@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: AMOR Backend
+Bundle-SymbolicName: org.infai.amor.backend
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.infai.amor.backend,
+ org.infai.amor.backend.messages
+Import-Package: org.eclipse.core.runtime;version="3.4.0",
+ org.eclipse.emf.common.util,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.ecore.resource,
+ org.eclipse.emf.ecore.xml.type.internal
