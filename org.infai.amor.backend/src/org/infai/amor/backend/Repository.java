@@ -69,22 +69,40 @@ public interface Repository {
     Response commitTransaction(Transaction tr);
 
     /**
-     * Get all models
+     * Get a branch. <code>uri</code> needs to be a valid suburi specifying a branch.
      * 
      * @param uri
      * @return
+     * @throws MalformedURIException
      */
-    Collection<URI> getContents(URI uri);
+    Branch getBranch(URI uri) throws MalformedURIException;
+
+    /**
+     * Get all branches. <code>uri</code> needs to be a valid suburi specifying a repository.
+     * 
+     * @param uri
+     * @return
+     * @throws MalformedURIException
+     */
+    Collection<Branch> getBranches(URI uri) throws MalformedURIException;
 
     /**
      * This method returns {@link URI}s to all models the model addressed by <code>uri</code> references to.
      * 
      * @param uri
      *            a persisted model
-     * @return all dependent models
+     * @return all referenced models
      * @throws MalformedURIException
      */
     Collection<URI> getDependencies(URI uri) throws MalformedURIException;
+
+    /**
+     * Get a revision. <code>uri</code> needs to be a valid suburi specifying a revision.
+     * 
+     * @param uri
+     * @return
+     */
+    Revision getRevision(URI uri) throws MalformedURIException;
 
     /**
      * Cancel all checked in models/changes.

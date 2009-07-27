@@ -20,6 +20,11 @@ public class OutOfTransactionException extends RuntimeException {
     /**
      * 
      */
+    private static final long serialVersionUID = -3398824477360185613L;
+
+    /**
+     * 
+     */
     public OutOfTransactionException() {
     }
 
