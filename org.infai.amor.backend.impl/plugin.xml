@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="org.infai.amor.backend.storage" name="Model Storage" schema="schema/org.infai.amor.backend.storage.exsd"/>
+   <extension
+         point="org.infai.amor.backend.repository">
+      <repository
+            implementation="org.infai.amor.backend.impl.RepositoryImpl">
+      </repository>
+   </extension>
+
+</plugin>

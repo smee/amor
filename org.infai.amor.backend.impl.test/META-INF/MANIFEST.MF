@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Implementation Unit/Integration tests
+Bundle-SymbolicName: org.infai.amor.backend.impl.test
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: org.infai.amor.backend.impl;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.junit4
+Bundle-ClassPath: lib/hamcrest-core-1.1.jar,
+ lib/hamcrest-library-1.1.jar,
+ lib/jmock-2.5.1.jar,
+ .

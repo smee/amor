@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Backen Default Implementation
+Bundle-SymbolicName: org.infai.amor.backend.impl;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.infai.amor.backend.impl.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf;bundle-version="2.4.0",
+ org.eclipse.emf.ecore;bundle-version="2.4.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.infai.amor.backend,
+ org.infai.amor.backend.branch,
+ org.infai.amor.backend.messages,
+ org.infai.amor.backend.storage
+Bundle-ClassPath: lib/jta-1_1.jar,
+ lib/neo-1.0-b8.jar,
+ .
