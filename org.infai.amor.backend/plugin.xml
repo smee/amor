@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="org.infai.amor.backend.repository" name="Repository Implementation" schema="schema/org.infai.amor.backend.repository.exsd"/>
+
+</plugin>

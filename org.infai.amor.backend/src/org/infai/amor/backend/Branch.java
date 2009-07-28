@@ -24,6 +24,13 @@ public interface Branch {
     Date getCreationTime();
 
     /**
+     * Get the most recent revision of this branch. Might be null if this branch has no revisions yet.
+     * 
+     * @return
+     */
+    Revision getHeadRevision();
+
+    /**
      * @return the name of this branch
      */
     String getName();

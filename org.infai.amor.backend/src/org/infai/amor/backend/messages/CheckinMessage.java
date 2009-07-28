@@ -9,6 +9,10 @@
  *******************************************************************************/
 package org.infai.amor.backend.messages;
 
+import java.util.Collection;
+
+import org.eclipse.emf.common.util.URI;
+
 /**
  * @author sdienst
  * 
@@ -34,8 +38,15 @@ public interface CheckinMessage extends Message {
     }
 
     /**
+     * In case of <code>getErrorCondition!=ErrorCondition.OKAY</code> this method returns references to all model instances
+     * affected by the current error.
+     * 
+     * @return
+     */
+    Collection<URI> getAffectedModels();
+
+    /**
      * @return
      */
     ErrorCondition getErrorCondition();
-
 }

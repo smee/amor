@@ -10,6 +10,7 @@
 package org.infai.amor.backend;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.eclipse.emf.common.util.URI;
 
@@ -20,11 +21,19 @@ import org.eclipse.emf.common.util.URI;
 public interface Revision {
 
     /**
-     * Get the branch this revision belongs to.
+     * Commit message.
      * 
      * @return
      */
-    Branch getBranch();
+    String getCommitMessage();
+
+    /**
+     * Commit time, represents the point in time, where {@link Repository#commitTransaction(Transaction)} got called for this
+     * revision.
+     * 
+     * @return
+     */
+    Date getCommitTimestamp();
 
     /**
      * Get a collection of uris for every touched model of this revision.
@@ -32,6 +41,13 @@ public interface Revision {
      * @return
      */
     Collection<URI> getModelReferences();
+
+    /**
+     * Get the parent revision of this one.
+     * 
+     * @return a revision or null if this rev. is the first one
+     */
+    Revision getPreviousRevision();
 
     /**
      * Get the unique revision id.

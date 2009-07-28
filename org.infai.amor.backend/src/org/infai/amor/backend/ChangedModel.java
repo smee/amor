@@ -10,7 +10,6 @@
 package org.infai.amor.backend;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -19,8 +18,6 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface ChangedModel {
     EObject getDiffModel();
-
-    URI getParentUri();
 
     IPath getPath();
 }
