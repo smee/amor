@@ -9,8 +9,6 @@
  *******************************************************************************/
 package org.infai.amor.backend;
 
-import java.util.Collection;
-
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
@@ -104,7 +102,7 @@ public interface Repository {
      * @return
      * @throws MalformedURIException
      */
-    Collection<Branch> getBranches(URI uri) throws MalformedURIException;
+    Iterable<Branch> getBranches(URI uri) throws MalformedURIException;
 
     /**
      * This method returns {@link URI}s to all models the model addressed by <code>uri</code> references to.
@@ -114,7 +112,7 @@ public interface Repository {
      * @return all referenced models
      * @throws MalformedURIException
      */
-    Collection<URI> getDependencies(URI uri) throws MalformedURIException;
+    Iterable<URI> getDependencies(URI uri) throws MalformedURIException;
 
     /**
      * Get a revision. <code>uri</code> needs to be a valid suburi specifying a revision.
