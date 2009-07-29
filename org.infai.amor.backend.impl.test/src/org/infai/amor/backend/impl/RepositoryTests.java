@@ -17,7 +17,10 @@ import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.ChangedModel;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Transaction;
-import org.infai.amor.backend.branch.BranchFactory;
+import org.infai.amor.backend.internal.BranchFactory;
+import org.infai.amor.backend.internal.StorageFactory;
+import org.infai.amor.backend.internal.TransactionManager;
+import org.infai.amor.backend.internal.UriHandler;
 import org.infai.amor.backend.storage.Storage;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -35,6 +38,9 @@ public class RepositoryTests {
     private RepositoryImpl repo;
     private Storage storage;
     private BranchFactory branchFactory;
+    private UriHandler uriHandler;
+    private TransactionManager transactionManager;
+    private StorageFactory storageFactory;
 
     @Test
     public void delegatesMainBranchCreation() {
@@ -78,7 +84,10 @@ public class RepositoryTests {
         context = new Mockery();
         storage = context.mock(Storage.class);
         branchFactory = context.mock(BranchFactory.class);
-        repo = new RepositoryImpl(storage, branchFactory);
+        uriHandler = context.mock(UriHandler.class);
+        transactionManager = context.mock(TransactionManager.class);
+        storageFactory = context.mock(StorageFactory.class);
+        repo = new RepositoryImpl(storageFactory, branchFactory, uriHandler, transactionManager);
     }
 
     @After
@@ -94,6 +103,8 @@ public class RepositoryTests {
 
         context.checking(new Expectations() {
             {
+                one(storageFactory).getStorage(branch);
+                will(returnValue(storage));
                 one(storage).checkin(model, tr);
             }
         });
@@ -109,6 +120,8 @@ public class RepositoryTests {
 
         context.checking(new Expectations() {
             {
+                one(storageFactory).getStorage(branch);
+                will(returnValue(storage));
                 one(storage).checkin(model, tr);
             }
         });
