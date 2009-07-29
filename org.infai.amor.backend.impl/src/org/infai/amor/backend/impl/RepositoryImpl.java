@@ -9,8 +9,6 @@
  *******************************************************************************/
 package org.infai.amor.backend.impl;
 
-import java.util.Collection;
-
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
@@ -21,26 +19,32 @@ import org.infai.amor.backend.Repository;
 import org.infai.amor.backend.Response;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.Transaction;
-import org.infai.amor.backend.branch.BranchFactory;
-import org.infai.amor.backend.storage.Storage;
+import org.infai.amor.backend.internal.BranchFactory;
+import org.infai.amor.backend.internal.StorageFactory;
+import org.infai.amor.backend.internal.TransactionManager;
+import org.infai.amor.backend.internal.UriHandler;
 
 /**
  * Default implementation of the amor repository backend.
  * 
- * @author sdienst
- * 
+ * @author sdienst<br>
+ *         TODO do the collaborators need to be informed upon transaction commits?
  */
 public class RepositoryImpl implements Repository {
 
-    private final Storage storage;
     private final BranchFactory branchFactory;
+    private final TransactionManager transactionManager;
+    private final UriHandler uriHandler;
+    private final StorageFactory storageFactory;
 
     /**
      * @param storage
      */
-    public RepositoryImpl(final Storage storage, final BranchFactory bf) {
-        this.storage = storage;
+    public RepositoryImpl(final StorageFactory sf, final BranchFactory bf, final UriHandler uh, final TransactionManager tr) {
+        this.storageFactory = sf;
         this.branchFactory = bf;
+        this.uriHandler = uh;
+        this.transactionManager = tr;
     }
 
     /*
@@ -51,8 +55,7 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Response checkin(final ChangedModel model, final Branch branch, final Transaction tr) {
-        // TODO branches!
-        return storage.checkin(model, tr);
+        return storageFactory.getStorage(branch).checkin(model, tr);
     }
 
     /*
@@ -63,8 +66,7 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Response checkin(final Model model, final Branch branch, final Transaction tr) {
-        // TODO branches!
-        return storage.checkin(model, tr);
+        return storageFactory.getStorage(branch).checkin(model, tr);
     }
 
     /*
@@ -74,10 +76,7 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Model checkout(final URI uri) throws MalformedURIException {
-        // TODO branches
-        // TODO - find matching storage for uri
-        // TODO - find better way to communicate with storage
-        return storage.checkout(uri);
+        return storageFactory.getStorage(branchFactory.getBranch(uriHandler.extractBranchName(uri))).checkout(uri);
     }
 
     /*
@@ -87,7 +86,7 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Response commitTransaction(final Transaction tr) {
-        throw new UnsupportedOperationException();
+        return transactionManager.commit(tr);
     }
 
     /*
@@ -100,16 +99,6 @@ public class RepositoryImpl implements Repository {
         return branchFactory.createBranch(parent, name);
     }
 
-    /**
-     * @param uri
-     * @return
-     */
-    private String extractBranchName(final URI uri) throws MalformedURIException {
-        // TODO
-        // return null;
-        throw new UnsupportedOperationException();
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -117,7 +106,7 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Branch getBranch(final URI uri) throws MalformedURIException {
-        final String branchName = extractBranchName(uri);
+        final String branchName = uriHandler.extractBranchName(uri);
 
         return branchFactory.getBranch(branchName);
     }
@@ -128,8 +117,9 @@ public class RepositoryImpl implements Repository {
      * @see org.infai.amor.backend.Repository#getBranches(org.eclipse.emf.common.util.URI)
      */
     @Override
-    public Collection<Branch> getBranches(final URI uri) throws MalformedURIException {
-        throw new UnsupportedOperationException();
+    public Iterable<Branch> getBranches(final URI uri) throws MalformedURIException {
+        // FIXME uri implies multiple repositories, remove it?
+        return branchFactory.getBranches();
     }
 
     /*
@@ -138,7 +128,7 @@ public class RepositoryImpl implements Repository {
      * @see org.infai.amor.backend.Repository#getDependencies(org.eclipse.emf.common.util.URI)
      */
     @Override
-    public Collection<URI> getDependencies(final URI uri) throws MalformedURIException {
+    public Iterable<URI> getDependencies(final URI uri) throws MalformedURIException {
         throw new UnsupportedOperationException();
     }
 
@@ -149,7 +139,8 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Revision getRevision(final URI uri) throws MalformedURIException {
-        throw new UnsupportedOperationException();
+        final Branch branch = branchFactory.getBranch(uriHandler.extractBranchName(uri));
+        return branch.getRevision(uriHandler.extractRevision(uri));
     }
 
     /*
@@ -159,7 +150,7 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public void rollbackTransaction(final Transaction tr) {
-        throw new UnsupportedOperationException();
+        transactionManager.rollback(tr);
     }
 
     /*
@@ -169,7 +160,7 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Transaction startTransaction() {
-        throw new UnsupportedOperationException();
+        return transactionManager.startTransaction();
     }
 
     /*

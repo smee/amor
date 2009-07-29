@@ -10,9 +10,9 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.infai.amor.backend,
- org.infai.amor.backend.branch,
+ org.infai.amor.backend.internal,
  org.infai.amor.backend.messages,
- org.infai.amor.backend.storage
-Bundle-ClassPath: lib/jta-1_1.jar,
- lib/neo-1.0-b8.jar,
- .
+ org.infai.amor.backend.storage,
+ org.neo4j.api.core
+Bundle-ClassPath: .
+Export-Package: org.infai.amor.backend.internal
