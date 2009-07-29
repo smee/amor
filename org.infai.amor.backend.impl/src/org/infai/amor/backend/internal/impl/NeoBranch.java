@@ -23,6 +23,8 @@ public class NeoBranch extends NeoObject implements Branch {
 
     private static final String BRANCHNAME = "branchname";
     private static final String CREATIONDATE = "creationdate";
+    private static final String HEADREVISION = "mostRecentRevision";
+    private static final String STARTREVISION = "startRevision";
 
     /**
      * Constructor for entirely new branches.
