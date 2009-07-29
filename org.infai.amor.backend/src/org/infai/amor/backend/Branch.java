@@ -24,6 +24,13 @@ public interface Branch {
     Date getCreationTime();
 
     /**
+     * Get the revision this branch started at. Might be null if this branch is the main branch.
+     * 
+     * @return
+     */
+    Revision getOriginRevision();
+
+    /**
      * Get the most recent revision of this branch. Might be null if this branch has no revisions yet.
      * 
      * @return
@@ -34,4 +41,17 @@ public interface Branch {
      * @return the name of this branch
      */
     String getName();
+
+    /**
+     * @param extractRevision
+     * @return
+     */
+    Revision getRevision(long revisionNumber);
+
+    /**
+     * Get all revisions of this branch, starting at {@link #getOriginRevision()} upto {@link #getHeadRevision()}.
+     * 
+     * @return
+     */
+    Iterable<Revision> getRevisions();
 }
