@@ -11,8 +11,24 @@ package org.infai.amor.backend;
 
 /**
  * @author sdienst
- *
+ * 
  */
-public interface Transaction {
+public interface CommitTransaction {
+    /**
+     * @return
+     */
+    Branch getBranch();
 
+    String getCommitMessage();
+
+    /**
+     * @return
+     */
+    long getRevisionId();
+
+    String getUser();
+
+    void setCommitMessage(String message);
+
+    void setUser(String username);
 }

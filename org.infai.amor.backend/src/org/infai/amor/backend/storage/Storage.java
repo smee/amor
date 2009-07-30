@@ -14,7 +14,7 @@ import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIExcepti
 import org.infai.amor.backend.ChangedModel;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Response;
-import org.infai.amor.backend.Transaction;
+import org.infai.amor.backend.CommitTransaction;
 
 /**
  * Pluggabe storage that knows how to (re)store models in a persistent fashion.
@@ -35,7 +35,7 @@ public interface Storage {
      *            the current transaction
      * @return
      */
-    Response checkin(ChangedModel model, Transaction tr);
+    Response checkin(ChangedModel model, CommitTransaction tr);
 
     /**
      * Add a {@link Model} that is new to the backend
@@ -48,7 +48,7 @@ public interface Storage {
      *            the current transaction
      * @return information about success or error conditions
      */
-    Response checkin(Model model, Transaction tr);
+    Response checkin(Model model, CommitTransaction tr);
 
     /**
      * Restore a {@link Model} with the exact same contents given by the model referenced via the uri.

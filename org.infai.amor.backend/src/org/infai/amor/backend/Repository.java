@@ -35,26 +35,22 @@ public interface Repository {
      * 
      * @param model
      *            a changed model
-     * @param branch
-     *            the branch to use
      * @param tr
      *            the current transaction
      * @return
      */
-    Response checkin(ChangedModel model, Branch branch, Transaction tr);
+    Response checkin(ChangedModel model, CommitTransaction tr);
 
     /**
      * Add a {@link Model} that is new to the backend
      * 
      * @param model
      *            a model
-     * @param branch
-     *            the branch to use
      * @param tr
      *            the current transaction
      * @return information about success or error conditions
      */
-    Response checkin(Model model, Branch branch, Transaction tr);
+    Response checkin(Model model, CommitTransaction tr);
 
     /**
      * Restore a {@link Model} with the exact same contents given by the model referenced via the uri.
@@ -72,19 +68,19 @@ public interface Repository {
      * 
      * @return
      */
-    Response commitTransaction(Transaction tr);
+    Response commitTransaction(CommitTransaction tr);
 
     /**
-     * Create a new branch split from a parent branch. The new branch will start at the most recent revision of the parent branch.<br>
+     * Create a new branch split from a revision. The new branch will start at the most given revision of the parent branch.<br>
      * Parent must not be null.
      * 
      * @param parent
-     *            parent branch or null
+     *            parent revision
      * @param branchName
      *            name of the new branch
      * @return a new subbranch
      */
-    Branch createBranch(Branch parent, String branchName);
+    Branch createBranch(Revision parent, String branchName);
 
     /**
      * Get a branch. <code>uri</code> needs to be a valid suburi specifying a branch.
@@ -125,13 +121,16 @@ public interface Repository {
     /**
      * Cancel all checked in models/changes.
      */
-    void rollbackTransaction(Transaction tr);
+    void rollbackTransaction(CommitTransaction tr);
 
     /**
      * Start a new transaction. Store every model commited during the transaction's lifetime. Persist these changes only upon
      * invocation of {@link #commitTransaction()}.
+     * 
+     * @param branch
+     *            the branch to commit to
      */
-    Transaction startTransaction();
+    CommitTransaction startTransaction(Branch branch);
 
     /**
      * Return a readonly resource that resolves dependencies to persisted models. This view has different uris than checked out
