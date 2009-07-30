@@ -14,15 +14,16 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.ChangedModel;
+import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Repository;
 import org.infai.amor.backend.Response;
 import org.infai.amor.backend.Revision;
-import org.infai.amor.backend.Transaction;
 import org.infai.amor.backend.internal.BranchFactory;
 import org.infai.amor.backend.internal.StorageFactory;
 import org.infai.amor.backend.internal.TransactionManager;
 import org.infai.amor.backend.internal.UriHandler;
+import org.infai.amor.backend.storage.Storage;
 
 /**
  * Default implementation of the amor repository backend.
@@ -54,8 +55,8 @@ public class RepositoryImpl implements Repository {
      * org.infai.amor.backend.Transaction)
      */
     @Override
-    public Response checkin(final ChangedModel model, final Branch branch, final Transaction tr) {
-        return storageFactory.getStorage(branch).checkin(model, tr);
+    public Response checkin(final ChangedModel model, final CommitTransaction tr) {
+        return storageFactory.getStorage(tr.getBranch()).checkin(model, tr);
     }
 
     /*
@@ -65,8 +66,8 @@ public class RepositoryImpl implements Repository {
      * org.infai.amor.backend.Transaction)
      */
     @Override
-    public Response checkin(final Model model, final Branch branch, final Transaction tr) {
-        return storageFactory.getStorage(branch).checkin(model, tr);
+    public Response checkin(final Model model, final CommitTransaction tr) {
+        return storageFactory.getStorage(tr.getBranch()).checkin(model, tr);
     }
 
     /*
@@ -76,7 +77,10 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Model checkout(final URI uri) throws MalformedURIException {
-        return storageFactory.getStorage(branchFactory.getBranch(uriHandler.extractBranchName(uri))).checkout(uri);
+        final String branchname = uriHandler.extractBranchName(uri);
+        final Branch branch = branchFactory.getBranch(branchname);
+        final Storage storage = storageFactory.getStorage(branch);
+        return storage.checkout(uri);
     }
 
     /*
@@ -85,7 +89,7 @@ public class RepositoryImpl implements Repository {
      * @see org.infai.amor.backend.Repository#commitTransaction(org.infai.amor.backend.Transaction)
      */
     @Override
-    public Response commitTransaction(final Transaction tr) {
+    public Response commitTransaction(final CommitTransaction tr) {
         return transactionManager.commit(tr);
     }
 
@@ -95,7 +99,7 @@ public class RepositoryImpl implements Repository {
      * @see org.infai.amor.backend.Repository#createBranch(org.infai.amor.backend.Branch)
      */
     @Override
-    public Branch createBranch(final Branch parent, final String name) {
+    public Branch createBranch(final Revision parent, final String name) {
         return branchFactory.createBranch(parent, name);
     }
 
@@ -140,6 +144,7 @@ public class RepositoryImpl implements Repository {
     @Override
     public Revision getRevision(final URI uri) throws MalformedURIException {
         final Branch branch = branchFactory.getBranch(uriHandler.extractBranchName(uri));
+
         return branch.getRevision(uriHandler.extractRevision(uri));
     }
 
@@ -149,7 +154,7 @@ public class RepositoryImpl implements Repository {
      * @see org.infai.amor.backend.Repository#rollbackTransaction(org.infai.amor.backend.Transaction)
      */
     @Override
-    public void rollbackTransaction(final Transaction tr) {
+    public void rollbackTransaction(final CommitTransaction tr) {
         transactionManager.rollback(tr);
     }
 
@@ -159,8 +164,8 @@ public class RepositoryImpl implements Repository {
      * @see org.infai.amor.backend.Repository#startTransaction()
      */
     @Override
-    public Transaction startTransaction() {
-        return transactionManager.startTransaction();
+    public CommitTransaction startTransaction(final Branch branch) {
+        return transactionManager.startTransaction(branch);
     }
 
     /*

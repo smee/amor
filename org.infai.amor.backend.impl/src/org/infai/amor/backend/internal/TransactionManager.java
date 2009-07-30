@@ -9,8 +9,9 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal;
 
+import org.infai.amor.backend.Branch;
+import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Response;
-import org.infai.amor.backend.Transaction;
 
 /**
  * @author sdienst
@@ -19,18 +20,20 @@ import org.infai.amor.backend.Transaction;
 public interface TransactionManager {
 
     /**
+     * @param branch
+     *            the branch to commit to
      * @return
      */
-    Transaction startTransaction();
+    CommitTransaction startTransaction(Branch branch);
 
     /**
      * @param tr
      */
-    void rollback(Transaction tr);
+    void rollback(CommitTransaction tr);
 
     /**
      * @param tr
      */
-    Response commit(Transaction tr);
+    Response commit(CommitTransaction tr);
 
 }

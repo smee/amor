@@ -10,6 +10,8 @@
 package org.infai.amor.backend.internal;
 
 import org.infai.amor.backend.Branch;
+import org.infai.amor.backend.CommitTransaction;
+import org.infai.amor.backend.Revision;
 
 /**
  * @author sdienst
@@ -19,13 +21,13 @@ public interface BranchFactory {
     /**
      * Create a (sub)branch with the provided name. If parent==null, creates a new main branch.
      * 
-     * @param parent
-     *            parent branch or null
+     * @param origin
+     *            revision of the parent branch
      * @param name
      *            name of the new branch
      * @return the new branch
      */
-    Branch createBranch(Branch parent, String name);
+    Branch createBranch(Revision origin, String name);
 
     /**
      * Find the branch with the given name.
@@ -40,6 +42,13 @@ public interface BranchFactory {
      * @return
      */
     Iterable<Branch> getBranches();
+
+    /**
+     * @param branch
+     * @param transaction
+     * @return
+     */
+    Revision createRevision(Branch branch, CommitTransaction transaction);
 
     // /**
     // * Merge branch source into branch target.

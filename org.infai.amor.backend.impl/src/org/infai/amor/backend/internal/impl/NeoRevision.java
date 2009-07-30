@@ -38,7 +38,31 @@ public class NeoRevision extends NeoObject implements Revision {
         getNode().setProperty(REVISIONID, revisionId);
         getNode().setProperty(COMMITMESSAGE, commitMessage);
         getNode().setProperty(COMMITTIME, System.currentTimeMillis());
-        getNode().createRelationshipTo(previousRevision.getNode(), NeoRelationshipType.getRelationshipType(PREVIOUSREVISION));
+        if (previousRevision != null) {
+            getNode().createRelationshipTo(previousRevision.getNode(), NeoRelationshipType.getRelationshipType(PREVIOUSREVISION));
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        if (getRevisionId() != ((NeoRevision) obj).getRevisionId()) {
+            return false;
+        }
+        return true;
     }
 
     /*
@@ -95,6 +119,21 @@ public class NeoRevision extends NeoObject implements Revision {
     @Override
     public long getRevisionId() {
         return (Long) getNode().getProperty(REVISIONID);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        final long revisionId = getRevisionId();
+
+        result = prime * result + (int) (revisionId ^ (revisionId >>> 32));
+        return result;
     }
 
 }
