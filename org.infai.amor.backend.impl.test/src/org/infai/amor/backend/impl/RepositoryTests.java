@@ -15,8 +15,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.ChangedModel;
+import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
-import org.infai.amor.backend.Transaction;
+import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.internal.BranchFactory;
 import org.infai.amor.backend.internal.StorageFactory;
 import org.infai.amor.backend.internal.TransactionManager;
@@ -61,16 +62,18 @@ public class RepositoryTests {
     public void delegatesSubBranchCreation() {
         final Branch mockedBranch = context.mock(Branch.class, "mainBranch");
         final Branch subBranch = context.mock(Branch.class, "subBranch");
+        final Revision revision = context.mock(Revision.class);
+
         context.checking(new Expectations() {
             {
-                one(branchFactory).createBranch(mockedBranch, "branch1");
+                one(branchFactory).createBranch(revision, "branch1");
                 will(returnValue(subBranch));
 
                 allowing(subBranch).getName();
                 will(returnValue("branch1"));
             }
         });
-        final Branch branch = repo.createBranch(mockedBranch, "branch1");
+        final Branch branch = repo.createBranch(revision, "branch1");
 
         assertNotNull(branch);
         assertEquals("branch1", branch.getName());
@@ -99,34 +102,38 @@ public class RepositoryTests {
     public void testSavesChangedModelIntoStorage() {
         final ChangedModel model = context.mock(ChangedModel.class);
         final Branch branch = context.mock(Branch.class);
-        final Transaction tr = context.mock(Transaction.class);
+        final CommitTransaction tr = context.mock(CommitTransaction.class);
 
         context.checking(new Expectations() {
             {
+                allowing(tr).getBranch();
+                will(returnValue(branch));
                 one(storageFactory).getStorage(branch);
                 will(returnValue(storage));
                 one(storage).checkin(model, tr);
             }
         });
 
-        repo.checkin(model, branch, tr);
+        repo.checkin(model, tr);
     }
 
     @Test
     public void testSavesIntoStorage() {
         final Model model = context.mock(Model.class);
-        final Transaction tr = context.mock(Transaction.class);
+        final CommitTransaction tr = context.mock(CommitTransaction.class);
         final Branch branch = context.mock(Branch.class);
 
         context.checking(new Expectations() {
             {
+                allowing(tr).getBranch();
+                will(returnValue(branch));
                 one(storageFactory).getStorage(branch);
                 will(returnValue(storage));
                 one(storage).checkin(model, tr);
             }
         });
 
-        repo.checkin(model, branch, tr);
+        repo.checkin(model, tr);
     }
 
 }
