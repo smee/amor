@@ -107,7 +107,12 @@ public class NeoBranch extends NeoObject implements Branch {
      */
     @Override
     public Revision getRevision(final long revisionNumber) {
-        throw new UnsupportedOperationException();
+        for (final Revision rev : getRevisions()) {
+            if (rev.getRevisionId() == revisionNumber) {
+                return rev;
+            }
+        }
+        return null;
     }
 
     /*

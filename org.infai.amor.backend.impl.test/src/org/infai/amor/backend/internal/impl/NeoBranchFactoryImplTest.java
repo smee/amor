@@ -59,6 +59,18 @@ public class NeoBranchFactoryImplTest {
     }
 
     /**
+     * @param branches
+     * @return
+     */
+    private <T> List<T> collect(final Iterable<T> items) {
+        final List<T> result = new LinkedList<T>();
+        for (final T revision : items) {
+            result.add(revision);
+        }
+        return result;
+    }
+
+    /**
      * @param revisions
      * @param originRevision
      * @return
@@ -85,6 +97,42 @@ public class NeoBranchFactoryImplTest {
         return tr;
     }
 
+    /**
+     * <pre>
+     * Branch
+     *   |
+     *   1 
+     *   |
+     *   2 -- subbranch
+     *   |  |
+     *   6  3
+     *      |
+     *      4
+     *      |
+     *      5
+     * </pre>
+     * 
+     * @return
+     */
+    private Branch createComplexRevisionTree() {
+        // create main branch
+        final Branch mainbranch = factory.createBranch(null, "main");
+        final CommitTransaction tr = createCommit(1, mainbranch, "test", "max");
+        // with one revision
+        factory.createRevision(mainbranch, tr);
+        // create a subbranch
+        final Revision branchingRev = factory.createRevision(mainbranch, createCommit(2, mainbranch, "test2", "max"));
+
+        // add 3 revisions to the subbranch
+        final Branch subbranch = factory.createBranch(branchingRev, "sub1");
+        factory.createRevision(subbranch, createCommit(3, subbranch, "test3", "max"));
+        factory.createRevision(subbranch, createCommit(4, subbranch, "test4", "max"));
+        factory.createRevision(subbranch, createCommit(5, subbranch, "test5", "max"));
+
+        factory.createRevision(mainbranch, createCommit(6, mainbranch, "test6", "max"));
+        return subbranch;
+    }
+
     @Before
     public void setUp() {
         factory = new NeoBranchFactory(new NeoProvider() {
@@ -99,6 +147,7 @@ public class NeoBranchFactoryImplTest {
     @After
     public void tearDown() {
         tx.failure();
+        // tx.success();
         tx.finish();
     }
 
@@ -111,6 +160,12 @@ public class NeoBranchFactoryImplTest {
         assertNotNull(branch);
         assertEquals("main", branch.getName());
         assertTrue(startTime <= branch.getCreationTime().getTime());
+    }
+
+    @Test
+    public void testFindRevisionById() {
+        final Branch subbranch = createComplexRevisionTree();
+        assertTrue(subbranch.getRevision(3) != null);
     }
 
     @Test
@@ -160,22 +215,10 @@ public class NeoBranchFactoryImplTest {
 
     @Test
     public void testSubBranching() {
-        // create main branch
-        final Branch mainbranch = factory.createBranch(null, "main");
-        final CommitTransaction tr = createCommit(1, mainbranch, "test", "max");
-        // with one revision
-        factory.createRevision(mainbranch, tr);
-        // create a subbranch
-        final Revision branchingRev = factory.createRevision(mainbranch, createCommit(2, mainbranch, "test2", "max"));
-
-        // add 3 revisions to the subbranch
-        final Branch subbranch = factory.createBranch(branchingRev, "sub1");
-        factory.createRevision(subbranch, createCommit(3, subbranch, "test3", "max"));
-        factory.createRevision(subbranch, createCommit(4, subbranch, "test4", "max"));
-        final Revision rev5 = factory.createRevision(subbranch, createCommit(5, subbranch, "test5", "max"));
+        final Branch subbranch = createComplexRevisionTree();
 
         // is branching revision == subbranch orgin revision?
-        assertEquals(branchingRev.getRevisionId(), subbranch.getOriginRevision().getRevisionId());
+        assertEquals(2, subbranch.getOriginRevision().getRevisionId());
 
         // get all revisions of the subbranch
         final List<Revision> subBranchRevisions = new LinkedList<Revision>();
@@ -184,6 +227,13 @@ public class NeoBranchFactoryImplTest {
         }
         // rootRevision + 3 unique revisions
         assertEquals(4, subBranchRevisions.size());
-        assertTrue(contains(subBranchRevisions, rev5));
+        assertTrue(contains(subBranchRevisions, subbranch.getHeadRevision()));
+        assertTrue(contains(subBranchRevisions, subbranch.getOriginRevision()));
+    }
+
+    @Test
+    public void testSubBranching2() {
+        final Branch subbranch = createComplexRevisionTree();
+        assertEquals(2, collect(factory.getBranches()).size());
     }
 }
