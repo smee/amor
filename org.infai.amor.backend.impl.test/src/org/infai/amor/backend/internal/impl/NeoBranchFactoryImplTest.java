@@ -13,7 +13,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,39 +22,24 @@ import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.neo4j.api.core.EmbeddedNeo;
 import org.neo4j.api.core.NeoService;
-import org.neo4j.api.core.Transaction;
 
 /**
  * @author sdienst
  * 
  */
-public class NeoBranchFactoryImplTest {
+public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
 
     private NeoBranchFactory factory;
-    private Transaction tx;
-    private static NeoService neoservice;
+
     private static MockedTransactionNeoWrapper neoWithMockTransaction;
 
     @BeforeClass
-    public static void createNeo() throws IOException {
-        final File tempFile = File.createTempFile("unit", "test");
-        tempFile.delete();
-        tempFile.mkdirs();
-
-        neoservice = new EmbeddedNeo(tempFile.getAbsolutePath());
+    public static void beforeClass() throws IOException {
         neoWithMockTransaction = new MockedTransactionNeoWrapper(neoservice);
-    }
-
-    @AfterClass
-    public static void shutDownNeo() {
-        neoservice.shutdown();
     }
 
     /**
@@ -141,14 +125,6 @@ public class NeoBranchFactoryImplTest {
                 return neoWithMockTransaction;
             }
         });
-        tx = neoservice.beginTx();
-    }
-
-    @After
-    public void tearDown() {
-        tx.failure();
-        // tx.success();
-        tx.finish();
     }
 
     @Test

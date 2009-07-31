@@ -10,6 +10,7 @@
 package org.infai.amor.backend.impl;
 
 import org.infai.amor.backend.internal.impl.NeoBranchFactoryImplTest;
+import org.infai.amor.backend.internal.impl.NeoTransactionTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -19,7 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses( { RepositoryTests.class, NeoBranchFactoryImplTest.class })
+@SuiteClasses( { RepositoryTests.class, NeoBranchFactoryImplTest.class, NeoTransactionTest.class })
 public class AllTests {
 
 }

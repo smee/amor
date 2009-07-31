@@ -106,7 +106,6 @@ public class NeoRevision extends NeoObject implements Revision {
         if (rel != null) {
             return new NeoRevision(rel.getEndNode());
         } else {
-            // TODO better to return a dummy revision?
             return null;
         }
     }
