@@ -10,7 +10,7 @@
 package org.infai.amor.backend.impl;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.ChangedModel;
@@ -20,10 +20,10 @@ import org.infai.amor.backend.Repository;
 import org.infai.amor.backend.Response;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.internal.BranchFactory;
-import org.infai.amor.backend.internal.StorageFactory;
 import org.infai.amor.backend.internal.TransactionManager;
 import org.infai.amor.backend.internal.UriHandler;
 import org.infai.amor.backend.storage.Storage;
+import org.infai.amor.backend.storage.StorageFactory;
 
 /**
  * Default implementation of the amor repository backend.
@@ -77,9 +77,7 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Model checkout(final URI uri) throws MalformedURIException {
-        final String branchname = uriHandler.extractBranchName(uri);
-        final Branch branch = branchFactory.getBranch(branchname);
-        final Storage storage = storageFactory.getStorage(branch);
+        final Storage storage = getStorage(uri);
         return storage.checkout(uri);
     }
 
@@ -123,7 +121,7 @@ public class RepositoryImpl implements Repository {
     @Override
     public Iterable<Branch> getBranches(final URI uri) throws MalformedURIException {
         // FIXME uri implies multiple repositories, remove it?
-        return branchFactory.getBranches();
+        return (Iterable<Branch>) branchFactory.getBranches();
     }
 
     /*
@@ -146,6 +144,18 @@ public class RepositoryImpl implements Repository {
         final Branch branch = branchFactory.getBranch(uriHandler.extractBranchName(uri));
 
         return branch.getRevision(uriHandler.extractRevision(uri));
+    }
+
+    /**
+     * @param uri
+     * @return
+     * @throws MalformedURIException
+     */
+    private Storage getStorage(final URI uri) throws MalformedURIException {
+        final String branchname = uriHandler.extractBranchName(uri);
+        final Branch branch = branchFactory.getBranch(branchname);
+        final Storage storage = storageFactory.getStorage(branch);
+        return storage;
     }
 
     /*
@@ -174,8 +184,9 @@ public class RepositoryImpl implements Repository {
      * @see org.infai.amor.backend.Repository#view(org.eclipse.emf.common.util.URI)
      */
     @Override
-    public Resource view(final URI uri) throws MalformedURIException {
-        throw new UnsupportedOperationException();
+    public EObject view(final URI uri) throws MalformedURIException {
+        final Storage storage = getStorage(uri);
+        return storage.view(uri);
     }
 
 }

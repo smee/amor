@@ -30,6 +30,13 @@ public interface BranchFactory {
     Branch createBranch(Revision origin, String name);
 
     /**
+     * @param branch
+     * @param transaction
+     * @return
+     */
+    Revision createRevision(Branch branch, CommitTransaction transaction);
+
+    /**
      * Find the branch with the given name.
      * 
      * @param name
@@ -41,14 +48,7 @@ public interface BranchFactory {
     /**
      * @return
      */
-    Iterable<Branch> getBranches();
-
-    /**
-     * @param branch
-     * @param transaction
-     * @return
-     */
-    Revision createRevision(Branch branch, CommitTransaction transaction);
+    Iterable<? extends Branch> getBranches();
 
     // /**
     // * Merge branch source into branch target.

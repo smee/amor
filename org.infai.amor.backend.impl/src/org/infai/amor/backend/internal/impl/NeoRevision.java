@@ -101,7 +101,7 @@ public class NeoRevision extends NeoObject implements Revision {
      * @see org.infai.amor.backend.Revision#getPreviousRevision()
      */
     @Override
-    public Revision getPreviousRevision() {
+    public NeoRevision getPreviousRevision() {
         final Relationship rel = getNode().getSingleRelationship(NeoRelationshipType.getRelationshipType(PREVIOUSREVISION), Direction.OUTGOING);
         if (rel != null) {
             return new NeoRevision(rel.getEndNode());

@@ -40,12 +40,12 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
      * @see org.infai.amor.backend.internal.BranchFactory#createBranch(org.infai.amor.backend.Branch, java.lang.String)
      */
     @Override
-    public Branch createBranch(final Revision origin, final String name) {
+    public NeoBranch createBranch(final Revision origin, final String name) {
         final Node factoryNode = getFactoryNode();
 
         if (origin == null) {
             // check if there already is any branch with the given name
-            final Branch branch = getBranch(name);
+            final NeoBranch branch = getBranch(name);
             if (branch != null) {
                 // yes, just return it
                 return branch;
@@ -74,7 +74,7 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
      * org.infai.amor.backend.CommitTransaction)
      */
     @Override
-    public Revision createRevision(final Branch branch, final CommitTransaction transaction) {
+    public NeoRevision createRevision(final Branch branch, final CommitTransaction transaction) {
         if (branch == null) {
             throw new IllegalArgumentException("Can't create a revision without a branch");
         } else {
@@ -98,7 +98,7 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
      * @see org.infai.amor.backend.internal.BranchFactory#getBranch(java.lang.String)
      */
     @Override
-    public Branch getBranch(final String name) {
+    public NeoBranch getBranch(final String name) {
         final Iterable<Relationship> rs = getFactoryNode().getRelationships(NeoRelationshipType.getRelationshipType("branch"), Direction.OUTGOING);
         // iterate over all branches
         for (final NeoBranch branch : new NeoRelationshipIterable<NeoBranch>(rs) {
@@ -120,10 +120,10 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
      * @see org.infai.amor.backend.internal.BranchFactory#getBranches()
      */
     @Override
-    public Iterable<Branch> getBranches() {
+    public Iterable<NeoBranch> getBranches() {
         final Iterable<Relationship> rs = getFactoryNode().getRelationships(NeoRelationshipType.getRelationshipType("branch"));
 
-        return new NeoRelationshipIterable<Branch>(rs) {
+        return new NeoRelationshipIterable<NeoBranch>(rs) {
             @Override
             public NeoBranch narrow(final Relationship r) {
                 return new NeoBranch(r.getEndNode());

@@ -7,21 +7,27 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.internal;
+package org.infai.amor.backend.internal.impl;
 
 import org.infai.amor.backend.Branch;
+import org.infai.amor.backend.internal.storage.BlobStorage;
 import org.infai.amor.backend.storage.Storage;
+import org.infai.amor.backend.storage.StorageFactory;
 
 /**
  * @author sdienst
  * 
  */
-public interface StorageFactory {
+public class DumbStorageFactory implements StorageFactory {
 
-    /**
-     * @param branch
-     * @return
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.infai.amor.backend.internal.StorageFactory#getStorage(org.infai.amor.backend.Branch)
      */
-    Storage getStorage(Branch branch);
+    @Override
+    public Storage getStorage(final Branch branch) {
+        return new BlobStorage();
+    }
 
 }
