@@ -10,11 +10,13 @@
 package org.infai.amor.backend.storage;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.ChangedModel;
-import org.infai.amor.backend.Model;
-import org.infai.amor.backend.Response;
 import org.infai.amor.backend.CommitTransaction;
+import org.infai.amor.backend.Model;
+import org.infai.amor.backend.Repository;
+import org.infai.amor.backend.Response;
 
 /**
  * Pluggabe storage that knows how to (re)store models in a persistent fashion.
@@ -60,5 +62,13 @@ public interface Storage {
      *             for URIs that do not address a versioned model
      */
     Model checkout(URI uri) throws MalformedURIException;
+
+    /**
+     * @see Repository#view(URI)
+     * @param uri
+     * @return
+     * @throws MalformedURIException
+     */
+    EObject view(URI uri) throws MalformedURIException;
 
 }

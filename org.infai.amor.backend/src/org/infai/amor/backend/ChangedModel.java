@@ -17,6 +17,8 @@ import org.eclipse.emf.ecore.EObject;
  * 
  */
 public interface ChangedModel {
+    EObject getContent();
+
     EObject getDiffModel();
 
     IPath getPath();

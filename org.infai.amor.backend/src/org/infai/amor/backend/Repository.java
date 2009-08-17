@@ -10,7 +10,7 @@
 package org.infai.amor.backend;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 
 /**
@@ -140,5 +140,5 @@ public interface Repository {
      *            uri of a model
      * @return a read only resource that resolves proxies within this repository
      */
-    Resource view(URI uri) throws MalformedURIException;
+    EObject view(URI uri) throws MalformedURIException;
 }

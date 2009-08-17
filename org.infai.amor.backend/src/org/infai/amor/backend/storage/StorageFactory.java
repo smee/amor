@@ -7,19 +7,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend;
+package org.infai.amor.backend.storage;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.emf.ecore.EObject;
+import org.infai.amor.backend.Branch;
 
 /**
  * @author sdienst
  * 
  */
-public interface Model {
+public interface StorageFactory {
 
-    EObject getContent();
-
-    IPath getPersistencePath();
+    /**
+     * @param branch
+     * @return
+     */
+    Storage getStorage(Branch branch);
 
 }
