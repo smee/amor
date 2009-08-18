@@ -11,6 +11,7 @@ package org.infai.amor.backend.impl;
 
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
+import org.neo4j.api.core.Transaction;
 
 /**
  * @author sdienst
@@ -20,14 +21,16 @@ public class CommitTransactionImpl implements CommitTransaction {
     private String commitMessage, username;
     private final long revId;
     private final Branch branch;
+    private final Transaction neoTransaction;
 
     /**
      * @param revId
      * @param branch2
      */
-    public CommitTransactionImpl(final Branch b, final long revId) {
+    public CommitTransactionImpl(final Branch b, final long revId, final Transaction neoTransaction) {
         this.branch = b;
         this.revId = revId;
+        this.neoTransaction = neoTransaction;
     }
 
     /*
@@ -48,6 +51,13 @@ public class CommitTransactionImpl implements CommitTransaction {
     @Override
     public String getCommitMessage() {
         return commitMessage;
+    }
+
+    /**
+     * @return the neoTransaction
+     */
+    public Transaction getNeoTransaction() {
+        return neoTransaction;
     }
 
     /*

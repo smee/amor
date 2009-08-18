@@ -9,42 +9,153 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
+import javax.swing.event.EventListenerList;
+
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Response;
+import org.infai.amor.backend.exception.TransactionException;
+import org.infai.amor.backend.exception.TransactionListener;
+import org.infai.amor.backend.impl.CommitTransactionImpl;
+import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.TransactionManager;
+import org.infai.amor.backend.internal.UriHandler;
+import org.infai.amor.backend.internal.responses.CommitSuccessResponse;
+import org.infai.amor.backend.internal.responses.TransactionErrorResponse;
+import org.neo4j.api.core.Node;
+import org.neo4j.api.core.Transaction;
 
 /**
  * @author sdienst
- *
+ * 
  */
-public class TransactionManagerImpl implements TransactionManager {
+public class TransactionManagerImpl extends NeoObjectFactory implements TransactionManager {
+    private final EventListenerList listeners = new EventListenerList();
+    private final UriHandler urihandler;
 
-    /* (non-Javadoc)
+    /**
+     * @param uh
+     * @param np
+     */
+    public TransactionManagerImpl(final UriHandler uh, final NeoProvider np) {
+        super(np);
+        this.urihandler = uh;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.infai.amor.backend.internal.TransactionManager#addTransactionListener(org.infai.amor.backend.internal.TransactionListener
+     * )
+     */
+    @Override
+    public void addTransactionListener(final TransactionListener listener) {
+        listeners.add(TransactionListener.class, listener);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.internal.TransactionManager#commit(org.infai.amor.backend.CommitTransaction)
      */
     @Override
-    public Response commit(CommitTransaction tr) {
-        // TODO Auto-generated method stub
-        return null;
+    public Response commit(final CommitTransaction tr) {
+        try {
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final PrintStream ps = new PrintStream(baos);
+            boolean failure = false;
+            // tell all listeners that we are going to commit
+            // and log errors
+            for (final TransactionListener listener : listeners.getListeners(TransactionListener.class)) {
+                try {
+                    listener.commit(tr);
+                } catch (final TransactionException e) {
+                    failure = true;
+                    e.printStackTrace(ps);
+                    ps.append("\n");
+                }
+            }
+
+            if (failure) {
+                return new TransactionErrorResponse("Error on commit: " + baos.toString());
+            } else {
+                return new CommitSuccessResponse("Success", urihandler.createUriFor(tr));
+            }
+        } finally {
+            if (tr instanceof CommitTransactionImpl) {
+                // commit to neo4j
+                final Transaction transaction = ((CommitTransactionImpl) tr).getNeoTransaction();
+                transaction.success();
+                transaction.finish();
+            }
+        }
     }
 
-    /* (non-Javadoc)
+    /**
+     * Create a new unique revision number.<br>
+     * TODO might not be unique, should be set on transaction commit, not start!
+     * 
+     * @return
+     */
+    private long createNextRevisionId() {
+        final Node node = getFactoryNode(NeoRelationshipType.getRelationshipType("lastRevision"));
+        Long lastRevision = (Long) node.getProperty("revisionCounter");
+        if (lastRevision == null) {
+            lastRevision = 1L;
+        } else {
+            lastRevision += 1;
+        }
+        node.setProperty("revisionCounter", lastRevision);
+        return lastRevision;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @seeorg.infai.amor.backend.internal.TransactionManager#removeTransactionListener(org.infai.amor.backend.internal.
+     * TransactionListener)
+     */
+    @Override
+    public void removeTransactionListener(final TransactionListener listener) {
+        listeners.remove(TransactionListener.class, listener);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.internal.TransactionManager#rollback(org.infai.amor.backend.CommitTransaction)
      */
     @Override
-    public void rollback(CommitTransaction tr) {
-        // TODO Auto-generated method stub
-
+    public void rollback(final CommitTransaction tr) {
+        try {
+            for (final TransactionListener listener : listeners.getListeners(TransactionListener.class)) {
+                listener.rollback(tr);
+            }
+        } finally {
+            if (tr instanceof CommitTransactionImpl) {
+                // rollback all neo4j database changes
+                final Transaction transaction = ((CommitTransactionImpl) tr).getNeoTransaction();
+                transaction.failure();
+                transaction.finish();
+            }
+        }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.internal.TransactionManager#startTransaction(org.infai.amor.backend.Branch)
      */
     @Override
-    public CommitTransaction startTransaction(Branch branch) {
-        // TODO Auto-generated method stub
-        return null;
+    public CommitTransaction startTransaction(final Branch branch) {
+        final CommitTransaction tr = new CommitTransactionImpl(branch, createNextRevisionId(), getNeo().beginTx());
+        for (final TransactionListener listener : listeners.getListeners(TransactionListener.class)) {
+            listener.startTransaction(tr);
+        }
+        return tr;
     }
-
 }

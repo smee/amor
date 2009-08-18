@@ -12,6 +12,7 @@ package org.infai.amor.backend.internal;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Response;
+import org.infai.amor.backend.exception.TransactionListener;
 
 /**
  * @author sdienst
@@ -20,11 +21,19 @@ import org.infai.amor.backend.Response;
 public interface TransactionManager {
 
     /**
-     * @param branch
-     *            the branch to commit to
-     * @return
+     * @param listener
      */
-    CommitTransaction startTransaction(Branch branch);
+    void addTransactionListener(TransactionListener listener);
+
+    /**
+     * @param tr
+     */
+    Response commit(CommitTransaction tr);
+
+    /**
+     * @param listener
+     */
+    void removeTransactionListener(TransactionListener listener);
 
     /**
      * @param tr
@@ -32,8 +41,10 @@ public interface TransactionManager {
     void rollback(CommitTransaction tr);
 
     /**
-     * @param tr
+     * @param branch
+     *            the branch to commit to
+     * @return
      */
-    Response commit(CommitTransaction tr);
+    CommitTransaction startTransaction(Branch branch);
 
 }
