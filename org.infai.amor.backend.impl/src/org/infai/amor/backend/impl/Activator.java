@@ -113,8 +113,9 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         final ServiceTracker stSF = new ServiceTracker(context, ServiceFactory.class.getName(), this);
         stSF.open();
         // instantiate our repository
+        final UriHandlerImpl uriHandler = new UriHandlerImpl();
         final Repository repo = new RepositoryImpl(new StorageFactory() {
-
+            // fetch the storage service lazily
             @Override
             public Storage getStorage(final Branch branch) {
                 if (storageFactory == null) {
@@ -123,7 +124,7 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
                     return storageFactory.getStorage(branch);
                 }
             }
-        }, new NeoBranchFactory(this), new UriHandlerImpl(), new TransactionManagerImpl());
+        }, new NeoBranchFactory(this), uriHandler, new TransactionManagerImpl(uriHandler, this));
         // register repository osgi service
         context.registerService(Repository.class.getName(), repo, null);
     }
