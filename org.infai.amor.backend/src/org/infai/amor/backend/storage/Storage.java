@@ -17,6 +17,7 @@ import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Repository;
 import org.infai.amor.backend.Response;
+import org.infai.amor.backend.exception.TransactionListener;
 
 /**
  * Pluggabe storage that knows how to (re)store models in a persistent fashion.
@@ -24,7 +25,7 @@ import org.infai.amor.backend.Response;
  * @author sdienst
  * 
  */
-public interface Storage {
+public interface Storage extends TransactionListener {
 
     /**
      * Checkin a changed model.
