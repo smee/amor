@@ -11,10 +11,11 @@ package org.infai.amor.backend.internal.impl;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
+import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.internal.UriHandler;
 
 /**
- * URI format: amor:/host/repositoryname/branchname/directories.../modelname/revisionnumber
+ * URI format: amor:/host/repositoryname/branchname/revisionnumber/directories.../modelname
  * 
  * @author sdienst
  * 
@@ -24,14 +25,25 @@ public class UriHandlerImpl implements UriHandler {
     /*
      * (non-Javadoc)
      * 
+     * @see org.infai.amor.backend.internal.UriHandler#createUriFor(org.infai.amor.backend.CommitTransaction)
+     */
+    @Override
+    public URI createUriFor(final CommitTransaction tr) {
+        // TODO configurable host and repository!
+        return URI.createHierarchicalURI("amor", "localhost", null, new String[] { "repo", tr.getBranch().getName(), Long.toString(tr.getRevisionId()) }, null, null);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.internal.UriHandler#extractBranchName(org.eclipse.emf.common.util.URI)
      */
     @Override
     public String extractBranchName(final URI uri) throws MalformedURIException {
-        if (uri.segmentCount() < 5) {
+        if (uri.segmentCount() < 4) {
             throw new MalformedURIException("This uri doesn't contain a branch name: " + uri.toString());
         } else {
-            return uri.segment(2);
+            return uri.segment(1);
         }
     }
 
@@ -42,10 +54,10 @@ public class UriHandlerImpl implements UriHandler {
      */
     @Override
     public long extractRevision(final URI uri) throws MalformedURIException {
-        if (uri.segmentCount() < 5) {
+        if (uri.segmentCount() < 4) {
             throw new MalformedURIException("This uri doesn't contain a branch name: " + uri.toString());
         } else {
-            return Long.parseLong(uri.lastSegment());
+            return Long.parseLong(uri.segment(2));
         }
     }
 

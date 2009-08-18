@@ -11,12 +11,19 @@ package org.infai.amor.backend.internal;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
+import org.infai.amor.backend.CommitTransaction;
 
 /**
  * @author sdienst
  * 
  */
 public interface UriHandler {
+
+    /**
+     * @param tr
+     * @return
+     */
+    URI createUriFor(CommitTransaction tr);
 
     /**
      * @param uri
