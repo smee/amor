@@ -75,7 +75,7 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
      * @return
      */
     private CommitTransaction createCommit(final long id, final Branch b, final String message, final String user) {
-        final CommitTransaction tr = new CommitTransactionImpl(b, id);
+        final CommitTransaction tr = new CommitTransactionImpl(b, id, tx);
         tr.setCommitMessage(message);
         tr.setUser(user);
         return tr;
