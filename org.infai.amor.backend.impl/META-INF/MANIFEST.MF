@@ -10,6 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.infai.amor.backend,
+ org.infai.amor.backend.exception,
  org.infai.amor.backend.internal,
  org.infai.amor.backend.messages,
  org.infai.amor.backend.storage,
