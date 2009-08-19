@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.infai.amor.backend.storage;
 
+import java.io.IOException;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
@@ -38,7 +40,7 @@ public interface Storage extends TransactionListener {
      *            the current transaction
      * @return
      */
-    Response checkin(ChangedModel model, CommitTransaction tr);
+    Response checkin(ChangedModel model, CommitTransaction tr) throws IOException;
 
     /**
      * Add a {@link Model} that is new to the backend
@@ -50,8 +52,9 @@ public interface Storage extends TransactionListener {
      * @param tr
      *            the current transaction
      * @return information about success or error conditions
+     * @throws IOException
      */
-    Response checkin(Model model, CommitTransaction tr);
+    Response checkin(Model model, CommitTransaction tr) throws IOException;
 
     /**
      * Restore a {@link Model} with the exact same contents given by the model referenced via the uri.
