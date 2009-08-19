@@ -20,6 +20,17 @@ import org.infai.amor.backend.CommitTransaction;
 public interface UriHandler {
 
     /**
+     * Create an externally usable uri that links to this exact model version.
+     * 
+     * @param modelSpecificPart
+     *            relative storage specific path
+     * @param tr
+     *            current commit transaction
+     * @return
+     */
+    URI createModelUri(CommitTransaction tr, String modelSpecificPart);
+
+    /**
      * @param tr
      * @return
      */

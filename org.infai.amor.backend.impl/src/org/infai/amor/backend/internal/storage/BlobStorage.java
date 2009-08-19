@@ -10,18 +10,22 @@
 package org.infai.amor.backend.internal.storage;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.ChangedModel;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Response;
 import org.infai.amor.backend.exception.TransactionException;
+import org.infai.amor.backend.internal.UriHandler;
 import org.infai.amor.backend.internal.responses.CheckinResponse;
 import org.infai.amor.backend.storage.Storage;
 
@@ -35,9 +39,11 @@ public class BlobStorage implements Storage {
 
     private final File storageDir;
     private ResourceSetImpl resourceSet;
+    private final UriHandler uriHandler;
 
-    public BlobStorage(final File storageDir) {
+    public BlobStorage(final File storageDir, final UriHandler uh) {
         this.storageDir = storageDir;
+        this.uriHandler = uh;
     }
 
     /*
@@ -47,11 +53,13 @@ public class BlobStorage implements Storage {
      * org.infai.amor.backend.CommitTransaction)
      */
     @Override
-    public Response checkin(final ChangedModel model, final CommitTransaction tr) {
-        final URI fileURI = createUriFor(model.getPath(), tr);
-
-        // TODO create real repository uri usable as external reference
-        return new CheckinResponse("Checked in model [" + model.getPath().lastSegment() + "]", null);
+    public Response checkin(final ChangedModel model, final CommitTransaction tr) throws IOException {
+        setMapping("amormodel");
+        final Resource resource = resourceSet.createResource(createUriFor(model.getPath(), tr, true));
+        resource.getContents().add(model.getContent());
+        resource.save(null);
+        // we ignore dependant models altogether
+        return new CheckinResponse("Success.", uriHandler.createModelUri(tr, createModelSpecificPath(model.getPath())));
     }
 
     /*
@@ -60,9 +68,13 @@ public class BlobStorage implements Storage {
      * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.Model, org.infai.amor.backend.CommitTransaction)
      */
     @Override
-    public Response checkin(final Model model, final CommitTransaction tr) {
-        // TODO Auto-generated method stub
-        return null;
+    public Response checkin(final Model model, final CommitTransaction tr) throws IOException {
+        setMapping("amormodel");
+        final Resource resource = resourceSet.createResource(createUriFor(model.getPersistencePath(), tr, true));
+        resource.getContents().add(model.getContent());
+        resource.save(null);
+        // we ignore dependant models altogether
+        return new CheckinResponse("Success.", uriHandler.createModelUri(tr, createModelSpecificPath(model.getPersistencePath())));
     }
 
     /*
@@ -89,22 +101,40 @@ public class BlobStorage implements Storage {
 
     /**
      * @param modelPath
+     * @param includeFilename
+     * @return
+     */
+    private String createModelSpecificPath(final IPath modelPath) {
+        if (modelPath != null && !modelPath.isAbsolute()) {
+            final int numSegments = modelPath.segmentCount();
+
+            final StringBuilder sb = new StringBuilder();
+            // ignore filename
+            for (int i = 0; i < numSegments - 1; i++) {
+                sb.append(File.separatorChar).append(modelPath.segment(i));
+            }
+
+            return sb.toString();
+        } else {
+            throw new IllegalArgumentException("The given path must be relative for storing a model, was absolute: " + modelPath);
+        }
+    }
+
+    /**
+     * @param modelPath
      * @param tr
      * @return
      */
-    protected URI createUriFor(final IPath modelPath, final CommitTransaction tr) {
-        String dirName = tr.getBranch().getName() + File.separatorChar + Long.toString(tr.getRevisionId());
+    protected URI createUriFor(final IPath modelPath, final CommitTransaction tr, final boolean includeFilename) {
+        String dirName = tr.getBranch().getName() + "/" + Long.toString(tr.getRevisionId());
         // if there is a model path, use its relative directory part
-        if (modelPath != null && !modelPath.isAbsolute()) {
-            final int numSegments = modelPath.segmentCount();
-            for (int i = 0; i < numSegments - 1; i++) {
-                dirName = dirName + File.separatorChar + modelPath.segment(i);
-            }
-        }
-        // create new directory for this revision
-        final File dir = new File(storageDir, dirName);
+        dirName = dirName + "/" + createModelSpecificPath(modelPath);
+        File dir = new File(storageDir, dirName);
         dir.mkdirs();
-        // create uri for this new directory
+        if (includeFilename) {
+            dir = new File(dir, modelPath.lastSegment());
+        }
+        // create uri for this new path
         final URI fileUri = URI.createURI(dir.toURI().toString());
         return fileUri;
     }
@@ -129,7 +159,7 @@ public class BlobStorage implements Storage {
      */
     @Override
     public void rollback(final CommitTransaction tr) {
-        final URI fileURI = createUriFor(null, tr);
+        final URI fileURI = createUriFor(null, tr, false);
         // delete the directory of this revision
         try {
             final File dir = new File(new java.net.URI(fileURI.toString()));
@@ -138,6 +168,13 @@ public class BlobStorage implements Storage {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @param string
+     */
+    private void setMapping(final String mapping) {
+        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(mapping, new XMIResourceFactoryImpl());
     }
 
     /*

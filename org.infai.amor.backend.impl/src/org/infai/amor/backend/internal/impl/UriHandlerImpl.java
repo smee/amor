@@ -25,6 +25,17 @@ public class UriHandlerImpl implements UriHandler {
     /*
      * (non-Javadoc)
      * 
+     * @see org.infai.amor.backend.internal.UriHandler#createModelUri(org.infai.amor.backend.CommitTransaction, java.lang.String)
+     */
+    @Override
+    public URI createModelUri(final CommitTransaction tr, final String modelSpecificPart) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.internal.UriHandler#createUriFor(org.infai.amor.backend.CommitTransaction)
      */
     @Override
