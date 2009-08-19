@@ -13,6 +13,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.ChangedModel;
 import org.infai.amor.backend.CommitTransaction;
@@ -99,7 +101,7 @@ public class RepositoryTests {
     }
 
     @Test
-    public void testSavesChangedModelIntoStorage() {
+    public void testSavesChangedModelIntoStorage() throws IOException {
         final ChangedModel model = context.mock(ChangedModel.class);
         final Branch branch = context.mock(Branch.class);
         final CommitTransaction tr = context.mock(CommitTransaction.class);
@@ -118,7 +120,7 @@ public class RepositoryTests {
     }
 
     @Test
-    public void testSavesIntoStorage() {
+    public void testSavesIntoStorage() throws IOException {
         final Model model = context.mock(Model.class);
         final CommitTransaction tr = context.mock(CommitTransaction.class);
         final Branch branch = context.mock(Branch.class);

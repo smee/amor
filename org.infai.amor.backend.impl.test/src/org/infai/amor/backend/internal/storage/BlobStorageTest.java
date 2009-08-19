@@ -10,13 +10,27 @@
 package org.infai.amor.backend.internal.storage;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 import org.infai.amor.backend.Branch;
+import org.infai.amor.backend.CommitTransaction;
+import org.infai.amor.backend.Model;
+import org.infai.amor.backend.Response;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
+import org.infai.amor.backend.internal.impl.UriHandlerImpl;
+import org.infai.amor.backend.internal.responses.CheckinResponse;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
@@ -32,15 +46,7 @@ public class BlobStorageTest {
     private Mockery context;
     private File tempDir;
 
-    @Before
-    public void setUp() throws IOException {
-        tempDir = File.createTempFile("storage", "temp");
-        storage = new BlobStorage(tempDir);
-        context = new Mockery();
-    }
-
-    @Test
-    public void testCreatesLocalDirectories() {
+    private CommitTransaction createTransaction(final String branchname, final long revisionId) {
         final Branch branch = context.mock(Branch.class);
         context.checking(new Expectations() {
             {
@@ -48,7 +54,56 @@ public class BlobStorageTest {
                 will(returnValue("testBranch"));
             }
         });
-        final URI fileUri = storage.createUriFor(null, new CommitTransactionImpl(branch, 55, null));
-        assertEquals(new File(tempDir, "testBranch/55").toURI().toString(), fileUri.toString());
+        return new CommitTransactionImpl(branch, 55, null);
+    }
+
+    /**
+     * @param string
+     * @return
+     * @throws IOException
+     */
+    private EObject readModel(final String string) throws IOException {
+        final ResourceSet rs = new ResourceSetImpl();
+
+        final Resource resource = rs.createResource(URI.createFileURI(new File(string).getAbsolutePath()));
+        resource.load(null);
+        return resource.getContents().get(0);
+    }
+
+    @Before
+    public void setUp() throws IOException {
+        tempDir = File.createTempFile("storage", "temp");
+        tempDir.delete();
+        tempDir.mkdirs();
+
+        storage = new BlobStorage(tempDir, new UriHandlerImpl());
+        context = new Mockery();
+        // init persistence mappings for ecore and xmi
+        Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
+        Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+        Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xml", new XMLResourceFactoryImpl());
+    }
+
+    @Test
+    public void storeModel() throws IOException {
+        // read model
+        final Model m = new ModelImpl(readModel("testmodels/base.ecore"), "testmodels/base.ecore");
+        // start commit transaction
+        final CommitTransaction tr = createTransaction("testBranch", 55);
+        storage.startTransaction(tr);
+        // store it into branch testBranch and revision 55
+        final Response response = storage.checkin(m, tr);
+        assertEquals(CheckinResponse.class, response.getClass());
+
+        final File storedFile = new File(tempDir, "testBranch/55/testmodels/base.ecore");
+        assertTrue(storedFile.exists());
+        // TODO compare contents via XMLUnit
+    }
+
+    @Test
+    public void testCreatesLocalDirectories() {
+        final CommitTransaction tr = createTransaction("testBranch", 55);
+        final URI fileUri = storage.createUriFor(new Path("testmodels/dummymodel.xmi"), tr, false);
+        assertEquals(new File(tempDir, "testBranch/55/testmodels").toURI().toString(), fileUri.toString());
     }
 }
