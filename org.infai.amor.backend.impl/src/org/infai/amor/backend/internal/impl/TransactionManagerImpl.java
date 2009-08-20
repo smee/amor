@@ -33,6 +33,10 @@ import org.neo4j.api.core.Transaction;
  * 
  */
 public class TransactionManagerImpl extends NeoObjectFactory implements TransactionManager {
+    /**
+     * 
+     */
+    private static final String REVISIONCOUNTER_PROPERTY = "revisionCounter";
     private final EventListenerList listeners = new EventListenerList();
     private final UriHandler urihandler;
 
@@ -103,13 +107,16 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
      */
     private long createNextRevisionId() {
         final Node node = getFactoryNode(NeoRelationshipType.getRelationshipType("lastRevision"));
-        Long lastRevision = (Long) node.getProperty("revisionCounter");
+        if (!node.hasProperty(REVISIONCOUNTER_PROPERTY)) {
+            node.setProperty(REVISIONCOUNTER_PROPERTY, 0L);
+        }
+        Long lastRevision = (Long) node.getProperty(REVISIONCOUNTER_PROPERTY);
         if (lastRevision == null) {
             lastRevision = 1L;
         } else {
             lastRevision += 1;
         }
-        node.setProperty("revisionCounter", lastRevision);
+        node.setProperty(REVISIONCOUNTER_PROPERTY, lastRevision);
         return lastRevision;
     }
 
@@ -151,8 +158,11 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
      * @see org.infai.amor.backend.internal.TransactionManager#startTransaction(org.infai.amor.backend.Branch)
      */
     @Override
-    public CommitTransaction startTransaction(final Branch branch) {
-        final CommitTransaction tr = new CommitTransactionImpl(branch, createNextRevisionId(), getNeo().beginTx());
+    public CommitTransaction startCommitTransaction(final Branch branch) {
+        // create a new neo transaction, increment revisioncounter
+        final Transaction tx = getNeo().beginTx();
+        final CommitTransaction tr = new CommitTransactionImpl(branch, createNextRevisionId(), tx);
+        // inform listeners
         for (final TransactionListener listener : listeners.getListeners(TransactionListener.class)) {
             listener.startTransaction(tr);
         }

@@ -45,6 +45,6 @@ public interface TransactionManager {
      *            the branch to commit to
      * @return
      */
-    CommitTransaction startTransaction(Branch branch);
+    CommitTransaction startCommitTransaction(Branch branch);
 
 }
