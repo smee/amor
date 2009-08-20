@@ -18,7 +18,6 @@ import org.infai.amor.backend.ChangedModel;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Repository;
-import org.infai.amor.backend.Response;
 import org.infai.amor.backend.exception.TransactionListener;
 
 /**
@@ -38,9 +37,8 @@ public interface Storage extends TransactionListener {
      *            the branch to use
      * @param tr
      *            the current transaction
-     * @return
      */
-    Response checkin(ChangedModel model, CommitTransaction tr) throws IOException;
+    void checkin(ChangedModel model, CommitTransaction tr) throws IOException;
 
     /**
      * Add a {@link Model} that is new to the backend
@@ -54,7 +52,7 @@ public interface Storage extends TransactionListener {
      * @return information about success or error conditions
      * @throws IOException
      */
-    Response checkin(Model model, CommitTransaction tr) throws IOException;
+    void checkin(Model model, CommitTransaction tr) throws IOException;
 
     /**
      * Restore a {@link Model} with the exact same contents given by the model referenced via the uri.
