@@ -190,8 +190,8 @@ public class RepositoryImpl implements Repository {
      * @see org.infai.amor.backend.Repository#startTransaction()
      */
     @Override
-    public CommitTransaction startTransaction(final Branch branch) {
-        return transactionManager.startTransaction(branch);
+    public CommitTransaction startCommitTransaction(final Branch branch) {
+        return transactionManager.startCommitTransaction(branch);
     }
 
     /*

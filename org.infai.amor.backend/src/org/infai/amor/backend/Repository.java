@@ -127,13 +127,13 @@ public interface Repository {
     void rollbackTransaction(CommitTransaction tr);
 
     /**
-     * Start a new transaction. Store every model commited during the transaction's lifetime. Persist these changes only upon
-     * invocation of {@link #commitTransaction()}.
+     * Start a new commit transaction. Store every model commited during the transaction's lifetime. Persist these changes only
+     * upon invocation of {@link #commitTransaction()}.
      * 
      * @param branch
      *            the branch to commit to
      */
-    CommitTransaction startTransaction(Branch branch);
+    CommitTransaction startCommitTransaction(Branch branch);
 
     /**
      * Return a readonly resource that resolves dependencies to persisted models. This view has different uris than checked out
