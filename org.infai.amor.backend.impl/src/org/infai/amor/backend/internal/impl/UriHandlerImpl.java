@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal.impl;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.CommitTransaction;
@@ -28,9 +29,14 @@ public class UriHandlerImpl implements UriHandler {
      * @see org.infai.amor.backend.internal.UriHandler#createModelUri(org.infai.amor.backend.CommitTransaction, java.lang.String)
      */
     @Override
-    public URI createModelUri(final CommitTransaction tr, final String modelSpecificPart) {
-        // TODO Auto-generated method stub
-        return null;
+    public URI createModelUri(final CommitTransaction tr, final IPath modelPath) {
+        final URI uri = createUriFor(tr);
+
+        if (modelPath != null && !modelPath.isAbsolute()) {
+            return uri.appendSegments(modelPath.segments());
+        } else {
+            throw new IllegalArgumentException("The given path must be relative for storing a model, was absolute: " + modelPath);
+        }
     }
 
     /*

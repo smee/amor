@@ -27,10 +27,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
-import org.infai.amor.backend.Response;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
-import org.infai.amor.backend.internal.impl.UriHandlerImpl;
-import org.infai.amor.backend.internal.responses.CheckinResponse;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
@@ -76,7 +73,7 @@ public class BlobStorageTest {
         tempDir.delete();
         tempDir.mkdirs();
 
-        storage = new BlobStorage(tempDir, new UriHandlerImpl());
+        storage = new BlobStorage(tempDir);
         context = new Mockery();
         // init persistence mappings for ecore and xmi
         Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
@@ -92,8 +89,7 @@ public class BlobStorageTest {
         final CommitTransaction tr = createTransaction("testBranch", 55);
         storage.startTransaction(tr);
         // store it into branch testBranch and revision 55
-        final Response response = storage.checkin(m, tr);
-        assertEquals(CheckinResponse.class, response.getClass());
+        storage.checkin(m, tr);
 
         final File storedFile = new File(tempDir, "testBranch/55/testmodels/base.ecore");
         assertTrue(storedFile.exists());
@@ -103,7 +99,7 @@ public class BlobStorageTest {
     @Test
     public void testCreatesLocalDirectories() {
         final CommitTransaction tr = createTransaction("testBranch", 55);
-        final URI fileUri = storage.createUriFor(new Path("testmodels/dummymodel.xmi"), tr, false);
+        final URI fileUri = storage.createStorageUriFor(new Path("testmodels/dummymodel.xmi"), tr, false);
         assertEquals(new File(tempDir, "testBranch/55/testmodels").toURI().toString(), fileUri.toString());
     }
 }

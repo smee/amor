@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.CommitTransaction;
@@ -28,9 +29,11 @@ public interface UriHandler {
      *            current commit transaction
      * @return
      */
-    URI createModelUri(CommitTransaction tr, String modelSpecificPart);
+    URI createModelUri(CommitTransaction tr, IPath persistencePath);
 
     /**
+     * Create an externally usable uri that links to this revision.
+     * 
      * @param tr
      * @return
      */

@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.infai.amor.backend.impl;
 
+import java.io.IOException;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
@@ -22,6 +24,8 @@ import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.internal.BranchFactory;
 import org.infai.amor.backend.internal.TransactionManager;
 import org.infai.amor.backend.internal.UriHandler;
+import org.infai.amor.backend.internal.responses.CheckinErrorResponse;
+import org.infai.amor.backend.internal.responses.CheckinResponse;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
 
@@ -56,7 +60,13 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Response checkin(final ChangedModel model, final CommitTransaction tr) {
-        return storageFactory.getStorage(tr.getBranch()).checkin(model, tr);
+        try {
+            storageFactory.getStorage(tr.getBranch()).checkin(model, tr);
+            return new CheckinResponse("Success.", uriHandler.createModelUri(tr, model.getPath()));
+        } catch (final IOException e) {
+            e.printStackTrace();
+            return new CheckinErrorResponse("Could not persist this model, reason: " + e.getMessage(), null);
+        }
     }
 
     /*
@@ -67,7 +77,13 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Response checkin(final Model model, final CommitTransaction tr) {
-        return storageFactory.getStorage(tr.getBranch()).checkin(model, tr);
+        try {
+            storageFactory.getStorage(tr.getBranch()).checkin(model, tr);
+            return new CheckinResponse("Success.", uriHandler.createModelUri(tr, model.getPersistencePath()));
+        } catch (final IOException e) {
+            e.printStackTrace();
+            return new CheckinErrorResponse("Could not persist this model, reason: " + e.getMessage(), null);
+        }
     }
 
     /*
