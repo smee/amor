@@ -92,9 +92,9 @@ public class RepositoryImpl implements Repository {
      * @see org.infai.amor.backend.Repository#checkout(org.eclipse.emf.common.util.URI)
      */
     @Override
-    public Model checkout(final URI uri) throws MalformedURIException {
+    public Model checkout(final URI uri) throws IOException {
         final Storage storage = getStorage(uri);
-        return storage.checkout(uri);
+        return storage.checkout(uriHandler.extractModelPathFrom(uri), uriHandler.extractRevision(uri));
     }
 
     /*
@@ -200,9 +200,9 @@ public class RepositoryImpl implements Repository {
      * @see org.infai.amor.backend.Repository#view(org.eclipse.emf.common.util.URI)
      */
     @Override
-    public EObject view(final URI uri) throws MalformedURIException {
+    public EObject view(final URI uri) throws IOException {
         final Storage storage = getStorage(uri);
-        return storage.view(uri);
+        return storage.view(uriHandler.extractModelPathFrom(uri), uriHandler.extractRevision(uri));
     }
 
 }

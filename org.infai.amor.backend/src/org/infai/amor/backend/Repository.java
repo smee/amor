@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.infai.amor.backend;
 
+import java.io.IOException;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
@@ -60,8 +62,9 @@ public interface Repository {
      * @return a {@link Model}
      * @throws MalformedURIException
      *             for URIs that do not address a versioned model
+     * @throws IOException
      */
-    Model checkout(URI uri) throws MalformedURIException;
+    Model checkout(URI uri) throws MalformedURIException, IOException;
 
     /**
      * Commit the current client transaction.
@@ -139,6 +142,7 @@ public interface Repository {
      * @param uri
      *            uri of a model
      * @return a read only resource that resolves proxies within this repository
+     * @throws IOException
      */
-    EObject view(URI uri) throws MalformedURIException;
+    EObject view(URI uri) throws MalformedURIException, IOException;
 }

@@ -9,7 +9,9 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.CommitTransaction;
@@ -67,12 +69,29 @@ public class UriHandlerImpl implements UriHandler {
     /*
      * (non-Javadoc)
      * 
+     * @see org.infai.amor.backend.internal.UriHandler#extractModelPathFrom(org.eclipse.emf.common.util.URI)
+     */
+    @Override
+    public IPath extractModelPathFrom(final URI uri) throws MalformedURIException {
+        if (uri.segmentCount() < 4) {
+            throw new MalformedURIException("This uri doesn't contain any model paths or name: " + uri.toString());
+        } else {
+            final String[] modelPath = new String[uri.segmentCount() - 4];
+            // copy all segments after the revision number
+            System.arraycopy(uri.segments(), 4, modelPath, 0, uri.segmentCount() - 4);
+            return new Path(StringUtils.join(modelPath, '/'));
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.internal.UriHandler#extractRevision(org.eclipse.emf.common.util.URI)
      */
     @Override
     public long extractRevision(final URI uri) throws MalformedURIException {
         if (uri.segmentCount() < 4) {
-            throw new MalformedURIException("This uri doesn't contain a branch name: " + uri.toString());
+            throw new MalformedURIException("This uri doesn't contain a revision number: " + uri.toString());
         } else {
             return Long.parseLong(uri.segment(2));
         }

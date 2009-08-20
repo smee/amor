@@ -48,6 +48,13 @@ public interface UriHandler {
     /**
      * @param uri
      * @return
+     * @throws MalformedURIException
+     */
+    IPath extractModelPathFrom(URI uri) throws MalformedURIException;
+
+    /**
+     * @param uri
+     * @return
      */
     long extractRevision(URI uri) throws MalformedURIException;
 
