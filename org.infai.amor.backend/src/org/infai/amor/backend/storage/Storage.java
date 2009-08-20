@@ -14,7 +14,6 @@ import java.io.IOException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.ChangedModel;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
@@ -64,8 +63,8 @@ public interface Storage extends TransactionListener {
      * @param revisionId
      *            id of the revision to check out
      * @return a {@link Model}
-     * @throws MalformedURIException
-     *             for URIs that do not address a versioned model
+     * @throws IOException
+     *             for every internal reading errors
      */
     Model checkout(IPath path, long revisionId) throws IOException;
 
@@ -74,7 +73,7 @@ public interface Storage extends TransactionListener {
      * @param path
      * @param revisionId
      * @return
-     * @throws MalformedURIException
+     * @throws IOException
      */
     EObject view(IPath path, long revisionId) throws IOException;
 
