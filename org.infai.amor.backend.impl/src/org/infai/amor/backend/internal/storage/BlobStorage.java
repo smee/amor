@@ -19,11 +19,11 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.ChangedModel;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.exception.TransactionException;
+import org.infai.amor.backend.internal.impl.ModelImpl;
 import org.infai.amor.backend.storage.Storage;
 
 /**
@@ -37,29 +37,8 @@ public class BlobStorage implements Storage {
     private final File storageDir;
     private ResourceSetImpl resourceSet;
 
-    /**
-     * @param modelPath
-     * @param includeFilename
-     * @return
-     */
-    public static String createModelSpecificPath(final IPath modelPath) {
-        if (modelPath != null && !modelPath.isAbsolute()) {
-            final int numSegments = modelPath.segmentCount();
-
-            final StringBuilder sb = new StringBuilder();
-            // ignore filename
-            for (int i = 0; i < numSegments - 1; i++) {
-                sb.append(File.separatorChar).append(modelPath.segment(i));
-            }
-
-            return sb.toString();
-        } else {
-            throw new IllegalArgumentException("The given path must be relative for storing a model, was absolute: " + modelPath);
-        }
-    }
-
-    public BlobStorage(final File storageDir) {
-        this.storageDir = storageDir;
+    public BlobStorage(final File storageDir, final String branchname) {
+        this.storageDir = new File(storageDir, branchname);
     }
 
     /*
@@ -70,11 +49,11 @@ public class BlobStorage implements Storage {
      */
     @Override
     public void checkin(final ChangedModel model, final CommitTransaction tr) throws IOException {
+        // we ignore dependant models altogether
         setMapping("amormodel");
-        final Resource resource = resourceSet.createResource(createStorageUriFor(model.getPath(), tr, true));
+        final Resource resource = resourceSet.createResource(createStorageUriFor(model.getPath(), tr.getRevisionId(), true));
         resource.getContents().add(model.getContent());
         resource.save(null);
-        // we ignore dependant models altogether
     }
 
     /*
@@ -85,7 +64,7 @@ public class BlobStorage implements Storage {
     @Override
     public void checkin(final Model model, final CommitTransaction tr) throws IOException {
         setMapping("amormodel");
-        final Resource resource = resourceSet.createResource(createStorageUriFor(model.getPersistencePath(), tr, true));
+        final Resource resource = resourceSet.createResource(createStorageUriFor(model.getPersistencePath(), tr.getRevisionId(), true));
         resource.getContents().add(model.getContent());
         resource.save(null);
         // we ignore dependant models altogether
@@ -97,9 +76,9 @@ public class BlobStorage implements Storage {
      * @see org.infai.amor.backend.storage.Storage#checkout(org.eclipse.emf.common.util.URI)
      */
     @Override
-    public Model checkout(final URI uri) throws MalformedURIException {
-        // TODO Auto-generated method stub
-        return null;
+    public Model checkout(final IPath path, final long revisionId) throws IOException {
+        final Resource resource = resourceSet.createResource(createStorageUriFor(path, revisionId, true));
+        return new ModelImpl(resource.getContents().get(0), path);
     }
 
     /*
@@ -115,11 +94,32 @@ public class BlobStorage implements Storage {
 
     /**
      * @param modelPath
+     * @param includeFilename
+     * @return
+     */
+    private String createModelSpecificPath(final IPath modelPath) {
+        if (modelPath != null && !modelPath.isAbsolute()) {
+            final int numSegments = modelPath.segmentCount();
+
+            final StringBuilder sb = new StringBuilder();
+            // ignore filename
+            for (int i = 0; i < numSegments - 1; i++) {
+                sb.append(File.separatorChar).append(modelPath.segment(i));
+            }
+
+            return sb.toString();
+        } else {
+            throw new IllegalArgumentException("The given path must be relative for storing a model, was absolute: " + modelPath);
+        }
+    }
+
+    /**
+     * @param modelPath
      * @param tr
      * @return
      */
-    protected URI createStorageUriFor(final IPath modelPath, final CommitTransaction tr, final boolean includeFilename) {
-        String dirName = tr.getBranch().getName() + "/" + Long.toString(tr.getRevisionId());
+    protected URI createStorageUriFor(final IPath modelPath, final long revisionId, final boolean includeFilename) {
+        String dirName = Long.toString(revisionId);
         // if there is a model path, use its relative directory part
         dirName = dirName + "/" + createModelSpecificPath(modelPath);
         File dir = new File(storageDir, dirName);
@@ -152,7 +152,7 @@ public class BlobStorage implements Storage {
      */
     @Override
     public void rollback(final CommitTransaction tr) {
-        final URI fileURI = createStorageUriFor(null, tr, false);
+        final URI fileURI = createStorageUriFor(null, tr.getRevisionId(), false);
         // delete the directory of this revision
         try {
             final File dir = new File(new java.net.URI(fileURI.toString()));
@@ -186,7 +186,7 @@ public class BlobStorage implements Storage {
      * @see org.infai.amor.backend.storage.Storage#view(org.eclipse.emf.common.util.URI)
      */
     @Override
-    public EObject view(final URI uri) throws MalformedURIException {
+    public EObject view(final IPath path, final long revisionId) throws IOException {
         // TODO Auto-generated method stub
         return null;
     }

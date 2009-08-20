@@ -11,6 +11,7 @@ package org.infai.amor.backend.storage;
 
 import java.io.IOException;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
@@ -55,22 +56,26 @@ public interface Storage extends TransactionListener {
     void checkin(Model model, CommitTransaction tr) throws IOException;
 
     /**
-     * Restore a {@link Model} with the exact same contents given by the model referenced via the uri.
+     * Restore a {@link Model} with the exact same contents given by the model referenced via the path. The path parameter
+     * describes the same relative model location that was used for the former checkin.
      * 
-     * @param uri
-     *            an amor uri specifying exactly one versioned model
+     * @param path
+     *            a model specific relative path
+     * @param revisionId
+     *            id of the revision to check out
      * @return a {@link Model}
      * @throws MalformedURIException
      *             for URIs that do not address a versioned model
      */
-    Model checkout(URI uri) throws MalformedURIException;
+    Model checkout(IPath path, long revisionId) throws IOException;
 
     /**
      * @see Repository#view(URI)
-     * @param uri
+     * @param path
+     * @param revisionId
      * @return
      * @throws MalformedURIException
      */
-    EObject view(URI uri) throws MalformedURIException;
+    EObject view(IPath path, long revisionId) throws IOException;
 
 }

@@ -28,6 +28,7 @@ import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
+import org.infai.amor.backend.internal.impl.ModelImpl;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
@@ -39,6 +40,10 @@ import org.junit.Test;
  */
 public class BlobStorageTest {
 
+    /**
+     * 
+     */
+    private static final String BRANCHNAME = "testBranch";
     private BlobStorage storage;
     private Mockery context;
     private File tempDir;
@@ -48,7 +53,7 @@ public class BlobStorageTest {
         context.checking(new Expectations() {
             {
                 allowing(branch).getName();
-                will(returnValue("testBranch"));
+                will(returnValue(BRANCHNAME));
             }
         });
         return new CommitTransactionImpl(branch, 55, null);
@@ -73,7 +78,7 @@ public class BlobStorageTest {
         tempDir.delete();
         tempDir.mkdirs();
 
-        storage = new BlobStorage(tempDir);
+        storage = new BlobStorage(tempDir, BRANCHNAME);
         context = new Mockery();
         // init persistence mappings for ecore and xmi
         Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
@@ -86,7 +91,7 @@ public class BlobStorageTest {
         // read model
         final Model m = new ModelImpl(readModel("testmodels/base.ecore"), "testmodels/base.ecore");
         // start commit transaction
-        final CommitTransaction tr = createTransaction("testBranch", 55);
+        final CommitTransaction tr = createTransaction(BRANCHNAME, 55);
         storage.startTransaction(tr);
         // store it into branch testBranch and revision 55
         storage.checkin(m, tr);
@@ -98,8 +103,8 @@ public class BlobStorageTest {
 
     @Test
     public void testCreatesLocalDirectories() {
-        final CommitTransaction tr = createTransaction("testBranch", 55);
-        final URI fileUri = storage.createStorageUriFor(new Path("testmodels/dummymodel.xmi"), tr, false);
+        final CommitTransaction tr = createTransaction(BRANCHNAME, 55);
+        final URI fileUri = storage.createStorageUriFor(new Path("testmodels/dummymodel.xmi"), tr.getRevisionId(), false);
         assertEquals(new File(tempDir, "testBranch/55/testmodels").toURI().toString(), fileUri.toString());
     }
 }
