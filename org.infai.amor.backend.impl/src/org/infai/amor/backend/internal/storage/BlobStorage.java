@@ -188,8 +188,7 @@ public class BlobStorage implements Storage {
      */
     @Override
     public EObject view(final IPath path, final long revisionId) throws IOException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("not implemented");
     }
 
 }
