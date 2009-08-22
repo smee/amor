@@ -1,4 +1,4 @@
-package de.model.repository.test;
+package de.modelrepository.test;
 
 import java.io.File;
 import java.io.IOException;

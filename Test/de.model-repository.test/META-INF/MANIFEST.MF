@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: de.model-repository.test
-Bundle-SymbolicName: de.model-repository.test
+Bundle-Name: de.modelrepository.test
+Bundle-SymbolicName: de.modelrepository.test
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.core.resources;bundle-version="3.5.0",
  org.eclipse.core.runtime,

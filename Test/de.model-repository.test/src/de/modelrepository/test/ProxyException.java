@@ -1,4 +1,4 @@
-package de.model.repository.test;
+package de.modelrepository.test;
 
 import java.util.Iterator;
 import java.util.Vector;
