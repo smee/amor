@@ -10,12 +10,13 @@
 package org.infai.amor.backend.storage;
 
 import org.infai.amor.backend.Branch;
+import org.infai.amor.backend.exception.TransactionListener;
 
 /**
  * @author sdienst
  * 
  */
-public interface StorageFactory {
+public interface StorageFactory extends TransactionListener {
 
     /**
      * @param branch
