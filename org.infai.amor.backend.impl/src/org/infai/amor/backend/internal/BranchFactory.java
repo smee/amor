@@ -30,11 +30,12 @@ public interface BranchFactory {
     Branch createBranch(Revision origin, String name);
 
     /**
-     * @param branch
+     * Create a new revision for the branch this transaction was started for.
+     * 
      * @param transaction
      * @return
      */
-    Revision createRevision(Branch branch, CommitTransaction transaction);
+    Revision createRevision(CommitTransaction transaction);
 
     /**
      * Find the branch with the given name.
