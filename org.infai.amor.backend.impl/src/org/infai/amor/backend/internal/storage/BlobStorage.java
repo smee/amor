@@ -77,7 +77,7 @@ public class BlobStorage implements Storage {
      */
     @Override
     public Model checkout(final IPath path, final long revisionId) throws IOException {
-        final Resource resource = resourceSet.createResource(createStorageUriFor(path, revisionId, true));
+        final Resource resource = new ResourceSetImpl().createResource(createStorageUriFor(path, revisionId, true));
         resource.load(null);
         return new ModelImpl(resource.getContents().get(0), path);
     }
