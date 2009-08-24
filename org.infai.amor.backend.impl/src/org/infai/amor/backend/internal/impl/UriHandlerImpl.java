@@ -76,9 +76,9 @@ public class UriHandlerImpl implements UriHandler {
         if (uri.segmentCount() < 4) {
             throw new MalformedURIException("This uri doesn't contain any model paths or name: " + uri.toString());
         } else {
-            final String[] modelPath = new String[uri.segmentCount() - 4];
+            final String[] modelPath = new String[uri.segmentCount() - 3];
             // copy all segments after the revision number
-            System.arraycopy(uri.segments(), 4, modelPath, 0, uri.segmentCount() - 4);
+            System.arraycopy(uri.segments(), 3, modelPath, 0, uri.segmentCount() - 3);
             return new Path(StringUtils.join(modelPath, '/'));
         }
     }
