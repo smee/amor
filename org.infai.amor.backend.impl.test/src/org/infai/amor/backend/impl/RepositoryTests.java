@@ -116,6 +116,7 @@ public class RepositoryTests {
                 one(storage).checkin(model, tr);
                 allowing(model);
                 allowing(uriHandler);
+                allowing(branchFactory);
             }
         });
 
@@ -137,6 +138,7 @@ public class RepositoryTests {
                 one(storage).checkin(model, tr);
                 allowing(model);
                 allowing(uriHandler);
+                allowing(branchFactory);
             }
         });
 

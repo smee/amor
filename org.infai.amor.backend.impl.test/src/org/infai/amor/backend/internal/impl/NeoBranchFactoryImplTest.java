@@ -103,17 +103,17 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
         final Branch mainbranch = factory.createBranch(null, "main");
         final CommitTransaction tr = createCommit(1, mainbranch, "test", "max");
         // with one revision
-        factory.createRevision(mainbranch, tr);
+        factory.createRevision(tr);
         // create a subbranch
-        final Revision branchingRev = factory.createRevision(mainbranch, createCommit(2, mainbranch, "test2", "max"));
+        final Revision branchingRev = factory.createRevision(createCommit(2, mainbranch, "test2", "max"));
 
         // add 3 revisions to the subbranch
         final Branch subbranch = factory.createBranch(branchingRev, "sub1");
-        factory.createRevision(subbranch, createCommit(3, subbranch, "test3", "max"));
-        factory.createRevision(subbranch, createCommit(4, subbranch, "test4", "max"));
-        factory.createRevision(subbranch, createCommit(5, subbranch, "test5", "max"));
+        factory.createRevision(createCommit(3, subbranch, "test3", "max"));
+        factory.createRevision(createCommit(4, subbranch, "test4", "max"));
+        factory.createRevision(createCommit(5, subbranch, "test5", "max"));
 
-        factory.createRevision(mainbranch, createCommit(6, mainbranch, "test6", "max"));
+        factory.createRevision(createCommit(6, mainbranch, "test6", "max"));
         return subbranch;
     }
 
@@ -148,7 +148,7 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
     public void testNewBranchOriginIsHead() {
         final Branch branch = factory.createBranch(null, "main");
         final CommitTransaction tr = createCommit(1, branch, "test", "user");
-        final Revision rootRevision = factory.createRevision(branch, tr);
+        final Revision rootRevision = factory.createRevision(tr);
 
         final Branch subBranch1 = factory.createBranch(rootRevision, "sub1");
 
@@ -169,8 +169,8 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
         final CommitTransaction tr = createCommit(1, branch, "test", "max");
         final CommitTransaction tr2 = createCommit(2, branch, "noch etwas vergessen", "user");
 
-        final Revision rootRevision = factory.createRevision(branch, tr);
-        final Revision nextRevision = factory.createRevision(branch, tr2);
+        final Revision rootRevision = factory.createRevision(tr);
+        final Revision nextRevision = factory.createRevision(tr2);
 
         // a main branch has no origin
         assertTrue(null == branch.getOriginRevision());
@@ -182,7 +182,7 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
     public void testSubbranchHasRevisionOrigin() {
         final Branch branch = factory.createBranch(null, "main");
         final CommitTransaction tr = createCommit(1, branch, "test", "max");
-        final Revision rootRevision = factory.createRevision(branch, tr);
+        final Revision rootRevision = factory.createRevision(tr);
 
         final Branch subBranch1 = factory.createBranch(rootRevision, "sub1");
 

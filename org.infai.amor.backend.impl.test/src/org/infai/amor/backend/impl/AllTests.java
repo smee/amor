@@ -22,7 +22,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses( { RepositoryTests.class, NeoBranchFactoryImplTest.class, NeoTransactionTest.class, BlobStorageTest.class, UriTest.class })
+@SuiteClasses( { RepositoryTests.class, NeoBranchFactoryImplTest.class, NeoTransactionTest.class, BlobStorageTest.class, UriTest.class, org.infai.amor.backend.integration.IntegrationTests.class })
 public class AllTests {
 
 }
