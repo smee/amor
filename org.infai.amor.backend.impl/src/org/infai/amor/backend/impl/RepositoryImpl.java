@@ -62,6 +62,7 @@ public class RepositoryImpl implements Repository {
     public Response checkin(final ChangedModel model, final CommitTransaction tr) {
         try {
             storageFactory.getStorage(tr.getBranch()).checkin(model, tr);
+            // TODO associate revision with this model
             return new CheckinResponse("Success.", uriHandler.createModelUri(tr, model.getPath()));
         } catch (final IOException e) {
             e.printStackTrace();
@@ -79,6 +80,7 @@ public class RepositoryImpl implements Repository {
     public Response checkin(final Model model, final CommitTransaction tr) {
         try {
             storageFactory.getStorage(tr.getBranch()).checkin(model, tr);
+            // TODO associate revision with this model
             return new CheckinResponse("Success.", uriHandler.createModelUri(tr, model.getPersistencePath()));
         } catch (final IOException e) {
             e.printStackTrace();
@@ -191,7 +193,9 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public CommitTransaction startCommitTransaction(final Branch branch) {
-        return transactionManager.startCommitTransaction(branch);
+        final CommitTransaction tr = transactionManager.startCommitTransaction(branch);
+        final Revision revision = branchFactory.createRevision(tr);
+        return tr;
     }
 
     /*
