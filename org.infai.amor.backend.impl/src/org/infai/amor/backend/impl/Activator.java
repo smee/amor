@@ -2,7 +2,9 @@ package org.infai.amor.backend.impl;
 
 import org.eclipse.core.runtime.Plugin;
 import org.infai.amor.backend.Branch;
+import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Repository;
+import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.NeoBranchFactory;
 import org.infai.amor.backend.internal.impl.TransactionManagerImpl;
@@ -115,6 +117,13 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         // instantiate our repository
         final UriHandlerImpl uriHandler = new UriHandlerImpl();
         final Repository repo = new RepositoryImpl(new StorageFactory() {
+            @Override
+            public void commit(final CommitTransaction tr) throws TransactionException {
+                if (storageFactory != null) {
+                    storageFactory.commit(tr);
+                }
+            }
+
             // fetch the storage service lazily
             @Override
             public Storage getStorage(final Branch branch) {
@@ -123,6 +132,21 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
                 } else {
                     return storageFactory.getStorage(branch);
                 }
+            }
+
+            @Override
+            public void rollback(final CommitTransaction tr) {
+                if (storageFactory != null) {
+                    storageFactory.rollback(tr);
+                }
+            }
+
+            @Override
+            public void startTransaction(final CommitTransaction tr) {
+                if (storageFactory != null) {
+                    storageFactory.startTransaction(tr);
+                }
+
             }
         }, new NeoBranchFactory(this), uriHandler, new TransactionManagerImpl(uriHandler, this));
         // register repository osgi service
