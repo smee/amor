@@ -162,6 +162,8 @@ public class JavaToEMFParser {
 			
 			for(Resource javaResource : new ArrayList<Resource>(rs.getResources())) {
 				URI srcURI = javaResource.getURI();
+				//TODO anders implementieren (Konstanten)
+				if(srcURI.toString().endsWith("java.ecore") || srcURI.toString().endsWith("primitive_types.ecore")) continue;
 				srcURI = rs.getURIConverter().normalize(srcURI);
 			 	URI outFileURI = outUri.appendSegments(srcURI.deresolve(srcUri.appendSegment("")).segments()).appendFileExtension("xmi");
 				Resource xmiResource = rs.createResource(outFileURI);
@@ -265,34 +267,26 @@ public class JavaToEMFParser {
 	 * the returned vector contains file-objects for each library found.
 	 */
 	private Vector<File> getAllJarFilesFromSource(Vector<File> files) {
-		Vector<File> result = new Vector<File>();
-		for(File f : files) {
-			if(f.isFile() && f.getAbsolutePath().endsWith("jar")) {
-				result.add(f);
-			}else {
-				Vector<File> tmp = new Vector<File>();
-				for(File file : f.listFiles()) {
-					tmp.add(file);
+		if(files == null) {
+			return null;
+		}else {
+			Vector<File> result = new Vector<File>();
+			for(File f : files) {
+				if(f.isFile() && f.getAbsolutePath().endsWith(".jar") && !result.contains(f)) {
+					result.add(f);
+				}else if(f.isDirectory()) {
+					Vector<File> children = new Vector<File>();
+					for (File file : f.listFiles()) {
+						children.add(file);
+					}
+					for (File file : getAllJarFilesFromSource(children)) {
+						if(!result.contains(file)) {
+							result.add(file);
+						}
+					}
 				}
-				result.addAll(tmp);
 			}
+			return result;
 		}
-		return result;
 	}
-//	
-//	public static void main(String[] args) {
-//		JavaToEMFParser parser = new JavaToEMFParser();
-//		File inputFolder = new File("in");
-//		File outputFolder = new File("out");
-//		Vector<File> jars = new Vector<File>();
-//		jars.add(new File("in/jars"));
-//		
-//		try {
-//			parser.parseAndSerializeAllJavaFiles(inputFolder, jars, outputFolder);
-//		} catch (ProxyException e) {
-//			for(Iterator<URI> i = e.getMissingProxies(); i.hasNext(); ) {
-//				System.out.println(i.next());
-//			}
-//		}
-//	}
 }
