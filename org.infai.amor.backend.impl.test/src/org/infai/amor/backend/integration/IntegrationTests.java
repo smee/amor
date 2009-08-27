@@ -27,11 +27,11 @@ import org.infai.amor.backend.impl.RepositoryImpl;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.TransactionManager;
 import org.infai.amor.backend.internal.UriHandler;
-import org.infai.amor.backend.internal.impl.DumbStorageFactory;
 import org.infai.amor.backend.internal.impl.ModelImpl;
 import org.infai.amor.backend.internal.impl.NeoBranchFactory;
 import org.infai.amor.backend.internal.impl.TransactionManagerImpl;
 import org.infai.amor.backend.internal.impl.UriHandlerImpl;
+import org.infai.amor.backend.internal.storage.DumbStorageFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -99,6 +99,24 @@ public class IntegrationTests {
         // tear down
         // commitTransaction.getNeoTransaction().failure();
         // commitTransaction.getNeoTransaction().finish();
+    }
+
+    @Test(expected = IOException.class)
+    public void shouldNotLoadAfterRollback() throws Exception {
+        // given
+        final EObject input = readInputModel("testmodels/base.ecore");
+
+        final Branch branch = repository.createBranch(null, "trunk");
+        final CommitTransaction ct = repository.startCommitTransaction(branch);
+        ct.setCommitMessage("test");
+        ct.setUser("mustermann");
+        // when
+        // model checked in
+        final Response checkin = repository.checkin(new ModelImpl(input, "testmodels/base.ecore"), ct);
+        // but rolled back
+        repository.rollbackTransaction(ct);
+        // then
+        repository.checkout(checkin.getURI());
     }
 
     @Test

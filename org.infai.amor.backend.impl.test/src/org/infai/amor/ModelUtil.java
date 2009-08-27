@@ -35,6 +35,8 @@ import org.eclipse.emf.compare.match.metamodel.MatchModel;
 import org.eclipse.emf.compare.match.service.MatchService;
 import org.eclipse.emf.compare.util.ModelUtils;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -111,16 +113,28 @@ public class ModelUtil {
     }
 
     /**
-     * @param string
+     * @param relativePath
      * @return
      * @throws IOException
      */
     public static EObject readInputModel(final String relativePath) throws IOException {
-        final ResourceSet rs = new ResourceSetImpl();
+        return readInputModel(relativePath, new ResourceSetImpl());
+    }
+
+    /**
+     * @param string
+     * @return
+     * @throws IOException
+     */
+    public static EObject readInputModel(final String relativePath, final ResourceSet rs) throws IOException {
 
         final Resource resource = rs.createResource(URI.createFileURI(new File(relativePath).getAbsolutePath()));
         resource.load(null);
-        return resource.getContents().get(0);
+        final EObject eObject = resource.getContents().get(0);
+        if (eObject instanceof EPackage && !((EPackage) eObject).getNsURI().equals(EcorePackage.eNS_URI)) {
+            rs.getPackageRegistry().put(((EPackage) eObject).getNsURI(), eObject);
+        }
+        return eObject;
     }
 
     /**

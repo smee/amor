@@ -11,4 +11,5 @@ Bundle-ClassPath: lib/hamcrest-core-1.1.jar,
  lib/jmock-2.5.1.jar,
  .,
  lib/xmlunit-1.2.jar
-Import-Package: org.eclipse.emf.compare.diff.service
+Import-Package: org.eclipse.emf.compare.diff.service,
+ org.neo4j.api.core

@@ -12,8 +12,10 @@ package org.infai.amor.backend.internal.impl;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.api.core.Direction;
+import org.neo4j.api.core.DynamicRelationshipType;
 import org.neo4j.api.core.Node;
 import org.neo4j.api.core.Relationship;
 
@@ -22,6 +24,25 @@ import org.neo4j.api.core.Relationship;
  * 
  */
 public class NeoTransactionTest extends AbstractNeo4JTest {
+
+    @Ignore(value = "leads to an error: Can't delete node with relationships.")
+    @Test
+    public void shouldDeleteDescendantsOnRemoveNode() throws Exception {
+        // given
+        final Node node1 = neoservice.createNode();
+        final Node node2 = neoservice.createNode();
+        node1.createRelationshipTo(node2, DynamicRelationshipType.withName("test"));
+        // when
+        node1.delete();
+        tx.success();
+        tx.finish();
+        tx = neoservice.beginTx();
+        // then
+        // assertFalse(neoservice.getAllNodes().iterator().hasNext());
+        for (final Node n : neoservice.getAllNodes()) {
+            System.out.println(n);
+        }
+    }
 
     @Test
     public void testTransactionsAreIsolated() throws InterruptedException {

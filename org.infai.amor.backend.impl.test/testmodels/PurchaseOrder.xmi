@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="ASCII"?>
+<po:PurchaseOrder xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:po="http://www.example.com/SimplePO" xsi:schemaLocation="http://www.example.com/SimplePO PurchaseOrder.ecore" shipTo="London" billTo="Mustermann">
+  <items productName="oranges" quantity="12"/>
+  <items productName="juicy" quantity="13"/>
+</po:PurchaseOrder>

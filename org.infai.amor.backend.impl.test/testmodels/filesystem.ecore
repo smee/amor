@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmi:id="_Au81IFAVEd6AUaiJ2ct23A"
+    name="filesystem" nsURI="http://filesystem/" nsPrefix="filesystem">
+  <eAnnotations xmi:id="_Au81IVAVEd6AUaiJ2ct23A" source="gmf">
+    <details xmi:id="_Au81IlAVEd6AUaiJ2ct23A" key="foo" value="bar"/>
+  </eAnnotations>
+  <eClassifiers xsi:type="ecore:EClass" xmi:id="_Au81I1AVEd6AUaiJ2ct23A" name="Filesystem">
+    <eAnnotations xmi:id="_Au81JFAVEd6AUaiJ2ct23A" source="gmf.diagram">
+      <details xmi:id="_Au81JVAVEd6AUaiJ2ct23A" key="foo" value="bar"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" xmi:id="_Au81JlAVEd6AUaiJ2ct23A"
+        name="drives" upperBound="-1" eType="#_Au81KFAVEd6AUaiJ2ct23A" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" xmi:id="_Au81J1AVEd6AUaiJ2ct23A"
+        name="syncs" upperBound="-1" eType="#_Au81MlAVEd6AUaiJ2ct23A" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" xmi:id="_Au81KFAVEd6AUaiJ2ct23A" name="Drive"
+      eSuperTypes="#_Au81KVAVEd6AUaiJ2ct23A"/>
+  <eClassifiers xsi:type="ecore:EClass" xmi:id="_Au81KVAVEd6AUaiJ2ct23A" name="Folder"
+      eSuperTypes="#_Au81PVAVEd6AUaiJ2ct23A">
+    <eStructuralFeatures xsi:type="ecore:EReference" xmi:id="_Au81KlAVEd6AUaiJ2ct23A"
+        name="contents" upperBound="-1" eType="#_Au81PVAVEd6AUaiJ2ct23A" containment="true">
+      <eAnnotations xmi:id="_Au81K1AVEd6AUaiJ2ct23A" source="gmf.compartment">
+        <details xmi:id="_Au81LFAVEd6AUaiJ2ct23A" key="foo" value="bar"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" xmi:id="_Au81LVAVEd6AUaiJ2ct23A" name="Shortcut"
+      eSuperTypes="#_Au81PVAVEd6AUaiJ2ct23A">
+    <eStructuralFeatures xsi:type="ecore:EReference" xmi:id="_Au81LlAVEd6AUaiJ2ct23A"
+        name="target" eType="#_Au81PVAVEd6AUaiJ2ct23A">
+      <eAnnotations xmi:id="_Au81L1AVEd6AUaiJ2ct23A" source="gmf.link">
+        <details xmi:id="_Au81MFAVEd6AUaiJ2ct23A" key="target.decoration" value="arrow"/>
+        <details xmi:id="_Au81MVAVEd6AUaiJ2ct23A" key="style" value="dash"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" xmi:id="_Au81MlAVEd6AUaiJ2ct23A" name="Sync">
+    <eAnnotations xmi:id="_Au81M1AVEd6AUaiJ2ct23A" source="gmf.link">
+      <details xmi:id="_Au81NFAVEd6AUaiJ2ct23A" key="label" value="lastSync"/>
+      <details xmi:id="_Au81NVAVEd6AUaiJ2ct23A" key="source" value="source"/>
+      <details xmi:id="_Au81NlAVEd6AUaiJ2ct23A" key="target" value="target"/>
+      <details xmi:id="_Au81N1AVEd6AUaiJ2ct23A" key="style" value="dot"/>
+      <details xmi:id="_Au81OFAVEd6AUaiJ2ct23A" key="width" value="2"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" xmi:id="_Au81OVAVEd6AUaiJ2ct23A"
+        name="source" eType="#_Au81PVAVEd6AUaiJ2ct23A"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" xmi:id="_Au81OlAVEd6AUaiJ2ct23A"
+        name="target" eType="#_Au81PVAVEd6AUaiJ2ct23A"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" xmi:id="_Au81O1AVEd6AUaiJ2ct23A"
+        name="lastSync" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" xmi:id="_Au81PVAVEd6AUaiJ2ct23A" name="File">
+    <eAnnotations xmi:id="_Au81PlAVEd6AUaiJ2ct23A" source="gmf.node">
+      <details xmi:id="_Au81P1AVEd6AUaiJ2ct23A" key="label" value="name"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" xmi:id="_Au81QFAVEd6AUaiJ2ct23A"
+        name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+</ecore:EPackage>
