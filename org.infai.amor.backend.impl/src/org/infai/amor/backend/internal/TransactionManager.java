@@ -12,6 +12,7 @@ package org.infai.amor.backend.internal;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Response;
+import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.exception.TransactionListener;
 
 /**
@@ -28,7 +29,7 @@ public interface TransactionManager {
     /**
      * @param tr
      */
-    Response commit(CommitTransaction tr);
+    Response commit(CommitTransaction tr, Revision rev);
 
     /**
      * @param listener

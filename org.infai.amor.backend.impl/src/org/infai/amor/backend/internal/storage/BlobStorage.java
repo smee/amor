@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.infai.amor.backend.ChangedModel;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
+import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.impl.ModelImpl;
 import org.infai.amor.backend.storage.Storage;
@@ -88,7 +89,7 @@ public class BlobStorage implements Storage {
      * @see org.infai.amor.backend.exception.TransactionListener#commit(org.infai.amor.backend.CommitTransaction)
      */
     @Override
-    public void commit(final CommitTransaction tr) throws TransactionException {
+    public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {
         // nothing to do
         resourceSet = null;
     }
@@ -122,10 +123,12 @@ public class BlobStorage implements Storage {
     protected URI createStorageUriFor(final IPath modelPath, final long revisionId, final boolean includeFilename) {
         String dirName = Long.toString(revisionId);
         // if there is a model path, use its relative directory part
-        dirName = dirName + "/" + createModelSpecificPath(modelPath);
+        if (modelPath != null) {
+            dirName = dirName + "/" + createModelSpecificPath(modelPath);
+        }
         File dir = new File(storageDir, dirName);
         dir.mkdirs();
-        if (includeFilename) {
+        if (includeFilename && modelPath != null) {
             dir = new File(dir, modelPath.lastSegment());
         }
         // create uri for this new path
@@ -159,7 +162,6 @@ public class BlobStorage implements Storage {
             final File dir = new File(new java.net.URI(fileURI.toString()));
             deleteRecurively(dir);
         } catch (final URISyntaxException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

@@ -17,6 +17,7 @@ import javax.swing.event.EventListenerList;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Response;
+import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.exception.TransactionListener;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
@@ -67,7 +68,7 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
      * @see org.infai.amor.backend.internal.TransactionManager#commit(org.infai.amor.backend.CommitTransaction)
      */
     @Override
-    public Response commit(final CommitTransaction tr) {
+    public Response commit(final CommitTransaction tr, final Revision rev) {
         try {
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             final PrintStream ps = new PrintStream(baos);
@@ -76,7 +77,7 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
             // and log errors
             for (final TransactionListener listener : listeners.getListeners(TransactionListener.class)) {
                 try {
-                    listener.commit(tr);
+                    listener.commit(tr, rev);
                 } catch (final TransactionException e) {
                     failure = true;
                     e.printStackTrace(ps);

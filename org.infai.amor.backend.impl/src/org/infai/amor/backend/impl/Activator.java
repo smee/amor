@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Repository;
+import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.NeoBranchFactory;
@@ -118,9 +119,9 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         final UriHandlerImpl uriHandler = new UriHandlerImpl();
         final Repository repo = new RepositoryImpl(new StorageFactory() {
             @Override
-            public void commit(final CommitTransaction tr) throws TransactionException {
+            public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {
                 if (storageFactory != null) {
-                    storageFactory.commit(tr);
+                    storageFactory.commit(tr, rev);
                 }
             }
 

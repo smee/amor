@@ -85,7 +85,7 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
     public NeoRevision createRevision(final CommitTransaction transaction) {
         final NeoBranch neobranch = (NeoBranch) transaction.getBranch();
         final NeoRevision oldHeadRevision = (NeoRevision) transaction.getBranch().getHeadRevision();
-        final NeoRevision newRevision = new NeoRevision(getNeo().createNode(), transaction.getRevisionId(), transaction.getCommitMessage(), oldHeadRevision);
+        final NeoRevision newRevision = new NeoRevision(getNeo().createNode(), transaction.getRevisionId(), transaction.getCommitMessage(), transaction.getUser(), oldHeadRevision);
         // is there a head revision of this branch?
         final Relationship oldHeadRel = neobranch.getNode().getSingleRelationship(NeoRelationshipType.getRelationshipType(NeoBranch.HEADREVISION), Direction.OUTGOING);
         if (oldHeadRel != null) {

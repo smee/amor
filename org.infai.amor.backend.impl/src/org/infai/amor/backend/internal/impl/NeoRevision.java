@@ -27,17 +27,19 @@ public class NeoRevision extends NeoObject implements Revision {
     private static final String COMMITMESSAGE = "message";
     private static final String COMMITTIME = "commitTime";
     private static final String PREVIOUSREVISION = "previousRev";
+    private static final String USER = "username";
     private static final String REVISIONID = "revId";
 
     public NeoRevision(final Node node) {
         super(node);
     }
 
-    public NeoRevision(final Node node, final long revisionId, final String commitMessage, final NeoRevision previousRevision) {
+    public NeoRevision(final Node node, final long revisionId, final String commitMessage, final String username, final NeoRevision previousRevision) {
         super(node);
         getNode().setProperty(REVISIONID, revisionId);
         getNode().setProperty(COMMITMESSAGE, commitMessage);
         getNode().setProperty(COMMITTIME, System.currentTimeMillis());
+        getNode().setProperty(USER, username);
         if (previousRevision != null) {
             getNode().createRelationshipTo(previousRevision.getNode(), NeoRelationshipType.getRelationshipType(PREVIOUSREVISION));
         }

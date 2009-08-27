@@ -106,7 +106,8 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Response commitTransaction(final CommitTransaction tr) {
-        return transactionManager.commit(tr);
+        final Revision revision = branchFactory.createRevision(tr);
+        return transactionManager.commit(tr, revision);
     }
 
     /*
@@ -194,7 +195,6 @@ public class RepositoryImpl implements Repository {
     @Override
     public CommitTransaction startCommitTransaction(final Branch branch) {
         final CommitTransaction tr = transactionManager.startCommitTransaction(branch);
-        final Revision revision = branchFactory.createRevision(tr);
         return tr;
     }
 
