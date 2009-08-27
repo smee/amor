@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="ASCII"?>
+<containers:CompilationUnit xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:classifiers="http://www.emftext.org/java/classifiers" xmlns:commons="http://www.emftext.org/java/commons" xmlns:containers="http://www.emftext.org/java/containers" xmlns:members="http://www.emftext.org/java/members" xmlns:modifiers="http://www.emftext.org/java/modifiers" xmlns:parameters="http://www.emftext.org/java/parameters" xmlns:types="http://www.emftext.org/java/types" xsi:schemaLocation="http://www.emftext.org/java/classifiers ../../../java.ecore#/2 http://www.emftext.org/java/commons ../../../java.ecore#/3 http://www.emftext.org/java/containers ../../../java.ecore#/4 http://www.emftext.org/java/members ../../../java.ecore#/10 http://www.emftext.org/java/modifiers ../../../java.ecore#/11 http://www.emftext.org/java/parameters ../../../java.ecore#/13 http://www.emftext.org/java/types ../../../java.ecore#/16">
+  <name xsi:type="commons:Name" value="sun.util.calendar.BaseCalendar.java"/>
+  <namespaces>sun</namespaces>
+  <namespaces>util</namespaces>
+  <namespaces>calendar</namespaces>
+  <classifiers xsi:type="classifiers:Class">
+    <name xsi:type="commons:Name" value="BaseCalendar"/>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="JANUARY"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="FEBRUARY"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="MARCH"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="APRIL"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="MAY"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="JUNE"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="JULY"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="AUGUST"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="SEPTEMBER"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="OCTOBER"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="NOVEMBER"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="DECEMBER"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="SUNDAY"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="MONDAY"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TUESDAY"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="WEDNESDAY"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="THURSDAY"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="FRIDAY"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="SATURDAY"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="BASE_YEAR"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Private"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="FIXED_DATES"/>
+      <type xsi:type="types:Int"/>
+      <arrayDimensionsBefore/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Private"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="DAYS_IN_MONTH"/>
+      <type xsi:type="types:Int"/>
+      <arrayDimensionsBefore/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="ACCUMULATED_DAYS_IN_MONTH"/>
+      <type xsi:type="types:Int"/>
+      <arrayDimensionsBefore/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="ACCUMULATED_DAYS_IN_MONTH_LEAP"/>
+      <type xsi:type="types:Int"/>
+      <arrayDimensionsBefore/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="$assertionsDisabled"/>
+      <type xsi:type="types:Boolean"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Constructor">
+      <name xsi:type="commons:Name" value="BaseCalendar"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="validate"/>
+      <type xsi:type="types:Boolean"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="CalendarDate.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="normalize"/>
+      <type xsi:type="types:Boolean"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="CalendarDate.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="normalizeMonth"/>
+      <type xsi:type="types:Void"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="CalendarDate.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getYearLength"/>
+      <type xsi:type="types:Int"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="CalendarDate.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getYearLengthInMonths"/>
+      <type xsi:type="types:Int"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="CalendarDate.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getMonthLength"/>
+      <type xsi:type="types:Int"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="CalendarDate.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getMonthLength"/>
+      <type xsi:type="types:Int"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Int"/>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Int"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Private"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getDayOfYear"/>
+      <type xsi:type="types:Long"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="CalendarDate.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getDayOfYear"/>
+      <type xsi:type="types:Long"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Int"/>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Int"/>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Int"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getFixedDate"/>
+      <type xsi:type="types:Long"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="CalendarDate.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getFixedDate"/>
+      <type xsi:type="types:Long"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Int"/>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Int"/>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Int"/>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="BaseCalendar$Date.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getCalendarDateFromFixedDate"/>
+      <type xsi:type="types:Void"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="CalendarDate.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Long"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getDayOfWeek"/>
+      <type xsi:type="types:Int"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="CalendarDate.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getDayOfWeekFromFixedDate"/>
+      <type xsi:type="types:Int"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Long"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getYearFromFixedDate"/>
+      <type xsi:type="types:Int"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Long"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getGregorianYearFromFixedDate"/>
+      <type xsi:type="types:Int"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Long"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="isLeapYear"/>
+      <type xsi:type="types:Boolean"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="CalendarDate.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Protected"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="isLeapYear"/>
+      <type xsi:type="types:Boolean"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Int"/>
+      </parameters>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="&lt;clinit>"/>
+      <type xsi:type="types:Void"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <annotationsAndModifiers xsi:type="modifiers:Abstract"/>
+    <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    <annotationsAndModifiers xsi:type="modifiers:Synchronized"/>
+    <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    <extends xsi:type="types:ClassifierReference">
+      <target xsi:type="classifiers:Class" href="AbstractCalendar.class.xmi#//@classifiers.0"/>
+    </extends>
+  </classifiers>
+</containers:CompilationUnit>

@@ -33,16 +33,4 @@ public class ModelComparator {
 		}
 		return null;
 	}
-//	
-//	public static void main(String[] args) {
-//		ModelComparator comparator = new ModelComparator();
-//		ResourceSet rs = new ResourceSetImpl();
-//		try {
-//			EObject model1 = ModelUtils.load(new File("out/Hello.java.xmi"), rs);
-//			EObject model2 = ModelUtils.load(new File("out/Hello2.java.xmi"), rs);
-//			System.out.println(comparator.compare(new File("out/Hello.java.xmi"), new File("out/Hello2.java.xmi")).getOwnedElements().size());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
 }

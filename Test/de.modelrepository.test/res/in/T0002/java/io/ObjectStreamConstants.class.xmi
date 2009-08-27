@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="ASCII"?>
+<containers:CompilationUnit xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:classifiers="http://www.emftext.org/java/classifiers" xmlns:commons="http://www.emftext.org/java/commons" xmlns:containers="http://www.emftext.org/java/containers" xmlns:members="http://www.emftext.org/java/members" xmlns:modifiers="http://www.emftext.org/java/modifiers" xmlns:types="http://www.emftext.org/java/types" xsi:schemaLocation="http://www.emftext.org/java/classifiers ../../java.ecore#/2 http://www.emftext.org/java/commons ../../java.ecore#/3 http://www.emftext.org/java/containers ../../java.ecore#/4 http://www.emftext.org/java/members ../../java.ecore#/10 http://www.emftext.org/java/modifiers ../../java.ecore#/11 http://www.emftext.org/java/types ../../java.ecore#/16">
+  <name xsi:type="commons:Name" value="java.io.ObjectStreamConstants.java"/>
+  <namespaces>java</namespaces>
+  <namespaces>io</namespaces>
+  <classifiers xsi:type="classifiers:Interface">
+    <name xsi:type="commons:Name" value="ObjectStreamConstants"/>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="STREAM_MAGIC"/>
+      <type xsi:type="types:Short"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="STREAM_VERSION"/>
+      <type xsi:type="types:Short"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_BASE"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_NULL"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_REFERENCE"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_CLASSDESC"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_OBJECT"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_STRING"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_ARRAY"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_CLASS"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_BLOCKDATA"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_ENDBLOCKDATA"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_RESET"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_BLOCKDATALONG"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_EXCEPTION"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_LONGSTRING"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_PROXYCLASSDESC"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_ENUM"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="TC_MAX"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="baseWireHandle"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="SC_WRITE_METHOD"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="SC_BLOCK_DATA"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="SC_SERIALIZABLE"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="SC_EXTERNALIZABLE"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="SC_ENUM"/>
+      <type xsi:type="types:Byte"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="SUBSTITUTION_PERMISSION"/>
+      <type xsi:type="types:ClassifierReference">
+        <target xsi:type="classifiers:Class" href="SerializablePermission.class.xmi#//@classifiers.0"/>
+      </type>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="SUBCLASS_IMPLEMENTATION_PERMISSION"/>
+      <type xsi:type="types:ClassifierReference">
+        <target xsi:type="classifiers:Class" href="SerializablePermission.class.xmi#//@classifiers.0"/>
+      </type>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="PROTOCOL_VERSION_1"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="PROTOCOL_VERSION_2"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <members xsi:type="members:InterfaceMethod">
+      <name xsi:type="commons:Name" value="&lt;clinit>"/>
+      <type xsi:type="types:Void"/>
+      <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    </members>
+    <annotationsAndModifiers xsi:type="modifiers:Abstract"/>
+    <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    <annotationsAndModifiers xsi:type="modifiers:Static"/>
+  </classifiers>
+</containers:CompilationUnit>

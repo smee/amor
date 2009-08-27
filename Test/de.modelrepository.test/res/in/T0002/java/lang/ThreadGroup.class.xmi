@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="ASCII"?>
+<containers:CompilationUnit xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:classifiers="http://www.emftext.org/java/classifiers" xmlns:commons="http://www.emftext.org/java/commons" xmlns:containers="http://www.emftext.org/java/containers" xmlns:members="http://www.emftext.org/java/members" xmlns:modifiers="http://www.emftext.org/java/modifiers" xmlns:parameters="http://www.emftext.org/java/parameters" xmlns:types="http://www.emftext.org/java/types" xsi:schemaLocation="http://www.emftext.org/java/classifiers ../../java.ecore#/2 http://www.emftext.org/java/commons ../../java.ecore#/3 http://www.emftext.org/java/containers ../../java.ecore#/4 http://www.emftext.org/java/members ../../java.ecore#/10 http://www.emftext.org/java/modifiers ../../java.ecore#/11 http://www.emftext.org/java/parameters ../../java.ecore#/13 http://www.emftext.org/java/types ../../java.ecore#/16">
+  <name xsi:type="commons:Name" value="java.lang.ThreadGroup.java"/>
+  <namespaces>java</namespaces>
+  <namespaces>lang</namespaces>
+  <classifiers xsi:type="classifiers:Class">
+    <name xsi:type="commons:Name" value="ThreadGroup"/>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="parent"/>
+      <type xsi:type="types:ClassifierReference" target="//@classifiers.0"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="name"/>
+      <type xsi:type="types:ClassifierReference">
+        <target xsi:type="classifiers:Class" href="String.class.xmi#//@classifiers.0"/>
+      </type>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="maxPriority"/>
+      <type xsi:type="types:Int"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="destroyed"/>
+      <type xsi:type="types:Boolean"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="daemon"/>
+      <type xsi:type="types:Boolean"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="vmAllowSuspension"/>
+      <type xsi:type="types:Boolean"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="nUnstartedThreads"/>
+      <type xsi:type="types:Int"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="nthreads"/>
+      <type xsi:type="types:Int"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="threads"/>
+      <type xsi:type="types:ClassifierReference">
+        <target xsi:type="classifiers:Class" href="Thread.class.xmi#//@classifiers.0"/>
+      </type>
+      <arrayDimensionsBefore/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="ngroups"/>
+      <type xsi:type="types:Int"/>
+    </members>
+    <members xsi:type="members:Field">
+      <name xsi:type="commons:Name" value="groups"/>
+      <type xsi:type="types:ClassifierReference" target="//@classifiers.0"/>
+      <arrayDimensionsBefore/>
+    </members>
+    <members xsi:type="members:Constructor">
+      <name xsi:type="commons:Name" value="ThreadGroup"/>
+    </members>
+    <members xsi:type="members:Constructor">
+      <name xsi:type="commons:Name" value="ThreadGroup"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="String.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+    </members>
+    <members xsi:type="members:Constructor">
+      <name xsi:type="commons:Name" value="ThreadGroup"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference" target="//@classifiers.0"/>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="String.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getName"/>
+      <type xsi:type="types:ClassifierReference">
+        <target xsi:type="classifiers:Class" href="String.class.xmi#//@classifiers.0"/>
+      </type>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getParent"/>
+      <type xsi:type="types:ClassifierReference" target="//@classifiers.0"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="getMaxPriority"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="isDaemon"/>
+      <type xsi:type="types:Boolean"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="isDestroyed"/>
+      <type xsi:type="types:Boolean"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+      <annotationsAndModifiers xsi:type="modifiers:Synchronized"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="setDaemon"/>
+      <type xsi:type="types:Void"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Boolean"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="setMaxPriority"/>
+      <type xsi:type="types:Void"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Int"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="parentOf"/>
+      <type xsi:type="types:Boolean"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference" target="//@classifiers.0"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="checkAccess"/>
+      <type xsi:type="types:Void"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="activeCount"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="enumerate"/>
+      <type xsi:type="types:Int"/>
+      <parameters xsi:type="parameters:VariableLengthParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="Thread.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="enumerate"/>
+      <type xsi:type="types:Int"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="Thread.class.xmi#//@classifiers.0"/>
+        </type>
+        <arrayDimensionsBefore/>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Boolean"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="enumerate"/>
+      <type xsi:type="types:Int"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="Thread.class.xmi#//@classifiers.0"/>
+        </type>
+        <arrayDimensionsBefore/>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Int"/>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Boolean"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Private"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="activeGroupCount"/>
+      <type xsi:type="types:Int"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="enumerate"/>
+      <type xsi:type="types:Int"/>
+      <parameters xsi:type="parameters:VariableLengthParameter">
+        <type xsi:type="types:ClassifierReference" target="//@classifiers.0"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="enumerate"/>
+      <type xsi:type="types:Int"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference" target="//@classifiers.0"/>
+        <arrayDimensionsBefore/>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Boolean"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="enumerate"/>
+      <type xsi:type="types:Int"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference" target="//@classifiers.0"/>
+        <arrayDimensionsBefore/>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Int"/>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Boolean"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Private"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="stop"/>
+      <type xsi:type="types:Void"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="interrupt"/>
+      <type xsi:type="types:Void"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="suspend"/>
+      <type xsi:type="types:Void"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="stopOrSuspend"/>
+      <type xsi:type="types:Boolean"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Boolean"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Private"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="resume"/>
+      <type xsi:type="types:Void"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="destroy"/>
+      <type xsi:type="types:Void"/>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="add"/>
+      <type xsi:type="types:Void"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference" target="//@classifiers.0"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Final"/>
+      <annotationsAndModifiers xsi:type="modifiers:Private"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="remove"/>
+      <type xsi:type="types:Void"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference" target="//@classifiers.0"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Private"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="addUnstarted"/>
+      <type xsi:type="types:Void"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="add"/>
+      <type xsi:type="types:Void"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="Thread.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="remove"/>
+      <type xsi:type="types:Void"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="Thread.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="list"/>
+      <type xsi:type="types:Void"/>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="list"/>
+      <type xsi:type="types:Void"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="../io/PrintStream.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Int"/>
+      </parameters>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="uncaughtException"/>
+      <type xsi:type="types:Void"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="Thread.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:ClassifierReference">
+          <target xsi:type="classifiers:Class" href="Throwable.class.xmi#//@classifiers.0"/>
+        </type>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="allowThreadSuspension"/>
+      <type xsi:type="types:Boolean"/>
+      <parameters xsi:type="parameters:OrdinaryParameter">
+        <type xsi:type="types:Boolean"/>
+      </parameters>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <members xsi:type="members:ClassMethod">
+      <name xsi:type="commons:Name" value="toString"/>
+      <type xsi:type="types:ClassifierReference">
+        <target xsi:type="classifiers:Class" href="String.class.xmi#//@classifiers.0"/>
+      </type>
+      <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    </members>
+    <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    <annotationsAndModifiers xsi:type="modifiers:Synchronized"/>
+    <annotationsAndModifiers xsi:type="modifiers:Static"/>
+    <implements xsi:type="types:ClassifierReference">
+      <target xsi:type="classifiers:Interface" href="Thread$UncaughtExceptionHandler.class.xmi#//@classifiers.0"/>
+    </implements>
+    <extends xsi:type="types:ClassifierReference">
+      <target xsi:type="classifiers:Class" href="Object.class.xmi#//@classifiers.0"/>
+    </extends>
+  </classifiers>
+</containers:CompilationUnit>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ASCII"?>
+<containers:CompilationUnit xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:classifiers="http://www.emftext.org/java/classifiers" xmlns:commons="http://www.emftext.org/java/commons" xmlns:containers="http://www.emftext.org/java/containers" xmlns:modifiers="http://www.emftext.org/java/modifiers" xsi:schemaLocation="http://www.emftext.org/java/classifiers ../../../java.ecore#/2 http://www.emftext.org/java/commons ../../../java.ecore#/3 http://www.emftext.org/java/containers ../../../java.ecore#/4 http://www.emftext.org/java/modifiers ../../../java.ecore#/11">
+  <name xsi:type="commons:Name" value="java.lang.reflect.Type.java"/>
+  <namespaces>java</namespaces>
+  <namespaces>lang</namespaces>
+  <namespaces>reflect</namespaces>
+  <classifiers xsi:type="classifiers:Interface">
+    <name xsi:type="commons:Name" value="Type"/>
+    <annotationsAndModifiers xsi:type="modifiers:Abstract"/>
+    <annotationsAndModifiers xsi:type="modifiers:Public"/>
+    <annotationsAndModifiers xsi:type="modifiers:Static"/>
+  </classifiers>
+</containers:CompilationUnit>
