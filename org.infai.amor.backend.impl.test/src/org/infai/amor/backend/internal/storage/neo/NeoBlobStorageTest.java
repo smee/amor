@@ -14,7 +14,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.time.StopWatch;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -29,7 +28,7 @@ import org.infai.amor.backend.impl.RepositoryImpl;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.TransactionManager;
 import org.infai.amor.backend.internal.UriHandler;
-import org.infai.amor.backend.internal.impl.AbstractNeo4JTest;
+import org.infai.amor.backend.internal.impl.AbstractNeo4JPerformanceTest;
 import org.infai.amor.backend.internal.impl.ModelImpl;
 import org.infai.amor.backend.internal.impl.NeoBranchFactory;
 import org.infai.amor.backend.internal.impl.TransactionManagerImpl;
@@ -43,8 +42,7 @@ import org.neo4j.api.core.NeoService;
  * @author sdienst
  * 
  */
-public class NeoBlobStorageTest extends AbstractNeo4JTest {
-
+public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
     private Repository repository;
 
     @Before
@@ -66,14 +64,13 @@ public class NeoBlobStorageTest extends AbstractNeo4JTest {
 
     @Test
     public void shouldSaveModelIntoNeo() throws Exception {
+        split("Before loading models");
         // given
         final ResourceSet rs = new ResourceSetImpl();
         final EObject input = readInputModel("testmodels/Ecore.ecore", rs);
         final EObject input2 = readInputModel("testmodels/filesystem.ecore", rs);
         final EObject input3 = readInputModel("testmodels/simplefilesystem.xmi", rs);
-
-        final StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+        split("After loading models");
 
         final Branch branch = repository.createBranch(null, "trunk");
         final CommitTransaction ct = repository.startCommitTransaction(branch);
@@ -82,16 +79,19 @@ public class NeoBlobStorageTest extends AbstractNeo4JTest {
         // when
         // model checked in successfully
         final Response checkin = repository.checkin(new ModelImpl(input, "testmodels/Ecore.ecore"), ct);
+        split("Neo4j - Ecore");
         final Response checkin2 = repository.checkin(new ModelImpl(input2, "testmodels/filesystem.ecore"), ct);
+        split("Neo4j - M2");
         final Response checkin3 = repository.checkin(new ModelImpl(input3, "testmodels/simplefilesystem.xmi"), ct);
+        split("Neo4j - M1");
         repository.commitTransaction(ct);
-        stopWatch.stop();
-        System.out.println("Neo4j: " + stopWatch.getTime());
+        split("Neo4j - Commit");
         // then
         assertTrue(checkin instanceof CheckinResponse);
         // storeViaXml(input, input2, input3);
 
         final Model checkedoutmodel = repository.checkout(URI.createURI("amor://localhost/repo/trunk/1/testmodels/filesystem.ecore"));
+        split("Restoring M1");
         storeViaXml(checkedoutmodel.getContent());
     }
 
@@ -102,15 +102,12 @@ public class NeoBlobStorageTest extends AbstractNeo4JTest {
      * @throws IOException
      */
     private void storeViaXml(final EObject... input) throws IOException {
-        final StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
         final ResourceSetImpl rs = new ResourceSetImpl();
         for (final EObject eo : input) {
             final Resource res = rs.createResource(URI.createFileURI("foo/" + eo.hashCode() + ".xml"));
             res.getContents().add(eo);
             res.save(null);
         }
-        stopWatch.stop();
-        System.out.println("XML: " + stopWatch.getTime());
+        split("Writing XML");
     }
 }
