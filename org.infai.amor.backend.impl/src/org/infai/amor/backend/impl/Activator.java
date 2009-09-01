@@ -116,7 +116,8 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         final ServiceTracker stSF = new ServiceTracker(context, ServiceFactory.class.getName(), this);
         stSF.open();
         // instantiate our repository
-        final UriHandlerImpl uriHandler = new UriHandlerImpl();
+        // TODO make settings configurable
+        final UriHandlerImpl uriHandler = new UriHandlerImpl("localhost", "repo");
         final Repository repo = new RepositoryImpl(new StorageFactory() {
             @Override
             public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {

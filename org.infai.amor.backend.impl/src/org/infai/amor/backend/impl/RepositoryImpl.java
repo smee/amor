@@ -10,6 +10,7 @@
 package org.infai.amor.backend.impl;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -28,6 +29,10 @@ import org.infai.amor.backend.internal.responses.CheckinErrorResponse;
 import org.infai.amor.backend.internal.responses.CheckinResponse;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 /**
  * Default implementation of the amor repository backend.
@@ -123,6 +128,74 @@ public class RepositoryImpl implements Repository {
     /*
      * (non-Javadoc)
      * 
+     * @see org.infai.amor.backend.Repository#getActiveContents(org.eclipse.emf.common.util.URI)
+     */
+    @Override
+    public Iterable<URI> getActiveContents(final URI uri) throws MalformedURIException {
+
+        String branchname = null;
+        long revisionId = -1;
+        boolean hasBranch = true, hasRevision = true;
+        // what does this uri point to?
+        try {
+            // has it a branch?
+            branchname = uriHandler.extractBranchName(uri);
+        } catch (final MalformedURIException e) {
+            hasBranch = false;
+        }
+        try {
+            // has it a revision?
+            revisionId = uriHandler.extractRevision(uri);
+        } catch (final MalformedURIException e) {
+            hasRevision = false;
+        }
+        if (!hasBranch) {
+            // find all branchnames, convert them into uris
+            return Iterables.transform(branchFactory.getBranches(), new Function<Branch, URI>() {
+                @Override
+                public URI apply(final Branch branch) {
+                    return uriHandler.createUriFor(branch);
+                }
+            });
+        } else if (!hasRevision) {
+            // find all revisions of the branch, convert them into uris
+            final Branch branch = branchFactory.getBranch(branchname);
+            return Iterables.transform(branch.getRevisions(), new Function<Revision, URI>() {
+                @Override
+                public URI apply(final Revision r) {
+                    return uriHandler.createUriFor(branch, r.getRevisionId());
+                }
+            });
+        } else {
+            // find all alive models, convert them into uris
+            final Collection<URI> result = Lists.newArrayList();
+            final Branch branch = branchFactory.getBranch(branchname);
+            Revision rev = branch.getRevision(revisionId);
+            if (rev == null) {
+                throw new MalformedURIException("Unknown revision: " + uri);
+            } else {
+                while (rev != null) {
+                    final Collection<URI> knownModels = rev.getModelReferences();
+                    for (final URI modelUri : knownModels) {
+                        if (uriHandler.isPrefixIgnoringRevision(uri, modelUri)) {
+                            result.add(uriHandler.trimToNextSegmentKeepingRevision(uri.segmentCount() + 1, modelUri));
+                        }
+                    }
+                    // cycle through to all older revisions
+                    // TODO handle deleted models
+                    rev = rev.getPreviousRevision();
+                }
+                return result;
+
+            }
+
+        }
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.Repository#getBranch(org.eclipse.emf.common.util.URI)
      */
     @Override
@@ -141,6 +214,67 @@ public class RepositoryImpl implements Repository {
     public Iterable<Branch> getBranches(final URI uri) throws MalformedURIException {
         // FIXME uri implies multiple repositories, remove it?
         return (Iterable<Branch>) branchFactory.getBranches();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.infai.amor.backend.Repository#getContents(org.eclipse.emf.common.util.URI)
+     */
+    @Override
+    public Iterable<URI> getContents(final URI uri) throws MalformedURIException {
+        String branchname = null;
+        long revisionId = -1;
+        boolean hasBranch = true, hasRevision = true;
+        // what does this uri point to?
+        try {
+            // has it a branch?
+            branchname = uriHandler.extractBranchName(uri);
+        } catch (final MalformedURIException e) {
+            hasBranch = false;
+        }
+        try {
+            // has it a revision?
+            revisionId = uriHandler.extractRevision(uri);
+        } catch (final MalformedURIException e) {
+            hasRevision = false;
+        }
+        if (!hasBranch) {
+            // find all branchnames, convert them into uris
+            return Iterables.transform(branchFactory.getBranches(), new Function<Branch, URI>() {
+                @Override
+                public URI apply(final Branch branch) {
+                    return uriHandler.createUriFor(branch);
+                }
+            });
+        } else if (!hasRevision) {
+            // find all revisions of the branch, convert them into uris
+            final Branch branch = branchFactory.getBranch(branchname);
+            return Iterables.transform(branch.getRevisions(), new Function<Revision, URI>() {
+                @Override
+                public URI apply(final Revision r) {
+                    return uriHandler.createUriFor(branch, r.getRevisionId());
+                }
+            });
+        } else {
+            // find all alive models, convert them into uris
+            final Collection<URI> result = Lists.newArrayList();
+            final Branch branch = branchFactory.getBranch(branchname);
+            final Revision rev = branch.getRevision(revisionId);
+            if (rev == null) {
+                throw new MalformedURIException("Unknown revision: " + uri);
+            } else {
+                final Collection<URI> knownModels = rev.getModelReferences();
+                for (final URI modelUri : knownModels) {
+                    if (uriHandler.isPrefix(uri, modelUri)) {
+                        result.add(uriHandler.trimToNextSegment(uri, modelUri));
+                    }
+                }
+                return result;
+
+            }
+
+        }
     }
 
     /*

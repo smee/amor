@@ -12,9 +12,12 @@ package org.infai.amor.backend.internal;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
+import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
 
 /**
+ * Internal interface that knows about the structure of externally referenceable uris to contents of the amor repository.
+ * 
  * @author sdienst
  * 
  */
@@ -30,6 +33,27 @@ public interface UriHandler {
      * @return
      */
     URI createModelUri(CommitTransaction tr, IPath persistencePath);
+
+    /**
+     * @param r
+     * @return
+     */
+    URI createUriFor(Branch branch);
+
+    /**
+     * @param branch
+     * @param revisionId
+     * @return
+     */
+    URI createUriFor(Branch branch, long revisionId);
+
+    /**
+     * @param branch
+     * @param revisionId
+     * @param path
+     * @return
+     */
+    URI createUriFor(Branch branch, long revisionId, IPath path);
 
     /**
      * Create an externally usable uri that links to this revision.
@@ -57,5 +81,40 @@ public interface UriHandler {
      * @return
      */
     long extractRevision(URI uri) throws MalformedURIException;
+
+    /**
+     * @param prefixUri
+     * @param fullUri
+     * @return
+     */
+    boolean isPrefix(final URI prefixUri, final URI fullUri);
+
+    /**
+     * @param prefixUri
+     * @param fullUri
+     * @return
+     */
+    boolean isPrefixIgnoringRevision(final URI prefixUri, final URI fullUri);
+
+    /**
+     * Works like the 'ls' command, returns the part of fullUri, that resembles prefix+one more segment.
+     * <p>
+     * Example: <code>trimToNextSegment("a/b/","a/b/c/d/e") => "a/b/c"
+     * 
+     * @param prefix
+     * @param fullUri
+     * @return
+     */
+    URI trimToNextSegment(URI prefix, URI fullUri);
+
+    /**
+     * Same as {@link #trimToNextSegment(URI, URI)} but keeps the revision number of prefix. If there is no revision, an exception
+     * gets thrown.
+     * 
+     * @param segmentIdx
+     * @param fullUri
+     * @return
+     */
+    URI trimToNextSegmentKeepingRevision(int segmentIdx, URI fullUri);
 
 }
