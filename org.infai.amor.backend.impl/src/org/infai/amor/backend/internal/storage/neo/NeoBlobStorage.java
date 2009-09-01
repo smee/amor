@@ -25,9 +25,9 @@ import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.ModelImpl;
-import org.infai.amor.backend.internal.impl.NeoRelationshipType;
 import org.infai.amor.backend.internal.impl.NeoRevision;
 import org.infai.amor.backend.storage.Storage;
+import org.neo4j.api.core.DynamicRelationshipType;
 import org.neo4j.api.core.Node;
 
 /**
@@ -108,7 +108,7 @@ public class NeoBlobStorage implements Storage {
         if (rev instanceof NeoRevision) {
             final NeoRevision revision = (NeoRevision) rev;
             for (final Node modelNode : addedModelNodes) {
-                revision.getNode().createRelationshipTo(modelNode, NeoRelationshipType.getRelationshipType("added"));
+                revision.getNode().createRelationshipTo(modelNode, DynamicRelationshipType.withName("added"));
             }
         }
     }
@@ -120,7 +120,7 @@ public class NeoBlobStorage implements Storage {
      */
     @Override
     public void rollback(final CommitTransaction tr) {
-        // TODO Auto-generated method stub
+        // nothing to do, gets handled by the neo4j transaction
 
     }
 

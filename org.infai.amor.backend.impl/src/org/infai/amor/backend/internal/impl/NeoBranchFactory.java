@@ -14,6 +14,7 @@ import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.internal.BranchFactory;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.neo4j.api.core.Direction;
+import org.neo4j.api.core.DynamicRelationshipType;
 import org.neo4j.api.core.Node;
 import org.neo4j.api.core.Relationship;
 import org.neo4j.api.core.Transaction;
@@ -58,7 +59,7 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
                 } else {
                     // no, create a new main branch
                     final NeoBranch newBranch = new NeoBranch(getNeo().createNode(), name);
-                    factoryNode.createRelationshipTo(newBranch.getNode(), NeoRelationshipType.getRelationshipType("branch"));
+                    factoryNode.createRelationshipTo(newBranch.getNode(), DynamicRelationshipType.withName("branch"));
                     result = newBranch;
                 }
             } else {
@@ -66,9 +67,9 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
                 final NeoBranch newBranch = new NeoBranch(getNeo().createNode(), name);
                 newBranch.setOriginRevision((NeoRevision) origin);
                 // set head revision to origin
-                newBranch.getNode().createRelationshipTo(((NeoRevision) origin).getNode(), NeoRelationshipType.getRelationshipType(NeoBranch.HEADREVISION));
+                newBranch.getNode().createRelationshipTo(((NeoRevision) origin).getNode(), DynamicRelationshipType.withName(NeoBranch.HEADREVISION));
 
-                factoryNode.createRelationshipTo(newBranch.getNode(), NeoRelationshipType.getRelationshipType("branch"));
+                factoryNode.createRelationshipTo(newBranch.getNode(), DynamicRelationshipType.withName("branch"));
                 result = newBranch;
             }
             tx.success();
@@ -90,12 +91,12 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
         final NeoRevision oldHeadRevision = (NeoRevision) transaction.getBranch().getHeadRevision();
         final NeoRevision newRevision = new NeoRevision(getNeo().createNode(), transaction.getRevisionId(), transaction.getCommitMessage(), transaction.getUser(), oldHeadRevision);
         // is there a head revision of this branch?
-        final Relationship oldHeadRel = neobranch.getNode().getSingleRelationship(NeoRelationshipType.getRelationshipType(NeoBranch.HEADREVISION), Direction.OUTGOING);
+        final Relationship oldHeadRel = neobranch.getNode().getSingleRelationship(DynamicRelationshipType.withName(NeoBranch.HEADREVISION), Direction.OUTGOING);
         if (oldHeadRel != null) {
             oldHeadRel.delete();
         }
         // set the new head revision of this branch
-        neobranch.getNode().createRelationshipTo(newRevision.getNode(), NeoRelationshipType.getRelationshipType(NeoBranch.HEADREVISION));
+        neobranch.getNode().createRelationshipTo(newRevision.getNode(), DynamicRelationshipType.withName(NeoBranch.HEADREVISION));
         return newRevision;
     }
 
@@ -144,14 +145,14 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
      * @return
      */
     private Node getFactoryNode() {
-        return getFactoryNode(NeoRelationshipType.getRelationshipType("branches"));
+        return getFactoryNode(DynamicRelationshipType.withName("branches"));
     }
 
     /**
      * @return
      */
     private Iterable<NeoBranch> getNeoBranches() {
-        final Iterable<Relationship> rs = getFactoryNode().getRelationships(NeoRelationshipType.getRelationshipType("branch"));
+        final Iterable<Relationship> rs = getFactoryNode().getRelationships(DynamicRelationshipType.withName("branch"));
         // iterate over all branches
 
         final Iterable<NeoBranch> branches = Iterables.transform(rs, new Function<Relationship, NeoBranch>() {

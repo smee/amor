@@ -4,7 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-lang-2.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/google-collect-1.0-rc2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/google-collect-1.0-rc2.jar" sourcepath="D:/temp/src-1.0-rc2.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jsr-305-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

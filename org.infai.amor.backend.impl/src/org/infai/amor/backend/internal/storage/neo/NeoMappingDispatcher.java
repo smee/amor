@@ -195,8 +195,10 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
             final Node modelNode = createNode();
 
             // bind dummy node to MODELS
+            // TODO create relative path nodes, use them for restoring, too
             final String metaNsUri = element.eClass().getEPackage().getNsURI();
             set(modelNode, NS_URI, metaNsUri + " [" + element.eResource().getURI() + "]");
+            // TODO do not store the real file uri, but the relative part only/amor uri
             set(modelNode, URI, String.valueOf(element.eResource().getURI()));
             getFactoryNode(EcoreRelationshipType.RESOURCES).createRelationshipTo(modelNode, EcoreRelationshipType.RESOURCE);
 

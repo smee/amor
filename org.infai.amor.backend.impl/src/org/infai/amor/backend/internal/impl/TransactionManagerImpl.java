@@ -26,6 +26,7 @@ import org.infai.amor.backend.internal.TransactionManager;
 import org.infai.amor.backend.internal.UriHandler;
 import org.infai.amor.backend.internal.responses.CommitSuccessResponse;
 import org.infai.amor.backend.internal.responses.TransactionErrorResponse;
+import org.neo4j.api.core.DynamicRelationshipType;
 import org.neo4j.api.core.Node;
 import org.neo4j.api.core.Transaction;
 
@@ -107,7 +108,7 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
      * @return
      */
     private long createNextRevisionId() {
-        final Node node = getFactoryNode(NeoRelationshipType.getRelationshipType("lastRevision"));
+        final Node node = getFactoryNode(DynamicRelationshipType.withName("lastRevision"));
         if (!node.hasProperty(REVISIONCOUNTER_PROPERTY)) {
             node.setProperty(REVISIONCOUNTER_PROPERTY, 0L);
         }

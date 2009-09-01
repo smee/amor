@@ -274,19 +274,16 @@ public class NeoRestorer extends AbstractNeoPersistence {
         for (final Node aNode : getOrderedNodes(node, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
             final Node metaNode = aNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
 
-            if (EAnnotation.class.getSimpleName().equals(metaNode.getProperty(NAME))) {
+            final Object metaNodeName = metaNode.getProperty(NAME);
+            if (EAnnotation.class.getSimpleName().equals(metaNodeName)) {
                 aClass.getEAnnotations().add(restoreEAnnotation(aNode));
-            }
-            if (EAttribute.class.getSimpleName().equals(metaNode.getProperty(NAME))) {
+            } else if (EAttribute.class.getSimpleName().equals(metaNodeName)) {
                 aClass.getEStructuralFeatures().add(restoreEAttribute(aNode));
-            }
-            if (EReference.class.getSimpleName().equals(metaNode.getProperty(NAME))) {
+            } else if (EReference.class.getSimpleName().equals(metaNodeName)) {
                 aClass.getEStructuralFeatures().add(restoreEReference(aNode));
-            }
-            if (EOperation.class.getSimpleName().equals(metaNode.getProperty(NAME))) {
+            } else if (EOperation.class.getSimpleName().equals(metaNodeName)) {
                 aClass.getEOperations().add(restoreEOperation(aNode));
-            }
-            if (ETypeParameter.class.getSimpleName().equals(metaNode.getProperty(NAME))) {
+            } else if (ETypeParameter.class.getSimpleName().equals(metaNodeName)) {
                 final ETypeParameter typeParameter = restoreETypeParameter(aNode);
                 if (!aClass.getETypeParameters().contains(typeParameter)) {
                     aClass.getETypeParameters().add(typeParameter);
@@ -515,13 +512,12 @@ public class NeoRestorer extends AbstractNeoPersistence {
         for (final Node aNode : getOrderedNodes(node, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
             final Node metaNode = aNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
 
-            if (metaNode.getProperty(NAME).equals(EAnnotation.class.getSimpleName())) {
+            final Object metaNodeName = metaNode.getProperty(NAME);
+            if (metaNodeName.equals(EAnnotation.class.getSimpleName())) {
                 operation.getEAnnotations().add(restoreEAnnotation(aNode));
-            }
-            if (metaNode.getProperty(NAME).equals(EParameter.class.getSimpleName())) {
+            } else if (metaNodeName.equals(EParameter.class.getSimpleName())) {
                 operation.getEParameters().add(restoreEParameter(aNode));
-            }
-            if (metaNode.getProperty(NAME).equals(ETypeParameter.class.getSimpleName())) {
+            } else if (metaNodeName.equals(ETypeParameter.class.getSimpleName())) {
                 final ETypeParameter typeParameter = restoreETypeParameter(aNode);
                 if (!operation.getETypeParameters().contains(typeParameter)) {
                     operation.getETypeParameters().add(typeParameter);

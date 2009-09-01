@@ -15,6 +15,7 @@ import java.util.Date;
 import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.Revision;
 import org.neo4j.api.core.Direction;
+import org.neo4j.api.core.DynamicRelationshipType;
 import org.neo4j.api.core.Node;
 import org.neo4j.api.core.Relationship;
 
@@ -41,7 +42,7 @@ public class NeoRevision extends NeoObject implements Revision {
         getNode().setProperty(COMMITTIME, System.currentTimeMillis());
         getNode().setProperty(USER, username);
         if (previousRevision != null) {
-            getNode().createRelationshipTo(previousRevision.getNode(), NeoRelationshipType.getRelationshipType(PREVIOUSREVISION));
+            getNode().createRelationshipTo(previousRevision.getNode(), DynamicRelationshipType.withName(PREVIOUSREVISION));
         }
     }
 
@@ -104,7 +105,7 @@ public class NeoRevision extends NeoObject implements Revision {
      */
     @Override
     public NeoRevision getPreviousRevision() {
-        final Relationship rel = getNode().getSingleRelationship(NeoRelationshipType.getRelationshipType(PREVIOUSREVISION), Direction.OUTGOING);
+        final Relationship rel = getNode().getSingleRelationship(DynamicRelationshipType.withName(PREVIOUSREVISION), Direction.OUTGOING);
         if (rel != null) {
             return new NeoRevision(rel.getEndNode());
         } else {

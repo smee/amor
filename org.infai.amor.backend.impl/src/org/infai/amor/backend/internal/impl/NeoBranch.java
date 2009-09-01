@@ -15,6 +15,7 @@ import java.util.Iterator;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.Revision;
 import org.neo4j.api.core.Direction;
+import org.neo4j.api.core.DynamicRelationshipType;
 import org.neo4j.api.core.Node;
 import org.neo4j.api.core.Relationship;
 
@@ -67,7 +68,7 @@ public class NeoBranch extends NeoObject implements Branch {
      */
     @Override
     public Revision getHeadRevision() {
-        final Relationship rel = getNode().getSingleRelationship(NeoRelationshipType.getRelationshipType(HEADREVISION), Direction.OUTGOING);
+        final Relationship rel = getNode().getSingleRelationship(DynamicRelationshipType.withName(HEADREVISION), Direction.OUTGOING);
         if (rel == null) {
             return null;
         } else {
@@ -92,7 +93,7 @@ public class NeoBranch extends NeoObject implements Branch {
      */
     @Override
     public Revision getOriginRevision() {
-        final Relationship rel = getNode().getSingleRelationship(NeoRelationshipType.getRelationshipType(STARTREVISION), Direction.OUTGOING);
+        final Relationship rel = getNode().getSingleRelationship(DynamicRelationshipType.withName(STARTREVISION), Direction.OUTGOING);
         if (rel == null) {
             return null;
         } else {
@@ -156,7 +157,7 @@ public class NeoBranch extends NeoObject implements Branch {
         if (getOriginRevision() != null) {
             throw new IllegalStateException("Attempt to change origin revision of a branch");
         } else {
-            getNode().createRelationshipTo(rev.getNode(), NeoRelationshipType.getRelationshipType(STARTREVISION));
+            getNode().createRelationshipTo(rev.getNode(), DynamicRelationshipType.withName(STARTREVISION));
         }
     }
 

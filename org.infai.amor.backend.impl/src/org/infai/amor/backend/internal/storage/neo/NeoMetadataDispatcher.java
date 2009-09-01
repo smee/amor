@@ -318,7 +318,7 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
         final Node classNode = findClassifierNode(element.eClass());
         classNode.createRelationshipTo(node, EcoreRelationshipType.INSTANCE);
 
-        // store attributes, TODO node per attribute or store as properties?
+        // store attributes, TODO create new node per attribute or store as properties?
         for (final EAttribute attribute : element.eClass().getEAllAttributes()) {
             // skip transient attributes, they must not be persisted
             if (attribute.isTransient() || attribute.isDerived()) {
@@ -394,6 +394,7 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
         // relationships
         final EPackage container = element.getESuperPackage();
         if (null == container && !element.getNsURI().equals(EcorePackage.eNS_URI)) {
+            // custom m2 model
             final Node metamodelNode = getModelNode(EcorePackage.eNS_URI);
             if (null == metamodelNode) {
                 throw new IllegalStateException("First save the meta model with nsURI: " + EcorePackage.eNS_URI);
