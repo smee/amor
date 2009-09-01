@@ -20,5 +20,7 @@ Import-Package: org.infai.amor.backend,
  org.infai.amor.backend.storage,
  org.neo4j.api.core
 Bundle-ClassPath: .,
- lib/commons-lang-2.4.jar
+ lib/commons-lang-2.4.jar,
+ lib/google-collect-1.0-rc2.jar,
+ lib/jsr-305-SNAPSHOT.jar
 Export-Package: org.infai.amor.backend.internal
