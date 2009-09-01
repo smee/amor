@@ -125,6 +125,16 @@ public class NeoRevision extends NeoObject implements Revision {
     /*
      * (non-Javadoc)
      * 
+     * @see org.infai.amor.backend.Revision#getUser()
+     */
+    @Override
+    public String getUser() {
+        return (String) getNode().getProperty(USER);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override

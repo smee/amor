@@ -37,6 +37,8 @@ public interface Revision {
 
     /**
      * Get a collection of uris for every touched model of this revision.
+     * <p>
+     * TODO should we distinguish between added, modified and deleted models?
      * 
      * @return
      */
@@ -55,4 +57,11 @@ public interface Revision {
      * @return
      */
     long getRevisionId();
+
+    /**
+     * Name of the user that created this revision.
+     * 
+     * @return
+     */
+    String getUser();
 }
