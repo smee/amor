@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * 
  */
 public interface ChangedModel {
+    @Deprecated
     EObject getContent();
 
     EObject getDiffModel();
