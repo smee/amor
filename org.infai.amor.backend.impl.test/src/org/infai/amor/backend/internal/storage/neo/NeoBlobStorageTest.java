@@ -47,7 +47,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
 
     @Before
     public void setup() throws IOException {
-        final UriHandler uh = new UriHandlerImpl();
+        final UriHandler uh = new UriHandlerImpl("localhost", "repo");
         final NeoProvider np = new NeoProvider() {
             @Override
             public NeoService getNeo() {

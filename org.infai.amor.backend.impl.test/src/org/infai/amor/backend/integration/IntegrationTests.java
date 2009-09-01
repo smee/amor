@@ -71,7 +71,7 @@ public class IntegrationTests {
 
     @Before
     public void setup() throws IOException {
-        final UriHandler uh = new UriHandlerImpl();
+        final UriHandler uh = new UriHandlerImpl("localhost", "repo");
         final TransactionManager tm = new TransactionManagerImpl(uh, neoprovider);
         final NeoBranchFactory bf = new NeoBranchFactory(neoprovider);
         // create storage directory

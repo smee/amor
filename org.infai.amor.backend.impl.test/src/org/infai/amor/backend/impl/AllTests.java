@@ -9,10 +9,12 @@
  *******************************************************************************/
 package org.infai.amor.backend.impl;
 
+import org.infai.amor.backend.integration.IntegrationTests;
 import org.infai.amor.backend.internal.impl.NeoBranchFactoryImplTest;
 import org.infai.amor.backend.internal.impl.NeoTransactionTest;
 import org.infai.amor.backend.internal.impl.UriTest;
 import org.infai.amor.backend.internal.storage.BlobStorageTest;
+import org.infai.amor.backend.internal.storage.neo.NeoBlobStorageTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -22,7 +24,16 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses( { RepositoryTests.class, NeoBranchFactoryImplTest.class, NeoTransactionTest.class, BlobStorageTest.class, UriTest.class, org.infai.amor.backend.integration.IntegrationTests.class })
+@SuiteClasses( { RepositoryTests.class, 
+                 NeoBranchFactoryImplTest.class, 
+                 NeoTransactionTest.class, 
+                 BlobStorageTest.class, 
+                 UriTest.class, 
+                 IntegrationTests.class, 
+                 QueryTests.class,
+                 BlobStorageTest.class,
+                 //NeoBlobStorageTest.class
+                 })
 public class AllTests {
 
 }

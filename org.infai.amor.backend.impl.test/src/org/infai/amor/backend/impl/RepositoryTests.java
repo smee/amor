@@ -144,5 +144,4 @@ public class RepositoryTests {
 
         repo.checkin(model, tr);
     }
-
 }
