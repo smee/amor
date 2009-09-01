@@ -18,6 +18,9 @@ import org.neo4j.api.core.Node;
 import org.neo4j.api.core.Relationship;
 import org.neo4j.api.core.Transaction;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+
 /**
  * BranchFactory based on a neo4j graph database. Assumes that there is no running transaction yet, creates a new one for every
  * call of {@link BranchFactory} methods.
@@ -106,14 +109,8 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
         final Transaction tx = getNeo().beginTx();
         try {
             NeoBranch result = null;
-            final Iterable<Relationship> rs = getFactoryNode().getRelationships(NeoRelationshipType.getRelationshipType("branch"), Direction.OUTGOING);
-            // iterate over all branches
-            for (final NeoBranch branch : new WrapperIterable<NeoBranch, Relationship>(rs) {
-                @Override
-                public NeoBranch narrow(final Relationship r) {
-                    return new NeoBranch(r.getEndNode());
-                }
-            }) {
+            final Iterable<NeoBranch> branches = getNeoBranches();
+            for (final NeoBranch branch : branches) {
                 if (branch.getName().equals(name)) {
                     result = branch;
                     break;
@@ -135,15 +132,7 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
     public Iterable<NeoBranch> getBranches() {
         final Transaction tx = getNeo().beginTx();
         try {
-            Iterable<NeoBranch> result = null;
-            final Iterable<Relationship> rs = getFactoryNode().getRelationships(NeoRelationshipType.getRelationshipType("branch"));
-
-            result = new WrapperIterable<NeoBranch, Relationship>(rs) {
-                @Override
-                public NeoBranch narrow(final Relationship r) {
-                    return new NeoBranch(r.getEndNode());
-                }
-            };
+            final Iterable<NeoBranch> result = getNeoBranches();
             tx.success();
             return result;
         } finally {
@@ -156,5 +145,21 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
      */
     private Node getFactoryNode() {
         return getFactoryNode(NeoRelationshipType.getRelationshipType("branches"));
+    }
+
+    /**
+     * @return
+     */
+    private Iterable<NeoBranch> getNeoBranches() {
+        final Iterable<Relationship> rs = getFactoryNode().getRelationships(NeoRelationshipType.getRelationshipType("branch"));
+        // iterate over all branches
+
+        final Iterable<NeoBranch> branches = Iterables.transform(rs, new Function<Relationship, NeoBranch>() {
+            @Override
+            public NeoBranch apply(final Relationship r) {
+                return new NeoBranch(r.getEndNode());
+            }
+        });
+        return branches;
     }
 }
