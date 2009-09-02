@@ -36,6 +36,10 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.XMIResource;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.neo4j.api.core.Direction;
 import org.neo4j.api.core.Node;
@@ -135,6 +139,15 @@ public class NeoRestorer extends AbstractNeoPersistence {
         if (null == modelNode) {
             return findTopLevelPackage(nsUri);
         } else {
+            final ResourceSet rs = new ResourceSetImpl();
+            rs.getResourceFactoryRegistry().getContentTypeToFactoryMap().put("*", new XMIResourceFactoryImpl());
+
+            // restore all models, that the referenced model depends on
+            for (final Node referenced : modelNode.traverse(Order.BREADTH_FIRST, StopEvaluator.END_OF_GRAPH, ReturnableEvaluator.ALL_BUT_START_NODE, EcoreRelationshipType.DEPENDS, Direction.OUTGOING, EcoreRelationshipType.INSTANCE_MODEL, Direction.INCOMING)) {
+                final String uri = (String) referenced.getProperty(NS_URI);
+                final XMIResource resource = (XMIResource) rs.createResource(org.eclipse.emf.common.util.URI.createURI(uri));
+                resource.getContents().add(load(uri));
+            }
             return restore(modelNode);
         }
 
@@ -431,13 +444,13 @@ public class NeoRestorer extends AbstractNeoPersistence {
         return genericType;
     }
 
-    private EObject restoreEObject(final Node node) {
-        if (null != cache.get(node)) {
-            return cache.get(node);
+    private EObject restoreEObject(final Node objectNode) {
+        if (null != cache.get(objectNode)) {
+            return cache.get(objectNode);
         }
 
         // get the meta EClass node
-        final Node classNode = node.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
+        final Node classNode = objectNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
         final String className = (String) classNode.getProperty(NAME);
 
         // get the meta (sub-)package node
@@ -449,16 +462,15 @@ public class NeoRestorer extends AbstractNeoPersistence {
         final EFactory factory = modelPackage.getEFactoryInstance();
         final EObject object = factory.create(eClass);
 
-        cache.put(node, object);
+        cache.put(objectNode, object);
 
         // set structural features
-        for (final Node featureNode : getOrderedNodes(node, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
+        for (final Node featureNode : getOrderedNodes(objectNode, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
             // find out if the saved feature is a reference or a containment reference
             // or an attribute
             final boolean hasRef = featureNode.hasRelationship(EcoreRelationshipType.REFERENCES, Direction.OUTGOING);
             final boolean hasRefCont = featureNode.hasRelationship(EcoreRelationshipType.REFERENCES_AS_CONTAINMENT, Direction.OUTGOING);
-            final EcoreRelationshipType relType = hasRef ? EcoreRelationshipType.REFERENCES : hasRefCont ? EcoreRelationshipType.REFERENCES_AS_CONTAINMENT : null;
-            if (null == relType) {
+            if (!hasRef && !hasRefCont) {
                 // set attribute and its values
                 final Node metaNode = featureNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
                 final EAttribute attribute = restoreEAttribute(metaNode);
@@ -470,6 +482,12 @@ public class NeoRestorer extends AbstractNeoPersistence {
                     object.eSet(attribute, featureNode.getProperty(VALUE));
                 }
             } else {
+                EcoreRelationshipType relType = null;
+                if (hasRef) {
+                    relType = EcoreRelationshipType.REFERENCES;
+                } else if (hasRefCont) {
+                    relType = EcoreRelationshipType.REFERENCES_AS_CONTAINMENT;
+                }
                 // set reference
                 final Node metaNode = featureNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
                 final EReference reference = restoreEReference(metaNode);
