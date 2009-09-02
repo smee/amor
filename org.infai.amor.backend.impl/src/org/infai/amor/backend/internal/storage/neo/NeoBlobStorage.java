@@ -10,12 +10,12 @@
 package org.infai.amor.backend.internal.storage.neo;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.ChangedModel;
@@ -27,8 +27,9 @@ import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.ModelImpl;
 import org.infai.amor.backend.internal.impl.NeoRevision;
 import org.infai.amor.backend.storage.Storage;
-import org.neo4j.api.core.DynamicRelationshipType;
 import org.neo4j.api.core.Node;
+
+import com.google.common.collect.Maps;
 
 /**
  * @author sdienst
@@ -37,8 +38,8 @@ import org.neo4j.api.core.Node;
 public class NeoBlobStorage implements Storage {
     private final static Logger logger = Logger.getLogger(NeoBlobStorage.class.getName());
     private final NeoProvider np;
+    private Map<URI, Node> addedModelNodes;
     private final Branch branch;
-    private Set<Node> addedModelNodes;
 
     public NeoBlobStorage(final NeoProvider np, final Branch branch) {
         this.np = np;
@@ -48,23 +49,22 @@ public class NeoBlobStorage implements Storage {
     /*
      * (non-Javadoc)
      * 
-     * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.ChangedModel,
-     * org.infai.amor.backend.CommitTransaction)
+     * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.ChangedModel, org.eclipse.emf.common.util.URI,
+     * long)
      */
     @Override
-    public void checkin(final ChangedModel model, final CommitTransaction tr) throws IOException {
+    public void checkin(final ChangedModel model, final URI externalUri, final long revisionId) throws IOException {
         throw new UnsupportedOperationException("not implemented");
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.Model, org.infai.amor.backend.CommitTransaction)
+     * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.Model, org.eclipse.emf.common.util.URI, long)
      */
     @Override
-    public void checkin(final Model model, final CommitTransaction tr) throws IOException {
+    public void checkin(final Model model, final URI externalUri, final long revisionId) throws IOException {
         // store all eobjects/epackages
-        // TODO remember the stored models for associating them with the revision on commit
         logger.finer("----------1-Storing contents----------");
         final NeoMappingDispatcher disp1 = new NeoMappingDispatcher(np);
         disp1.dispatch(model.getContent());
@@ -84,7 +84,7 @@ public class NeoBlobStorage implements Storage {
             disp2.dispatch(eo);
         }
         // remember new model node
-        this.addedModelNodes.add((Node) disp2.getRegistry().get(model.getContent()));
+        this.addedModelNodes.put(externalUri, (Node) disp2.getRegistry().get(model.getContent()));
     }
 
     /*
@@ -107,9 +107,13 @@ public class NeoBlobStorage implements Storage {
     public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {
         if (rev instanceof NeoRevision) {
             final NeoRevision revision = (NeoRevision) rev;
-            for (final Node modelNode : addedModelNodes) {
-                revision.getNode().createRelationshipTo(modelNode, DynamicRelationshipType.withName("added"));
+            for (final URI uri : addedModelNodes.keySet()) {
+                final Node modelNode = addedModelNodes.get(uri);
+                revision.addModel(uri, modelNode);
+
             }
+        } else {
+            throw new TransactionException("Internal error: Do not know how to commit to revision of type " + rev.getClass());
         }
     }
 
@@ -131,7 +135,7 @@ public class NeoBlobStorage implements Storage {
      */
     @Override
     public void startTransaction(final CommitTransaction tr) {
-        this.addedModelNodes = new HashSet<Node>();
+        this.addedModelNodes = Maps.newHashMap();
     }
 
     /*

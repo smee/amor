@@ -66,9 +66,11 @@ public class RepositoryImpl implements Repository {
     @Override
     public Response checkin(final ChangedModel model, final CommitTransaction tr) {
         try {
-            storageFactory.getStorage(tr.getBranch()).checkin(model, tr);
-            // TODO associate revision with this model
-            return new CheckinResponse("Success.", uriHandler.createModelUri(tr, model.getPath()));
+            // remember the repository uri for this model
+            final URI modeluri = uriHandler.createModelUri(tr, model.getPath());
+            storageFactory.getStorage(tr.getBranch()).checkin(model, modeluri, tr.getRevisionId());
+
+            return new CheckinResponse("Success.", modeluri);
         } catch (final IOException e) {
             e.printStackTrace();
             return new CheckinErrorResponse("Could not persist this model, reason: " + e.getMessage(), null);
@@ -84,9 +86,11 @@ public class RepositoryImpl implements Repository {
     @Override
     public Response checkin(final Model model, final CommitTransaction tr) {
         try {
-            storageFactory.getStorage(tr.getBranch()).checkin(model, tr);
-            // TODO associate revision with this model
-            return new CheckinResponse("Success.", uriHandler.createModelUri(tr, model.getPersistencePath()));
+            // remember the repository uri for this model
+            final URI modeluri = uriHandler.createModelUri(tr, model.getPersistencePath());
+            storageFactory.getStorage(tr.getBranch()).checkin(model, modeluri, tr.getRevisionId());
+
+            return new CheckinResponse("Success.", modeluri);
         } catch (final IOException e) {
             e.printStackTrace();
             return new CheckinErrorResponse("Could not persist this model, reason: " + e.getMessage(), null);

@@ -12,6 +12,7 @@ package org.infai.amor.backend.internal.storage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
@@ -25,7 +26,10 @@ import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.impl.ModelImpl;
+import org.infai.amor.backend.internal.impl.NeoRevision;
 import org.infai.amor.backend.storage.Storage;
+
+import com.google.common.collect.Lists;
 
 /**
  * Store models as xml documents without messing with their internal structures.
@@ -37,6 +41,7 @@ public class BlobStorage implements Storage {
 
     private final File storageDir;
     private ResourceSetImpl resourceSet;
+    private Collection<URI> addedModelUris;
 
     public BlobStorage(final File storageDir, final String branchname) {
         this.storageDir = new File(storageDir, branchname);
@@ -45,30 +50,31 @@ public class BlobStorage implements Storage {
     /*
      * (non-Javadoc)
      * 
-     * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.ChangedModel,
-     * org.infai.amor.backend.CommitTransaction)
+     * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.ChangedModel, org.eclipse.emf.common.util.URI,
+     * long)
      */
     @Override
-    public void checkin(final ChangedModel model, final CommitTransaction tr) throws IOException {
+    public void checkin(final ChangedModel model, final URI externalUri, final long revisionId) throws IOException {
         // we ignore dependant models altogether
         setMapping("amormodel");
-        final Resource resource = resourceSet.createResource(createStorageUriFor(model.getPath(), tr.getRevisionId(), true));
+        final Resource resource = resourceSet.createResource(createStorageUriFor(model.getPath(), revisionId, true));
         resource.getContents().add(model.getContent());
         resource.save(null);
+        addedModelUris.add(externalUri);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.Model, org.infai.amor.backend.CommitTransaction)
+     * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.Model, org.eclipse.emf.common.util.URI, long)
      */
     @Override
-    public void checkin(final Model model, final CommitTransaction tr) throws IOException {
+    public void checkin(final Model model, final URI externalUri, final long revisionId) throws IOException {
         setMapping("amormodel");
-        final Resource resource = resourceSet.createResource(createStorageUriFor(model.getPersistencePath(), tr.getRevisionId(), true));
+        final Resource resource = resourceSet.createResource(createStorageUriFor(model.getPersistencePath(), revisionId, true));
         resource.getContents().add(model.getContent());
         resource.save(null);
-        // we ignore dependant models altogether
+        addedModelUris.add(externalUri);
     }
 
     /*
@@ -92,6 +98,15 @@ public class BlobStorage implements Storage {
     public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {
         // nothing to do
         resourceSet = null;
+        if (rev instanceof NeoRevision) {
+            final NeoRevision revision = (NeoRevision) rev;
+            for (final URI uri : addedModelUris) {
+                revision.addModel(uri, null);
+
+            }
+        } else {
+            throw new TransactionException("Internal error: Do not know how to commit to revision of type " + rev.getClass());
+        }
     }
 
     /**
@@ -181,6 +196,7 @@ public class BlobStorage implements Storage {
     @Override
     public void startTransaction(final CommitTransaction tr) {
         resourceSet = new ResourceSetImpl();
+        addedModelUris = Lists.newArrayList();
     }
 
     /*
