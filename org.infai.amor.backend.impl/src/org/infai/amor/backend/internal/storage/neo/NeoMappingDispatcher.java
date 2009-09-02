@@ -187,7 +187,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
      */
     @Override
     public void store(final EObject element) {
-        final Node node = createNode();
+        final Node objectNode = createNode();
 
         // relationships
         final EObject container = element.eContainer();
@@ -203,7 +203,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
             getFactoryNode(EcoreRelationshipType.RESOURCES).createRelationshipTo(modelNode, EcoreRelationshipType.RESOURCE);
 
             // bind node to dummy container node
-            modelNode.createRelationshipTo(node, EcoreRelationshipType.CONTAINS);
+            modelNode.createRelationshipTo(objectNode, EcoreRelationshipType.CONTAINS);
             // bind dummy container node to its meta model
             EPackage topLevelPackage = element.eClass().getEPackage();
             while (null != topLevelPackage.getESuperPackage()) {
@@ -213,7 +213,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
             metaPackageNode.createRelationshipTo(modelNode, EcoreRelationshipType.INSTANCE_MODEL);
         }
 
-        nodeCache.put(element, node);
+        nodeCache.put(element, objectNode);
     }
 
     /*

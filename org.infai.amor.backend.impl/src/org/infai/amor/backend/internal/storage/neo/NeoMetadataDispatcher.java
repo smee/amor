@@ -202,19 +202,22 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
             if (null == eTypeNode) {
                 throw new IllegalStateException("The type element " + eType + " could not be found!");
             }
-
+            // find toplevel container
             Node container = getNodeFor(element);
             while (container.hasRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING)) {
                 container = container.getSingleRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING).getStartNode();
             }
 
+            // find toplevel typecontainer
             Node typeContainer = eTypeNode;
             while (typeContainer.hasRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING)) {
                 typeContainer = typeContainer.getSingleRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING).getStartNode();
             }
 
             if (!container.equals(typeContainer)) {
-                container.createRelationshipTo(typeContainer, EcoreRelationshipType.DEPENDS);
+                if (!container.hasRelationship(EcoreRelationshipType.DEPENDS, Direction.OUTGOING)) {
+                    container.createRelationshipTo(typeContainer, EcoreRelationshipType.DEPENDS);
+                }
             }
 
             getNodeFor(element).createRelationshipTo(eTypeNode, EcoreRelationshipType.TYPE);
@@ -312,11 +315,11 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
      */
     @Override
     public void store(final EObject element) {
-        final Node node = getNodeFor(element);
+        final Node eObjectNode = getNodeFor(element);
 
         // link to class
         final Node classNode = findClassifierNode(element.eClass());
-        classNode.createRelationshipTo(node, EcoreRelationshipType.INSTANCE);
+        classNode.createRelationshipTo(eObjectNode, EcoreRelationshipType.INSTANCE);
 
         // store attributes, TODO create new node per attribute or store as properties?
         for (final EAttribute attribute : element.eClass().getEAllAttributes()) {
@@ -326,21 +329,20 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
             }
             final Object featureValue = element.eGet(attribute);
             if (featureValue != null) {
-                if (featureValue instanceof EList<?>) {
+                final Node attributeMetaNode = findFeatureNode(attribute);
+                if (attribute.isMany()) {
                     for (final Object singleFeatureValue : (EList<?>) featureValue) {
-                        final Node featureNode = createNodeWithRelationship(node, EcoreRelationshipType.CONTAINS, true);
-                        featureNode.setProperty(VALUE, singleFeatureValue);
+                        final Node attributeNode = createNodeWithRelationship(eObjectNode, EcoreRelationshipType.CONTAINS, true);
+                        attributeNode.setProperty(VALUE, singleFeatureValue);
 
-                        final Node metaNode = findFeatureNode(attribute);
-                        metaNode.createRelationshipTo(featureNode, EcoreRelationshipType.INSTANCE);
+                        attributeMetaNode.createRelationshipTo(attributeNode, EcoreRelationshipType.INSTANCE);
                     }
                 } else {
-                    final Node featureNode = createNodeWithRelationship(node, EcoreRelationshipType.CONTAINS, true);
+                    final Node featureNode = createNodeWithRelationship(eObjectNode, EcoreRelationshipType.CONTAINS, true);
                     featureNode.setProperty(VALUE, featureValue);
 
                     // set meta relationship
-                    final Node metaNode = findFeatureNode(attribute);
-                    metaNode.createRelationshipTo(featureNode, EcoreRelationshipType.INSTANCE);
+                    attributeMetaNode.createRelationshipTo(featureNode, EcoreRelationshipType.INSTANCE);
                 }
             }
         }
@@ -352,22 +354,21 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
             }
             final Object featureValue = element.eGet(feature);
             if (featureValue != null) {
-                if (featureValue instanceof EObject) {
-                    final Node featureNode = createNodeWithRelationship(node, EcoreRelationshipType.CONTAINS, true);
-                    featureNode.createRelationshipTo(getNodeFor((EObject) featureValue), feature.isContainment() ? EcoreRelationshipType.REFERENCES_AS_CONTAINMENT : EcoreRelationshipType.REFERENCES);
-
-                    // set meta relationship
-                    final Node metaNode = findFeatureNode(feature);
-                    metaNode.createRelationshipTo(featureNode, EcoreRelationshipType.INSTANCE);
-                } else if (featureValue instanceof EList<?>) {
+                final Node metaNode = findFeatureNode(feature);
+                if (feature.isMany()) {
                     for (final Object singleFeatureValue : (EList<?>) featureValue) {
-                        final Node featureNode = createNodeWithRelationship(node, EcoreRelationshipType.CONTAINS, true);
+                        final Node featureNode = createNodeWithRelationship(eObjectNode, EcoreRelationshipType.CONTAINS, true);
                         featureNode.createRelationshipTo(getNodeFor((EObject) singleFeatureValue), feature.isContainment() ? EcoreRelationshipType.REFERENCES_AS_CONTAINMENT : EcoreRelationshipType.REFERENCES);
 
                         // set meta relationship
-                        final Node metaNode = findFeatureNode(feature);
                         metaNode.createRelationshipTo(featureNode, EcoreRelationshipType.INSTANCE);
                     }
+                } else {
+                    final Node featureNode = createNodeWithRelationship(eObjectNode, EcoreRelationshipType.CONTAINS, true);
+                    featureNode.createRelationshipTo(getNodeFor((EObject) featureValue), feature.isContainment() ? EcoreRelationshipType.REFERENCES_AS_CONTAINMENT : EcoreRelationshipType.REFERENCES);
+
+                    // set meta relationship
+                    metaNode.createRelationshipTo(featureNode, EcoreRelationshipType.INSTANCE);
                 }
             }
         }
