@@ -47,20 +47,20 @@ public class NeoTransactionTest extends AbstractNeo4JTest {
     @Test
     public void testTransactionsAreIsolated() throws InterruptedException {
         final Node node = neoservice.createNode();
-        neoservice.getReferenceNode().createRelationshipTo(node, NeoRelationshipType.getRelationshipType("test"));
+        neoservice.getReferenceNode().createRelationshipTo(node, DynamicRelationshipType.withName("test"));
 
         final Thread t = new Thread(new Runnable() {
             public void run() {
                 neoservice.beginTx();
                 // should not see this reference/node within another transaction
-                final Relationship rel = neoservice.getReferenceNode().getSingleRelationship(NeoRelationshipType.getRelationshipType("test"), Direction.OUTGOING);
+                final Relationship rel = neoservice.getReferenceNode().getSingleRelationship(DynamicRelationshipType.withName("test"), Direction.OUTGOING);
                 assertNull(rel);
             }
         });
         t.start();
         t.join();
         // but this thread should still see it
-        final Relationship rel = neoservice.getReferenceNode().getSingleRelationship(NeoRelationshipType.getRelationshipType("test"), Direction.OUTGOING);
+        final Relationship rel = neoservice.getReferenceNode().getSingleRelationship(DynamicRelationshipType.withName("test"), Direction.OUTGOING);
         assertNotNull(rel);
     }
 }

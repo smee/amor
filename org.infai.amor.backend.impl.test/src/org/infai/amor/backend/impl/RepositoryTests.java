@@ -113,10 +113,12 @@ public class RepositoryTests {
                 one(storageFactory).getStorage(branch);
                 will(returnValue(storage));
                 // needs to checkin into our given storage
-                one(storage).checkin(model, tr);
+                one(storage).checkin(model, null, 1);
                 allowing(model);
                 allowing(uriHandler);
                 allowing(branchFactory);
+                allowing(tr).getRevisionId();
+                will(returnValue(1L));
             }
         });
 
@@ -135,10 +137,12 @@ public class RepositoryTests {
                 will(returnValue(branch));
                 one(storageFactory).getStorage(branch);
                 will(returnValue(storage));
-                one(storage).checkin(model, tr);
+                one(storage).checkin(model, null, 1);
                 allowing(model);
                 allowing(uriHandler);
                 allowing(branchFactory);
+                allowing(tr).getRevisionId();
+                will(returnValue(1L));
             }
         });
 

@@ -32,7 +32,7 @@ import org.junit.runners.Suite.SuiteClasses;
                  IntegrationTests.class, 
                  QueryTests.class,
                  BlobStorageTest.class,
-                 //NeoBlobStorageTest.class
+                 NeoBlobStorageTest.class
                  })
 public class AllTests {
 

@@ -46,26 +46,6 @@ public class BlobStorageTest {
     private Mockery context;
     private File tempDir;
 
-    /**
-     * Create some models nested into revisions. Each revision has revisionId times a subdirectory containing one model.
-     * 
-     * @param revEnd
-     * @param revStart
-     * @throws IOException
-     * 
-     */
-    private void createNestedDirectories(final int revStart, final int revEnd) throws IOException {
-        for (int i = revStart; i <= revEnd; i++) {
-            final File revdir = new File(tempDir, BRANCHNAME + "/" + i);
-            revdir.mkdirs();
-            for (int j = 0; j < i; j++) {
-                final File dummyfile = new File(revdir, "subdir_" + j);
-                dummyfile.mkdir();
-                new File(dummyfile, "model.xmi").createNewFile();
-            }
-        }
-    }
-
     private CommitTransaction createTransaction(final String branchname, final long revisionId) {
         final Branch branch = context.mock(Branch.class);
         context.checking(new Expectations() {
@@ -95,7 +75,7 @@ public class BlobStorageTest {
 
         // when
         storage.startTransaction(tr);
-        storage.checkin(m, tr);
+        storage.checkin(m, null, tr.getRevisionId());
         final Model checkedout = storage.checkout(m.getPersistencePath(), tr.getRevisionId());
 
         // then
@@ -111,7 +91,7 @@ public class BlobStorageTest {
         final CommitTransaction tr = createTransaction(BRANCHNAME, 55);
         storage.startTransaction(tr);
         // store it into branch testBranch and revision 55
-        storage.checkin(m, tr);
+        storage.checkin(m, null, tr.getRevisionId());
 
         final File storedFile = new File(tempDir, "testBranch/55/testmodels/base.ecore");
         assertTrue(storedFile.exists());

@@ -31,6 +31,7 @@ import org.infai.amor.backend.internal.impl.ModelImpl;
 import org.infai.amor.backend.internal.impl.NeoBranchFactory;
 import org.infai.amor.backend.internal.impl.TransactionManagerImpl;
 import org.infai.amor.backend.internal.impl.UriHandlerImpl;
+import org.infai.amor.backend.internal.responses.CommitSuccessResponse;
 import org.infai.amor.backend.internal.storage.DumbStorageFactory;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -131,7 +132,11 @@ public class IntegrationTests {
         // when
         // model checked in successfully
         final Response checkin = repository.checkin(new ModelImpl(input, "testmodels/base.ecore"), ct);
-        repository.commitTransaction(ct);
+        final CommitSuccessResponse commitResponse = (CommitSuccessResponse) repository.commitTransaction(ct);
+        /*
+         * // then the revision should know about this model final Revision revision =
+         * repository.getRevision(commitResponse.getURI()); assertEquals(1, revision.getModelReferences().size());
+         */
         // and reloaded from repository successfully
         final Model output = repository.checkout(checkin.getURI());
         // then
