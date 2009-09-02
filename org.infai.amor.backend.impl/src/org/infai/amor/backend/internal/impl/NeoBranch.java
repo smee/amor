@@ -11,6 +11,7 @@ package org.infai.amor.backend.internal.impl;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.Revision;
@@ -124,7 +125,8 @@ public class NeoBranch extends NeoObject implements Branch {
     @Override
     public Iterable<Revision> getRevisions() {
         return new Iterable<Revision>() {
-            Revision currentRev = getHeadRevision();
+            Revision nextRevision = getHeadRevision();
+            final Revision originRev = getOriginRevision();
 
             @Override
             public Iterator<Revision> iterator() {
@@ -132,16 +134,21 @@ public class NeoBranch extends NeoObject implements Branch {
 
                     @Override
                     public boolean hasNext() {
-                        return currentRev != null && currentRev.getPreviousRevision() != null;
+                        return nextRevision != null;
                     }
 
                     @Override
                     public Revision next() {
-                        final Revision result = currentRev;
-                        if (currentRev != null) {
-                            currentRev = currentRev.getPreviousRevision();
+                        if (nextRevision == null) {
+                            throw new NoSuchElementException();
                         }
-                        return result;
+                        final Revision currentRevision = nextRevision;
+                        nextRevision = nextRevision.getPreviousRevision();
+                        // stop if we would reach the origin revision of this branch
+                        if (nextRevision != null && originRev != null && originRev.getRevisionId() == currentRevision.getRevisionId()) {
+                            nextRevision = null;
+                        }
+                        return currentRevision;
                     }
 
                     @Override
