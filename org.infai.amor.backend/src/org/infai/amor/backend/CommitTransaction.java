@@ -19,6 +19,9 @@ public interface CommitTransaction {
      */
     Branch getBranch();
 
+    /**
+     * @return
+     */
     String getCommitMessage();
 
     /**
@@ -26,9 +29,18 @@ public interface CommitTransaction {
      */
     long getRevisionId();
 
+    /**
+     * @return
+     */
     String getUser();
 
+    /**
+     * @param message
+     */
     void setCommitMessage(String message);
 
+    /**
+     * @param username
+     */
     void setUser(String username);
 }

@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.infai.amor.backend.ChangedModel;
-import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Repository;
 import org.infai.amor.backend.exception.TransactionListener;
@@ -33,12 +32,10 @@ public interface Storage extends TransactionListener {
      * 
      * @param model
      *            a changed model
-     * @param branch
-     *            the branch to use
-     * @param tr
-     *            the current transaction
+     * @param externalUri
+     *            the uri for accessing this exact model version
      */
-    void checkin(ChangedModel model, CommitTransaction tr) throws IOException;
+    void checkin(ChangedModel model, URI externalUri, long revisionId) throws IOException;
 
     /**
      * Add a {@link Model} that is new to the backend
@@ -47,12 +44,10 @@ public interface Storage extends TransactionListener {
      *            a model
      * @param branch
      *            the branch to use
-     * @param tr
-     *            the current transaction
      * @return information about success or error conditions
      * @throws IOException
      */
-    void checkin(Model model, CommitTransaction tr) throws IOException;
+    void checkin(Model model, URI externalUri, long revisionId) throws IOException;
 
     /**
      * Restore a {@link Model} with the exact same contents given by the model referenced via the path. The path parameter
