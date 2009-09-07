@@ -327,19 +327,19 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
             if (attribute.isTransient() || attribute.isDerived()) {
                 continue;
             }
-            final Object featureValue = element.eGet(attribute);
-            if (featureValue != null) {
+            final Object attributeValue = element.eGet(attribute);
+            if (attributeValue != null) {
                 final Node attributeMetaNode = findFeatureNode(attribute);
                 if (attribute.isMany()) {
-                    for (final Object singleFeatureValue : (EList<?>) featureValue) {
+                    for (final Object singleValue : (EList<?>) attributeValue) {
                         final Node attributeNode = createNodeWithRelationship(eObjectNode, EcoreRelationshipType.CONTAINS, true);
-                        attributeNode.setProperty(VALUE, singleFeatureValue);
+                        attributeNode.setProperty(VALUE, singleValue);
 
                         attributeMetaNode.createRelationshipTo(attributeNode, EcoreRelationshipType.INSTANCE);
                     }
                 } else {
                     final Node featureNode = createNodeWithRelationship(eObjectNode, EcoreRelationshipType.CONTAINS, true);
-                    featureNode.setProperty(VALUE, featureValue);
+                    featureNode.setProperty(VALUE, attributeValue);
 
                     // set meta relationship
                     attributeMetaNode.createRelationshipTo(featureNode, EcoreRelationshipType.INSTANCE);
@@ -348,27 +348,27 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
         }
 
         // set references
-        for (final EReference feature : element.eClass().getEAllReferences()) {
-            if (feature.isTransient() || feature.isDerived()) {
+        for (final EReference eReference : element.eClass().getEAllReferences()) {
+            if (eReference.isTransient() || eReference.isDerived()) {
                 continue;
             }
-            final Object featureValue = element.eGet(feature);
-            if (featureValue != null) {
-                final Node metaNode = findFeatureNode(feature);
-                if (feature.isMany()) {
-                    for (final Object singleFeatureValue : (EList<?>) featureValue) {
-                        final Node featureNode = createNodeWithRelationship(eObjectNode, EcoreRelationshipType.CONTAINS, true);
-                        featureNode.createRelationshipTo(getNodeFor((EObject) singleFeatureValue), feature.isContainment() ? EcoreRelationshipType.REFERENCES_AS_CONTAINMENT : EcoreRelationshipType.REFERENCES);
+            final Object referenceValue = element.eGet(eReference);
+            if (referenceValue != null) {
+                final Node eReferenceMetaNode = findFeatureNode(eReference);
+                if (eReference.isMany()) {
+                    for (final Object singleReference : (EList<?>) referenceValue) {
+                        final Node referenceNode = createNodeWithRelationship(eObjectNode, EcoreRelationshipType.CONTAINS, true);
+                        referenceNode.createRelationshipTo(getNodeFor((EObject) singleReference), eReference.isContainment() ? EcoreRelationshipType.REFERENCES_AS_CONTAINMENT : EcoreRelationshipType.REFERENCES);
 
                         // set meta relationship
-                        metaNode.createRelationshipTo(featureNode, EcoreRelationshipType.INSTANCE);
+                        eReferenceMetaNode.createRelationshipTo(referenceNode, EcoreRelationshipType.INSTANCE);
                     }
                 } else {
-                    final Node featureNode = createNodeWithRelationship(eObjectNode, EcoreRelationshipType.CONTAINS, true);
-                    featureNode.createRelationshipTo(getNodeFor((EObject) featureValue), feature.isContainment() ? EcoreRelationshipType.REFERENCES_AS_CONTAINMENT : EcoreRelationshipType.REFERENCES);
+                    final Node referenceNode = createNodeWithRelationship(eObjectNode, EcoreRelationshipType.CONTAINS, true);
+                    referenceNode.createRelationshipTo(getNodeFor((EObject) referenceValue), eReference.isContainment() ? EcoreRelationshipType.REFERENCES_AS_CONTAINMENT : EcoreRelationshipType.REFERENCES);
 
                     // set meta relationship
-                    metaNode.createRelationshipTo(featureNode, EcoreRelationshipType.INSTANCE);
+                    eReferenceMetaNode.createRelationshipTo(referenceNode, EcoreRelationshipType.INSTANCE);
                 }
             }
         }
