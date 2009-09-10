@@ -20,20 +20,10 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * @author sdienst
- * 
+ * @author sdienst Run with the following parameters: -ea -Xmx1000M -Djava.util.logging.config.file=logging.properties
  */
 @RunWith(Suite.class)
-@SuiteClasses( { RepositoryTests.class, 
-                 NeoBranchFactoryImplTest.class, 
-                 NeoTransactionTest.class, 
-                 BlobStorageTest.class, 
-                 UriTest.class, 
-                 IntegrationTests.class, 
-                 QueryTests.class,
-                 BlobStorageTest.class,
-                 NeoBlobStorageTest.class
-                 })
+@SuiteClasses( { RepositoryTests.class, NeoBranchFactoryImplTest.class, NeoTransactionTest.class, BlobStorageTest.class, UriTest.class, IntegrationTests.class, QueryTests.class, BlobStorageTest.class, NeoBlobStorageTest.class })
 public class AllTests {
 
 }

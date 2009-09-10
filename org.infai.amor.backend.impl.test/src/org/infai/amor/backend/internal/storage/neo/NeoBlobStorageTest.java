@@ -69,7 +69,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
     public static Collection<String[]> getTestParameters() {
         final Collection<String[]> params = Lists.newArrayList();
         params.add(new String[] { "testmodels/filesystem.ecore", "testmodels/simplefilesystem.xmi" });
-        // params.add(new String[] { "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
+        params.add(new String[] { "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
         return params;
     }
 
@@ -81,15 +81,15 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         this.m2Location = m2;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.infai.amor.backend.internal.impl.AbstractNeo4JTest#isRollbackAfterTest()
-     */
-    @Override
-    protected boolean isRollbackAfterTest() {
-        return false;
-    }
+    // /*
+    // * (non-Javadoc)
+    // *
+    // * @see org.infai.amor.backend.internal.impl.AbstractNeo4JTest#isRollbackAfterTest()
+    // */
+    // @Override
+    // protected boolean isRollbackAfterTest() {
+    // return false;
+    // }
 
     @After
     public void printStatistics() {

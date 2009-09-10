@@ -150,7 +150,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
     public EObject load(final String nsUri) {
         logger.fine("loading model " + nsUri);
 
-        initMembers();
+        // initMembers();
 
         final Node modelNode = getModelNode(nsUri);
         if (null == modelNode) {
@@ -427,7 +427,12 @@ public class NeoRestorer extends AbstractNeoPersistence {
     }
 
     private EEnumLiteral restoreEEnumLiteral(final Node node) {
+        if (cache.containsKey(node)) {
+            return (EEnumLiteral) cache.get(node);
+        }
+
         final EEnumLiteral enumLiteral = EcoreFactory.eINSTANCE.createEEnumLiteral();
+        cache.put(node, enumLiteral);
 
         // properties
         enumLiteral.setName((String) node.getProperty(NAME));
@@ -572,7 +577,12 @@ public class NeoRestorer extends AbstractNeoPersistence {
     }
 
     private EPackage restoreEPackage(final Node node) {
+        if (cache.containsKey(node)) {
+            return (EPackage) cache.get(node);
+        }
+
         final EPackage aPackage = EcoreFactory.eINSTANCE.createEPackage();
+        cache.put(node, aPackage);
 
         // properties
         aPackage.setName((String) node.getProperty(NAME));
@@ -688,7 +698,11 @@ public class NeoRestorer extends AbstractNeoPersistence {
     }
 
     private ETypeParameter restoreETypeParameter(final Node node) {
+        if (cache.containsKey(node)) {
+            return (ETypeParameter) cache.get(node);
+        }
         final ETypeParameter typeParameter = EcoreFactory.eINSTANCE.createETypeParameter();
+        cache.put(node, typeParameter);
 
         // properties
         typeParameter.setName((String) node.getProperty(NAME));

@@ -111,6 +111,8 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      */
     @Override
     public Model checkout(final IPath path, final long revisionId) throws IOException {
+        logger.finer(String.format("checking out %s of revision %d", path.toString(), revisionId));
+
         final NeoRevision revision = branch.getRevision(revisionId);
         final ModelLocation modelLocation = revision.getModelLocation(createModelSpecificPath(path));
 
