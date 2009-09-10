@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.internal.NeoProvider;
 import org.neo4j.api.core.Direction;
 import org.neo4j.api.core.DynamicRelationshipType;
 import org.neo4j.api.core.Node;
@@ -32,24 +32,24 @@ public class NeoBranch extends NeoObject implements Branch {
     static final String STARTREVISION = "startRevision";
 
     /**
+     * Constructor for entirely new branches.
+     * 
+     * @param np
+     * @param name
+     */
+    public NeoBranch(final NeoProvider np, final String name) {
+        super(np);
+        getNode().setProperty(BRANCHNAME, name);
+        getNode().setProperty(CREATIONDATE, new Date().getTime());
+    }
+
+    /**
      * Constructor for branches loaded from neo.
      * 
      * @param node
      */
     public NeoBranch(final Node node) {
         super(node);
-    }
-
-    /**
-     * Constructor for entirely new branches.
-     * 
-     * @param node
-     * @param name
-     */
-    public NeoBranch(final Node node, final String name) {
-        super(node);
-        getNode().setProperty(BRANCHNAME, name);
-        getNode().setProperty(CREATIONDATE, new Date().getTime());
     }
 
     /*
@@ -68,7 +68,7 @@ public class NeoBranch extends NeoObject implements Branch {
      * @see org.infai.amor.backend.Branch#getHeadRevision()
      */
     @Override
-    public Revision getHeadRevision() {
+    public NeoRevision getHeadRevision() {
         final Relationship rel = getNode().getSingleRelationship(DynamicRelationshipType.withName(HEADREVISION), Direction.OUTGOING);
         if (rel == null) {
             return null;
@@ -93,7 +93,7 @@ public class NeoBranch extends NeoObject implements Branch {
      * @see org.infai.amor.backend.Branch#getOriginRevision()
      */
     @Override
-    public Revision getOriginRevision() {
+    public NeoRevision getOriginRevision() {
         final Relationship rel = getNode().getSingleRelationship(DynamicRelationshipType.withName(STARTREVISION), Direction.OUTGOING);
         if (rel == null) {
             return null;
@@ -108,8 +108,8 @@ public class NeoBranch extends NeoObject implements Branch {
      * @see org.infai.amor.backend.Branch#getRevision(long)
      */
     @Override
-    public Revision getRevision(final long revisionNumber) {
-        for (final Revision rev : getRevisions()) {
+    public NeoRevision getRevision(final long revisionNumber) {
+        for (final NeoRevision rev : getRevisions()) {
             if (rev.getRevisionId() == revisionNumber) {
                 return rev;
             }
@@ -123,14 +123,14 @@ public class NeoBranch extends NeoObject implements Branch {
      * @see org.infai.amor.backend.Branch#getRevisions()
      */
     @Override
-    public Iterable<Revision> getRevisions() {
-        return new Iterable<Revision>() {
-            Revision nextRevision = getHeadRevision();
-            final Revision originRev = getOriginRevision();
+    public Iterable<NeoRevision> getRevisions() {
+        return new Iterable<NeoRevision>() {
+            NeoRevision nextRevision = getHeadRevision();
+            final NeoRevision originRev = getOriginRevision();
 
             @Override
-            public Iterator<Revision> iterator() {
-                return new Iterator<Revision>() {
+            public Iterator<NeoRevision> iterator() {
+                return new Iterator<NeoRevision>() {
 
                     @Override
                     public boolean hasNext() {
@@ -138,11 +138,11 @@ public class NeoBranch extends NeoObject implements Branch {
                     }
 
                     @Override
-                    public Revision next() {
+                    public NeoRevision next() {
                         if (nextRevision == null) {
                             throw new NoSuchElementException();
                         }
-                        final Revision currentRevision = nextRevision;
+                        final NeoRevision currentRevision = nextRevision;
                         nextRevision = nextRevision.getPreviousRevision();
                         // stop if we would reach the origin revision of this branch
                         if (nextRevision != null && originRev != null && originRev.getRevisionId() == currentRevision.getRevisionId()) {

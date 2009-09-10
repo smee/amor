@@ -11,6 +11,7 @@ package org.infai.amor.backend.internal.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -37,7 +38,12 @@ public abstract class AbstractNeo4JTest {
         tempFile.delete();
         tempFile.mkdirs();
 
-        neoservice = new EmbeddedNeo(tempFile.getAbsolutePath());
+        neoservice = new EmbeddedNeo(tempFile.getAbsolutePath(), new HashMap<String, String>() {
+            {
+                // put("min_relationship_cache_size", "15000");
+                // put("min_node_cache_size", "10000");
+            }
+        });
     }
 
     @AfterClass
@@ -47,13 +53,25 @@ public abstract class AbstractNeo4JTest {
 
     @After
     final public void afterTest() {
-        tx.failure();
-        // tx.success();
+        if (isRollbackAfterTest()) {
+            tx.failure();
+        } else {
+            tx.success();
+        }
         tx.finish();
     }
 
     @Before
     final public void beforeTest() {
         tx = neoservice.beginTx();
+    }
+
+    /**
+     * Overwrite this method to specify, whether changes to the neo4j db should persist after a test or not. Default is true;
+     * 
+     * @return
+     */
+    protected boolean isRollbackAfterTest() {
+        return true;
     }
 }

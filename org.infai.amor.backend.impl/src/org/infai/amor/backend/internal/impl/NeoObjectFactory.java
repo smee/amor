@@ -36,6 +36,26 @@ public abstract class NeoObjectFactory {
     }
 
     /**
+     * Determines the node that represents the factory itself. This node holds references to all existing instances.
+     */
+    protected Node getFactoryNode(final RelationshipType type) {
+        if (factoryNode == null) {
+            final Relationship rel = getNeo().getReferenceNode().getSingleRelationship(type, Direction.OUTGOING);
+
+            if (rel == null) {
+                // does not exist yet, create one
+                factoryNode = getNeo().createNode();
+
+                getNeo().getReferenceNode().createRelationshipTo(factoryNode, type);
+            } else {
+                factoryNode = rel.getEndNode();
+            }
+        }
+
+        return factoryNode;
+    }
+
+    /**
      * @return
      */
     protected NeoService getNeo() {
@@ -43,21 +63,9 @@ public abstract class NeoObjectFactory {
     }
 
     /**
-     * Determines the node that represents the factory itself. This node holds references to all existing instances.
+     * @return
      */
-    protected Node getFactoryNode(final RelationshipType type) {
-        if (factoryNode == null) {
-            final Relationship rel = np.getNeo().getReferenceNode().getSingleRelationship(type, Direction.OUTGOING);
-
-            if (rel == null) {
-                // does not exist yet, create one
-                factoryNode = np.getNeo().createNode();
-
-                np.getNeo().getReferenceNode().createRelationshipTo(factoryNode, type);
-            } else
-                factoryNode = rel.getEndNode();
-        }
-
-        return factoryNode;
+    protected NeoProvider getNeoProvider() {
+        return np;
     }
 }

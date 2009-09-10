@@ -11,6 +11,7 @@ package org.infai.amor.backend.internal.storage.neo;
 
 import static org.infai.amor.ModelUtil.readInputModel;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
     public static Collection<String[]> getTestParameters() {
         final Collection<String[]> params = Lists.newArrayList();
         params.add(new String[] { "testmodels/filesystem.ecore", "testmodels/simplefilesystem.xmi" });
-        params.add(new String[] { "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
+        // params.add(new String[] { "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
         return params;
     }
 
@@ -78,6 +79,16 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
     public NeoBlobStorageTest(final String m2, final String m1) {
         this.m1Location = m1;
         this.m2Location = m2;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.infai.amor.backend.internal.impl.AbstractNeo4JTest#isRollbackAfterTest()
+     */
+    @Override
+    protected boolean isRollbackAfterTest() {
+        return false;
     }
 
     @After
@@ -141,10 +152,11 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
 
         split("Accessing model references of the last revision");
         // storeViaXml(input, input2, input3);
-
         final Model checkedoutmodel = repository.checkout(checkin3.getURI());
         split("Restoring M1");
+        assertNotNull(checkedoutmodel.getContent());
         storeViaXml(checkedoutmodel.getContent());
+        split("Writing XML");
     }
 
     /**
@@ -160,6 +172,5 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
             res.getContents().add(eo);
             res.save(null);
         }
-        split("Writing XML");
     }
 }

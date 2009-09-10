@@ -12,6 +12,7 @@ package org.infai.amor.backend.internal.storage.neo;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.AbstractStorageFactory;
+import org.infai.amor.backend.internal.impl.NeoBranch;
 import org.infai.amor.backend.storage.Storage;
 
 /**
@@ -36,7 +37,7 @@ public class NeoBlobStorageFactory extends AbstractStorageFactory {
      */
     @Override
     protected Storage createNewStorage(final Branch branch) {
-        return new NeoBlobStorage(neoprovider, branch);
+        return new NeoBlobStorage(neoprovider, (NeoBranch) branch);
     }
 
 }

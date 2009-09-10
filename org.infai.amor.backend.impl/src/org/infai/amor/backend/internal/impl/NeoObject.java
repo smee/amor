@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal.impl;
 
+import org.infai.amor.backend.internal.NeoProvider;
 import org.neo4j.api.core.Node;
 
 /**
@@ -18,12 +19,31 @@ import org.neo4j.api.core.Node;
 public class NeoObject {
 
     private final Node node;
+    private final NeoProvider np;
+
+    /**
+     * @param node
+     */
+    public NeoObject(final NeoProvider np) {
+        this.np = np;
+        this.node = np.getNeo().createNode();
+    }
 
     /**
      * @param node
      */
     public NeoObject(final Node node) {
         this.node = node;
+        this.np = null;
+    }
+
+    /**
+     * Create a new node.
+     * 
+     * @return
+     */
+    protected Node createNode() {
+        return np.getNeo().createNode();
     }
 
     /**

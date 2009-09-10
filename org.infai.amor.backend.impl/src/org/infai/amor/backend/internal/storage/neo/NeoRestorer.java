@@ -123,6 +123,25 @@ public class NeoRestorer extends AbstractNeoPersistence {
     }
 
     /**
+     * 
+     */
+    private void initMembers() {
+        this.cache = new HashMap<Node, EObject>();
+        this.classifierCache = new HashMap<String, Node>();
+        this.nodeCache = new HashMap<EObject, Object>();
+    }
+
+    /**
+     * @param startNode
+     *            toplevel node for a persisted model
+     * @return
+     */
+    public EObject load(final Node startNode) {
+        initMembers();
+        return loadModel(startNode);
+    }
+
+    /**
      * Load a model.
      * 
      * @param nsUri
@@ -131,26 +150,32 @@ public class NeoRestorer extends AbstractNeoPersistence {
     public EObject load(final String nsUri) {
         logger.fine("loading model " + nsUri);
 
-        this.cache = new HashMap<Node, EObject>();
-        this.classifierCache = new HashMap<String, Node>();
-        this.nodeCache = new HashMap<EObject, Object>();
+        initMembers();
 
         final Node modelNode = getModelNode(nsUri);
         if (null == modelNode) {
             return findTopLevelPackage(nsUri);
         } else {
-            final ResourceSet rs = new ResourceSetImpl();
-            rs.getResourceFactoryRegistry().getContentTypeToFactoryMap().put("*", new XMIResourceFactoryImpl());
-
-            // restore all models, that the referenced model depends on
-            for (final Node referenced : modelNode.traverse(Order.BREADTH_FIRST, StopEvaluator.END_OF_GRAPH, ReturnableEvaluator.ALL_BUT_START_NODE, EcoreRelationshipType.DEPENDS, Direction.OUTGOING, EcoreRelationshipType.INSTANCE_MODEL, Direction.INCOMING)) {
-                final String uri = (String) referenced.getProperty(NS_URI);
-                final XMIResource resource = (XMIResource) rs.createResource(org.eclipse.emf.common.util.URI.createURI(uri));
-                resource.getContents().add(load(uri));
-            }
-            return restore(modelNode);
+            return loadModel(modelNode);
         }
 
+    }
+
+    /**
+     * @param modelNode
+     * @return
+     */
+    private EObject loadModel(final Node modelNode) {
+        final ResourceSet rs = new ResourceSetImpl();
+        rs.getResourceFactoryRegistry().getContentTypeToFactoryMap().put("*", new XMIResourceFactoryImpl());
+
+        // restore all models, that the referenced model depends on
+        for (final Node referenced : modelNode.traverse(Order.BREADTH_FIRST, StopEvaluator.END_OF_GRAPH, ReturnableEvaluator.ALL_BUT_START_NODE, EcoreRelationshipType.DEPENDS, Direction.OUTGOING, EcoreRelationshipType.INSTANCE_MODEL, Direction.INCOMING)) {
+            final String uri = (String) referenced.getProperty(NS_URI);
+            final XMIResource resource = (XMIResource) rs.createResource(org.eclipse.emf.common.util.URI.createURI(uri));
+            resource.getContents().add(load(uri));
+        }
+        return restore(modelNode);
     }
 
     /**

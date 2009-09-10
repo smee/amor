@@ -43,6 +43,27 @@ public class BlobStorage implements Storage {
     private ResourceSetImpl resourceSet;
     private Collection<URI> addedModelUris;
 
+    /**
+     * @param modelPath
+     * @param includeFilename
+     * @return
+     */
+    private static String createModelSpecificPath(final IPath modelPath) {
+        if (modelPath != null && !modelPath.isAbsolute()) {
+            final int numSegments = modelPath.segmentCount();
+
+            final StringBuilder sb = new StringBuilder();
+            // ignore filename
+            for (int i = 0; i < numSegments - 1; i++) {
+                sb.append(File.separatorChar).append(modelPath.segment(i));
+            }
+
+            return sb.toString();
+        } else {
+            throw new IllegalArgumentException("The given path must be relative for storing a model, was absolute: " + modelPath);
+        }
+    }
+
     public BlobStorage(final File storageDir, final String branchname) {
         this.storageDir = new File(storageDir, branchname);
     }
@@ -106,27 +127,6 @@ public class BlobStorage implements Storage {
             }
         } else {
             throw new TransactionException("Internal error: Do not know how to commit to revision of type " + rev.getClass());
-        }
-    }
-
-    /**
-     * @param modelPath
-     * @param includeFilename
-     * @return
-     */
-    private String createModelSpecificPath(final IPath modelPath) {
-        if (modelPath != null && !modelPath.isAbsolute()) {
-            final int numSegments = modelPath.segmentCount();
-
-            final StringBuilder sb = new StringBuilder();
-            // ignore filename
-            for (int i = 0; i < numSegments - 1; i++) {
-                sb.append(File.separatorChar).append(modelPath.segment(i));
-            }
-
-            return sb.toString();
-        } else {
-            throw new IllegalArgumentException("The given path must be relative for storing a model, was absolute: " + modelPath);
         }
     }
 

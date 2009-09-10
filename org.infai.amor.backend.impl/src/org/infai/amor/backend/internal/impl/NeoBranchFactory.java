@@ -58,13 +58,13 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
                     result = branch;
                 } else {
                     // no, create a new main branch
-                    final NeoBranch newBranch = new NeoBranch(getNeo().createNode(), name);
+                    final NeoBranch newBranch = new NeoBranch(getNeoProvider(), name);
                     factoryNode.createRelationshipTo(newBranch.getNode(), DynamicRelationshipType.withName("branch"));
                     result = newBranch;
                 }
             } else {
                 // create a new subbranch
-                final NeoBranch newBranch = new NeoBranch(getNeo().createNode(), name);
+                final NeoBranch newBranch = new NeoBranch(getNeoProvider(), name);
                 newBranch.setOriginRevision((NeoRevision) origin);
                 // set head revision to origin
                 newBranch.getNode().createRelationshipTo(((NeoRevision) origin).getNode(), DynamicRelationshipType.withName(NeoBranch.HEADREVISION));
@@ -89,7 +89,7 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
     public NeoRevision createRevision(final CommitTransaction transaction) {
         final NeoBranch neobranch = (NeoBranch) transaction.getBranch();
         final NeoRevision oldHeadRevision = (NeoRevision) transaction.getBranch().getHeadRevision();
-        final NeoRevision newRevision = new NeoRevision(getNeo().createNode(), transaction.getRevisionId(), transaction.getCommitMessage(), transaction.getUser(), oldHeadRevision);
+        final NeoRevision newRevision = new NeoRevision(getNeoProvider(), transaction.getRevisionId(), transaction.getCommitMessage(), transaction.getUser(), oldHeadRevision);
         // is there a head revision of this branch?
         final Relationship oldHeadRel = neobranch.getNode().getSingleRelationship(DynamicRelationshipType.withName(NeoBranch.HEADREVISION), Direction.OUTGOING);
         if (oldHeadRel != null) {
