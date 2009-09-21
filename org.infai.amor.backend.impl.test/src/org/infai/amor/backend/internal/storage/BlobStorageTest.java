@@ -20,14 +20,18 @@ import java.io.IOException;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.infai.amor.ModelUtil;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
+import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
 import org.infai.amor.backend.internal.impl.ModelImpl;
+import org.infai.amor.backend.internal.impl.NeoRevision;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -45,16 +49,45 @@ public class BlobStorageTest {
     private BlobStorage storage;
     private Mockery context;
     private File tempDir;
+    private NeoRevision rev;
+
+    /**
+     * @throws IOException
+     * @throws TransactionException
+     */
+    private void createSomeRevisions() throws IOException, TransactionException {
+        final Model m = new ModelImpl(ModelUtil.readInputModel("testmodels/base.ecore"), "testmodels/foo.ecore");
+        // given several older revisions
+        // rev 33
+        CommitTransaction tr = createTransaction(BRANCHNAME, 33);
+        storage.startTransaction(tr);
+        storage.checkin(m, null, tr.getRevisionId());
+        storage.commit(tr, rev);
+        // rev 55
+        tr = createTransaction(BRANCHNAME, 55);
+        storage.startTransaction(tr);
+        storage.checkin(new ModelImpl(m.getContent(), "testmodel/base.ecore"), null, tr.getRevisionId());
+        storage.commit(tr, rev);
+        // rev 88
+        tr = createTransaction(BRANCHNAME, 88);
+        storage.startTransaction(tr);
+        storage.checkin(new ModelImpl(m.getContent(), "testmodel/foo.ecore"), null, tr.getRevisionId());
+        storage.commit(tr, rev);
+        // rev 99
+        tr = createTransaction(BRANCHNAME, 99);
+        storage.startTransaction(tr);
+        storage.checkin(new ModelImpl(m.getContent(), "testmodel/foo.ecore"), null, tr.getRevisionId());
+    }
 
     private CommitTransaction createTransaction(final String branchname, final long revisionId) {
-        final Branch branch = context.mock(Branch.class);
+        final Branch branch = context.mock(Branch.class, "" + Math.random());
         context.checking(new Expectations() {
             {
                 allowing(branch).getName();
                 will(returnValue(BRANCHNAME));
             }
         });
-        return new CommitTransactionImpl(branch, 55, null);
+        return new CommitTransactionImpl(branch, revisionId, null);
     }
 
     @Before
@@ -64,7 +97,9 @@ public class BlobStorageTest {
         tempDir.mkdirs();
 
         storage = new BlobStorage(tempDir, BRANCHNAME);
-        context = new Mockery();
+        context = new Mockery() {{ setImposteriser(ClassImposteriser.INSTANCE); }};
+        rev = context.mock(NeoRevision.class);
+        context.checking(new Expectations() {{ allowing(rev); }});
     }
 
     @Test
@@ -81,6 +116,34 @@ public class BlobStorageTest {
         // then
         // TODO compare via emfcompare or xmlunit
         ModelUtil.assertModelEqual(m.getContent(), checkedout.getContent());
+    }
+
+    @Test
+    public void shouldFindMostRecentParentModel() throws Exception {
+        createSomeRevisions();
+        // when
+        final CommitTransaction tr = createTransaction(BRANCHNAME, 100);
+        storage.startTransaction(tr);
+        // final ChangedModel cm = new ChangedModelImpl(null, "testmodels/base.ecore");
+        final ResourceSet rs = storage.findMostRecentModelFor(new Path("testmodel/base.ecore"));
+
+        // then
+        assertEquals(1, rs.getResources().size());
+        assertTrue(rs.getResources().get(0).getURI().toString().endsWith("55/testmodel/base.ecore"));
+    }
+
+    @Test
+    public void shouldFindMostRecentParentModel2() throws Exception {
+        createSomeRevisions();
+        // when
+        final CommitTransaction tr = createTransaction(BRANCHNAME, 100);
+        storage.startTransaction(tr);
+        // final ChangedModel cm = new ChangedModelImpl(null, "testmodels/base.ecore");
+        final ResourceSet rs = storage.findMostRecentModelFor(new Path("testmodel/foo.ecore"));
+
+        // then
+        assertEquals(1, rs.getResources().size());
+        assertTrue(rs.getResources().get(0).getURI().toString().endsWith("99/testmodel/foo.ecore"));
     }
 
     @Test
