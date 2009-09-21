@@ -10,17 +10,15 @@
 package org.infai.amor.backend;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.compare.epatch.Epatch;
 
 /**
  * @author sdienst
  * 
  */
 public interface ChangedModel {
-    @Deprecated
-    EObject getContent();
 
-    EObject getDiffModel();
+    Epatch getDiffModel();
 
     IPath getPath();
 }
