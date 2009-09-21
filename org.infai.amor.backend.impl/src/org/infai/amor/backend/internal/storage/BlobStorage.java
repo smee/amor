@@ -12,12 +12,18 @@ package org.infai.amor.backend.internal.storage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.compare.epatch.applier.ApplyStrategy;
+import org.eclipse.emf.compare.epatch.applier.CopyingEpatchApplier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.infai.amor.backend.ChangedModel;
@@ -29,7 +35,10 @@ import org.infai.amor.backend.internal.impl.ModelImpl;
 import org.infai.amor.backend.internal.impl.NeoRevision;
 import org.infai.amor.backend.storage.Storage;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 
 /**
  * Store models as xml documents without messing with their internal structures.
@@ -78,9 +87,18 @@ public class BlobStorage implements Storage {
     public void checkin(final ChangedModel model, final URI externalUri, final long revisionId) throws IOException {
         // we ignore dependant models altogether
         setMapping("amormodel");
-        final Resource resource = resourceSet.createResource(createStorageUriFor(model.getPath(), revisionId, true));
-        resource.getContents().add(model.getContent());
-        resource.save(null);
+        final ResourceSet inputRS = findMostRecentModelFor(model.getPath());
+        // apply the model patch
+        final CopyingEpatchApplier epatchApplier = new CopyingEpatchApplier(ApplyStrategy.LEFT_TO_RIGHT, model.getDiffModel(), inputRS);
+        epatchApplier.apply();
+        // store changed models
+        final ResourceSet outputResourceSet = epatchApplier.getOutputResourceSet();
+        for (final Resource res : outputResourceSet.getResources()) {
+            System.out.println(res.getURI());
+        }
+        // final Resource resource = resourceSet.createResource(createStorageUriFor(model.getPath(), revisionId, true));
+
+        // resource.save(null);
         addedModelUris.add(externalUri);
     }
 
@@ -162,6 +180,35 @@ public class BlobStorage implements Storage {
         }
         dir.delete();
 
+    }
+
+    /**
+     * Create a new resourceset that contains the newest instance of the model specified by the given relative path
+     * 
+     * @param path
+     * @return
+     */
+    protected ResourceSet findMostRecentModelFor(final IPath path) {
+        final String modelSpecificPath = createModelSpecificPath(path) + File.separatorChar + path.lastSegment();
+        // find all revisions
+        final ArrayList<File> allRevDirs = Lists.newArrayList(Arrays.asList(storageDir.listFiles()));
+        // order them by last modified timestamp
+        final Ordering<File> order = Ordering.from(new Comparator<File>() {
+            @Override
+            public int compare(final File o1, final File o2) {
+                return new Long(o1.lastModified()).compareTo(o2.lastModified());
+            }
+        });
+        // find the newest revision
+        final File newestRevisionDir = order.max(Iterables.filter(allRevDirs, new Predicate<File>() {
+            @Override
+            public boolean apply(final File revDir) {
+                return new File(revDir, modelSpecificPath).exists();
+            }
+        }));
+        // load the newest model version
+        resourceSet.getResource(createStorageUriFor(path, Long.parseLong(newestRevisionDir.getName()), true), true);
+        return resourceSet;
     }
 
     /*
