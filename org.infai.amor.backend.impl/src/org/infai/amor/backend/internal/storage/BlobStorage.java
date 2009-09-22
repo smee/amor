@@ -75,6 +75,9 @@ public class BlobStorage implements Storage {
 
     public BlobStorage(final File storageDir, final String branchname) {
         this.storageDir = new File(storageDir, branchname);
+        /*
+         * TODO create Map<nsuri, most recent metamodel>, needed to be able to load model instances
+         */
     }
 
     /*
@@ -85,6 +88,7 @@ public class BlobStorage implements Storage {
      */
     @Override
     public void checkin(final ChangedModel model, final URI externalUri, final long revisionId) throws IOException {
+        // FIXME not usable atm
         // we ignore dependant models altogether
         setMapping("amormodel");
         final ResourceSet inputRS = findMostRecentModelFor(model.getPath());
@@ -123,6 +127,7 @@ public class BlobStorage implements Storage {
      */
     @Override
     public Model checkout(final IPath path, final long revisionId) throws IOException {
+        // TODO first load the metamodel to prevent exception
         final Resource resource = new ResourceSetImpl().createResource(createStorageUriFor(path, revisionId, true));
         resource.load(null);
         return new ModelImpl(resource.getContents().get(0), path);
@@ -196,16 +201,29 @@ public class BlobStorage implements Storage {
         final Ordering<File> order = Ordering.from(new Comparator<File>() {
             @Override
             public int compare(final File o1, final File o2) {
-                return new Long(o1.lastModified()).compareTo(o2.lastModified());
+                final long time1 = o1.lastModified();
+                final long time2 = o2.lastModified();
+                // during unit tests the timestamp might be the same, then sort by revision (name of the directory)
+                if (time1 == time2) {
+                    final long rev1 = Long.parseLong(o1.getName());
+                    final long rev2 = Long.parseLong(o2.getName());
+                    return new Long(rev1).compareTo(rev2);
+                } else {
+                    return new Long(time1).compareTo(time2);
+                }
             }
         });
         // find the newest revision
         final File newestRevisionDir = order.max(Iterables.filter(allRevDirs, new Predicate<File>() {
             @Override
             public boolean apply(final File revDir) {
-                return new File(revDir, modelSpecificPath).exists();
+                final File f = new File(revDir, modelSpecificPath);
+                System.out.println("Does "+f+" exist? "+f.exists());
+                return f.exists();
             }
         }));
+        // TODO first, load the most recent metamodel
+
         // load the newest model version
         resourceSet.getResource(createStorageUriFor(path, Long.parseLong(newestRevisionDir.getName()), true), true);
         return resourceSet;

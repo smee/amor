@@ -69,6 +69,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
     public static Collection<String[]> getTestParameters() {
         final Collection<String[]> params = Lists.newArrayList();
         params.add(new String[] { "testmodels/filesystem.ecore", "testmodels/simplefilesystem.xmi" });
+        params.add(new String[] { "testmodels/filesystem.ecore", "testmodels/fs/simplefilesystem_v1.filesystem" });
         params.add(new String[] { "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
         return params;
     }

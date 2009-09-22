@@ -20,13 +20,23 @@ import java.io.IOException;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.compare.diff.metamodel.DiffModel;
+import org.eclipse.emf.compare.diff.service.DiffService;
+import org.eclipse.emf.compare.epatch.Epatch;
+import org.eclipse.emf.compare.epatch.diff.DiffEpatchService;
+import org.eclipse.emf.compare.match.metamodel.MatchModel;
+import org.eclipse.emf.compare.match.service.MatchService;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.infai.amor.ModelUtil;
 import org.infai.amor.backend.Branch;
+import org.infai.amor.backend.ChangedModel;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
+import org.infai.amor.backend.internal.impl.ChangedModelImpl;
 import org.infai.amor.backend.internal.impl.ModelImpl;
 import org.infai.amor.backend.internal.impl.NeoRevision;
 import org.jmock.Expectations;
@@ -77,8 +87,8 @@ public class BlobStorageTest {
         tr = createTransaction(BRANCHNAME, 99);
         storage.startTransaction(tr);
         storage.checkin(new ModelImpl(m.getContent(), "testmodel/foo.ecore"), null, tr.getRevisionId());
+        storage.commit(tr, rev);
     }
-
     private CommitTransaction createTransaction(final String branchname, final long revisionId) {
         final Branch branch = context.mock(Branch.class, "" + Math.random());
         context.checking(new Expectations() {
@@ -89,7 +99,6 @@ public class BlobStorageTest {
         });
         return new CommitTransactionImpl(branch, revisionId, null);
     }
-
     @Before
     public void setUp() throws IOException {
         tempDir = File.createTempFile("storage", "temp");
@@ -143,6 +152,7 @@ public class BlobStorageTest {
 
         // then
         assertEquals(1, rs.getResources().size());
+        System.out.println(rs.getResources().get(0).getURI());
         assertTrue(rs.getResources().get(0).getURI().toString().endsWith("99/testmodel/foo.ecore"));
     }
 
@@ -161,6 +171,41 @@ public class BlobStorageTest {
 
         // compare both models as xml documents
         XMLAssert.assertXMLEqual(new BufferedReader(new FileReader("testmodels/base.ecore")), new BufferedReader(new FileReader(storedFile)));
+    }
+
+    @Test
+    public void shouldStoreChangedModels() throws Exception {
+        // given
+        final ResourceSet rs = new ResourceSetImpl();
+        // checked in metamodel
+        final Model mm = new ModelImpl(ModelUtil.readInputModel("testmodels/filesystem.ecore", rs), "testmodels/filesystem.ecore");
+        CommitTransaction tr = createTransaction(BRANCHNAME, 1);
+        storage.startTransaction(tr);
+        storage.checkin(mm, null, tr.getRevisionId());
+        storage.commit(tr, rev);
+        // given several older revisions
+        final String modelpath = "model/simplefilesystem.xml";
+        final Model m = new ModelImpl(ModelUtil.readInputModel("testmodels/fs/simplefilesystem_v1.filesystem", rs), modelpath);
+        // rev 33
+        tr = createTransaction(BRANCHNAME, 33);
+        storage.startTransaction(tr);
+        storage.checkin(m, null, tr.getRevisionId());
+        storage.commit(tr, rev);
+        // rev 55
+        tr = createTransaction(BRANCHNAME, 55);
+        storage.startTransaction(tr);
+
+        // when changing model
+        final EObject changedModel = ModelUtil.readInputModel("testmodels/fs/simplefilesystem_v2.filesystem", rs);
+        final MatchModel match = MatchService.doMatch(m.getContent(), changedModel, null);
+        final DiffModel diff = DiffService.doDiff(match, false);
+        final Epatch epatch = DiffEpatchService.createEpatch(match, diff, "testpatch");
+        final ChangedModel cm = new ChangedModelImpl(epatch, modelpath);
+
+        storage.checkin(cm, null, 55);
+        storage.commit(tr, rev);
+        // then ??
+
     }
 
     @Test

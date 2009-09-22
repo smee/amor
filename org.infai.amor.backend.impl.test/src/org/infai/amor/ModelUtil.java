@@ -56,6 +56,7 @@ public class ModelUtil {
         Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
         Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
         Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xml", new XMLResourceFactoryImpl());
+        Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("filesystem", new XMIResourceFactoryImpl());
 
     }
 
@@ -128,7 +129,7 @@ public class ModelUtil {
      */
     public static EObject readInputModel(final String relativePath, final ResourceSet rs) throws IOException {
 
-        final Resource resource = rs.createResource(URI.createFileURI(new File(relativePath).getAbsolutePath()));
+        final Resource resource = rs.getResource(URI.createFileURI(new File(relativePath).getAbsolutePath()), true);
         resource.load(null);
         final EObject eObject = resource.getContents().get(0);
         if (eObject instanceof EPackage && !((EPackage) eObject).getNsURI().equals(EcorePackage.eNS_URI)) {
