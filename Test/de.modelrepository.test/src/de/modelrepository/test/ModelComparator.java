@@ -14,7 +14,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 public class ModelComparator {
-	//TODO weitere Vergleiche für Listen von Modellen, dann die ähnlichsten ausgeben, ...
+	//IDEA weitere Vergleiche für Listen von Modellen, dann die ähnlichsten ausgeben, ...
 	public DiffModel compare(EObject model1, EObject model2) throws InterruptedException {
 		MatchModel match = MatchService.doMatch(model1, model2, Collections.<String, Object> emptyMap());
 		return DiffService.doDiff(match, false);
