@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.jgit.lib.AnyObjectId;
@@ -30,12 +29,15 @@ import org.eclipse.jgit.treewalk.filter.TreeFilter;
 import org.eclipse.jgit.util.RawCharSequence;
 
 import de.modelrepository.test.util.FileUtility;
+import de.modelrepository.test.util.Tupel;
 
 public class GitFileHistory {
 	private Repository repo;
 	private RevWalk walk;
 	private String fileRelativePath;
-	private Vector<ObjectId> fileRevisionIds = new Vector<ObjectId>();
+	private Vector<Tupel<ObjectId,String>> fileRevisionIds = new Vector<Tupel<ObjectId,String>>();
+	private String currentBranch;
+	
 	
 	public GitFileHistory(File originalFile, Repository repo) throws IOException {
 		this.repo = repo;
@@ -60,8 +62,8 @@ public class GitFileHistory {
 		return walk;
 	}
 	
-	private Vector<ObjectId> buildRevisions() throws IOException {
-		Vector<ObjectId> result = new Vector<ObjectId>();
+	private Vector<Tupel<ObjectId,String>> buildRevisions() throws IOException {
+		Vector<Tupel<ObjectId,String>> result = new Vector<Tupel<ObjectId,String>>();
 		AnyObjectId headID = repo.resolve(Constants.HEAD);
 		if(headID == null) {
 			System.err.println("NULL - headID");
@@ -73,19 +75,19 @@ public class GitFileHistory {
 		for (RevCommit revCommit : walk) {
 			TreeWalk fileWalker = TreeWalk.forPath(repo, fileRelativePath, revCommit.asCommit(walk).getTreeId());
 			if(fileWalker != null)
-				result.add(fileWalker.getObjectId(0));
+				result.add(new Tupel<ObjectId, String>(fileWalker.getObjectId(0),currentBranch));
 		}
 
 		return result;
 	}
 	
-	public Vector<String> getFileRevisions() throws IOException {
-		Vector<String> result = new Vector<String>();
+	public Vector<Tupel<String,String>> getFileRevisions() throws IOException {
+		Vector<Tupel<String,String>> result = new Vector<Tupel<String,String>>();
 		ObjectDatabase db = repo.getObjectDatabase();
-		for (ObjectId id : fileRevisionIds) {
-			byte[] buffer = db.openObject(new WindowCursor(), id).getBytes();
+		for (Tupel<ObjectId,String> t : fileRevisionIds) {
+			byte[] buffer = db.openObject(new WindowCursor(), t.getO1()).getBytes();
 			RawCharSequence seq = new RawCharSequence(buffer, 0, buffer.length);
-			result.add(seq.toString());
+			result.add(new Tupel<String, String>(seq.toString(), t.getO2()));
 		}
 		return result;
 	}
@@ -101,6 +103,7 @@ public class GitFileHistory {
 		WorkDirCheckout co = new WorkDirCheckout(repo, repo.getWorkDir(), index, tree);
 		index.write();
 		repo.writeSymref(Constants.HEAD, refName);
+		currentBranch = refName;
 	}
 	
 	public static void main(String[] args) {
@@ -126,12 +129,15 @@ public class GitFileHistory {
 //			System.out.println(max);
 //			
 			GitFileHistory fileHistory = new GitFileHistory(new File("res/out/T0003/01/voldemort/src/java/voldemort/store/routed/RoutedStore.java"), new Repository(new File("res/out/T0003/01/voldemort/.git")));
-			Vector<String> fileRevisions = fileHistory.getFileRevisions();
+			Vector<Tupel<String,String>> fileRevisions = fileHistory.getFileRevisions();
 			
 			int i=0;
-			for (String s : fileRevisions) {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("D:/test/RoutedStore"+ ++i + ".java")));
-				bw.write(s);
+			for (Tupel<String,String> t : fileRevisions) {
+				File path = new File("D:/test/"+t.getO2());
+				if(!path.exists())
+					path.mkdirs();
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path, "RoutedStore"+ ++i + ".java")));
+				bw.write(t.getO1());
 				bw.close();
 			}
 		} catch (IOException e) {
