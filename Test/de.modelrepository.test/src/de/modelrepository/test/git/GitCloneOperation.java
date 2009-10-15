@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import org.eclipse.jgit.errors.NotSupportedException;
 import org.eclipse.jgit.errors.TransportException;
 import org.eclipse.jgit.lib.Commit;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.GitIndex;
 import org.eclipse.jgit.lib.NullProgressMonitor;
 import org.eclipse.jgit.lib.Ref;
@@ -21,6 +22,8 @@ import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.Transport;
 import org.eclipse.jgit.transport.URIish;
+
+import de.modelrepository.test.util.FileUtility;
 
 public class GitCloneOperation {
 	private URIish uri;
@@ -42,15 +45,15 @@ public class GitCloneOperation {
 		File gitDir = new File(workDir, ".git");
 		local = new Repository(gitDir);
 		local.create();
-		local.writeSymref("HEAD", branch);
+		local.writeSymref(Constants.HEAD, branch);
 		
 		remoteConfig = new RemoteConfig(local.getConfig(), remoteName);
 		remoteConfig.addURI(uri);
 		
-		String destination = "refs/remotes/" + remoteConfig.getName();
+		String destination = Constants.R_REMOTES + remoteConfig.getName();
 		RefSpec rs = new RefSpec();
 		rs = rs.setForceUpdate(true);
-		rs = rs.setSourceDestination("refs/heads/*", destination + "/*");
+		rs = rs.setSourceDestination(Constants.R_HEADS + "*", destination + "/*");
 		
 		remoteConfig.addFetchRefSpec(rs);
 		local.getConfig().setBoolean("core", null, "bare", false);
@@ -79,7 +82,7 @@ public class GitCloneOperation {
 		Commit mapCommit = local.mapCommit(head.getObjectId());
 		Tree tree = mapCommit.getTree();
 		
-		RefUpdate u = local.updateRef("HEAD");
+		RefUpdate u = local.updateRef(Constants.HEAD);
 		u.setNewObjectId(mapCommit.getCommitId());
 		u.forceUpdate();
 		
@@ -95,17 +98,6 @@ public class GitCloneOperation {
 		}
 	}
 	
-	private static void delete(final File d) {
-		if (d.isDirectory()) {
-			final File[] items = d.listFiles();
-			if (items != null) {
-				for (final File c : items)
-					delete(c);
-			}
-		}
-		d.delete();
-	}
-	
 	public void cloneRepository() throws InvocationTargetException {
 		try {
 			try {
@@ -116,7 +108,7 @@ public class GitCloneOperation {
 				closeLocal();
 			}
 		}catch (Exception e) {
-			delete(workDir);
+			FileUtility.delete(workDir);
 			throw new InvocationTargetException(e);
 		}
 	}
