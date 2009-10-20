@@ -10,6 +10,7 @@
 package org.infai.amor.backend.internal.storage;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
@@ -134,7 +135,7 @@ public class BlobStorageTest {
         final CommitTransaction tr = createTransaction(BRANCHNAME, 100);
         storage.startTransaction(tr);
         // final ChangedModel cm = new ChangedModelImpl(null, "testmodels/base.ecore");
-        final ResourceSet rs = storage.findMostRecentModelFor(new Path("testmodel/base.ecore"));
+        final ResourceSet rs = storage.findMostRecentModelFor(new Path("testmodel/base.ecore"), 100);
 
         // then
         assertEquals(1, rs.getResources().size());
@@ -148,12 +149,31 @@ public class BlobStorageTest {
         final CommitTransaction tr = createTransaction(BRANCHNAME, 100);
         storage.startTransaction(tr);
         // final ChangedModel cm = new ChangedModelImpl(null, "testmodels/base.ecore");
-        final ResourceSet rs = storage.findMostRecentModelFor(new Path("testmodel/foo.ecore"));
+        final ResourceSet rs = storage.findMostRecentModelFor(new Path("testmodel/foo.ecore"), 100);
 
         // then
         assertEquals(1, rs.getResources().size());
         System.out.println(rs.getResources().get(0).getURI());
         assertTrue(rs.getResources().get(0).getURI().toString().endsWith("99/testmodel/foo.ecore"));
+    }
+
+    @Test
+    public void shouldFindPackageNameViaXPath() throws Exception {
+        // given
+        final File file = new File("testmodels/fs/simplefilesystem_v1.filesystem");
+        // when
+        final String nsuri =storage.getM2Uri(file);
+        // then
+        assertEquals("http://filesystem",nsuri);
+    }
+
+    @Test
+    public void shouldSaveAndRestoreM2ModelWithoutChanges() throws IOException, SAXException {
+        // store the model
+        shouldSaveModelWithoutChanges();
+
+        final Model model = storage.checkout(new Path("testmodels/base.ecore"), 55);
+        assertNotNull(model.getContent());
     }
 
     @Test
