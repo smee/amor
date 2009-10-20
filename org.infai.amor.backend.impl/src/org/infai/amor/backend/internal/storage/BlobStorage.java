@@ -143,11 +143,10 @@ public class BlobStorage implements Storage {
         // store changed models
         final ResourceSet outputResourceSet = epatchApplier.getOutputResourceSet();
         for (final Resource res : outputResourceSet.getResources()) {
-            System.out.println(res.getURI());
+            // create the real storage uri, as the patch sets only a name
+            res.setURI(createStorageUriFor(model.getPath(), revisionId, true));
+            res.save(null);
         }
-        // final Resource resource = resourceSet.createResource(createStorageUriFor(model.getPath(), revisionId, true));
-
-        // resource.save(null);
         addedModelUris.add(externalUri);
     }
 
@@ -300,17 +299,23 @@ public class BlobStorage implements Storage {
             }
         }));
         // first, load the most recent metamodel in case this is a M1 model
+        Resource m2Resource = null;
         final String nsUri = getM2Uri(new File(newestRevisionDir, modelSpecificPath));
         if (nsUri != null && nsUri.length() > 0) {
             // find most recent m2 model with the given package name
             final URI m2Uri = foo(revisionId,nsUri);
-            final Resource res = resourceSet.getResource(m2Uri, true);
-            res.load(null);
-            resourceSet.getPackageRegistry().put(nsUri, res.getContents().get(0));
+            m2Resource = resourceSet.getResource(m2Uri, true);
+            m2Resource.load(null);
+            resourceSet.getPackageRegistry().put(nsUri, m2Resource.getContents().get(0));
         }
         // load the newest model version
         final Resource res = resourceSet.getResource(createStorageUriFor(path, Long.parseLong(newestRevisionDir.getName()), true), true);
         res.load(null);
+
+        if (m2Resource != null) {
+            // if we loaded the m2 model,remove it to work around a bug in epatch
+            resourceSet.getResources().remove(m2Resource);
+        }
         return resourceSet;
     }
 
