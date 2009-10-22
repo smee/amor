@@ -43,7 +43,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.infai.amor.backend.ChangedModel;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
@@ -72,6 +71,24 @@ public class FileBlobStorage implements Storage {
     private final File storageDir;
     private ResourceSetImpl resourceSet;
     private Collection<URI> addedModelUris;
+    /**
+     * order them by last modified timestamp
+     */
+    final static Ordering<File> revisionsFolderOrder = Ordering.from(new Comparator<File>() {
+        @Override
+        public int compare(final File o1, final File o2) {
+            final long time1 = o1.lastModified();
+            final long time2 = o2.lastModified();
+            // during unit tests the timestamp might be the same, then sort by revision (name of the directory)
+            if (time1 == time2) {
+                final long rev1 = Long.parseLong(o1.getName());
+                final long rev2 = Long.parseLong(o2.getName());
+                return new Long(rev1).compareTo(rev2);
+            } else {
+                return new Long(time1).compareTo(time2);
+            }
+        }
+    });
 
     /**
      * @param modelPath
@@ -135,7 +152,6 @@ public class FileBlobStorage implements Storage {
     public void checkin(final ChangedModel model, final URI externalUri, final long revisionId) throws IOException {
         // FIXME not usable atm
         // we ignore dependant models altogether
-        setMapping("amormodel");
         final ResourceSet inputRS = findMostRecentModelFor(model.getPath(), revisionId);
         // apply the model patch
         final CopyingEpatchApplier epatchApplier = new CopyingEpatchApplier(ApplyStrategy.LEFT_TO_RIGHT, model.getDiffModel(), inputRS);
@@ -152,7 +168,6 @@ public class FileBlobStorage implements Storage {
 
     @Override
     public void checkin(final Model model, final URI externalUri, final long revisionId) throws IOException {
-        setMapping("amormodel");
         final URI storagePath = createStorageUriFor(model.getPersistencePath(), revisionId, true);
         final Resource resource = resourceSet.createResource(storagePath);
         resource.getContents().add(model.getContent());
@@ -173,16 +188,21 @@ public class FileBlobStorage implements Storage {
      */
     @Override
     public Model checkout(final IPath path, final long revisionId) throws IOException {
+        final ResourceSet rs = new ResourceSetImpl();
         final URI modelStorageUri = createStorageUriFor(path, revisionId, true);
         // first load the metamodel to prevent exception
-        final URI m2StorageUri = findMostRecentM2StorageUriFor(modelStorageUri, revisionId);
-        if (m2StorageUri != null) {
-            // this is a m1 model, let's load the corresponding m2 model first
-            final Resource m2resource = new ResourceSetImpl().createResource(m2StorageUri);
-            m2resource.load(null);
+        final String m2Uri = getM2Uri(new File(modelStorageUri.toFileString()));
+        if (m2Uri != null) {
+            final URI m2StorageUri = findMostRecentM2ByNamespace(revisionId, m2Uri);
+            if (m2StorageUri != null) {
+                // this is a m1 model, let's load the corresponding m2 model first
+                final Resource m2resource = rs.createResource(m2StorageUri);
+                m2resource.load(null);
+                rs.getPackageRegistry().put(m2Uri, m2resource.getContents().get(0));
+            }
         }
         // load the model
-        final Resource resource = new ResourceSetImpl().createResource(modelStorageUri);
+        final Resource resource = rs.createResource(modelStorageUri);
         resource.load(null);
         return new ModelImpl(resource.getContents().get(0), path);
     }
@@ -243,90 +263,13 @@ public class FileBlobStorage implements Storage {
     }
 
     /**
-     * @param m1StorageUri
      * @param revisionId
-     * @return
-     * @throws IOException
-     */
-    private URI findMostRecentM2StorageUriFor(final URI m1StorageUri, final long revisionId) throws IOException {
-        // if modelStorageUri points to a m2 model, find the namespace uri of it
-        final String m2Uri = getM2Uri(new File(m1StorageUri.toFileString()));
-        if(m2Uri == null) {
-            return null;
-        }
-        return foo(revisionId, m2Uri);
-    }
-
-    /**
-     * Create a new resourceset that contains the newest instance of the model specified by the given relative path
-     * 
-     * @param path
-     * @param revisionId
-     * @return
-     * @throws IOException
-     */
-    protected ResourceSet findMostRecentModelFor(final IPath path, final long revisionId) throws IOException {
-        final String modelSpecificPath = createModelSpecificPath(path) + File.separatorChar + path.lastSegment();
-        // find all revisions with id <= revisionId
-        final ArrayList<File> allRevDirs = Lists.newArrayList(Arrays.asList(storageDir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(final File path) {
-                return path.isDirectory() && Long.parseLong(path.getName()) <= revisionId;
-            }
-        })));
-        // order them by last modified timestamp
-        final Ordering<File> order = Ordering.from(new Comparator<File>() {
-            @Override
-            public int compare(final File o1, final File o2) {
-                final long time1 = o1.lastModified();
-                final long time2 = o2.lastModified();
-                // during unit tests the timestamp might be the same, then sort by revision (name of the directory)
-                if (time1 == time2) {
-                    final long rev1 = Long.parseLong(o1.getName());
-                    final long rev2 = Long.parseLong(o2.getName());
-                    return new Long(rev1).compareTo(rev2);
-                } else {
-                    return new Long(time1).compareTo(time2);
-                }
-            }
-        });
-        // find the newest revision
-        final File newestRevisionDir = order.max(Iterables.filter(allRevDirs, new Predicate<File>() {
-            @Override
-            public boolean apply(final File revDir) {
-                final File f = new File(revDir, modelSpecificPath);
-                return f.exists();
-            }
-        }));
-        // first, load the most recent metamodel in case this is a M1 model
-        Resource m2Resource = null;
-        final String nsUri = getM2Uri(new File(newestRevisionDir, modelSpecificPath));
-        if (nsUri != null && nsUri.length() > 0) {
-            // find most recent m2 model with the given package name
-            final URI m2Uri = foo(revisionId,nsUri);
-            m2Resource = resourceSet.getResource(m2Uri, true);
-            m2Resource.load(null);
-            resourceSet.getPackageRegistry().put(nsUri, m2Resource.getContents().get(0));
-        }
-        // load the newest model version
-        final Resource res = resourceSet.getResource(createStorageUriFor(path, Long.parseLong(newestRevisionDir.getName()), true), true);
-        res.load(null);
-
-        if (m2Resource != null) {
-            // if we loaded the m2 model,remove it to work around a bug in epatch
-            resourceSet.getResources().remove(m2Resource);
-        }
-        return resourceSet;
-    }
-
-    /**
-     * @param revisionId
-     * @param m2Uri
+     * @param m2Namespace
      * @return
      * @throws FileNotFoundException
      * @throws IOException
      */
-    private URI foo(final long revisionId, final String m2Uri) throws FileNotFoundException, IOException {
+    private URI findMostRecentM2ByNamespace(final long revisionId, final String m2Namespace) throws FileNotFoundException, IOException {
         // find all tag files
         final List<File> allTagFiles = Lists.newArrayList(storageDir.listFiles(new FilenameFilter() {
             @Override
@@ -350,13 +293,75 @@ public class FileBlobStorage implements Storage {
                 continue;
             }else{
                 final String nsUri = sc.next();
-                if (nsUri.equals(m2Uri)) {
+                if (nsUri.equals(m2Namespace)) {
                     // found our most recent m2 model, return it's location
                     return URI.createURI(sc.next());
                 }
             }
         }
         return null;
+    }
+
+    /**
+     * @param m1StorageUri
+     * @param revisionId
+     * @return
+     * @throws IOException
+     */
+    private URI findMostRecentM2StorageUriFor(final URI m1StorageUri, final long revisionId) throws IOException {
+        // if modelStorageUri points to a m2 model, find the namespace uri of it
+        final String m2Uri = getM2Uri(new File(m1StorageUri.toFileString()));
+        if(m2Uri == null) {
+            return null;
+        }
+        return findMostRecentM2ByNamespace(revisionId, m2Uri);
+    }
+
+    /**
+     * Create a new resourceset that contains the newest instance of the model specified by the given relative path
+     * 
+     * @param path
+     * @param revisionId
+     * @return
+     * @throws IOException
+     */
+    protected ResourceSet findMostRecentModelFor(final IPath path, final long revisionId) throws IOException {
+        final String modelSpecificPath = createModelSpecificPath(path) + File.separatorChar + path.lastSegment();
+        // find all revisions with id <= revisionId
+        final ArrayList<File> allRevDirs = Lists.newArrayList(Arrays.asList(storageDir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(final File path) {
+                return path.isDirectory() && Long.parseLong(path.getName()) <= revisionId;
+            }
+        })));
+
+        // find the newest revision
+        final File newestRevisionDir = revisionsFolderOrder.max(Iterables.filter(allRevDirs, new Predicate<File>() {
+            @Override
+            public boolean apply(final File revDir) {
+                final File f = new File(revDir, modelSpecificPath);
+                return f.exists();
+            }
+        }));
+        // first, load the most recent metamodel in case this is a M1 model
+        Resource m2Resource = null;
+        final String nsUri = getM2Uri(new File(newestRevisionDir, modelSpecificPath));
+        if (nsUri != null && nsUri.length() > 0) {
+            // find most recent m2 model with the given package name
+            final URI m2Uri = findMostRecentM2ByNamespace(revisionId,nsUri);
+            m2Resource = resourceSet.getResource(m2Uri, true);
+            m2Resource.load(null);
+            resourceSet.getPackageRegistry().put(nsUri, m2Resource.getContents().get(0));
+        }
+        // load the newest model version
+        final Resource res = resourceSet.getResource(createStorageUriFor(path, Long.parseLong(newestRevisionDir.getName()), true), true);
+        res.load(null);
+
+        if (m2Resource != null) {
+            // if we loaded the m2 model,remove it to work around a bug in epatch
+            resourceSet.getResources().remove(m2Resource);
+        }
+        return resourceSet;
     }
 
     /**
@@ -419,13 +424,6 @@ public class FileBlobStorage implements Storage {
         } catch (final URISyntaxException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * @param string
-     */
-    private void setMapping(final String mapping) {
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(mapping, new XMIResourceFactoryImpl());
     }
 
     /*

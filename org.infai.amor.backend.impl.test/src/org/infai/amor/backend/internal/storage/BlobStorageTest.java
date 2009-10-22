@@ -168,6 +168,16 @@ public class BlobStorageTest {
     }
 
     @Test
+    public void shouldNotFindDifferences() throws IOException{
+        final ResourceSet rs = new ResourceSetImpl();
+        ModelUtil.readInputModel("testmodels/filesystem.ecore", rs);
+        final EObject sfs1 = ModelUtil.readInputModel("testmodels/encoding/sfs_ascii.filesystem", rs);
+        final EObject sfs2 = ModelUtil.readInputModel("testmodels/encoding/sfs_utf8.filesystem", rs);
+
+        ModelUtil.assertModelEqual(sfs1, sfs2);
+    }
+
+    @Test
     public void shouldSaveAndRestoreM2ModelWithoutChanges() throws IOException, SAXException {
         // store the model
         shouldSaveModelWithoutChanges();
@@ -204,7 +214,7 @@ public class BlobStorageTest {
         storage.checkin(mm, null, tr.getRevisionId());
         storage.commit(tr, rev);
         // given several older revisions
-        final String modelpath = "model/simplefilesystem.xml";
+        final String modelpath = "model/simplefilesystem.filesystem";
         final Model m = new ModelImpl(ModelUtil.readInputModel("testmodels/fs/simplefilesystem_v1.filesystem", rs), modelpath);
         // rev 33
         tr = createTransaction(BRANCHNAME, 33);
@@ -222,10 +232,14 @@ public class BlobStorageTest {
         final Epatch epatch = DiffEpatchService.createEpatch(match, diff, "testpatch");
         final ChangedModel cm = new ChangedModelImpl(epatch, modelpath);
 
-        storage.checkin(cm, null, 55);
+        storage.checkin(cm, null, tr.getRevisionId());
         storage.commit(tr, rev);
         // then ??
+        final Model checkedoutmodel = storage.checkout(new Path(modelpath), 55);
 
+        // ModelUtil.storeViaXml(changedModel, checkedoutmodel.getContent());
+
+        ModelUtil.assertModelEqual(changedModel, checkedoutmodel.getContent());
     }
 
     @Test

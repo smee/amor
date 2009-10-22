@@ -20,9 +20,9 @@ import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.infai.amor.ModelUtil;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
@@ -81,16 +81,6 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         this.m1Location = m1;
         this.m2Location = m2;
     }
-
-    // /*
-    // * (non-Javadoc)
-    // *
-    // * @see org.infai.amor.backend.internal.impl.AbstractNeo4JTest#isRollbackAfterTest()
-    // */
-    // @Override
-    // protected boolean isRollbackAfterTest() {
-    // return false;
-    // }
 
     @After
     public void printStatistics() {
@@ -156,22 +146,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         final Model checkedoutmodel = repository.checkout(checkin3.getURI());
         split("Restoring M1");
         assertNotNull(checkedoutmodel.getContent());
-        storeViaXml(checkedoutmodel.getContent());
+        ModelUtil.storeViaXml(checkedoutmodel.getContent());
         split("Writing XML");
-    }
-
-    /**
-     * @param input
-     * @param input2
-     * @param input3
-     * @throws IOException
-     */
-    private void storeViaXml(final EObject... input) throws IOException {
-        final ResourceSetImpl rs = new ResourceSetImpl();
-        for (final EObject eo : input) {
-            final Resource res = rs.createResource(URI.createFileURI("foo/" + eo.hashCode() + ".xml"));
-            res.getContents().add(eo);
-            res.save(null);
-        }
     }
 }
