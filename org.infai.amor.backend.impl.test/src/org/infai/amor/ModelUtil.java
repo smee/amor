@@ -16,8 +16,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.EList;
@@ -31,6 +32,7 @@ import org.eclipse.emf.compare.diff.metamodel.DifferenceKind;
 import org.eclipse.emf.compare.diff.metamodel.ModelElementChangeLeftTarget;
 import org.eclipse.emf.compare.diff.metamodel.ModelElementChangeRightTarget;
 import org.eclipse.emf.compare.diff.service.DiffService;
+import org.eclipse.emf.compare.match.MatchOptions;
 import org.eclipse.emf.compare.match.metamodel.MatchModel;
 import org.eclipse.emf.compare.match.service.MatchService;
 import org.eclipse.emf.compare.util.ModelUtils;
@@ -66,14 +68,16 @@ public class ModelUtil {
      */
     public static void assertModelEqual(final EObject orig, final EObject changed) {
         try {
-            final MatchModel match = MatchService.doMatch(orig, changed, Collections.<String, Object> emptyMap());
+            // we assume the very same metamodel, no matter where it was loaded from
+            final Map<String, Object> options = new HashMap<String, Object>();
+            options.put(MatchOptions.OPTION_DISTINCT_METAMODELS, true);
+            final MatchModel match = MatchService.doMatch(orig, changed, options);
             final DiffModel diff = DiffService.doDiff(match, false);
 
-            //            System.out.println("Merging difference to args[1].\n"); //$NON-NLS-1$
             final List<DiffElement> differences = new ArrayList<DiffElement>(diff.getOwnedElements());
             // saveDiff(diff, match);
             // describeDiff(differences, 0);
-            // FIXME if it's equals there is still an empty change, bug in emfcompare?
+            // if there are no differences, there is still an empty change, bug in emfcompare?
             assertTrue(differences.isEmpty() || differences.get(0).getSubDiffElements().isEmpty());
         } catch (final InterruptedException e) {
             fail();
@@ -154,6 +158,19 @@ public class ModelUtil {
             e.printStackTrace();
         } //$NON-NLS-1$
 
+    }
+
+    /**
+     * @param input
+     * @throws IOException
+     */
+    public static void storeViaXml(final EObject... input) throws IOException {
+        final ResourceSetImpl rs = new ResourceSetImpl();
+        for (final EObject eo : input) {
+            final Resource res = rs.createResource(URI.createFileURI("foo/" + eo.hashCode() + ".xml"));
+            res.getContents().add(eo);
+            res.save(null);
+        }
     }
 
 }
