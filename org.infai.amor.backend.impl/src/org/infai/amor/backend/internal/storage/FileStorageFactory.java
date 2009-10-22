@@ -19,13 +19,13 @@ import org.infai.amor.backend.storage.Storage;
  * @author sdienst
  * 
  */
-public class DumbStorageFactory extends AbstractStorageFactory {
+public class FileStorageFactory extends AbstractStorageFactory {
     private String storageDir = ".";
 
     /**
      * @param branchname
      */
-    public DumbStorageFactory() {
+    public FileStorageFactory() {
         super();
     }
 
@@ -36,7 +36,7 @@ public class DumbStorageFactory extends AbstractStorageFactory {
      */
     @Override
     protected Storage createNewStorage(final Branch branch) {
-        return new BlobStorage(new File(storageDir), branch.getName());
+        return new FileBlobStorage(new File(storageDir), branch.getName());
     }
 
     /**

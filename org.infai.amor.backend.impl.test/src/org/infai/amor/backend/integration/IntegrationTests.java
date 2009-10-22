@@ -32,7 +32,7 @@ import org.infai.amor.backend.internal.impl.NeoBranchFactory;
 import org.infai.amor.backend.internal.impl.TransactionManagerImpl;
 import org.infai.amor.backend.internal.impl.UriHandlerImpl;
 import org.infai.amor.backend.internal.responses.CommitSuccessResponse;
-import org.infai.amor.backend.internal.storage.DumbStorageFactory;
+import org.infai.amor.backend.internal.storage.FileStorageFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -79,7 +79,7 @@ public class IntegrationTests {
         final File tempDir = File.createTempFile("storage", "temp");
         tempDir.delete();
         tempDir.mkdirs();
-        final DumbStorageFactory sf = new DumbStorageFactory();
+        final FileStorageFactory sf = new FileStorageFactory();
         sf.setStorageDir(tempDir.getAbsolutePath());
         tm.addTransactionListener(sf);
 

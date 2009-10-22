@@ -67,7 +67,7 @@ import com.google.common.collect.Ordering;
  * @author sdienst
  * 
  */
-public class BlobStorage implements Storage {
+public class FileBlobStorage implements Storage {
 
     private final File storageDir;
     private ResourceSetImpl resourceSet;
@@ -113,7 +113,7 @@ public class BlobStorage implements Storage {
         }
     }
 
-    public BlobStorage(final File storageDir, final String branchname) {
+    public FileBlobStorage(final File storageDir, final String branchname) {
         this.storageDir = new File(storageDir, branchname);
         /*
          * TODO create Map<nsuri, most recent metamodel>, needed to be able to load model instances

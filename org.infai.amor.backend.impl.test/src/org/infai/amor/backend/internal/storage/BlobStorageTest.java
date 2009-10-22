@@ -57,7 +57,7 @@ public class BlobStorageTest {
      * 
      */
     private static final String BRANCHNAME = "testBranch";
-    private BlobStorage storage;
+    private FileBlobStorage storage;
     private Mockery context;
     private File tempDir;
     private NeoRevision rev;
@@ -106,7 +106,7 @@ public class BlobStorageTest {
         tempDir.delete();
         tempDir.mkdirs();
 
-        storage = new BlobStorage(tempDir, BRANCHNAME);
+        storage = new FileBlobStorage(tempDir, BRANCHNAME);
         context = new Mockery() {{ setImposteriser(ClassImposteriser.INSTANCE); }};
         rev = context.mock(NeoRevision.class);
         context.checking(new Expectations() {{ allowing(rev); }});
