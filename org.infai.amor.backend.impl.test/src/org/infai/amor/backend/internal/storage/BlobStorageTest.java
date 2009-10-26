@@ -21,12 +21,6 @@ import java.io.IOException;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.compare.diff.metamodel.DiffModel;
-import org.eclipse.emf.compare.diff.service.DiffService;
-import org.eclipse.emf.compare.epatch.Epatch;
-import org.eclipse.emf.compare.epatch.diff.DiffEpatchService;
-import org.eclipse.emf.compare.match.metamodel.MatchModel;
-import org.eclipse.emf.compare.match.service.MatchService;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -227,10 +221,7 @@ public class BlobStorageTest {
 
         // when changing model
         final EObject changedModel = ModelUtil.readInputModel("testmodels/fs/simplefilesystem_v2.filesystem", rs);
-        final MatchModel match = MatchService.doMatch(m.getContent(), changedModel, null);
-        final DiffModel diff = DiffService.doDiff(match, false);
-        final Epatch epatch = DiffEpatchService.createEpatch(match, diff, "testpatch");
-        final ChangedModel cm = new ChangedModelImpl(epatch, modelpath);
+        final ChangedModel cm = new ChangedModelImpl(ModelUtil.createEpatch(m.getContent(), changedModel), modelpath);
 
         storage.checkin(cm, null, tr.getRevisionId());
         storage.commit(tr, rev);

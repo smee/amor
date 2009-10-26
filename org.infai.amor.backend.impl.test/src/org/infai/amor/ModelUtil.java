@@ -32,6 +32,8 @@ import org.eclipse.emf.compare.diff.metamodel.DifferenceKind;
 import org.eclipse.emf.compare.diff.metamodel.ModelElementChangeLeftTarget;
 import org.eclipse.emf.compare.diff.metamodel.ModelElementChangeRightTarget;
 import org.eclipse.emf.compare.diff.service.DiffService;
+import org.eclipse.emf.compare.epatch.Epatch;
+import org.eclipse.emf.compare.epatch.diff.DiffEpatchService;
 import org.eclipse.emf.compare.match.MatchOptions;
 import org.eclipse.emf.compare.match.metamodel.MatchModel;
 import org.eclipse.emf.compare.match.service.MatchService;
@@ -100,6 +102,18 @@ public class ModelUtil {
         } else {
             return kind.toString();
         }
+    }
+
+    /**
+     * @param origModel
+     * @param changedModel
+     * @return
+     * @throws InterruptedException
+     */
+    public static Epatch createEpatch(final EObject origModel, final EObject changedModel) throws InterruptedException{
+        final MatchModel match = MatchService.doMatch(origModel, changedModel, null);
+        final DiffModel diff = DiffService.doDiff(match, false);
+        return DiffEpatchService.createEpatch(match, diff, "testpatch");
     }
 
     /**
