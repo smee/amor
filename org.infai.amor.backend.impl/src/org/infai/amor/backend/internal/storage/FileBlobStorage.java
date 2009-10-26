@@ -70,7 +70,7 @@ public class FileBlobStorage implements Storage {
 
     private final File storageDir;
     private ResourceSetImpl resourceSet;
-    private Collection<URI> addedModelUris;
+    private Collection<FileModelLocation> addedModelUris;
     /**
      * order them by last modified timestamp
      */
@@ -111,7 +111,11 @@ public class FileBlobStorage implements Storage {
         }
     }
 
-    public static String sha1(final String text) {
+    /**
+     * @param text
+     * @return
+     */
+    public static String md5(final String text) {
         try {
             MessageDigest md;
             md = MessageDigest.getInstance("MD5");
@@ -140,17 +144,11 @@ public class FileBlobStorage implements Storage {
     /*
      * (non-Javadoc)
      * 
-     * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.Model, org.eclipse.emf.common.util.URI, long)
-     */
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.ChangedModel, org.eclipse.emf.common.util.URI,
      * long)
      */
     @Override
     public void checkin(final ChangedModel model, final URI externalUri, final long revisionId) throws IOException {
-        // FIXME not usable atm
         // we ignore dependant models altogether
         final ResourceSet inputRS = findMostRecentModelFor(model.getPath(), revisionId);
         // apply the model patch
@@ -163,21 +161,26 @@ public class FileBlobStorage implements Storage {
             res.setURI(createStorageUriFor(model.getPath(), revisionId, true));
             res.save(null);
         }
-        addedModelUris.add(externalUri);
+        addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(model.getPath())));
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.Model, org.eclipse.emf.common.util.URI, long)
+     */
     @Override
     public void checkin(final Model model, final URI externalUri, final long revisionId) throws IOException {
         final URI storagePath = createStorageUriFor(model.getPersistencePath(), revisionId, true);
         final Resource resource = resourceSet.createResource(storagePath);
         resource.getContents().add(model.getContent());
         resource.save(null);
-        addedModelUris.add(externalUri);
+        addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(model.getPersistencePath())));
 
         if(model.getContent() instanceof EPackage){
             // write a file containing the mapping of revision number to
             // this epackage name
-            writeM2TagFile(revisionId, storagePath, (EPackage) model.getContent());
+            writeM2TagFile(revisionId, storagePath, ((EPackage) model.getContent()).getNsURI());
         }
     }
 
@@ -219,9 +222,8 @@ public class FileBlobStorage implements Storage {
         resourceSet = null;
         if (rev instanceof NeoRevision) {
             final NeoRevision revision = (NeoRevision) rev;
-            for (final URI uri : addedModelUris) {
-                revision.addModel(uri, null);
-
+            for (final FileModelLocation fml : addedModelUris) {
+                revision.addModel(fml);
             }
         } else {
             throw new TransactionException("Internal error: Do not know how to commit to revision of type " + rev.getClass());
@@ -247,6 +249,14 @@ public class FileBlobStorage implements Storage {
         // create uri for this new path
         final URI fileUri = URI.createURI(dir.toURI().toString());
         return fileUri;
+    }
+
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.storage.Storage#delete(org.eclipse.core.runtime.IPath, long)
+     */
+    @Override
+    public void delete(final IPath modelPath, final long revisionId) throws IOException {
+        throw new UnsupportedOperationException("not implemented");
     }
 
     /**
@@ -300,21 +310,6 @@ public class FileBlobStorage implements Storage {
             }
         }
         return null;
-    }
-
-    /**
-     * @param m1StorageUri
-     * @param revisionId
-     * @return
-     * @throws IOException
-     */
-    private URI findMostRecentM2StorageUriFor(final URI m1StorageUri, final long revisionId) throws IOException {
-        // if modelStorageUri points to a m2 model, find the namespace uri of it
-        final String m2Uri = getM2Uri(new File(m1StorageUri.toFileString()));
-        if(m2Uri == null) {
-            return null;
-        }
-        return findMostRecentM2ByNamespace(revisionId, m2Uri);
     }
 
     /**
@@ -449,14 +444,14 @@ public class FileBlobStorage implements Storage {
 
     /**
      * Write a unique file containing the revision id, epackge namespace uri and filesystem location of a m2 model.
+     * 
      * @param revisionId
      * @param storagePath
      * @param pckg
      * @throws IOException
      */
-    private void writeM2TagFile(final long revisionId, final URI storagePath, final EPackage pckg) throws IOException {
-        final String nsURI = pckg.getNsURI();
-        final File f = new File(this.storageDir, sha1(Long.toString(System.nanoTime())) + ".tagfile");
+    private void writeM2TagFile(final long revisionId, final URI storagePath, final String nsURI) throws IOException {
+        final File f = new File(this.storageDir, md5(Long.toString(System.nanoTime())) + ".tagfile");
         final BufferedWriter bw = new BufferedWriter(new FileWriter(f));
         bw.write(String.format("%d\t%s\t%s", revisionId, nsURI, storagePath));
         bw.close();

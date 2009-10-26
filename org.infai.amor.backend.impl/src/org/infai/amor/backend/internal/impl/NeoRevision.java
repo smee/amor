@@ -15,8 +15,9 @@ import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.internal.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.infai.amor.backend.internal.storage.neo.ModelLocation;
+import org.infai.amor.backend.internal.storage.neo.NeoModelLocation;
 import org.neo4j.api.core.Direction;
 import org.neo4j.api.core.DynamicRelationshipType;
 import org.neo4j.api.core.Node;
@@ -37,7 +38,7 @@ public class NeoRevision extends NeoObject implements Revision {
     private static final String PREVIOUSREVISION = "previousRev";
     private static final String USER = "username";
     private static final String REVISIONID = "revId";
-    private static final String MODEL = "model";
+    private static final String MODELLOCATION = "modellocation";
 
     public NeoRevision(final NeoProvider np, final long revisionId, final String commitMessage, final String username, final NeoRevision previousRevision) {
         super(np);
@@ -67,12 +68,11 @@ public class NeoRevision extends NeoObject implements Revision {
      * @param uri
      * @param loc
      */
-    public void addModel(final URI externaluri, final ModelLocation loc) {
-        if (loc != null) {
-            getNode().createRelationshipTo(loc.getNode(), DynamicRelationshipType.withName(MODEL));
-        } else {
-            logger.warning(String.format("Could not store reference to added model '%s' in revision %d, model got persisted outside of neo!", externaluri, getRevisionId()));
+    public void addModel(ModelLocation loc) {
+        if (!(loc instanceof NeoModelLocation)) {
+            loc = new NeoModelLocation(getNeoProvider(), null, loc);
         }
+        getNode().createRelationshipTo(((NeoObject) loc).getNode(), DynamicRelationshipType.withName(MODELLOCATION));
     }
 
     /*
@@ -118,13 +118,15 @@ public class NeoRevision extends NeoObject implements Revision {
     }
 
     /**
+     * Get internal storage specific informations about this stored model instance.
+     * 
      * @param modelPath
      * @return
      */
-    public ModelLocation getModelLocation(final String modelPath) {
-        for (final Relationship rel : getNode().getRelationships(DynamicRelationshipType.withName(MODEL), Direction.OUTGOING)) {
-            if (modelPath.equals(rel.getEndNode().getProperty(ModelLocation.RELATIVE_PATH))) {
-                return new ModelLocation(rel.getEndNode());
+    public ModelLocation getModelLocation(final String modelPath){
+        for (final Relationship rel : getNode().getRelationships(DynamicRelationshipType.withName(MODELLOCATION), Direction.OUTGOING)) {
+            if (modelPath.equals(rel.getEndNode().getProperty(NeoModelLocation.RELATIVE_PATH))) {
+                return new NeoModelLocation(rel.getEndNode());
             }
         }
         return null;
@@ -138,8 +140,8 @@ public class NeoRevision extends NeoObject implements Revision {
     @Override
     public Collection<URI> getModelReferences() {
         final Collection<URI> modelUris = Lists.newArrayList();
-        for (final Relationship rel : getNode().getRelationships(DynamicRelationshipType.withName(MODEL), Direction.OUTGOING)) {
-            modelUris.add(new ModelLocation(rel.getEndNode()).getExternalUri());
+        for (final Relationship rel : getNode().getRelationships(DynamicRelationshipType.withName(MODELLOCATION), Direction.OUTGOING)) {
+            modelUris.add(new NeoModelLocation(rel.getEndNode()).getExternalUri());
         }
         return modelUris;
     }

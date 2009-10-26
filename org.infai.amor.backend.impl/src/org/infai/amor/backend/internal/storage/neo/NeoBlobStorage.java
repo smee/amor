@@ -41,7 +41,7 @@ import com.google.common.collect.Maps;
  */
 public class NeoBlobStorage extends NeoObjectFactory implements Storage {
     private final static Logger logger = Logger.getLogger(NeoBlobStorage.class.getName());
-    private Map<URI, ModelLocation> addedModelNodes;
+    private Map<URI, NeoModelLocation> addedModelNodes;
     private final NeoBranch branch;
 
     private static String createModelSpecificPath(final IPath modelPath) {
@@ -101,7 +101,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
             disp2.dispatch(eo);
         }
         // remember new model node
-        this.addedModelNodes.put(externalUri, new ModelLocation(getNeoProvider(), (Node) disp2.getRegistry().get(model.getContent()), createModelSpecificPath(model.getPersistencePath()), externalUri));
+        this.addedModelNodes.put(externalUri, new NeoModelLocation(getNeoProvider(), (Node) disp2.getRegistry().get(model.getContent()), createModelSpecificPath(model.getPersistencePath()), externalUri));
     }
 
     /*
@@ -114,10 +114,9 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         logger.finer(String.format("checking out %s of revision %d", path.toString(), revisionId));
 
         final NeoRevision revision = branch.getRevision(revisionId);
-        final ModelLocation modelLocation = revision.getModelLocation(createModelSpecificPath(path));
+        final NeoModelLocation modelLocation = (NeoModelLocation) revision.getModelLocation(createModelSpecificPath(path));
 
         final NeoRestorer restorer = new NeoRestorer(getNeoProvider());
-        // return new ModelImpl(restorer.load("http://filesystem/"), path);
         return new ModelImpl(restorer.load(modelLocation.getModelHead()), path);
     }
 
@@ -132,14 +131,23 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
             // add all modelLocations to the revision
             final NeoRevision revision = (NeoRevision) rev;
             for (final URI uri : addedModelNodes.keySet()) {
-                final ModelLocation loc = addedModelNodes.get(uri);
-                revision.addModel(uri, loc);
+                final NeoModelLocation loc = addedModelNodes.get(uri);
+                revision.addModel(loc);
 
             }
         } else {
             throw new TransactionException("Internal error: Do not know how to commit to revision of type " + rev.getClass());
         }
     }
+
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.storage.Storage#delete(org.eclipse.core.runtime.IPath, long)
+     */
+    @Override
+    public void delete(final IPath modelPath, final long revisionId) throws IOException {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
 
     /*
      * (non-Javadoc)

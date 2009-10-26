@@ -12,6 +12,7 @@ package org.infai.amor.backend.impl;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
@@ -27,6 +28,8 @@ import org.infai.amor.backend.internal.TransactionManager;
 import org.infai.amor.backend.internal.UriHandler;
 import org.infai.amor.backend.internal.responses.CheckinErrorResponse;
 import org.infai.amor.backend.internal.responses.CheckinResponse;
+import org.infai.amor.backend.internal.responses.DeleteErrorResponse;
+import org.infai.amor.backend.internal.responses.DeleteSuccessResponse;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
 
@@ -127,6 +130,20 @@ public class RepositoryImpl implements Repository {
     @Override
     public Branch createBranch(final Revision parent, final String name) {
         return branchFactory.createBranch(parent, name);
+    }
+
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.Repository#deleteModel(org.eclipse.core.runtime.IPath, org.infai.amor.backend.CommitTransaction)
+     */
+    @Override
+    public Response deleteModel(final IPath modelPath, final CommitTransaction tr) throws IOException {
+        try {
+            storageFactory.getStorage(tr.getBranch()).delete(modelPath, tr.getRevisionId());
+            return new DeleteSuccessResponse("Model deleted successfully", uriHandler.createModelUri(tr, modelPath));
+        } catch (final IOException ioe) {
+            ioe.printStackTrace();
+            return new DeleteErrorResponse(ioe.getMessage(), uriHandler.createModelUri(tr, modelPath));
+        }
     }
 
     /*

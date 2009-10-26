@@ -11,6 +11,7 @@ package org.infai.amor.backend;
 
 import java.io.IOException;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
@@ -53,7 +54,6 @@ public interface Repository {
      * @return information about success or error conditions
      */
     Response checkin(Model model, CommitTransaction tr);
-
     /**
      * Restore a {@link Model} with the exact same contents given by the model referenced via the uri.
      * 
@@ -84,6 +84,17 @@ public interface Repository {
      * @return a new subbranch
      */
     Branch createBranch(Revision parent, String branchName);
+
+    /**
+     * Delete a model from the repository.
+     * @param modelPath
+     * relative model path
+     * @param tr
+     * the current transaction
+     * @return
+     * @throws IOException if the model doesn't exist in this repo
+     */
+    Response deleteModel(IPath modelPath,CommitTransaction tr) throws IOException;
 
     /**
      * Similar to {@link #getContents(URI)}, but if called with an uri resembling a revision or a subpath under a revision, it

@@ -49,6 +49,13 @@ public class NeoObject {
     /**
      * @return
      */
+    protected NeoProvider getNeoProvider(){
+        return np;
+    }
+
+    /**
+     * @return
+     */
     public Node getNode() {
         return node;
     }

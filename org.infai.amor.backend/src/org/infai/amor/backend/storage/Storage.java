@@ -64,6 +64,12 @@ public interface Storage extends TransactionListener {
     Model checkout(IPath path, long revisionId) throws IOException;
 
     /**
+     * @param modelPath
+     * @param revisionId
+     */
+    void delete(IPath modelPath, long revisionId) throws IOException;
+
+    /**
      * @see Repository#view(URI)
      * @param path
      * @param revisionId

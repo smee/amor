@@ -118,7 +118,6 @@ public class BlobStorageTest {
         final Model checkedout = storage.checkout(m.getPersistencePath(), tr.getRevisionId());
 
         // then
-        // TODO compare via emfcompare or xmlunit
         ModelUtil.assertModelEqual(m.getContent(), checkedout.getContent());
     }
 

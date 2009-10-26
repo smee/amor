@@ -22,6 +22,7 @@ import org.infai.amor.backend.ChangedModel;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
+import org.infai.amor.backend.internal.impl.AbstractNeo4JPerformanceTest;
 import org.infai.amor.backend.internal.impl.ChangedModelImpl;
 import org.infai.amor.backend.internal.impl.ModelImpl;
 import org.infai.amor.backend.internal.impl.NeoRevision;
@@ -37,7 +38,7 @@ import org.junit.Test;
  * @author sdienst
  * 
  */
-public class LinearHistoryFileBlobStorageTest {
+public class LinearHistoryFileBlobStorageTest extends AbstractNeo4JPerformanceTest {
     private static final String BRANCHNAME = "testBranch";
     private FileBlobStorage storage;
     private Mockery context;
@@ -99,16 +100,19 @@ public class LinearHistoryFileBlobStorageTest {
         storage.startTransaction(tr);
         storage.checkin(mm, null, tr.getRevisionId());
         storage.commit(tr, rev);
+        split("Committed M2");
+
         // checked in first model revision
         final Model m = new ModelImpl(ModelUtil.readInputModel(models[1], rs), modelName);
         tr = createTransaction(BRANCHNAME, 1);
         storage.startTransaction(tr);
         storage.checkin(m, null, tr.getRevisionId());
         storage.commit(tr, rev);
+        split("Committed initial M1");
 
         EObject lastModel = m.getContent();
         // commit all changes to the model in order
-        for (int i = 2; i < models.length - 1; i++) {
+        for (int i = 2; i < models.length; i++) {
             tr = createTransaction(BRANCHNAME, i);
             storage.startTransaction(tr);
             final EObject changedModel = ModelUtil.readInputModel(models[i], rs);
@@ -119,6 +123,7 @@ public class LinearHistoryFileBlobStorageTest {
             final Model checkedoutmodel = storage.checkout(new Path(modelName), i);
             ModelUtil.assertModelEqual(changedModel, checkedoutmodel.getContent());
             lastModel = changedModel;
+            split("Roundtrip completed for M1 revision " + i);
         }
 
     }

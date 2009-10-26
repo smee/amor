@@ -9,7 +9,10 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal.storage.neo;
 
+import java.util.Map;
+
 import org.eclipse.emf.common.util.URI;
+import org.infai.amor.backend.internal.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.NeoObject;
 import org.neo4j.api.core.Direction;
@@ -17,14 +20,27 @@ import org.neo4j.api.core.DynamicRelationshipType;
 import org.neo4j.api.core.Node;
 import org.neo4j.api.core.Relationship;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+
 /**
  * @author sdienst
  * 
  */
-public class ModelLocation extends NeoObject {
+public class NeoModelLocation extends NeoObject implements ModelLocation {
 
-    public static final String RELATIVE_PATH = "relativePath";
-    private static final String EXTERNAL_URI = "externalUri";
+
+    private static final String CUSTOMPROPERTIES = null;
+
+    /**
+     * @param np
+     * @param contentNode
+     * @param loc
+     */
+    public NeoModelLocation(final NeoProvider np, final Node contentNode,final ModelLocation loc){
+        this(np,contentNode,loc.getRelativePath(),loc.getExternalUri());
+        storeCustomProperties(loc.getCustomProperties());
+    }
 
     /**
      * Default constructor for new model location.
@@ -33,7 +49,7 @@ public class ModelLocation extends NeoObject {
      * 
      * @param node
      */
-    public ModelLocation(final NeoProvider np, final Node contentNode, final String relativePath, final URI externalUri) {
+    public NeoModelLocation(final NeoProvider np, final Node contentNode, final String relativePath, final URI externalUri) {
         super(np);
 
         getNode().createRelationshipTo(contentNode, DynamicRelationshipType.withName(Constants.MODEL_HEAD));
@@ -48,13 +64,27 @@ public class ModelLocation extends NeoObject {
      * 
      * @param node
      */
-    public ModelLocation(final Node contentNode) {
+    public NeoModelLocation(final Node contentNode) {
         super(contentNode);
 
     }
 
-    /**
-     * @return
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.internal.ModelLocation#getCustomProperties()
+     */
+    @Override
+    public Map<String, Object> getCustomProperties() {
+        final Node propertiesNode = getNode().getSingleRelationship(DynamicRelationshipType.withName(CUSTOMPROPERTIES), Direction.OUTGOING).getEndNode();
+
+        final Builder<String, Object> mb = new ImmutableMap.Builder<String, Object>();
+        for (final String key : propertiesNode.getPropertyKeys()) {
+            mb.put(key, propertiesNode.getProperty(key));
+        }
+        return mb.build();
+    }
+
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.internal.storage.neo.ModelLocation#getExternalUri()
      */
     public URI getExternalUri() {
         return URI.createURI((String) getNode().getProperty(EXTERNAL_URI));
@@ -73,12 +103,22 @@ public class ModelLocation extends NeoObject {
         }
     }
 
-    /**
-     * What is the relative path component of this model?
-     * 
-     * @return
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.internal.storage.neo.ModelLocation#getRelativePath()
      */
     public String getRelativePath() {
         return (String) getNode().getProperty(RELATIVE_PATH);
+    }
+
+    /**
+     * @param customProperties
+     */
+    private void storeCustomProperties(final Map<String, Object> customProperties) {
+        final Node propertiesNode = createNode();
+        getNode().createRelationshipTo(propertiesNode, DynamicRelationshipType.withName(CUSTOMPROPERTIES));
+        for (final String key : customProperties.keySet()) {
+            propertiesNode.setProperty(key, customProperties.get(key));
+        }
+
     }
 }
