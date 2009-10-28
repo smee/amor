@@ -47,6 +47,7 @@ import org.infai.amor.backend.ChangedModel;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.impl.ModelImpl;
 import org.infai.amor.backend.internal.impl.NeoRevision;
@@ -134,6 +135,10 @@ public class FileBlobStorage implements Storage {
         }
     }
 
+    /**
+     * @param storageDir
+     * @param branch
+     */
     public FileBlobStorage(final File storageDir, final String branchname) {
         this.storageDir = new File(storageDir, branchname);
         /*
@@ -161,7 +166,7 @@ public class FileBlobStorage implements Storage {
             res.setURI(createStorageUriFor(model.getPath(), revisionId, true));
             res.save(null);
         }
-        addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(model.getPath())));
+        addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(model.getPath()), ChangeType.CHANGED));
     }
 
     /*
@@ -175,7 +180,8 @@ public class FileBlobStorage implements Storage {
         final Resource resource = resourceSet.createResource(storagePath);
         resource.getContents().add(model.getContent());
         resource.save(null);
-        addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(model.getPersistencePath())));
+
+        addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(model.getPersistencePath()), ChangeType.ADDED));
 
         if(model.getContent() instanceof EPackage){
             // write a file containing the mapping of revision number to
@@ -223,7 +229,7 @@ public class FileBlobStorage implements Storage {
         if (rev instanceof NeoRevision) {
             final NeoRevision revision = (NeoRevision) rev;
             for (final FileModelLocation fml : addedModelUris) {
-                revision.addModel(fml);
+                revision.touchedModel(fml);
             }
         } else {
             throw new TransactionException("Internal error: Do not know how to commit to revision of type " + rev.getClass());
@@ -256,7 +262,9 @@ public class FileBlobStorage implements Storage {
      */
     @Override
     public void delete(final IPath modelPath, final long revisionId) throws IOException {
-        throw new UnsupportedOperationException("not implemented");
+        addedModelUris.add(new FileModelLocation(null, createModelSpecificPath(modelPath), ChangeType.DELETED));
+        // TODO make sure to signal an error, if anyone checks in another model that depends on this deleted model
+        // throw new UnsupportedOperationException("not implemented");
     }
 
     /**
@@ -280,6 +288,7 @@ public class FileBlobStorage implements Storage {
      * @throws IOException
      */
     private URI findMostRecentM2ByNamespace(final long revisionId, final String m2Namespace) throws FileNotFoundException, IOException {
+        // TODO add the tagfile contents to FileModelLocation#customProperties instead of writing them to the filesystem
         // find all tag files
         final List<File> allTagFiles = Lists.newArrayList(storageDir.listFiles(new FilenameFilter() {
             @Override

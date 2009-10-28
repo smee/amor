@@ -12,6 +12,8 @@ package org.infai.amor.backend.internal.storage.neo;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
+import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.internal.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.NeoObject;
@@ -30,7 +32,8 @@ import com.google.common.collect.ImmutableMap.Builder;
 public class NeoModelLocation extends NeoObject implements ModelLocation {
 
 
-    private static final String CUSTOMPROPERTIES = null;
+    private static final String CUSTOMPROPERTIES = "customProperties";
+    private static final String CHANGETYPE = "changetype";
 
     /**
      * @param np
@@ -38,7 +41,7 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      * @param loc
      */
     public NeoModelLocation(final NeoProvider np, final Node contentNode,final ModelLocation loc){
-        this(np,contentNode,loc.getRelativePath(),loc.getExternalUri());
+        this(np, contentNode, loc.getRelativePath(), loc.getExternalUri(), loc.getChangeType());
         storeCustomProperties(loc.getCustomProperties());
     }
 
@@ -46,15 +49,19 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      * Default constructor for new model location.
      * 
      * @param contentNode
+     * @param changeType
      * 
      * @param node
      */
-    public NeoModelLocation(final NeoProvider np, final Node contentNode, final String relativePath, final URI externalUri) {
+    public NeoModelLocation(final NeoProvider np, final Node contentNode, final String relativePath, final URI externalUri, final ChangeType changeType) {
         super(np);
 
         getNode().createRelationshipTo(contentNode, DynamicRelationshipType.withName(Constants.MODEL_HEAD));
-        getNode().setProperty(RELATIVE_PATH, relativePath);
-        getNode().setProperty(EXTERNAL_URI, externalUri.toString());
+        set(RELATIVE_PATH, relativePath);
+        if (externalUri != null) {
+            set(EXTERNAL_URI, externalUri.toString());
+        }
+        set(CHANGETYPE, changeType.name());
     }
 
     /**
@@ -67,6 +74,14 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
     public NeoModelLocation(final Node contentNode) {
         super(contentNode);
 
+    }
+
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.internal.ModelLocation#getChangeType()
+     */
+    @Override
+    public ChangeType getChangeType() {
+        return Revision.ChangeType.valueOf((String) getNode().getProperty(CHANGETYPE));
     }
 
     /* (non-Javadoc)
@@ -87,7 +102,12 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      * @see org.infai.amor.backend.internal.storage.neo.ModelLocation#getExternalUri()
      */
     public URI getExternalUri() {
-        return URI.createURI((String) getNode().getProperty(EXTERNAL_URI));
+        if (getNode().hasProperty(EXTERNAL_URI)) {
+            return URI.createURI((String) getNode().getProperty(EXTERNAL_URI));
+        } else {
+            return null;
+            // TODO nodes fuer modellocations und Changetypespezifische Knoten ueberpruefen, ist inkonsistent!
+        }
     }
 
     /**

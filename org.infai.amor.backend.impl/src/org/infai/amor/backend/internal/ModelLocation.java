@@ -12,6 +12,7 @@ package org.infai.amor.backend.internal;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
+import org.infai.amor.backend.Revision;
 
 /**
  * @author sdienst
@@ -20,8 +21,15 @@ import org.eclipse.emf.common.util.URI;
 public interface ModelLocation {
     static final String RELATIVE_PATH = "relativePath";
     static final String EXTERNAL_URI = "externalUri";
+
+    /**
+     * @return
+     */
+    Revision.ChangeType getChangeType();
+
     /**
      * Some undefined properties, use them for storage specific informations.
+     * 
      * @return
      */
     Map<String,Object> getCustomProperties();

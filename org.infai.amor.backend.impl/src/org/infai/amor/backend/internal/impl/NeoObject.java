@@ -59,4 +59,17 @@ public class NeoObject {
     public Node getNode() {
         return node;
     }
+
+    /**
+     * Set a property iff value != null.
+     * 
+     * @param node
+     * @param key
+     * @param value
+     */
+    protected void set(final String key, final Object value) {
+        if (value != null) {
+            node.setProperty(key, value);
+        }
+    }
 }

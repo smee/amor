@@ -13,6 +13,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
+import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.internal.ModelLocation;
 
 /**
@@ -23,15 +25,26 @@ public class FileModelLocation implements ModelLocation {
 
     private final String rp;
     private final URI exUri;
-    private Map<String, Object> props;
+    private final Map<String, Object> props;
+    private final Revision.ChangeType ct;
 
-    public FileModelLocation(final URI externalUri, final String relativePath) {
-        this(externalUri,relativePath,Collections.EMPTY_MAP);
-    }
-
-    public FileModelLocation(final URI externalUri, final String relativePath, final Map<String, Object> props) {
+    public FileModelLocation(final URI externalUri, final String relativePath, final ChangeType ct, final Map<String, Object> props) {
         this.rp = relativePath;
         this.exUri = externalUri;
+        this.ct = ct;
+        this.props = props;
+    }
+
+    public FileModelLocation(final URI externalUri, final String relativePath, final Revision.ChangeType ct) {
+        this(externalUri,relativePath,ct,Collections.EMPTY_MAP);
+    }
+
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.internal.ModelLocation#getChangeType()
+     */
+    @Override
+    public ChangeType getChangeType() {
+        return ct;
     }
 
     /* (non-Javadoc)

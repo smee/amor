@@ -22,6 +22,7 @@ import org.infai.amor.backend.ChangedModel;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.ModelImpl;
@@ -101,7 +102,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
             disp2.dispatch(eo);
         }
         // remember new model node
-        this.addedModelNodes.put(externalUri, new NeoModelLocation(getNeoProvider(), (Node) disp2.getRegistry().get(model.getContent()), createModelSpecificPath(model.getPersistencePath()), externalUri));
+        this.addedModelNodes.put(externalUri, new NeoModelLocation(getNeoProvider(), (Node) disp2.getRegistry().get(model.getContent()), createModelSpecificPath(model.getPersistencePath()), externalUri, ChangeType.ADDED));
     }
 
     /*
@@ -132,7 +133,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
             final NeoRevision revision = (NeoRevision) rev;
             for (final URI uri : addedModelNodes.keySet()) {
                 final NeoModelLocation loc = addedModelNodes.get(uri);
-                revision.addModel(loc);
+                revision.touchedModel(loc);
 
             }
         } else {
