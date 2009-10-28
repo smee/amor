@@ -13,7 +13,6 @@ import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.internal.BranchFactory;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.neo4j.api.core.Direction;
 import org.neo4j.api.core.DynamicRelationshipType;
 import org.neo4j.api.core.Node;
 import org.neo4j.api.core.Relationship;
@@ -67,7 +66,7 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
                 final NeoBranch newBranch = new NeoBranch(getNeoProvider(), name);
                 newBranch.setOriginRevision((NeoRevision) origin);
                 // set head revision to origin
-                newBranch.getNode().createRelationshipTo(((NeoRevision) origin).getNode(), DynamicRelationshipType.withName(NeoBranch.HEADREVISION));
+                newBranch.setHeadRevisionTo((NeoRevision) origin);
 
                 factoryNode.createRelationshipTo(newBranch.getNode(), DynamicRelationshipType.withName("branch"));
                 result = newBranch;
@@ -90,13 +89,9 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
         final NeoBranch neobranch = (NeoBranch) transaction.getBranch();
         final NeoRevision oldHeadRevision = (NeoRevision) transaction.getBranch().getHeadRevision();
         final NeoRevision newRevision = new NeoRevision(getNeoProvider(), transaction.getRevisionId(), transaction.getCommitMessage(), transaction.getUser(), oldHeadRevision);
-        // is there a head revision of this branch?
-        final Relationship oldHeadRel = neobranch.getNode().getSingleRelationship(DynamicRelationshipType.withName(NeoBranch.HEADREVISION), Direction.OUTGOING);
-        if (oldHeadRel != null) {
-            oldHeadRel.delete();
-        }
+
         // set the new head revision of this branch
-        neobranch.getNode().createRelationshipTo(newRevision.getNode(), DynamicRelationshipType.withName(NeoBranch.HEADREVISION));
+        neobranch.setHeadRevisionTo(newRevision);
         return newRevision;
     }
 

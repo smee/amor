@@ -51,7 +51,6 @@ public class NeoBranch extends NeoObject implements Branch {
     public NeoBranch(final Node node) {
         super(node);
     }
-
     /*
      * (non-Javadoc)
      * 
@@ -61,7 +60,6 @@ public class NeoBranch extends NeoObject implements Branch {
     public Date getCreationTime() {
         return new Date((Long) getNode().getProperty(CREATIONDATE));
     }
-
     /*
      * (non-Javadoc)
      * 
@@ -158,6 +156,17 @@ public class NeoBranch extends NeoObject implements Branch {
                 };
             }
         };
+    }
+
+    /**
+     * @param rev
+     */
+    protected void setHeadRevisionTo(final NeoRevision rev){
+        final Relationship oldHeadRel = getNode().getSingleRelationship(DynamicRelationshipType.withName(NeoBranch.HEADREVISION), Direction.OUTGOING);
+        if (oldHeadRel != null) {
+            oldHeadRel.delete();
+        }
+        getNode().createRelationshipTo(rev.getNode(), DynamicRelationshipType.withName(NeoBranch.HEADREVISION));
     }
 
     public void setOriginRevision(final NeoRevision rev) {
