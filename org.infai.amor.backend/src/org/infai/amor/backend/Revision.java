@@ -19,7 +19,9 @@ import org.eclipse.emf.common.util.URI;
  * 
  */
 public interface Revision {
-
+    enum ChangeType {
+        ADDED, CHANGED, DELETED
+    }
     /**
      * Commit message.
      * 
@@ -38,11 +40,10 @@ public interface Revision {
     /**
      * Get a collection of uris for every touched model of this revision.
      * <p>
-     * TODO should we distinguish between added, modified and deleted models?
      * 
      * @return
      */
-    Collection<URI> getModelReferences();
+    Collection<URI> getModelReferences(ChangeType ct);
 
     /**
      * Get the parent revision of this one.
