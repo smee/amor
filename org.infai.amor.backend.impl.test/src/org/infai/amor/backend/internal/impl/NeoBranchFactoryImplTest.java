@@ -14,18 +14,24 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
 import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.internal.storage.FileModelLocation;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.neo4j.api.core.NeoService;
+
+import com.google.common.collect.Iterables;
 
 /**
  * @author sdienst
@@ -34,6 +40,8 @@ import org.neo4j.api.core.NeoService;
 public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
 
     private NeoBranchFactory factory;
+
+    private NeoBranch mainbranch;
 
     private static MockedTransactionNeoWrapper neoWithMockTransaction;
 
@@ -60,12 +68,7 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
      * @return
      */
     private <T> boolean contains(final Iterable<T> items, final T lookFor) {
-        for (final T item : items) {
-            if (item.equals(lookFor)) {
-                return true;
-            }
-        }
-        return false;
+        return Iterables.contains(items, lookFor);
     }
 
     /**
@@ -85,7 +88,7 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
      * <pre>
      * Branch
      *   |
-     *   1 
+     *   1
      *   |
      *   2 -- subbranch
      *   |  |
@@ -100,7 +103,6 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
      */
     private Branch createComplexRevisionTree() {
         // create main branch
-        final Branch mainbranch = factory.createBranch(null, "main");
         final CommitTransaction tr = createCommit(1, mainbranch, "test", "max");
         // with one revision
         factory.createRevision(tr);
@@ -125,17 +127,45 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
                 return neoWithMockTransaction;
             }
         });
+        mainbranch = factory.createBranch(null, "main");
+    }
+
+    @Test
+    public void shouldIgnoreDeletedModels() throws Exception {
+        // given
+        final String model1path = "deleteme.model";
+        final URI model1uri = URI.createURI("amor://localhost/repo/main/1/" + model1path);
+        final String model2path = "donottouchme.model";
+        final URI model2uri = URI.createURI("amor://localhost/repo/main/1/" + model2path);
+        final CommitTransaction tr = createCommit(1, mainbranch, "test", "max mustermann");
+        // added two models
+        final NeoRevision rev1 = factory.createRevision(tr);
+        rev1.touchedModel(new FileModelLocation(model1uri, model1path, ChangeType.ADDED));
+        rev1.touchedModel(new FileModelLocation(model2uri, model2path, ChangeType.ADDED));
+        // deleted one model
+        final CommitTransaction tr2 = createCommit(2, mainbranch, "deleted one model", "max mustermann");
+        final NeoRevision rev2 = factory.createRevision(tr2);
+        final URI model3uri = URI.createURI("amor://localhost/repo/main/2/" + model2path);
+        rev2.touchedModel(new FileModelLocation(model3uri, model1path, ChangeType.DELETED));
+        // when
+        // ask for contents
+        final Collection<URI> addedModelReferencesOnRev1 = rev1.getModelReferences(ChangeType.ADDED);
+        final Collection<URI> addedModelReferencesOnRev2 = rev2.getModelReferences(ChangeType.ADDED);
+        final Collection<URI> deletedModelReferencesOnRev2 = rev2.getModelReferences(ChangeType.DELETED);
+        // then
+        assertEquals(2, addedModelReferencesOnRev1.size());
+        assertEquals(0, addedModelReferencesOnRev2.size());
+        assertEquals(1, deletedModelReferencesOnRev2.size());
     }
 
     @Test
     public void testCreatesNewMainBranch() {
         final long startTime = System.currentTimeMillis();
 
-        final Branch branch = factory.createBranch(null, "main");
 
-        assertNotNull(branch);
-        assertEquals("main", branch.getName());
-        assertTrue(startTime <= branch.getCreationTime().getTime());
+        assertNotNull(mainbranch);
+        assertEquals("main", mainbranch.getName());
+        assertTrue(startTime <= mainbranch.getCreationTime().getTime());
     }
 
     @Test
@@ -146,8 +176,7 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
 
     @Test
     public void testNewBranchOriginIsHead() {
-        final Branch branch = factory.createBranch(null, "main");
-        final CommitTransaction tr = createCommit(1, branch, "test", "user");
+        final CommitTransaction tr = createCommit(1, mainbranch, "test", "user");
         final Revision rootRevision = factory.createRevision(tr);
 
         final Branch subBranch1 = factory.createBranch(rootRevision, "sub1");
@@ -157,31 +186,28 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
 
     @Test
     public void testReturnsBranchIfExists() {
-        final Branch branch = factory.createBranch(null, "main");
         final Branch branch2 = factory.createBranch(null, "main");
 
-        assertTrue(((NeoBranch) branch).getNode().equals(((NeoBranch) branch2).getNode()));
+        assertTrue((mainbranch).getNode().equals(((NeoBranch) branch2).getNode()));
     }
 
     @Test
     public void testRevisionChainingWorks() {
-        final Branch branch = factory.createBranch(null, "main");
-        final CommitTransaction tr = createCommit(1, branch, "test", "max");
-        final CommitTransaction tr2 = createCommit(2, branch, "noch etwas vergessen", "user");
+        final CommitTransaction tr = createCommit(1, mainbranch, "test", "max");
+        final CommitTransaction tr2 = createCommit(2, mainbranch, "noch etwas vergessen", "user");
 
         final Revision rootRevision = factory.createRevision(tr);
         final Revision nextRevision = factory.createRevision(tr2);
 
         // a main branch has no origin
-        assertTrue(null == branch.getOriginRevision());
-        assertEquals(2, branch.getHeadRevision().getRevisionId());
-        assertEquals(1, branch.getHeadRevision().getPreviousRevision().getRevisionId());
+        assertTrue(null == mainbranch.getOriginRevision());
+        assertEquals(2, mainbranch.getHeadRevision().getRevisionId());
+        assertEquals(1, mainbranch.getHeadRevision().getPreviousRevision().getRevisionId());
     }
 
     @Test
     public void testSubbranchHasRevisionOrigin() {
-        final Branch branch = factory.createBranch(null, "main");
-        final CommitTransaction tr = createCommit(1, branch, "test", "max");
+        final CommitTransaction tr = createCommit(1, mainbranch, "test", "max");
         final Revision rootRevision = factory.createRevision(tr);
 
         final Branch subBranch1 = factory.createBranch(rootRevision, "sub1");

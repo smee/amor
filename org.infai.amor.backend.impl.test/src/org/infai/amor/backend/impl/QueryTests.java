@@ -98,13 +98,13 @@ public class QueryTests {
                 allowing(rev3).getRevisionId();
                 will(returnValue(3L));
                 final URI uri1 = URI.createURI("amor://localhost/repo/branch1/1/path1/model1");
-                allowing(rev1).getModelReferences();
+                allowing(rev1).getModelReferences(with(any(Revision.ChangeType.class)));
                 will(returnValue(Arrays.asList(uri1)));
                 final URI uri2 = URI.createURI("amor://localhost/repo/branch1/2/path1/model2");
-                allowing(rev2).getModelReferences();
+                allowing(rev2).getModelReferences(with(any(Revision.ChangeType.class)));
                 will(returnValue(Arrays.asList(uri2)));
                 final URI uri3 = URI.createURI("amor://localhost/repo/branch1/3/path1/model3");
-                allowing(rev3).getModelReferences();
+                allowing(rev3).getModelReferences(with(any(Revision.ChangeType.class)));
                 will(returnValue(Arrays.asList(uri3)));
             }
         });

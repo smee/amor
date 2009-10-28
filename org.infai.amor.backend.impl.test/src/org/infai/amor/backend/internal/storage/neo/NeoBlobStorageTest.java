@@ -29,6 +29,7 @@ import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Repository;
 import org.infai.amor.backend.Response;
 import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.impl.RepositoryImpl;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.TransactionManager;
@@ -134,7 +135,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         assertTrue(checkin instanceof CheckinResponse);
         // all models should be known to the corresponding revision
         final Revision revision = repository.getRevision(commitResponse.getURI());
-        final Collection<URI> modelReferences = revision.getModelReferences();
+        final Collection<URI> modelReferences = revision.getModelReferences(ChangeType.ADDED);
 
         assertEquals(3, modelReferences.size());
         assertTrue(modelReferences.contains(checkin.getURI()));

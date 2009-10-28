@@ -12,10 +12,13 @@ package org.infai.amor.backend.integration;
 import static org.infai.amor.ModelUtil.readInputModel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.infai.amor.ModelUtil;
 import org.infai.amor.backend.Branch;
@@ -23,6 +26,8 @@ import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Repository;
 import org.infai.amor.backend.Response;
+import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.impl.RepositoryImpl;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.TransactionManager;
@@ -40,6 +45,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.neo4j.api.core.EmbeddedNeo;
 import org.neo4j.api.core.NeoService;
+
+import com.google.common.collect.Iterables;
 
 /**
  * @author sdienst
@@ -141,6 +148,36 @@ public class IntegrationTests {
         final Model output = repository.checkout(checkin.getURI());
         // then
         ModelUtil.assertModelEqual(input, output.getContent());
+    }
+
+    @Test
+    public void shouldShowRepositoryContentsPerRevision() throws Exception {
+        // given
+        final EObject input = readInputModel("testmodels/base.ecore");
+
+        final Branch branch = repository.createBranch(null, "trunk");
+        final CommitTransaction ct = repository.startCommitTransaction(branch);
+        ct.setCommitMessage("test");
+        ct.setUser("mustermann");
+        // when
+        // model checked in successfully
+        final Response checkin = repository.checkin(new ModelImpl(input, "testmodels/base.ecore"), ct);
+        final CommitSuccessResponse commitResponse = (CommitSuccessResponse) repository.commitTransaction(ct);
+        // then the revision should know about this model final Revision revision =
+        final Revision revision = repository.getRevision(commitResponse.getURI());
+        assertEquals(1, revision.getModelReferences(ChangeType.ADDED).size());
+
+        // delete the model
+        final CommitTransaction ct2 = repository.startCommitTransaction(branch);
+        ct2.setCommitMessage("test");
+        ct2.setUser("mustermann");
+        repository.deleteModel(new Path("testmodels/base.ecore"), ct2);
+        final CommitSuccessResponse commitResponse2 = (CommitSuccessResponse) repository.commitTransaction(ct2);
+
+        final Iterable<URI> activeContents = repository.getActiveContents(URI.createURI("amor://localhost/repo/trunk/2"));
+
+        assertTrue(Iterables.isEmpty(activeContents));
+
     }
 
     @After
