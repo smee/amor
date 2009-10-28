@@ -23,6 +23,7 @@ import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Repository;
 import org.infai.amor.backend.Response;
 import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.internal.BranchFactory;
 import org.infai.amor.backend.internal.TransactionManager;
 import org.infai.amor.backend.internal.UriHandler;
@@ -196,14 +197,16 @@ public class RepositoryImpl implements Repository {
                 throw new MalformedURIException("Unknown revision: " + uri);
             } else {
                 while (rev != null) {
-                    final Collection<URI> knownModels = rev.getModelReferences();
-                    for (final URI modelUri : knownModels) {
+                    final Collection<URI> addedModels = rev.getModelReferences(Revision.ChangeType.ADDED);
+                    for (final URI modelUri : addedModels) {
                         if (uriHandler.isPrefixIgnoringRevision(uri, modelUri)) {
                             result.add(uriHandler.trimToNextSegmentKeepingRevision(uri.segmentCount() + 1, modelUri));
                         }
                     }
                     // cycle through to all older revisions
                     // TODO handle deleted models
+                    // TODO add the latest uri only (for changed models)
+                    // TODO should we introduce a revision.getNextRevision()?
                     rev = rev.getPreviousRevision();
                 }
                 return result;
@@ -242,6 +245,7 @@ public class RepositoryImpl implements Repository {
      * 
      * @see org.infai.amor.backend.Repository#getContents(org.eclipse.emf.common.util.URI)
      */
+    @Deprecated
     @Override
     public Iterable<URI> getContents(final URI uri) throws MalformedURIException {
         String branchname = null;
@@ -285,7 +289,9 @@ public class RepositoryImpl implements Repository {
             if (rev == null) {
                 throw new MalformedURIException("Unknown revision: " + uri);
             } else {
-                final Collection<URI> knownModels = rev.getModelReferences();
+                // TODO also show changed (and deleted?) models
+                final Iterable<URI> knownModels = Iterables.concat(
+rev.getModelReferences(ChangeType.ADDED));
                 for (final URI modelUri : knownModels) {
                     if (uriHandler.isPrefix(uri, modelUri)) {
                         result.add(uriHandler.trimToNextSegment(uri, modelUri));

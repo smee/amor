@@ -150,10 +150,12 @@ public interface Repository {
      * getContents(new URI("amor://host/repo/branch1/2/foo1/bar2")) => {"model2"}<br>
      * </code>
      * 
+     * @deprecated unneeded, see {@link Revision#getModelReferences(org.infai.amor.backend.Revision.ChangeType)}
      * @param uri
      * @return
      * @throws MalformedURIException
      */
+    @Deprecated
     Iterable<URI> getContents(URI uri) throws MalformedURIException;
 
     /**
