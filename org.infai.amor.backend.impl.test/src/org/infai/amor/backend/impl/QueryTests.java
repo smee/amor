@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.backend.impl;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import java.util.List;
 import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.internal.BranchFactory;
 import org.infai.amor.backend.internal.TransactionManager;
 import org.infai.amor.backend.internal.UriHandler;
@@ -98,14 +100,17 @@ public class QueryTests {
                 allowing(rev3).getRevisionId();
                 will(returnValue(3L));
                 final URI uri1 = URI.createURI("amor://localhost/repo/branch1/1/path1/model1");
-                allowing(rev1).getModelReferences(with(any(Revision.ChangeType.class)));
+                allowing(rev1).getModelReferences(ChangeType.ADDED);
                 will(returnValue(Arrays.asList(uri1)));
                 final URI uri2 = URI.createURI("amor://localhost/repo/branch1/2/path1/model2");
-                allowing(rev2).getModelReferences(with(any(Revision.ChangeType.class)));
+                allowing(rev2).getModelReferences(ChangeType.ADDED);
                 will(returnValue(Arrays.asList(uri2)));
                 final URI uri3 = URI.createURI("amor://localhost/repo/branch1/3/path1/model3");
-                allowing(rev3).getModelReferences(with(any(Revision.ChangeType.class)));
+                allowing(rev3).getModelReferences(ChangeType.ADDED);
                 will(returnValue(Arrays.asList(uri3)));
+                allowing(rev1).getModelReferences(with(any(Revision.ChangeType.class)));
+                allowing(rev2).getModelReferences(with(any(Revision.ChangeType.class)));
+                allowing(rev3).getModelReferences(with(any(Revision.ChangeType.class)));
             }
         });
     }
@@ -151,8 +156,8 @@ public class QueryTests {
         // then
         // finds all models, ordered backwards
         assertEquals(2, Iterables.size(uris));
-        assertEquals(URI.createURI("amor://localhost/repo/branch1/2/path1/model2"), Iterables.get(uris, 0));
-        assertEquals(URI.createURI("amor://localhost/repo/branch1/1/path1/model1"), Iterables.get(uris, 1));
+        assertTrue(Iterables.contains(uris, URI.createURI("amor://localhost/repo/branch1/2/path1/model2")));
+        assertTrue(Iterables.contains(uris, URI.createURI("amor://localhost/repo/branch1/1/path1/model1")));
     }
 
     @Test
@@ -164,9 +169,9 @@ public class QueryTests {
         // then
         // finds all models, ordered backwards
         assertEquals(3, Iterables.size(uris));
-        assertEquals(URI.createURI("amor://localhost/repo/branch1/3/path1/model3"), Iterables.get(uris, 0));
-        assertEquals(URI.createURI("amor://localhost/repo/branch1/2/path1/model2"), Iterables.get(uris, 1));
-        assertEquals(URI.createURI("amor://localhost/repo/branch1/1/path1/model1"), Iterables.get(uris, 2));
+        assertTrue(Iterables.contains(uris, URI.createURI("amor://localhost/repo/branch1/3/path1/model3")));
+        assertTrue(Iterables.contains(uris, URI.createURI("amor://localhost/repo/branch1/2/path1/model2")));
+        assertTrue(Iterables.contains(uris, URI.createURI("amor://localhost/repo/branch1/1/path1/model1") ));
     }
 
     @Test

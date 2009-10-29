@@ -156,26 +156,27 @@ public class IntegrationTests {
         final EObject input = readInputModel("testmodels/base.ecore");
 
         final Branch branch = repository.createBranch(null, "trunk");
+        // when
+        // start new checkin transaction
         final CommitTransaction ct = repository.startCommitTransaction(branch);
         ct.setCommitMessage("test");
         ct.setUser("mustermann");
-        // when
-        // model checked in successfully
+        // add a model
         final Response checkin = repository.checkin(new ModelImpl(input, "testmodels/base.ecore"), ct);
         final CommitSuccessResponse commitResponse = (CommitSuccessResponse) repository.commitTransaction(ct);
-        // then the revision should know about this model final Revision revision =
+        // then the revision should know about this model
         final Revision revision = repository.getRevision(commitResponse.getURI());
         assertEquals(1, revision.getModelReferences(ChangeType.ADDED).size());
 
-        // delete the model
+        // now delete the model
         final CommitTransaction ct2 = repository.startCommitTransaction(branch);
-        ct2.setCommitMessage("test");
+        ct2.setCommitMessage("delete model");
         ct2.setUser("mustermann");
         repository.deleteModel(new Path("testmodels/base.ecore"), ct2);
         final CommitSuccessResponse commitResponse2 = (CommitSuccessResponse) repository.commitTransaction(ct2);
 
-        final Iterable<URI> activeContents = repository.getActiveContents(URI.createURI("amor://localhost/repo/trunk/2"));
-
+        final Iterable<URI> activeContents = repository.getActiveContents(commitResponse2.getURI());
+        // no models should be visible at revision 3
         assertTrue(Iterables.isEmpty(activeContents));
 
     }

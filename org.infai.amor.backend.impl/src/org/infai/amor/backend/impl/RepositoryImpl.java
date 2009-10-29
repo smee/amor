@@ -11,6 +11,7 @@ package org.infai.amor.backend.impl;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
@@ -33,10 +34,12 @@ import org.infai.amor.backend.internal.responses.DeleteErrorResponse;
 import org.infai.amor.backend.internal.responses.DeleteSuccessResponse;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
+import org.infai.amor.backend.util.Pair;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Default implementation of the amor repository backend.
@@ -139,7 +142,8 @@ public class RepositoryImpl implements Repository {
     @Override
     public Response deleteModel(final IPath modelPath, final CommitTransaction tr) throws IOException {
         try {
-            storageFactory.getStorage(tr.getBranch()).delete(modelPath, tr.getRevisionId());
+            final URI modeluri = uriHandler.createModelUri(tr, modelPath);
+            storageFactory.getStorage(tr.getBranch()).delete(modelPath, modeluri,tr.getRevisionId());
             return new DeleteSuccessResponse("Model deleted successfully", uriHandler.createModelUri(tr, modelPath));
         } catch (final IOException ioe) {
             ioe.printStackTrace();
@@ -190,32 +194,64 @@ public class RepositoryImpl implements Repository {
             });
         } else {
             // find all alive models, convert them into uris
-            final Collection<URI> result = Lists.newArrayList();
             final Branch branch = branchFactory.getBranch(branchname);
             Revision rev = branch.getRevision(revisionId);
             if (rev == null) {
                 throw new MalformedURIException("Unknown revision: " + uri);
             } else {
-                while (rev != null) {
-                    final Collection<URI> addedModels = rev.getModelReferences(Revision.ChangeType.ADDED);
-                    for (final URI modelUri : addedModels) {
-                        if (uriHandler.isPrefixIgnoringRevision(uri, modelUri)) {
-                            result.add(uriHandler.trimToNextSegmentKeepingRevision(uri.segmentCount() + 1, modelUri));
-                        }
-                    }
-                    // cycle through to all older revisions
-                    // TODO handle deleted models
-                    // TODO add the latest uri only (for changed models)
-                    // TODO should we introduce a revision.getNextRevision()?
-                    rev = rev.getPreviousRevision();
-                }
-                return result;
-
+            	return constructActiveRepositoryContents(rev,uri);
             }
 
         }
 
     }
+
+	/**
+	 * @param rev
+	 * @param uri 
+	 * @throws MalformedURIException
+	 */
+	private Iterable<URI> constructActiveRepositoryContents(Revision rev, URI uri)
+ throws MalformedURIException {
+		Map<IPath, Pair<Long, URI>> activeModels = Maps.newHashMap();
+		Map<IPath, Pair<Long, URI>> deletedModels = Maps.newHashMap();
+		// cycle through to all older revisions
+		while (rev != null) {
+			final Iterable<URI> addedModelUris = Iterables.concat(rev
+					.getModelReferences(ChangeType.ADDED), rev
+					.getModelReferences(ChangeType.CHANGED));
+			Iterable<URI> deletedModelUris = rev.getModelReferences(ChangeType.DELETED);
+
+			for (URI deletedModelUri : deletedModelUris) {
+				deletedModels.put(uriHandler.extractModelPathFrom(deletedModelUri), 
+				        new Pair(rev.getRevisionId(), deletedModelUri));
+			}
+			for (URI touchedModelUri : addedModelUris) {
+				// extract model path+name
+				IPath path = uriHandler.extractModelPathFrom(touchedModelUri);
+				// was it deleted in a later revision?
+				Pair<Long, URI> p = deletedModels.get(path);
+				if (p == null || p.first < rev.getRevisionId()) {
+					// was never deleted or was deleted prior to the current
+					// revision
+					activeModels.put(path, new Pair(rev.getRevisionId(),touchedModelUri));
+				} else {
+					// will get deleted in a later revision, not active at this
+					// rev
+					activeModels.remove(path);
+				}
+			}
+
+			rev = rev.getPreviousRevision();
+		}
+		final Collection<URI> result = Lists.newArrayList();
+		for (final Pair<Long, URI> pair : activeModels.values()) {
+			if (uriHandler.isPrefixIgnoringRevision(uri, pair.second)) {
+				result.add(uriHandler.trimToNextSegmentKeepingRevision(uri.segmentCount() + 1, pair.second));
+			}
+		}
+		return result;
+	}
 
     /*
      * (non-Javadoc)
