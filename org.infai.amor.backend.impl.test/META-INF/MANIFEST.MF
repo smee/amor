@@ -14,5 +14,10 @@ Bundle-ClassPath: lib/hamcrest-core-1.1.jar,
  lib/cglib-nodep-2.1_3.jar,
  lib/jmock-legacy-2.5.1.jar,
  lib/objenesis-1.0.jar
-Import-Package: org.eclipse.emf.compare.diff.service,
+Import-Package: org.eclipse.emf.compare.diff.metamodel,
+ org.eclipse.emf.compare.diff.service,
+ org.eclipse.emf.compare.match,
+ org.eclipse.emf.compare.match.metamodel,
+ org.eclipse.emf.compare.match.service,
+ org.eclipse.emf.compare.util,
  org.neo4j.api.core
