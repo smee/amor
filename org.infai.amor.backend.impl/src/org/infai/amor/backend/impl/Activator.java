@@ -10,6 +10,7 @@ import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.NeoBranchFactory;
 import org.infai.amor.backend.internal.impl.TransactionManagerImpl;
 import org.infai.amor.backend.internal.impl.UriHandlerImpl;
+import org.infai.amor.backend.internal.storage.FileStorageFactory;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
 import org.neo4j.api.core.NeoService;
@@ -153,6 +154,9 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         }, new NeoBranchFactory(this), uriHandler, new TransactionManagerImpl(uriHandler, this));
         // register repository osgi service
         context.registerService(Repository.class.getName(), repo, null);
+        // TODO configuration?
+        context.registerService(StorageFactory.class.getName(), new FileStorageFactory(), null);
+        
     }
 
     /*
