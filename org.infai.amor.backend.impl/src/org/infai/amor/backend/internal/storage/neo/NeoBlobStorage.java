@@ -145,7 +145,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      * @see org.infai.amor.backend.storage.Storage#delete(org.eclipse.core.runtime.IPath, long)
      */
     @Override
-    public void delete(final IPath modelPath, final long revisionId) throws IOException {
+    public void delete(final IPath modelPath, URI externalUri,final long revisionId) throws IOException {
         throw new UnsupportedOperationException("not implemented");
     }
 
