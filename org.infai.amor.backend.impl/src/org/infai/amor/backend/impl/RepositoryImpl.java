@@ -95,7 +95,8 @@ public class RepositoryImpl implements Repository {
         try {
             // remember the repository uri for this model
             final URI modeluri = uriHandler.createModelUri(tr, model.getPersistencePath());
-            storageFactory.getStorage(tr.getBranch()).checkin(model, modeluri, tr.getRevisionId());
+            final Storage storage = storageFactory.getStorage(tr.getBranch());
+            storage.checkin(model, modeluri, tr.getRevisionId());
 
             return new CheckinResponse("Success.", modeluri);
         } catch (final IOException e) {
@@ -124,6 +125,53 @@ public class RepositoryImpl implements Repository {
     public Response commitTransaction(final CommitTransaction tr) {
         final Revision revision = branchFactory.createRevision(tr);
         return transactionManager.commit(tr, revision);
+    }
+
+    /**
+     * @param rev
+     * @param uri
+     * @throws MalformedURIException
+     */
+    private Iterable<URI> constructActiveRepositoryContents(Revision rev, final URI uri)
+    throws MalformedURIException {
+        final Map<IPath, Pair<Long, URI>> activeModels = Maps.newHashMap();
+        final Map<IPath, Pair<Long, URI>> deletedModels = Maps.newHashMap();
+        // cycle through to all older revisions
+        while (rev != null) {
+            final Iterable<URI> addedModelUris = Iterables.concat(rev
+                    .getModelReferences(ChangeType.ADDED), rev
+                    .getModelReferences(ChangeType.CHANGED));
+            final Iterable<URI> deletedModelUris = rev.getModelReferences(ChangeType.DELETED);
+
+            for (final URI deletedModelUri : deletedModelUris) {
+                deletedModels.put(uriHandler.extractModelPathFrom(deletedModelUri),
+                        new Pair(rev.getRevisionId(), deletedModelUri));
+            }
+            for (final URI touchedModelUri : addedModelUris) {
+                // extract model path+name
+                final IPath path = uriHandler.extractModelPathFrom(touchedModelUri);
+                // was it deleted in a later revision?
+                final Pair<Long, URI> p = deletedModels.get(path);
+                if (p == null || p.first < rev.getRevisionId()) {
+                    // was never deleted or was deleted prior to the current
+                    // revision
+                    activeModels.put(path, new Pair(rev.getRevisionId(),touchedModelUri));
+                } else {
+                    // will get deleted in a later revision, not active at this
+                    // rev
+                    activeModels.remove(path);
+                }
+            }
+
+            rev = rev.getPreviousRevision();
+        }
+        final Collection<URI> result = Lists.newArrayList();
+        for (final Pair<Long, URI> pair : activeModels.values()) {
+            if (uriHandler.isPrefixIgnoringRevision(uri, pair.second)) {
+                result.add(uriHandler.trimToNextSegmentKeepingRevision(uri.segmentCount() + 1, pair.second));
+            }
+        }
+        return result;
     }
 
     /*
@@ -195,63 +243,16 @@ public class RepositoryImpl implements Repository {
         } else {
             // find all alive models, convert them into uris
             final Branch branch = branchFactory.getBranch(branchname);
-            Revision rev = branch.getRevision(revisionId);
+            final Revision rev = branch.getRevision(revisionId);
             if (rev == null) {
                 throw new MalformedURIException("Unknown revision: " + uri);
             } else {
-            	return constructActiveRepositoryContents(rev,uri);
+                return constructActiveRepositoryContents(rev,uri);
             }
 
         }
 
     }
-
-	/**
-	 * @param rev
-	 * @param uri 
-	 * @throws MalformedURIException
-	 */
-	private Iterable<URI> constructActiveRepositoryContents(Revision rev, URI uri)
- throws MalformedURIException {
-		Map<IPath, Pair<Long, URI>> activeModels = Maps.newHashMap();
-		Map<IPath, Pair<Long, URI>> deletedModels = Maps.newHashMap();
-		// cycle through to all older revisions
-		while (rev != null) {
-			final Iterable<URI> addedModelUris = Iterables.concat(rev
-					.getModelReferences(ChangeType.ADDED), rev
-					.getModelReferences(ChangeType.CHANGED));
-			Iterable<URI> deletedModelUris = rev.getModelReferences(ChangeType.DELETED);
-
-			for (URI deletedModelUri : deletedModelUris) {
-				deletedModels.put(uriHandler.extractModelPathFrom(deletedModelUri), 
-				        new Pair(rev.getRevisionId(), deletedModelUri));
-			}
-			for (URI touchedModelUri : addedModelUris) {
-				// extract model path+name
-				IPath path = uriHandler.extractModelPathFrom(touchedModelUri);
-				// was it deleted in a later revision?
-				Pair<Long, URI> p = deletedModels.get(path);
-				if (p == null || p.first < rev.getRevisionId()) {
-					// was never deleted or was deleted prior to the current
-					// revision
-					activeModels.put(path, new Pair(rev.getRevisionId(),touchedModelUri));
-				} else {
-					// will get deleted in a later revision, not active at this
-					// rev
-					activeModels.remove(path);
-				}
-			}
-
-			rev = rev.getPreviousRevision();
-		}
-		final Collection<URI> result = Lists.newArrayList();
-		for (final Pair<Long, URI> pair : activeModels.values()) {
-			if (uriHandler.isPrefixIgnoringRevision(uri, pair.second)) {
-				result.add(uriHandler.trimToNextSegmentKeepingRevision(uri.segmentCount() + 1, pair.second));
-			}
-		}
-		return result;
-	}
 
     /*
      * (non-Javadoc)
@@ -327,7 +328,7 @@ public class RepositoryImpl implements Repository {
             } else {
                 // TODO also show changed (and deleted?) models
                 final Iterable<URI> knownModels = Iterables.concat(
-rev.getModelReferences(ChangeType.ADDED));
+                        rev.getModelReferences(ChangeType.ADDED));
                 for (final URI modelUri : knownModels) {
                     if (uriHandler.isPrefix(uri, modelUri)) {
                         result.add(uriHandler.trimToNextSegment(uri, modelUri));

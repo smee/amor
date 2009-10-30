@@ -26,6 +26,8 @@ import org.infai.amor.backend.storage.StorageFactory;
 public abstract class AbstractStorageFactory implements StorageFactory {
     private final Map<String, Storage> storages = new HashMap<String, Storage>();
 
+    // TODO make sure, we cache each storage per transaction, else we mix different user's models
+
     /**
      * @param branchname
      */

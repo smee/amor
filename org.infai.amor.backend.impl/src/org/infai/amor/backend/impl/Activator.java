@@ -27,6 +27,44 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
  */
 public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoProvider {
 
+    /**
+     * @author sdienst
+     * 
+     */
+    private final class DelegatingStorageFactory implements StorageFactory {
+        @Override
+        public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {
+            if (getStorageFactory() != null) {
+                getStorageFactory().commit(tr, rev);
+            }
+        }
+
+        // fetch the storage service lazily
+        @Override
+        public Storage getStorage(final Branch branch) {
+            if (getStorageFactory() == null) {
+                return null;
+            } else {
+                return getStorageFactory().getStorage(branch);
+            }
+        }
+
+        @Override
+        public void rollback(final CommitTransaction tr) {
+            if (getStorageFactory() != null) {
+                getStorageFactory().rollback(tr);
+            }
+        }
+
+        @Override
+        public void startTransaction(final CommitTransaction tr) {
+            if (getStorageFactory() != null) {
+                getStorageFactory().startTransaction(tr);
+            }
+
+        }
+    }
+
     // The plug-in ID
     public static final String PLUGIN_ID = "org.infai.amor.backend.impl";
 
@@ -62,10 +100,11 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
     @Override
     public Object addingService(final ServiceReference reference) {
         final Object service = context.getService(reference);
+        System.out.println("Got new service of type " + service.getClass().getSimpleName());
         if (service instanceof NeoService) {
             this.neoService = (NeoService) service;
         } else if (service instanceof StorageFactory) {
-            this.storageFactory = (StorageFactory) service;
+            this.setStorageFactory((StorageFactory) service);
         }
         return reference;
     }
@@ -75,6 +114,13 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
      */
     public NeoService getNeo() {
         return neoService;
+    }
+
+    /**
+     * @return the storageFactory
+     */
+    private StorageFactory getStorageFactory() {
+        return storageFactory;
     }
 
     /*
@@ -94,10 +140,17 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
      */
     @Override
     public void removedService(final ServiceReference reference, final Object service) {
-        if (service == this.neoService || service == this.storageFactory) {
+        if (service == this.neoService || service == this.getStorageFactory()) {
             context.ungetService(reference);
         }
         this.neoService = null;
+    }
+
+    /**
+     * @param storageFactory the storageFactory to set
+     */
+    private void setStorageFactory(final StorageFactory storageFactory) {
+        this.storageFactory = storageFactory;
     }
 
     /*
@@ -111,6 +164,7 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         plugin = this;
         this.context = context;
 
+        this.storageFactory = new FileStorageFactory();
         // let's ask for neoservice implementations
         final ServiceTracker st = new ServiceTracker(context, NeoService.class.getName(), this);
         st.open();
@@ -119,44 +173,14 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         // instantiate our repository
         // TODO make settings configurable
         final UriHandlerImpl uriHandler = new UriHandlerImpl("localhost", "repo");
-        final Repository repo = new RepositoryImpl(new StorageFactory() {
-            @Override
-            public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {
-                if (storageFactory != null) {
-                    storageFactory.commit(tr, rev);
-                }
-            }
-
-            // fetch the storage service lazily
-            @Override
-            public Storage getStorage(final Branch branch) {
-                if (storageFactory == null) {
-                    return null;
-                } else {
-                    return storageFactory.getStorage(branch);
-                }
-            }
-
-            @Override
-            public void rollback(final CommitTransaction tr) {
-                if (storageFactory != null) {
-                    storageFactory.rollback(tr);
-                }
-            }
-
-            @Override
-            public void startTransaction(final CommitTransaction tr) {
-                if (storageFactory != null) {
-                    storageFactory.startTransaction(tr);
-                }
-
-            }
-        }, new NeoBranchFactory(this), uriHandler, new TransactionManagerImpl(uriHandler, this));
+        final TransactionManagerImpl trman = new TransactionManagerImpl(uriHandler, this);
+        final DelegatingStorageFactory sf = new DelegatingStorageFactory();
+        trman.addTransactionListener(sf);
+        final Repository repo = new RepositoryImpl(sf, new NeoBranchFactory(this), uriHandler, trman);
         // register repository osgi service
         context.registerService(Repository.class.getName(), repo, null);
         // TODO configuration?
-        context.registerService(StorageFactory.class.getName(), new FileStorageFactory(), null);
-        
+
     }
 
     /*
@@ -168,7 +192,7 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
     public void stop(final BundleContext context) throws Exception {
         plugin = null;
         neoService = null;
-        storageFactory = null;
+        setStorageFactory(null);
         super.stop(context);
     }
 

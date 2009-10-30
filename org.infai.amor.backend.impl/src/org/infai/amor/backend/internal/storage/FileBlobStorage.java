@@ -261,7 +261,7 @@ public class FileBlobStorage implements Storage {
      * @see org.infai.amor.backend.storage.Storage#delete(org.eclipse.core.runtime.IPath, long)
      */
     @Override
-    public void delete(final IPath modelPath, URI externalUri,final long revisionId) throws IOException {
+    public void delete(final IPath modelPath, final URI externalUri,final long revisionId) throws IOException {
         addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(modelPath), ChangeType.DELETED));
         // TODO make sure to signal an error, if anyone checks in another model that depends on this deleted model
         // throw new UnsupportedOperationException("not implemented");
