@@ -178,15 +178,16 @@ public class FileBlobStorage implements Storage {
     public void checkin(final Model model, final URI externalUri, final long revisionId) throws IOException {
         final URI storagePath = createStorageUriFor(model.getPersistencePath(), revisionId, true);
         final Resource resource = resourceSet.createResource(storagePath);
-        resource.getContents().add(model.getContent());
+        final EObject contents = model.getContent();
+        resource.getContents().add(contents);
         resource.save(null);
 
         addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(model.getPersistencePath()), ChangeType.ADDED));
 
-        if(model.getContent() instanceof EPackage){
+        if (contents instanceof EPackage) {
             // write a file containing the mapping of revision number to
             // this epackage name
-            writeM2TagFile(revisionId, storagePath, ((EPackage) model.getContent()).getNsURI());
+            writeM2TagFile(revisionId, storagePath, ((EPackage) contents).getNsURI());
         }
     }
 
@@ -420,6 +421,7 @@ public class FileBlobStorage implements Storage {
      */
     @Override
     public void rollback(final CommitTransaction tr) {
+        // TODO all created tagfiles
         final URI fileURI = createStorageUriFor(null, tr.getRevisionId(), false);
         // delete the directory of this revision
         try {
