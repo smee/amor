@@ -10,7 +10,6 @@
 package org.infai.amor.backend.internal.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -156,16 +155,6 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
         assertEquals(2, addedModelReferencesOnRev1.size());
         assertEquals(0, addedModelReferencesOnRev2.size());
         assertEquals(1, deletedModelReferencesOnRev2.size());
-    }
-
-    @Test
-    public void testCreatesNewMainBranch() {
-        final long startTime = System.currentTimeMillis();
-
-
-        assertNotNull(mainbranch);
-        assertEquals("main", mainbranch.getName());
-        assertTrue(startTime <= mainbranch.getCreationTime().getTime());
     }
 
     @Test
