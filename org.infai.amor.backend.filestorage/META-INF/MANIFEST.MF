@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Filestorage
+Bundle-SymbolicName: org.infai.amor.backend.filestorage
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.infai.amor.backend.filestorage.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: com.google.common.base,
+ com.google.common.collect,
+ org.eclipse.core.runtime;version="3.4.0",
+ org.eclipse.emf.common.util,
+ org.eclipse.emf.compare.epatch.applier,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.ecore.resource,
+ org.eclipse.emf.ecore.resource.impl,
+ org.infai.amor.backend,
+ org.infai.amor.backend.exception,
+ org.infai.amor.backend.internal,
+ org.infai.amor.backend.storage,
+ org.osgi.framework;version="1.3.0"
+Export-Package: org.infai.amor.backend.filestorage
+Bundle-Vendor: InfAI Leipzig
