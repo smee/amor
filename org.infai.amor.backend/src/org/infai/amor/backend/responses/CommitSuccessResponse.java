@@ -7,33 +7,33 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.internal.responses;
+package org.infai.amor.backend.responses;
 
+import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.messages.Message;
 
 /**
  * @author sdienst
- * 
+ *
  */
-public class MessageImpl implements Message {
-
-    private final String message;
+public class CommitSuccessResponse extends AbstractResponse {
 
     /**
-     * @param message
+     * @param msg
+     * @param uri
      */
-    public MessageImpl(final String message) {
-        this.message = message;
+    public CommitSuccessResponse(Message msg, URI uri) {
+        super(msg, uri);
+        // TODO Auto-generated constructor stub
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.infai.amor.backend.messages.Message#getContent()
+    /**
+     * @param msg
+     * @param uri
      */
-    @Override
-    public String getContent() {
-        return message;
+    public CommitSuccessResponse(String msg, URI uri) {
+        super(msg, uri);
+        // TODO Auto-generated constructor stub
     }
 
 }

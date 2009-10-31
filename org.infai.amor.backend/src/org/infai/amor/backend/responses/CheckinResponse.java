@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.internal.responses;
+package org.infai.amor.backend.responses;
 
 import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.messages.Message;
@@ -16,13 +16,13 @@ import org.infai.amor.backend.messages.Message;
  * @author sdienst
  *
  */
-public class CheckinErrorResponse extends AbstractResponse {
+public class CheckinResponse extends AbstractResponse {
 
     /**
      * @param msg
      * @param uri
      */
-    public CheckinErrorResponse(Message msg, URI uri) {
+    public CheckinResponse(Message msg, URI uri) {
         super(msg, uri);
         // TODO Auto-generated constructor stub
     }
@@ -31,7 +31,7 @@ public class CheckinErrorResponse extends AbstractResponse {
      * @param msg
      * @param uri
      */
-    public CheckinErrorResponse(String msg, URI uri) {
+    public CheckinResponse(String msg, URI uri) {
         super(msg, uri);
         // TODO Auto-generated constructor stub
     }

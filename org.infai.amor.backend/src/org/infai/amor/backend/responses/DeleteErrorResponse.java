@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.internal.responses;
+package org.infai.amor.backend.responses;
 
 import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.Response;

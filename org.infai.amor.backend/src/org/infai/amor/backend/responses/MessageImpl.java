@@ -7,31 +7,33 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.internal.responses;
+package org.infai.amor.backend.responses;
 
-import org.eclipse.emf.common.util.URI;
-import org.infai.amor.backend.Response;
 import org.infai.amor.backend.messages.Message;
 
 /**
  * @author sdienst
- *
+ * 
  */
-public class DeleteSuccessResponse extends AbstractResponse implements Response {
-    /**
-     * @param msg
-     * @param uri
-     */
-    public DeleteSuccessResponse(final Message msg, final URI uri) {
-        super(msg, uri);
-    }
+public class MessageImpl implements Message {
+
+    private final String message;
 
     /**
-     * @param msg
-     * @param uri
+     * @param message
      */
-    public DeleteSuccessResponse(final String msg, final URI uri) {
-        super(msg, uri);
+    public MessageImpl(final String message) {
+        this.message = message;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.infai.amor.backend.messages.Message#getContent()
+     */
+    @Override
+    public String getContent() {
+        return message;
     }
 
 }
