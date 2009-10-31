@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.internal.InternalRevision;
 import org.infai.amor.backend.internal.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.storage.neo.NeoModelLocation;
@@ -30,7 +31,7 @@ import com.google.common.collect.Lists;
  * @author sdienst
  * 
  */
-public class NeoRevision extends NeoObject implements Revision {
+public class NeoRevision extends NeoObject implements InternalRevision {
     private static Logger logger = Logger.getLogger(NeoRevision.class.getName());
 
     private static final String COMMITMESSAGE = "message";
@@ -236,10 +237,8 @@ public class NeoRevision extends NeoObject implements Revision {
         return "NeoRevision [commitMessage=" + getCommitMessage() + ", commitTimestamp=" + getCommitTimestamp() + ", revisionId=" + getRevisionId() + ", user=" + getUser() + "]";
     }
 
-    /**
-     * For internal usage only, not part of the external interface! Add references to added model nodes.
-     * 
-     * @param loc
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.internal.impl.InternalRevision#touchedModel(org.infai.amor.backend.internal.ModelLocation)
      */
     public void touchedModel(final ModelLocation loc) {
         rememberModelAction(loc, loc.getChangeType());

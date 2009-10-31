@@ -24,8 +24,8 @@ import org.infai.amor.backend.impl.CommitTransactionImpl;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.TransactionManager;
 import org.infai.amor.backend.internal.UriHandler;
-import org.infai.amor.backend.internal.responses.CommitSuccessResponse;
-import org.infai.amor.backend.internal.responses.TransactionErrorResponse;
+import org.infai.amor.backend.responses.CommitSuccessResponse;
+import org.infai.amor.backend.responses.TransactionErrorResponse;
 import org.neo4j.api.core.DynamicRelationshipType;
 import org.neo4j.api.core.Node;
 import org.neo4j.api.core.Transaction;
@@ -103,23 +103,28 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
 
     /**
      * Create a new unique revision number.<br>
-     * TODO might not be unique, should be set on transaction commit, not start!
      * 
      * @return
      */
     private long createNextRevisionId() {
-        final Node node = getFactoryNode(DynamicRelationshipType.withName("lastRevision"));
-        if (!node.hasProperty(REVISIONCOUNTER_PROPERTY)) {
-            node.setProperty(REVISIONCOUNTER_PROPERTY, 0L);
+        final Transaction tx = getNeo().beginTx();
+        try {
+            final Node node = getFactoryNode(DynamicRelationshipType.withName("lastRevision"));
+            if (!node.hasProperty(REVISIONCOUNTER_PROPERTY)) {
+                node.setProperty(REVISIONCOUNTER_PROPERTY, 0L);
+            }
+            Long lastRevision = (Long) node.getProperty(REVISIONCOUNTER_PROPERTY);
+            if (lastRevision == null) {
+                lastRevision = 1L;
+            } else {
+                lastRevision += 1;
+            }
+            node.setProperty(REVISIONCOUNTER_PROPERTY, lastRevision);
+            return lastRevision;
+        }finally{
+            tx.success();
+            tx.finish();
         }
-        Long lastRevision = (Long) node.getProperty(REVISIONCOUNTER_PROPERTY);
-        if (lastRevision == null) {
-            lastRevision = 1L;
-        } else {
-            lastRevision += 1;
-        }
-        node.setProperty(REVISIONCOUNTER_PROPERTY, lastRevision);
-        return lastRevision;
     }
 
     /*
@@ -161,9 +166,10 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
      */
     @Override
     public CommitTransaction startCommitTransaction(final Branch branch) {
+        long revisionId = createNextRevisionId();
         // create a new neo transaction, increment revisioncounter
         final Transaction tx = getNeo().beginTx();
-        final CommitTransaction tr = new CommitTransactionImpl(branch, createNextRevisionId(), tx);
+        final CommitTransaction tr = new CommitTransactionImpl(branch, revisionId, tx);
         // inform listeners
         for (final TransactionListener listener : listeners.getListeners(TransactionListener.class)) {
             listener.startTransaction(tr);

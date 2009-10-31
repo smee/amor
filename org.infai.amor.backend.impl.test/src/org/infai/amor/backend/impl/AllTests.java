@@ -13,7 +13,6 @@ import org.infai.amor.backend.integration.IntegrationTests;
 import org.infai.amor.backend.internal.impl.NeoBranchFactoryImplTest;
 import org.infai.amor.backend.internal.impl.NeoTransactionTest;
 import org.infai.amor.backend.internal.impl.UriTest;
-import org.infai.amor.backend.internal.storage.BlobStorageTest;
 import org.infai.amor.backend.internal.storage.LinearHistoryFileBlobStorageTest;
 import org.infai.amor.backend.internal.storage.neo.NeoBlobStorageTest;
 import org.junit.runner.RunWith;
@@ -28,12 +27,10 @@ import org.junit.runners.Suite.SuiteClasses;
     RepositoryTests.class, 
     NeoBranchFactoryImplTest.class, 
     NeoTransactionTest.class, 
-    BlobStorageTest.class, 
     LinearHistoryFileBlobStorageTest.class,
     UriTest.class, 
     IntegrationTests.class, 
     QueryTests.class, 
-    BlobStorageTest.class, 
     NeoBlobStorageTest.class })
 public class AllTests {
 

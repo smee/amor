@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.internal.storage;
+package org.infai.amor.backend.filestorage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -30,9 +30,10 @@ import org.infai.amor.backend.ChangedModel;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.exception.TransactionException;
+import org.infai.amor.backend.filestorage.FileBlobStorage;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
+import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.internal.impl.ChangedModelImpl;
-import org.infai.amor.backend.internal.impl.ModelImpl;
 import org.infai.amor.backend.internal.impl.NeoRevision;
 import org.jmock.Expectations;
 import org.jmock.Mockery;

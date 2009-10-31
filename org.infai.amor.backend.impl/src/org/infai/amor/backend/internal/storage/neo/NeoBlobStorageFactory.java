@@ -10,8 +10,8 @@
 package org.infai.amor.backend.internal.storage.neo;
 
 import org.infai.amor.backend.Branch;
+import org.infai.amor.backend.internal.AbstractStorageFactory;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.infai.amor.backend.internal.impl.AbstractStorageFactory;
 import org.infai.amor.backend.internal.impl.NeoBranch;
 import org.infai.amor.backend.storage.Storage;
 

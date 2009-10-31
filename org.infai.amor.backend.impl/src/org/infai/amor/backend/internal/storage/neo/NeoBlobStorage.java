@@ -24,8 +24,9 @@ import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.exception.TransactionException;
+import org.infai.amor.backend.internal.InternalRevision;
+import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.infai.amor.backend.internal.impl.ModelImpl;
 import org.infai.amor.backend.internal.impl.NeoBranch;
 import org.infai.amor.backend.internal.impl.NeoObjectFactory;
 import org.infai.amor.backend.internal.impl.NeoRevision;
@@ -128,9 +129,9 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      */
     @Override
     public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {
-        if (rev instanceof NeoRevision) {
+        if (rev instanceof InternalRevision) {
             // add all modelLocations to the revision
-            final NeoRevision revision = (NeoRevision) rev;
+            final InternalRevision revision = (InternalRevision) rev;
             for (final URI uri : addedModelNodes.keySet()) {
                 final NeoModelLocation loc = addedModelNodes.get(uri);
                 revision.touchedModel(loc);

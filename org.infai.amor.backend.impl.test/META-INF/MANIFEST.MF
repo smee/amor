@@ -20,4 +20,6 @@ Import-Package: org.eclipse.emf.compare.diff.metamodel,
  org.eclipse.emf.compare.match.metamodel,
  org.eclipse.emf.compare.match.service,
  org.eclipse.emf.compare.util,
+ org.infai.amor.backend.filestorage,
+ org.infai.amor.backend.responses,
  org.neo4j.api.core

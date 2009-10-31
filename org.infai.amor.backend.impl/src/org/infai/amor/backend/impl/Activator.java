@@ -10,12 +10,10 @@ import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.NeoBranchFactory;
 import org.infai.amor.backend.internal.impl.TransactionManagerImpl;
 import org.infai.amor.backend.internal.impl.UriHandlerImpl;
-import org.infai.amor.backend.internal.storage.FileStorageFactory;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
 import org.neo4j.api.core.NeoService;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
@@ -164,12 +162,12 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         plugin = this;
         this.context = context;
 
-        this.storageFactory = new FileStorageFactory();
         // let's ask for neoservice implementations
         final ServiceTracker st = new ServiceTracker(context, NeoService.class.getName(), this);
         st.open();
-        final ServiceTracker stSF = new ServiceTracker(context, ServiceFactory.class.getName(), this);
+        final ServiceTracker stSF = new ServiceTracker(context, StorageFactory.class.getName(), this);
         stSF.open();
+        this.storageFactory = (StorageFactory)stSF.getService();
         // instantiate our repository
         // TODO make settings configurable
         final UriHandlerImpl uriHandler = new UriHandlerImpl("localhost", "repo");
@@ -177,10 +175,8 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         final DelegatingStorageFactory sf = new DelegatingStorageFactory();
         trman.addTransactionListener(sf);
         final Repository repo = new RepositoryImpl(sf, new NeoBranchFactory(this), uriHandler, trman);
-        // register repository osgi service
+        // register repository service
         context.registerService(Repository.class.getName(), repo, null);
-        // TODO configuration?
-
     }
 
     /*
