@@ -98,7 +98,7 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
     @Override
     public Object addingService(final ServiceReference reference) {
         final Object service = context.getService(reference);
-        System.out.println("Got new service of type " + service.getClass().getSimpleName());
+        // System.out.println("Got new service of type " + service.getClass().getSimpleName());
         if (service instanceof NeoService) {
             this.neoService = (NeoService) service;
         } else if (service instanceof StorageFactory) {

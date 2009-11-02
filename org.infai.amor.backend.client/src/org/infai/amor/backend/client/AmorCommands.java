@@ -27,6 +27,7 @@ import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Repository;
 import org.infai.amor.backend.Response;
+import org.infai.amor.backend.responses.CommitSuccessResponse;
 
 /**
  * @author sdienst
@@ -35,6 +36,8 @@ import org.infai.amor.backend.Response;
 public class AmorCommands implements CommandProvider {
 
     private CommitTransaction transaction;
+    URI currentUri = getRepoUri();
+
     public void _aborttransaction(final CommandInterpreter ci){
         if(transaction!=null){
             getRepo().rollbackTransaction(transaction);
@@ -72,33 +75,79 @@ public class AmorCommands implements CommandProvider {
         ci.println(checkin.getMessage().getContent());
     }
 
+    public void _cd(final CommandInterpreter ci){
+        final String arg = ci.nextArgument();
+        if (arg == null) {
+            currentUri = getRepoUri();
+        } else if (arg.trim().equals("..")) {
+            currentUri = currentUri.trimSegments(1);
+        } else {
+            currentUri = currentUri.appendSegments(arg.split("/"));
+        }
+    }
+
+    public void _committransaction(final CommandInterpreter ci){
+        if (transaction == null) {
+            ci.println("There is no running transaction, can't commit...");
+        }else{
+            final String commitmessage = ci.nextArgument();
+            final String username = ci.nextArgument();
+            if (commitmessage == null || username == null) {
+                ci.println("Please provide a commitmessage and a username!");
+            } else {
+                transaction.setCommitMessage(commitmessage);
+                transaction.setUser(username);
+
+                final Response response = getRepo().commitTransaction(transaction);
+
+                if(!(response instanceof CommitSuccessResponse)){
+                    ci.println("Error on commit: " + response.getMessage().getContent());
+                } else {
+                    ci.println("Successfully commited " + response.getURI());
+                    transaction = null;
+                }
+            }
+        }
+
+    }
     public void _getbranches(final CommandInterpreter ci) throws MalformedURIException {
         for (final Branch branch : getRepo().getBranches(getRepoUri())) {
             ci.println(branch.getName());
         }
     }
 
-    public void _newbranch(final CommandInterpreter ci){
+    public void _ls(final CommandInterpreter ci) throws MalformedURIException {
+        for (final URI uri : getRepo().getActiveContents(currentUri)) {
+            ci.println(uri);
+        }
+    }
+
+    public void _newbranch(final CommandInterpreter ci) {
         final String branchname = ci.nextArgument();
         final String revId = ci.nextArgument();
-        if(branchname == null){
+        if (branchname == null) {
             ci.println("please specify a valid branchname!");
             return;
         }
         Long revisionId = null;
         if (revId != null) {
-            try{
+            try {
                 revisionId = new Long(revId);
-            }catch(final NumberFormatException e){
+            } catch (final NumberFormatException e) {
                 ci.println("please specify a valid revisionId!");
                 return;
 
             }
         }
-
+        // TODO find revision
         final Branch branch = getRepo().createBranch(null, branchname);
         ci.println("Successfully created branch '" + branchname + "'");
     }
+
+    public void _pwd(final CommandInterpreter ci) {
+        ci.println(currentUri);
+    }
+
 
     public void _starttransaction(final CommandInterpreter ci) throws MalformedURIException {
         if (transaction != null) {
@@ -119,15 +168,28 @@ public class AmorCommands implements CommandProvider {
      */
     @Override
     public String getHelp() {
+        final String[][] commands = new String[][]{
+            {"---AMOR Repository Commands---"},
+            { "Checkin:" },
+            {"starttransaction <branchname>", "needed before invoking any other amor command!"},
+            {"newbranch <branchname> <revisionid>","create a new branch starting from a revision"},
+            {"getbranches","print names of all known branches"},
+            {"add <relative path to model>","add a modelfile"},
+            {"committransaction <username> <message>","commit all actions done during the current transaction"},
+            {"aborttransaction","rollback all actions done during the current transaction"},
+            {"Navigation:"},
+            { "pwd","show the current amor uri we are looking at" },
+            { "ls","show the current amor repository contents using the uri show by 'pwd'" },
+            { "cd <string>","append a string to the current amor uri, use '..' to remove the last uri segment, call without parameter to change uri back to the default" },
+            { "" } };
         final StringBuilder sb = new StringBuilder();
-        sb.append("\n---AMOR Repository Commands---\n");
-        sb.append("\tstarttransaction <branchname> - needed before invoking any other amor command!\n");
-        sb.append("\tnewbranch <branchname> <revisionid> - create a new branch starting from a revision\n");
-        sb.append("\tgetbranches - print names of all known branches\n");
-        sb.append("\tadd <relative path to model> - add a modelfile\n");
-        sb.append("\taborttransaction - rollback all actions done during the current transaction\n");
-        sb.append("\t\n");
-        // return "\tadd <relative modelpath> - checkin a";
+        for (final String[] command : commands) {
+            if (command.length == 2) {
+                sb.append(String.format("\t%-30s - %s\n", command[0], command[1]));
+            } else {
+                sb.append(String.format("%s\n", command[0]));
+            }
+        }
         return sb.toString();
     }
     private Repository getRepo(){
