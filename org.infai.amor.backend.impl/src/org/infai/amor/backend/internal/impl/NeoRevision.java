@@ -17,7 +17,6 @@ import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.internal.InternalRevision;
 import org.infai.amor.backend.internal.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.infai.amor.backend.internal.storage.neo.NeoModelLocation;
 import org.neo4j.api.core.Direction;
 import org.neo4j.api.core.DynamicRelationshipType;
 import org.neo4j.api.core.Node;

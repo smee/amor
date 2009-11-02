@@ -206,6 +206,7 @@ public class CountingNeoProxy implements NeoService {
          * @see org.neo4j.api.core.PropertyContainer#setProperty(java.lang.String, java.lang.Object)
          */
         public void setProperty(final String arg0, final Object arg1) {
+            countProperty();
             node.setProperty(arg0, arg1);
         }
 
@@ -258,6 +259,7 @@ public class CountingNeoProxy implements NeoService {
     private final NeoService service;
     private long numRels;
     private long numNodes;
+    private long numProps;
 
     public CountingNeoProxy(final NeoService ns) {
         this.service = ns;
@@ -269,6 +271,13 @@ public class CountingNeoProxy implements NeoService {
      */
     public Transaction beginTx() {
         return service.beginTx();
+    }
+
+    /**
+     * 
+     */
+    public void countProperty() {
+        numProps++;
     }
 
     /**
@@ -326,6 +335,13 @@ public class CountingNeoProxy implements NeoService {
      */
     public long getNumNodes() {
         return numNodes;
+    }
+
+    /**
+     * @return the numProps
+     */
+    public long getNumProps() {
+        return numProps;
     }
 
     /**

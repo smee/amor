@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Filestorage
+Bundle-SymbolicName: org.infai.amor.backend.neoblobstorage
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.infai.amor.backend.neostorage.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: com.google.common.collect;version="1.0.0",
+ org.eclipse.core.runtime;version="3.4.0",
+ org.eclipse.emf.common.util,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.ecore.resource,
+ org.eclipse.emf.ecore.resource.impl,
+ org.eclipse.emf.ecore.xmi,
+ org.eclipse.emf.ecore.xmi.impl,
+ org.infai.amor.backend,
+ org.infai.amor.backend.exception,
+ org.infai.amor.backend.internal,
+ org.infai.amor.backend.storage,
+ org.neo4j.api.core,
+ org.osgi.framework;version="1.3.0",
+ org.osgi.util.tracker;version="1.4.2"
+Export-Package: org.infai.amor.backend.neostorage
+Bundle-Vendor: InfAI Leipzig

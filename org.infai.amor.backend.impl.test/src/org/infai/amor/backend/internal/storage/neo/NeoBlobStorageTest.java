@@ -39,6 +39,7 @@ import org.infai.amor.backend.internal.impl.AbstractNeo4JPerformanceTest;
 import org.infai.amor.backend.internal.impl.NeoBranchFactory;
 import org.infai.amor.backend.internal.impl.TransactionManagerImpl;
 import org.infai.amor.backend.internal.impl.UriHandlerImpl;
+import org.infai.amor.backend.neostorage.NeoBlobStorageFactory;
 import org.infai.amor.backend.responses.CheckinResponse;
 import org.junit.After;
 import org.junit.Before;
@@ -85,7 +86,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
 
     @After
     public void printStatistics() {
-        logger.info(String.format("# nodes created: %d, # relationships created: %d", proxy.getNumNodes(), proxy.getNumRels()));
+        logger.info(String.format("# nodes created: %d, # relationships created: %d, # properties set: %d", proxy.getNumNodes(), proxy.getNumRels(), proxy.getNumProps()));
     }
 
     @Before
