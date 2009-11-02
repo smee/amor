@@ -5,14 +5,13 @@ Bundle-SymbolicName: org.infai.amor.backend.impl.test
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: org.infai.amor.backend.impl;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.junit4
-Bundle-ClassPath: lib/hamcrest-core-1.1.jar,
+Bundle-ClassPath: lib/jmock-legacy-2.5.1.jar,
+ lib/hamcrest-core-1.1.jar,
  lib/hamcrest-library-1.1.jar,
  lib/jmock-2.5.1.jar,
  .,
  lib/xmlunit-1.2.jar,
  lib/cglib-nodep-2.1_3.jar,
- lib/jmock-legacy-2.5.1.jar,
  lib/objenesis-1.0.jar
 Import-Package: org.eclipse.emf.compare.diff.metamodel,
  org.eclipse.emf.compare.diff.service,
@@ -22,4 +21,5 @@ Import-Package: org.eclipse.emf.compare.diff.metamodel,
  org.eclipse.emf.compare.util,
  org.infai.amor.backend.filestorage,
  org.infai.amor.backend.responses,
+ org.junit;version="4.5.0",
  org.neo4j.api.core
