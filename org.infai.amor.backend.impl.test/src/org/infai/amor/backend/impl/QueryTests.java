@@ -9,8 +9,8 @@
  *******************************************************************************/
 package org.infai.amor.backend.impl;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -111,6 +111,8 @@ public class QueryTests {
                 allowing(rev1).getModelReferences(with(any(Revision.ChangeType.class)));
                 allowing(rev2).getModelReferences(with(any(Revision.ChangeType.class)));
                 allowing(rev3).getModelReferences(with(any(Revision.ChangeType.class)));
+                allowing(transactionManager).startReadTransaction();
+                allowing(transactionManager).closeReadTransaction();
             }
         });
     }
