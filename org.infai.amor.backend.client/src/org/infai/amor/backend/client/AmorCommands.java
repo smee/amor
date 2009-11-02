@@ -27,6 +27,8 @@ import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Repository;
 import org.infai.amor.backend.Response;
+import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.responses.CommitSuccessResponse;
 
 /**
@@ -110,6 +112,14 @@ public class AmorCommands implements CommandProvider {
         }
 
     }
+
+    public void _delete(final CommandInterpreter ci) throws IOException {
+        final String path = ci.nextArgument();
+
+        final Response response = getRepo().deleteModel(new Path(path), this.transaction);
+        ci.println(response.getMessage().getContent());
+    }
+
     public void _getbranches(final CommandInterpreter ci) throws MalformedURIException {
         for (final Branch branch : getRepo().getBranches(getRepoUri())) {
             ci.println(branch.getName());
@@ -117,8 +127,17 @@ public class AmorCommands implements CommandProvider {
     }
 
     public void _ls(final CommandInterpreter ci) throws MalformedURIException {
-        for (final URI uri : getRepo().getActiveContents(currentUri)) {
-            ci.println(uri);
+        final String flag = ci.nextArgument();
+        if (flag != null && flag.trim().equals("-l")) {
+            // assume we are staring at a revision, let's show the details!
+            final Revision revision = getRepo().getRevision(currentUri);
+            ci.println(dumpTouchedModels(revision, Revision.ChangeType.ADDED));
+            ci.println(dumpTouchedModels(revision, Revision.ChangeType.CHANGED));
+            ci.println(dumpTouchedModels(revision, Revision.ChangeType.DELETED));
+        } else {
+            for (final URI uri : getRepo().getActiveContents(currentUri)) {
+                ci.println(uri);
+            }
         }
     }
 
@@ -148,7 +167,6 @@ public class AmorCommands implements CommandProvider {
         ci.println(currentUri);
     }
 
-
     public void _starttransaction(final CommandInterpreter ci) throws MalformedURIException {
         if (transaction != null) {
             ci.println(String.format("Already in transaction on branch '%s'", transaction.getBranch().getName()));
@@ -161,6 +179,22 @@ public class AmorCommands implements CommandProvider {
             transaction = getRepo().startCommitTransaction(getRepo().getBranch(getRepoUri().appendSegment(branchname)));
         }
     }
+
+    /**
+     * @param revision
+     * @param added
+     * @return
+     */
+    private String dumpTouchedModels(final Revision revision, final ChangeType ct) {
+        final StringBuilder sb = new StringBuilder(ct.name().toUpperCase());
+        sb.append(":\n");
+        for(final URI uri: revision.getModelReferences(ct)) {
+            sb.append(uri).append("\n");
+        }
+        return sb.toString();
+    }
+
+
     /*
      * (non-Javadoc)
      * 
@@ -175,6 +209,7 @@ public class AmorCommands implements CommandProvider {
             {"newbranch <branchname> <revisionid>","create a new branch starting from a revision"},
             {"getbranches","print names of all known branches"},
             {"add <relative path to model>","add a modelfile"},
+            { "delete <relative path to model>", "delete a persisted model" },
             {"committransaction <username> <message>","commit all actions done during the current transaction"},
             {"aborttransaction","rollback all actions done during the current transaction"},
             {"Navigation:"},
@@ -200,6 +235,18 @@ public class AmorCommands implements CommandProvider {
      */
     private URI getRepoUri() {
         return URI.createURI("amor://localhost/repo");
+    }
+    /**
+     * @param s
+     * @return
+     */
+    private boolean isNumber(final String s){
+        for (int i = 0; i < s.length(); i++) {
+            if(!Character.isDigit(s.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
