@@ -153,7 +153,7 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
         final Iterable<NeoBranch> branches = Iterables.transform(rs, new Function<Relationship, NeoBranch>() {
             @Override
             public NeoBranch apply(final Relationship r) {
-                return new NeoBranch(r.getEndNode());
+                return new NeoBranch(getNeoProvider(), r.getEndNode());
             }
         });
         return branches;

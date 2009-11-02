@@ -27,6 +27,11 @@ public interface TransactionManager {
     void addTransactionListener(TransactionListener listener);
 
     /**
+     * 
+     */
+    void closeReadTransaction() ;
+
+    /**
      * @param tr
      */
     Response commit(CommitTransaction tr, Revision rev);
@@ -48,4 +53,8 @@ public interface TransactionManager {
      */
     CommitTransaction startCommitTransaction(Branch branch);
 
+    /**
+     * 
+     */
+    void startReadTransaction();
 }

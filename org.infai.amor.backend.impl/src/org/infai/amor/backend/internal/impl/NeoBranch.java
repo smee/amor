@@ -32,6 +32,15 @@ public class NeoBranch extends NeoObject implements Branch {
     static final String STARTREVISION = "startRevision";
 
     /**
+     * Constructor for branches loaded from neo.
+     * 
+     * @param node
+     */
+    public NeoBranch(final NeoProvider np,final Node node) {
+        super(np,node);
+    }
+
+    /**
      * Constructor for entirely new branches.
      * 
      * @param np
@@ -39,17 +48,8 @@ public class NeoBranch extends NeoObject implements Branch {
      */
     public NeoBranch(final NeoProvider np, final String name) {
         super(np);
-        getNode().setProperty(BRANCHNAME, name);
-        getNode().setProperty(CREATIONDATE, new Date().getTime());
-    }
-
-    /**
-     * Constructor for branches loaded from neo.
-     * 
-     * @param node
-     */
-    public NeoBranch(final Node node) {
-        super(node);
+        set(BRANCHNAME, name);
+        set(CREATIONDATE, new Date().getTime());
     }
     /*
      * (non-Javadoc)
@@ -58,7 +58,7 @@ public class NeoBranch extends NeoObject implements Branch {
      */
     @Override
     public Date getCreationTime() {
-        return new Date((Long) getNode().getProperty(CREATIONDATE));
+        return new Date((Long) get(CREATIONDATE));
     }
     /*
      * (non-Javadoc)
@@ -71,7 +71,7 @@ public class NeoBranch extends NeoObject implements Branch {
         if (rel == null) {
             return null;
         } else {
-            return new NeoRevision(rel.getEndNode());
+            return new NeoRevision(getNeoProvider(), rel.getEndNode());
         }
     }
 
@@ -82,7 +82,7 @@ public class NeoBranch extends NeoObject implements Branch {
      */
     @Override
     public String getName() {
-        return (String) getNode().getProperty(BRANCHNAME);
+        return (String) get(BRANCHNAME);
     }
 
     /*
@@ -96,7 +96,7 @@ public class NeoBranch extends NeoObject implements Branch {
         if (rel == null) {
             return null;
         } else {
-            return new NeoRevision(rel.getEndNode());
+            return new NeoRevision(getNeoProvider(), rel.getEndNode());
         }
     }
 

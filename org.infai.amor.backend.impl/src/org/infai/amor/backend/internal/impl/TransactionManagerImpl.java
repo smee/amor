@@ -35,6 +35,7 @@ import org.neo4j.api.core.Transaction;
  * 
  */
 public class TransactionManagerImpl extends NeoObjectFactory implements TransactionManager {
+    ThreadLocal<Transaction> readTransaction = new ThreadLocal<Transaction>();
     /**
      * 
      */
@@ -61,6 +62,21 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
     @Override
     public void addTransactionListener(final TransactionListener listener) {
         listeners.add(TransactionListener.class, listener);
+    }
+
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.internal.TransactionManager#closeReadTransaction()
+     */
+    @Override
+    public void closeReadTransaction() {
+        // System.out.println("Closing read transaction");
+        final Transaction transaction = readTransaction.get();
+        if(transaction != null){
+            readTransaction.set(null);
+            transaction.success();
+            transaction.finish();
+        }
+
     }
 
     /*
@@ -166,7 +182,7 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
      */
     @Override
     public CommitTransaction startCommitTransaction(final Branch branch) {
-        long revisionId = createNextRevisionId();
+        final long revisionId = createNextRevisionId();
         // create a new neo transaction, increment revisioncounter
         final Transaction tx = getNeo().beginTx();
         final CommitTransaction tr = new CommitTransactionImpl(branch, revisionId, tx);
@@ -175,5 +191,20 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
             listener.startTransaction(tr);
         }
         return tr;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.infai.amor.backend.internal.TransactionManager#startReadTransaction()
+     */
+    @Override
+    public void startReadTransaction() {
+        // System.out.println("Starting read transaction");
+        final Transaction transaction = readTransaction.get();
+        if (transaction == null) {
+            readTransaction.set(getNeo().beginTx());
+        }
+
     }
 }

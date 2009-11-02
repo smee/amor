@@ -11,6 +11,7 @@ package org.infai.amor.backend.internal.impl;
 
 import org.infai.amor.backend.internal.NeoProvider;
 import org.neo4j.api.core.Node;
+import org.neo4j.api.core.Transaction;
 
 /**
  * @author sdienst
@@ -25,16 +26,15 @@ public class NeoObject {
      * @param node
      */
     public NeoObject(final NeoProvider np) {
-        this.np = np;
-        this.node = np.getNeo().createNode();
+        this(np, np.getNeo().createNode());
     }
 
     /**
      * @param node
      */
-    public NeoObject(final Node node) {
+    public NeoObject(final NeoProvider np, final Node node) {
+        this.np = np;
         this.node = node;
-        this.np = null;
     }
 
     /**
@@ -44,6 +44,20 @@ public class NeoObject {
      */
     protected Node createNode() {
         return np.getNeo().createNode();
+    }
+
+    /**
+     * @param key
+     * @return
+     */
+    protected Object get(final String key){
+        final Transaction tx = getNeoProvider().getNeo().beginTx();
+        try{
+            return getNode().getProperty(key);
+        }finally{
+            tx.success();
+            tx.finish();
+        }
     }
 
     /**

@@ -112,8 +112,13 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Model checkout(final URI uri) throws IOException {
-        final Storage storage = getStorage(uri);
-        return storage.checkout(uriHandler.extractModelPathFrom(uri), uriHandler.extractRevision(uri));
+        transactionManager.startReadTransaction();
+        try {
+            final Storage storage = getStorage(uri);
+            return storage.checkout(uriHandler.extractModelPathFrom(uri), uriHandler.extractRevision(uri));
+        } finally {
+            transactionManager.closeReadTransaction();
+        }
     }
 
     /*
@@ -155,7 +160,9 @@ public class RepositoryImpl implements Repository {
                 if (p == null || p.first < rev.getRevisionId()) {
                     // was never deleted or was deleted prior to the current
                     // revision
-                    activeModels.put(path, new Pair(rev.getRevisionId(),touchedModelUri));
+                    if (!activeModels.containsKey(path)) {
+                        activeModels.put(path, new Pair(rev.getRevisionId(),touchedModelUri));
+                    }
                 } else {
                     // will get deleted in a later revision, not active at this
                     // rev
@@ -206,50 +213,54 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Iterable<URI> getActiveContents(final URI uri) throws MalformedURIException {
-
-        String branchname = null;
-        long revisionId = -1;
-        boolean hasBranch = true, hasRevision = true;
-        // what does this uri point to?
+        transactionManager.startReadTransaction();
         try {
-            // has it a branch?
-            branchname = uriHandler.extractBranchName(uri);
-        } catch (final MalformedURIException e) {
-            hasBranch = false;
-        }
-        try {
-            // has it a revision?
-            revisionId = uriHandler.extractRevision(uri);
-        } catch (final MalformedURIException e) {
-            hasRevision = false;
-        }
-        if (!hasBranch) {
-            // find all branchnames, convert them into uris
-            return Iterables.transform(branchFactory.getBranches(), new Function<Branch, URI>() {
-                @Override
-                public URI apply(final Branch branch) {
-                    return uriHandler.createUriFor(branch);
-                }
-            });
-        } else if (!hasRevision) {
-            // find all revisions of the branch, convert them into uris
-            final Branch branch = branchFactory.getBranch(branchname);
-            return Iterables.transform(branch.getRevisions(), new Function<Revision, URI>() {
-                @Override
-                public URI apply(final Revision r) {
-                    return uriHandler.createUriFor(branch, r.getRevisionId());
-                }
-            });
-        } else {
-            // find all alive models, convert them into uris
-            final Branch branch = branchFactory.getBranch(branchname);
-            final Revision rev = branch.getRevision(revisionId);
-            if (rev == null) {
-                throw new MalformedURIException("Unknown revision: " + uri);
-            } else {
-                return constructActiveRepositoryContents(rev,uri);
+            String branchname = null;
+            long revisionId = -1;
+            boolean hasBranch = true, hasRevision = true;
+            // what does this uri point to?
+            try {
+                // has it a branch?
+                branchname = uriHandler.extractBranchName(uri);
+            } catch (final MalformedURIException e) {
+                hasBranch = false;
             }
+            try {
+                // has it a revision?
+                revisionId = uriHandler.extractRevision(uri);
+            } catch (final MalformedURIException e) {
+                hasRevision = false;
+            }
+            if (!hasBranch) {
+                // find all branchnames, convert them into uris
+                return Iterables.transform(branchFactory.getBranches(), new Function<Branch, URI>() {
+                    @Override
+                    public URI apply(final Branch branch) {
+                        return uriHandler.createUriFor(branch);
+                    }
+                });
+            } else if (!hasRevision) {
+                // find all revisions of the branch, convert them into uris
+                final Branch branch = branchFactory.getBranch(branchname);
+                return Iterables.transform(branch.getRevisions(), new Function<Revision, URI>() {
+                    @Override
+                    public URI apply(final Revision r) {
+                        return uriHandler.createUriFor(branch, r.getRevisionId());
+                    }
+                });
+            } else {
+                // find all alive models, convert them into uris
+                final Branch branch = branchFactory.getBranch(branchname);
+                final Revision rev = branch.getRevision(revisionId);
+                if (rev == null) {
+                    throw new MalformedURIException("Unknown revision: " + uri);
+                } else {
+                    return constructActiveRepositoryContents(rev,uri);
+                }
 
+            }
+        } finally {
+            transactionManager.closeReadTransaction();
         }
 
     }
@@ -261,9 +272,15 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Branch getBranch(final URI uri) throws MalformedURIException {
-        final String branchName = uriHandler.extractBranchName(uri);
+        transactionManager.startReadTransaction();
+        try {
 
-        return branchFactory.getBranch(branchName);
+            final String branchName = uriHandler.extractBranchName(uri);
+            return branchFactory.getBranch(branchName);
+
+        } finally {
+            transactionManager.closeReadTransaction();
+        }
     }
 
     /*
@@ -273,8 +290,14 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Iterable<Branch> getBranches(final URI uri) throws MalformedURIException {
-        // FIXME uri implies multiple repositories, remove it?
-        return (Iterable<Branch>) branchFactory.getBranches();
+        transactionManager.startReadTransaction();
+        try {
+
+            // FIXME uri implies multiple repositories, remove it?
+            return (Iterable<Branch>) branchFactory.getBranches();
+        } finally {
+            transactionManager.closeReadTransaction();
+        }
     }
 
     /*
@@ -358,9 +381,15 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Revision getRevision(final URI uri) throws MalformedURIException {
-        final Branch branch = branchFactory.getBranch(uriHandler.extractBranchName(uri));
+        transactionManager.startReadTransaction();
+        try {
 
-        return branch.getRevision(uriHandler.extractRevision(uri));
+            final Branch branch = branchFactory.getBranch(uriHandler.extractBranchName(uri));
+
+            return branch.getRevision(uriHandler.extractRevision(uri));
+        } finally {
+            transactionManager.closeReadTransaction();
+        }
     }
 
     /**
@@ -403,8 +432,14 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public EObject view(final URI uri) throws IOException {
-        final Storage storage = getStorage(uri);
-        return storage.view(uriHandler.extractModelPathFrom(uri), uriHandler.extractRevision(uri));
+        transactionManager.startReadTransaction();
+        try {
+
+            final Storage storage = getStorage(uri);
+            return storage.view(uriHandler.extractModelPathFrom(uri), uriHandler.extractRevision(uri));
+        } finally {
+            transactionManager.closeReadTransaction();
+        }
     }
 
 }

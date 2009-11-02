@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
-import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.internal.InternalRevision;
 import org.infai.amor.backend.internal.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
@@ -58,8 +57,8 @@ public class NeoRevision extends NeoObject implements InternalRevision {
      * 
      * @param node
      */
-    public NeoRevision(final Node node) {
-        super(node);
+    public NeoRevision(final NeoProvider np, final Node node) {
+        super(np, node);
     }
 
     private void dumpOutRels(final Node n){
@@ -141,7 +140,7 @@ public class NeoRevision extends NeoObject implements InternalRevision {
             final Node refNode = rel.getEndNode();
             for (final Relationship locRel : refNode.getRelationships(DynamicRelationshipType.withName(MODELLOCATION), Direction.OUTGOING)) {
                 if (modelPath.equals(locRel.getEndNode().getProperty(NeoModelLocation.RELATIVE_PATH))) {
-                    return new NeoModelLocation(locRel.getEndNode());
+                    return new NeoModelLocation(getNeoProvider(), locRel.getEndNode());
                 }
             }
 
@@ -162,7 +161,7 @@ public class NeoRevision extends NeoObject implements InternalRevision {
             final Node n = rel.getEndNode();
             dumpOutRels(n);
             for (final Relationship rel2 : n.getRelationships(DynamicRelationshipType.withName(MODELLOCATION), Direction.OUTGOING)) {
-                final ModelLocation mloc = new NeoModelLocation(rel2.getEndNode());
+                final ModelLocation mloc = new NeoModelLocation(getNeoProvider(), rel2.getEndNode());
                 modelUris.add(mloc.getExternalUri());
             }
         }
@@ -177,7 +176,7 @@ public class NeoRevision extends NeoObject implements InternalRevision {
     public NeoRevision getPreviousRevision() {
         final Relationship rel = getNode().getSingleRelationship(DynamicRelationshipType.withName(PREVIOUSREVISION), Direction.OUTGOING);
         if (rel != null) {
-            return new NeoRevision(rel.getEndNode());
+            return new NeoRevision(getNeoProvider(), rel.getEndNode());
         } else {
             return null;
         }

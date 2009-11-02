@@ -36,6 +36,18 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
     private static final String CHANGETYPE = "changetype";
 
     /**
+     * Restore a previously stored model location
+     * 
+     * @param neoProvider
+     * 
+     * @param node
+     */
+    public NeoModelLocation(final NeoProvider np,final Node contentNode) {
+        super(np, contentNode);
+
+    }
+
+    /**
      * @param np
      * @param contentNode
      * @param loc
@@ -64,24 +76,12 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
         set(CHANGETYPE, changeType.name());
     }
 
-    /**
-     * Restore a previously stored model location
-     * 
-     * @param neoProvider
-     * 
-     * @param node
-     */
-    public NeoModelLocation(final Node contentNode) {
-        super(contentNode);
-
-    }
-
     /* (non-Javadoc)
      * @see org.infai.amor.backend.internal.ModelLocation#getChangeType()
      */
     @Override
     public ChangeType getChangeType() {
-        return Revision.ChangeType.valueOf((String) getNode().getProperty(CHANGETYPE));
+        return Revision.ChangeType.valueOf((String) get(CHANGETYPE));
     }
 
     /* (non-Javadoc)
@@ -103,7 +103,7 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      */
     public URI getExternalUri() {
         if (getNode().hasProperty(EXTERNAL_URI)) {
-            return URI.createURI((String) getNode().getProperty(EXTERNAL_URI));
+            return URI.createURI((String) get(EXTERNAL_URI));
         } else {
             return null;
             // TODO nodes fuer modellocations und Changetypespezifische Knoten ueberpruefen, ist inkonsistent!
@@ -127,7 +127,7 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      * @see org.infai.amor.backend.internal.storage.neo.ModelLocation#getRelativePath()
      */
     public String getRelativePath() {
-        return (String) getNode().getProperty(RELATIVE_PATH);
+        return (String) get(RELATIVE_PATH);
     }
 
     /**
