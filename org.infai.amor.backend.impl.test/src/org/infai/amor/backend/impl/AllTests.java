@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.backend.impl;
 
+import org.infai.amor.backend.filestorage.BlobStorageTest;
 import org.infai.amor.backend.integration.IntegrationTests;
 import org.infai.amor.backend.internal.impl.NeoBranchFactoryImplTest;
 import org.infai.amor.backend.internal.impl.NeoTransactionTest;
@@ -23,15 +24,16 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author sdienst Run with the following parameters: -ea -Xmx1000M -Djava.util.logging.config.file=logging.properties
  */
 @RunWith(Suite.class)
-@SuiteClasses( { 
-    RepositoryTests.class, 
-    NeoBranchFactoryImplTest.class, 
-    NeoTransactionTest.class, 
+@SuiteClasses( {
+    RepositoryTests.class,
+    NeoBranchFactoryImplTest.class,
+    NeoTransactionTest.class,
     LinearHistoryFileBlobStorageTest.class,
-    UriTest.class, 
-    IntegrationTests.class, 
-    QueryTests.class, 
-    NeoBlobStorageTest.class })
-public class AllTests {
+    UriTest.class,
+    IntegrationTests.class,
+    QueryTests.class,
+    NeoBlobStorageTest.class, 
+    BlobStorageTest.class})
+    public class AllTests {
 
 }
