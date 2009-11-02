@@ -6,8 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.infai.amor.backend.filestorage.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: com.google.common.base,
- com.google.common.collect,
+Import-Package: com.google.common.base;version="1.0.0",
+ com.google.common.collect;version="1.0.0",
  org.eclipse.core.runtime;version="3.4.0",
  org.eclipse.emf.common.util,
  org.eclipse.emf.compare.epatch.applier,

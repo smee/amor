@@ -20,8 +20,8 @@ Bundle-ClassPath: .,
  lib/commons-lang-2.4.jar,
  lib/google-collect-1.0-rc2.jar,
  lib/jsr-305-SNAPSHOT.jar
-Export-Package: com.google.common.annotations,
- com.google.common.base,
- com.google.common.base.internal,
- com.google.common.collect,
+Export-Package: com.google.common.annotations;version="1.0.0",
+ com.google.common.base;version="1.0.0",
+ com.google.common.base.internal;version="1.0.0",
+ com.google.common.collect;version="1.0.0",
  org.infai.amor.backend.internal
