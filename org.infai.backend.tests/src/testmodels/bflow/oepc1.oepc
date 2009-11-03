@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.1/notation" xmlns:oepc="org.bflow.toolbox.oepc">
+  <oepc:OEPC xmi:id="_9LAp4cO7Ed6vWvFZyvQujA">
+    <elements xmi:type="oepc:Event" xmi:id="_0a1k0ciJEd6ckv8oDKViDA" name="start"/>
+  </oepc:OEPC>
+  <notation:Diagram xmi:id="_9MIEMMO7Ed6vWvFZyvQujA" type="Oepc" element="_9LAp4cO7Ed6vWvFZyvQujA" name="default.oepc" measurementUnit="Pixel">
+    <children xmi:type="notation:Node" xmi:id="_0a_V0MiJEd6ckv8oDKViDA" type="2001" element="_0a1k0ciJEd6ckv8oDKViDA">
+      <children xmi:type="notation:Node" xmi:id="_0bIfwMiJEd6ckv8oDKViDA" type="5001"/>
+      <styles xmi:type="notation:ShapeStyle" xmi:id="_0a_V0ciJEd6ckv8oDKViDA" fontName="Segoe UI" fillColor="16253176" lineColor="0"/>
+      <styles xmi:type="notation:TextStyle" xmi:id="_0a_V0siJEd6ckv8oDKViDA" textAlignment="Center"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_0a_V08iJEd6ckv8oDKViDA" x="517" y="189"/>
+    </children>
+    <styles xmi:type="notation:DiagramStyle" xmi:id="_9MIEMcO7Ed6vWvFZyvQujA" pageWidth="697" pageHeight="1026" description="IGlobalColorSchema=o"/>
+  </notation:Diagram>
+</xmi:XMI>
