@@ -108,7 +108,7 @@ public class BlobStorageTest {
         final Model checkedout = storage.checkout(m.getPersistencePath(), tr.getRevisionId());
 
         // then
-        ModelUtil.assertModelEqual(m.getContent(), checkedout.getContent());
+        ModelUtil.assertModelEqual(m.getContent().get(0), checkedout.getContent().get(0));
     }
 
     @Test
@@ -143,7 +143,7 @@ public class BlobStorageTest {
     @Test
     public void shouldFindPackageNameViaXPath() throws Exception {
         // given
-        final File file = new File("testmodels/fs/simplefilesystem_v1.filesystem");
+        final File file = new File("../org.infai.backend.tests/src/testmodels/fs/simplefilesystem_v1.filesystem");
         // when
         final String nsuri =storage.getM2Uri(file);
         // then
@@ -183,7 +183,7 @@ public class BlobStorageTest {
         assertTrue(storedFile.exists());
 
         // compare both models as xml documents
-        XMLAssert.assertXMLEqual(new BufferedReader(new FileReader("testmodels/base.ecore")), new BufferedReader(new FileReader(storedFile)));
+        XMLAssert.assertXMLEqual(new BufferedReader(new FileReader("../org.infai.backend.tests/src/testmodels/base.ecore")), new BufferedReader(new FileReader(storedFile)));
     }
 
     @Test
@@ -210,7 +210,7 @@ public class BlobStorageTest {
 
         // when changing model
         final EObject changedModel = ModelUtil.readInputModel("testmodels/fs/simplefilesystem_v2.filesystem", rs);
-        final ChangedModel cm = new ChangedModelImpl(ModelUtil.createEpatch(m.getContent(), changedModel), modelpath);
+        final ChangedModel cm = new ChangedModelImpl(ModelUtil.createEpatch(m.getContent().get(0), changedModel), modelpath);
 
         storage.checkin(cm, null, tr.getRevisionId());
         storage.commit(tr, rev);
@@ -219,7 +219,7 @@ public class BlobStorageTest {
 
         // ModelUtil.storeViaXml(changedModel, checkedoutmodel.getContent());
 
-        ModelUtil.assertModelEqual(changedModel, checkedoutmodel.getContent());
+        ModelUtil.assertModelEqual(changedModel, checkedoutmodel.getContent().get(0));
     }
 
     @Test

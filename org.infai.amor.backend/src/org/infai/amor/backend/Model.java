@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.infai.amor.backend;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.ecore.EObject;
 
@@ -18,7 +20,7 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Model {
 
-    EObject getContent();
+    List<EObject> getContent();
 
     IPath getPersistencePath();
 

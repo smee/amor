@@ -113,6 +113,48 @@ public class FileBlobStorage implements Storage {
     }
 
     /**
+     * Try to find the package name. Returns null if the file is no m2 emf model.
+     * 
+     * @param file
+     *            file containing an emf model xml
+     * @return nsUri or null
+     * @throws
+     */
+    protected static String getM2Uri(final File file){
+        try {
+            // extract namespace uri if this is a m2 model
+            final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+            domFactory.setNamespaceAware(false);
+            final DocumentBuilder builder = domFactory.newDocumentBuilder();
+            final Document doc = builder.parse(file);
+
+            // final String nsUri = XPathFactory.newInstance().newXPath().evaluate("/EPackage/@nsURI", doc);
+            // // is this a m2 model?
+            // if (nsUri != null && nsUri.length() > 0) {
+            // return nsUri;
+            // } else {
+            // m1 model
+            final String rootNodeName = doc.getFirstChild().getNodeName();
+            if (rootNodeName.contains(":")) {
+                final String attrName = "xmlns:" + rootNodeName.substring(0, rootNodeName.indexOf(':'));
+                final Node attribute = doc.getFirstChild().getAttributes().getNamedItem(attrName);
+                final String m2uri = attribute.getNodeValue();
+                if (!m2uri.equals("http://www.eclipse.org/emf/2002/Ecore")) {
+                    return m2uri;
+                }
+            }
+            return null;
+            // }
+        } catch (final ParserConfigurationException e) {
+            return null;
+        } catch (final SAXException e) {
+            return null;
+        } catch (final IOException e) {
+            return null;
+        }
+    }
+
+    /**
      * @param text
      * @return
      */
@@ -178,18 +220,22 @@ public class FileBlobStorage implements Storage {
     public void checkin(final Model model, final URI externalUri, final long revisionId) throws IOException {
         final URI storagePath = createStorageUriFor(model.getPersistencePath(), revisionId, true);
         final Resource resource = resourceSet.createResource(storagePath);
-        final EObject contents = model.getContent();
-        resource.getContents().add(contents);
+
+        // write a file containing the mapping of revision number to
+        // this epackage name
+        for (final EObject contents : model.getContent()) {
+            if (contents instanceof EPackage) {
+                writeM2TagFile(revisionId, storagePath, ((EPackage) contents).getNsURI());
+            }
+        }
+
+        resource.getContents().addAll(model.getContent());
         resource.save(null);
 
         addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(model.getPersistencePath()), ChangeType.ADDED));
 
-        if (contents instanceof EPackage) {
-            // write a file containing the mapping of revision number to
-            // this epackage name
-            writeM2TagFile(revisionId, storagePath, ((EPackage) contents).getNsURI());
-        }
     }
+
 
     /*
      * (non-Javadoc)
@@ -208,7 +254,9 @@ public class FileBlobStorage implements Storage {
                 // this is a m1 model, let's load the corresponding m2 model first
                 final Resource m2resource = rs.createResource(m2StorageUri);
                 m2resource.load(null);
-                rs.getPackageRegistry().put(m2Uri, m2resource.getContents().get(0));
+                for (final EObject eo : m2resource.getContents()) {
+                    rs.getPackageRegistry().put(((EPackage) eo).getNsURI(), eo);
+                }
             }
         }
         // load the model
@@ -216,7 +264,6 @@ public class FileBlobStorage implements Storage {
         resource.load(null);
         return new ModelImpl(resource.getContents().get(0), path);
     }
-
 
     /*
      * (non-Javadoc)
@@ -367,51 +414,6 @@ public class FileBlobStorage implements Storage {
             resourceSet.getResources().remove(m2Resource);
         }
         return resourceSet;
-    }
-
-    /**
-     * Try to find the package name. Returns null if the file is no m2 emf model.
-     * 
-     * @param file
-     *            file containing an emf model xml
-     * @return nsUri or null
-     * @throws
-     */
-    protected static String getM2Uri(final File file){
-        try {
-            // extract namespace uri if this is a m2 model
-            final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-            domFactory.setNamespaceAware(false);
-            final DocumentBuilder builder = domFactory.newDocumentBuilder();
-            final Document doc = builder.parse(file);
-
-            // final String nsUri = XPathFactory.newInstance().newXPath().evaluate("/EPackage/@nsURI", doc);
-            // // is this a m2 model?
-            // if (nsUri != null && nsUri.length() > 0) {
-            // return nsUri;
-            // } else {
-            // m1 model
-            final String rootNodeName = doc.getFirstChild().getNodeName();
-            if (rootNodeName.contains(":")) {
-                final String attrName = "xmlns:" + rootNodeName.substring(0, rootNodeName.indexOf(':'));
-                final Node attribute = doc.getFirstChild().getAttributes().getNamedItem(attrName);
-                final String m2uri = attribute.getNodeValue();
-                if (!m2uri.equals("http://www.eclipse.org/emf/2002/Ecore")) {
-                    return m2uri;
-                }
-            }
-            return null;
-            // }
-        } catch (final ParserConfigurationException e) {
-            e.printStackTrace();
-            return null;
-        } catch (final SAXException e) {
-            e.printStackTrace();
-            return null;
-        } catch (final IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     /*

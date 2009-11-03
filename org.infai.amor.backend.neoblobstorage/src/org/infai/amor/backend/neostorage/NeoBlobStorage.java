@@ -87,10 +87,12 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         // store all eobjects/epackages
         logger.finer("----------1-Storing contents----------");
         final NeoMappingDispatcher disp1 = new NeoMappingDispatcher(getNeoProvider());
-        disp1.dispatch(model.getContent());
-        for (final TreeIterator<EObject> it = model.getContent().eAllContents(); it.hasNext();) {
-            final EObject eo = it.next();
+        for (final EObject eo : model.getContent()) {
             disp1.dispatch(eo);
+            for (final TreeIterator<EObject> it = eo.eAllContents(); it.hasNext();) {
+                final EObject eoSub = it.next();
+                disp1.dispatch(eoSub);
+            }
         }
         logger.finer("----------2-Storing metadata----------");
         final NeoMetadataDispatcher disp2 = new NeoMetadataDispatcher(getNeoProvider());
@@ -98,13 +100,16 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         disp2.setRegistry(disp1.getRegistry());
 
         // store all additional references and meta relationships
-        disp2.dispatch(model.getContent());
-        for (final TreeIterator<EObject> it = model.getContent().eAllContents(); it.hasNext();) {
-            final EObject eo = it.next();
+        for (final EObject eo : model.getContent()) {
             disp2.dispatch(eo);
+            for (final TreeIterator<EObject> it = eo.eAllContents(); it.hasNext();) {
+                final EObject eoSub = it.next();
+                disp2.dispatch(eoSub);
+            }
         }
         // remember new model node
-        this.addedModelNodes.put(externalUri, new NeoModelLocation(getNeoProvider(), (Node) disp2.getRegistry().get(model.getContent()), createModelSpecificPath(model.getPersistencePath()), externalUri, ChangeType.ADDED));
+        // FIXME we wrote several model elements, need to link to all of them, not just to the first
+        this.addedModelNodes.put(externalUri, new NeoModelLocation(getNeoProvider(), (Node) disp2.getRegistry().get(model.getContent().get(0)), createModelSpecificPath(model.getPersistencePath()), externalUri, ChangeType.ADDED));
     }
 
     /*
@@ -147,7 +152,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      * @see org.infai.amor.backend.storage.Storage#delete(org.eclipse.core.runtime.IPath, long)
      */
     @Override
-    public void delete(final IPath modelPath, URI externalUri,final long revisionId) throws IOException {
+    public void delete(final IPath modelPath, final URI externalUri,final long revisionId) throws IOException {
         throw new UnsupportedOperationException("not implemented");
     }
 

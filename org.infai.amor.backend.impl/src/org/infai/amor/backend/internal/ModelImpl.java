@@ -9,6 +9,9 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.ecore.EObject;
@@ -20,17 +23,23 @@ import org.infai.amor.backend.Model;
  */
 public class ModelImpl implements Model {
 
-    private final EObject model;
+    private final List<EObject> model;
     private final IPath path;
 
     public ModelImpl(final EObject model, final IPath path) {
-        this.model = model;
-        this.path = path;
+        this(Arrays.asList(model), path);
     }
 
     public ModelImpl(final EObject model, final String path) {
+        this(model, new Path(path));
+    }
+
+    public ModelImpl(final List<EObject> model, final IPath path) {
         this.model = model;
-        this.path = new Path(path);
+        this.path = path;
+    }
+    public ModelImpl(final List<EObject> model, final String path) {
+        this(model, new Path(path));
     }
 
     /*
@@ -39,7 +48,7 @@ public class ModelImpl implements Model {
      * @see org.infai.amor.backend.Model#getContent()
      */
     @Override
-    public EObject getContent() {
+    public List<EObject> getContent() {
         return model;
     }
 

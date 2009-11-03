@@ -40,7 +40,6 @@ import org.infai.amor.backend.internal.impl.UriHandlerImpl;
 import org.infai.amor.backend.neostorage.NeoBlobStorageFactory;
 import org.infai.amor.backend.responses.CheckinResponse;
 import org.infai.amor.test.AbstractNeo4JPerformanceTest;
-import org.infai.amor.test.ModelUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,29 +60,28 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
     private Repository repository;
     private final String m1Location, m2Location;
     private CountingNeoProxy proxy;
-    private final String pathPrefix;
 
     /**
      * Run one roundtrip for every pair of m2/m1 model.
      * 
      * @return
+     * @throws InterruptedException
      */
     @Parameters
     public static Collection<String[]> getTestParameters() {
         final Collection<String[]> params = Lists.newArrayList();
-        params.add(new String[] { "../org.infai.amor.backend.impl.test/", "testmodels/filesystem.ecore", "testmodels/simplefilesystem.xmi" });
-        params.add(new String[] { "../org.infai.amor.backend.impl.test/", "testmodels/filesystem.ecore", "testmodels/fs/simplefilesystem_v1.filesystem" });
-        params.add(new String[] { "../org.infai.amor.backend.impl.test/", "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
+        params.add(new String[] { "testmodels/filesystem.ecore", "testmodels/simplefilesystem.xmi" });
+        params.add(new String[] { "testmodels/filesystem.ecore", "testmodels/fs/simplefilesystem_v1.filesystem" });
+        params.add(new String[] { "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
         return params;
     }
 
     /**
      * @param modelLocations
      */
-    public NeoBlobStorageTest(final String prefix, final String m2, final String m1) {
-        this.pathPrefix = prefix;
-        this.m1Location = prefix + m1;
-        this.m2Location = prefix + m2;
+    public NeoBlobStorageTest(final String m2, final String m1) {
+        this.m1Location = m1;
+        this.m2Location = m2;
     }
 
     @After
@@ -115,7 +113,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         split("Before loading models " + m2Location + " and " + m1Location);
         // given
         final ResourceSet rs = new ResourceSetImpl();
-        final EObject input = readInputModel(pathPrefix + "testmodels/Ecore.ecore", rs);
+        final EObject input = readInputModel("testmodels/Ecore.ecore", rs);
         final EObject input2 = readInputModel(m2Location, rs);
         final EObject input3 = readInputModel(m1Location, rs);
         split("After loading models");
@@ -150,7 +148,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         final Model checkedoutmodel = repository.checkout(checkin3.getURI());
         split("Restoring M1");
         assertNotNull(checkedoutmodel.getContent());
-        ModelUtil.storeViaXml(checkedoutmodel.getContent());
-        split("Writing XML");
+        // ModelUtil.storeViaXml(checkedoutmodel.getContent());
+        // split("Writing XML");
     }
 }

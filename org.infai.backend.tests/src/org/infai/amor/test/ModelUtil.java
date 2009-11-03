@@ -170,7 +170,7 @@ public class ModelUtil {
         final Resource resource = rs.getResource(URI.createFileURI(file), true);
         resource.load(null);
 
-        // register package
+        // register packages
         for (final EObject eObject : resource.getContents()) {
             if (eObject instanceof EPackage && !((EPackage) eObject).getNsURI().equals(EcorePackage.eNS_URI)) {
                 rs.getPackageRegistry().put(((EPackage) eObject).getNsURI(), eObject);

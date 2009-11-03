@@ -49,12 +49,8 @@ public class LinearHistoryFileBlobStorageTest extends AbstractNeo4JPerformanceTe
     /**
      * The models to store. First the meta model, then the revisions of the instance model.
      */
-    private final String[] models = {"testmodels/filesystem.ecore",
-        "testmodels/fs/simplefilesystem_v1.filesystem"
-        ,"testmodels/fs/simplefilesystem_v2.filesystem"
-        ,"testmodels/fs/simplefilesystem_v3.filesystem"
-        ,"testmodels/fs/simplefilesystem_v4.filesystem"};
-    private final String pathPrefix = "../org.infai.amor.backend.impl.test/";
+    private final String[] models = {
+        "testmodels/filesystem.ecore", "testmodels/fs/simplefilesystem_v1.filesystem", "testmodels/fs/simplefilesystem_v2.filesystem", "testmodels/fs/simplefilesystem_v3.filesystem", "testmodels/fs/simplefilesystem_v4.filesystem" };
     /**
      * Common name of the instancemodel
      */
@@ -113,7 +109,7 @@ public class LinearHistoryFileBlobStorageTest extends AbstractNeo4JPerformanceTe
         // given
         final ResourceSet rs = new ResourceSetImpl();
         // checked in metamodel
-        final Model mm = new ModelImpl(ModelUtil.readInputModel(pathPrefix + models[0], rs), models[0]);
+        final Model mm = new ModelImpl(ModelUtil.readInputModel(models[0], rs), models[0]);
         CommitTransaction tr = TestUtils.createTransaction(BRANCHNAME, 0);
         storage.startTransaction(tr);
         storage.checkin(mm, null, tr.getRevisionId());
@@ -121,25 +117,25 @@ public class LinearHistoryFileBlobStorageTest extends AbstractNeo4JPerformanceTe
         split("Committed M2");
 
         // checked in first model revision
-        final Model m = new ModelImpl(ModelUtil.readInputModel(pathPrefix + models[1], rs), modelName);
+        final Model m = new ModelImpl(ModelUtil.readInputModel(models[1], rs), modelName);
         tr = TestUtils.createTransaction(BRANCHNAME, 1);
         storage.startTransaction(tr);
         storage.checkin(m, null, tr.getRevisionId());
         storage.commit(tr, rev);
         split("Committed initial M1");
 
-        EObject lastModel = m.getContent();
+        EObject lastModel = m.getContent().get(0);
         // commit all changes to the model in order
         for (int i = 2; i < models.length; i++) {
             tr = TestUtils.createTransaction(BRANCHNAME, i);
             storage.startTransaction(tr);
-            final EObject changedModel = ModelUtil.readInputModel(pathPrefix + models[i], rs);
+            final EObject changedModel = ModelUtil.readInputModel(models[i], rs);
             final ChangedModel cm = new ChangedModelImpl(ModelUtil.createEpatch(lastModel, changedModel), modelName);
             storage.checkin(cm, null, tr.getRevisionId());
             storage.commit(tr, rev);
 
             final Model checkedoutmodel = storage.checkout(new Path(modelName), i);
-            ModelUtil.assertModelEqual(changedModel, checkedoutmodel.getContent());
+            ModelUtil.assertModelEqual(changedModel, checkedoutmodel.getContent().get(0));
             lastModel = changedModel;
             split("Roundtrip completed for M1 revision " + i);
         }
