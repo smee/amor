@@ -11,7 +11,7 @@ package org.infai.amor.backend.internal.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
+import static org.infai.amor.test.TestUtils.createLocation;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -22,9 +22,10 @@ import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.Revision.ChangeType;
-import org.infai.amor.backend.filestorage.FileModelLocation;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
 import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.test.AbstractNeo4JTest;
+import org.infai.amor.test.MockedTransactionNeoWrapper;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -139,13 +140,13 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
         final CommitTransaction tr = createCommit(1, mainbranch, "test", "max mustermann");
         // added two models
         final NeoRevision rev1 = factory.createRevision(tr);
-        rev1.touchedModel(new FileModelLocation(model1uri, model1path, ChangeType.ADDED));
-        rev1.touchedModel(new FileModelLocation(model2uri, model2path, ChangeType.ADDED));
+        rev1.touchedModel(createLocation(model1uri, model1path, ChangeType.ADDED));
+        rev1.touchedModel(createLocation(model2uri, model2path, ChangeType.ADDED));
         // deleted one model
         final CommitTransaction tr2 = createCommit(2, mainbranch, "deleted one model", "max mustermann");
         final NeoRevision rev2 = factory.createRevision(tr2);
         final URI model3uri = URI.createURI("amor://localhost/repo/main/2/" + model2path);
-        rev2.touchedModel(new FileModelLocation(model3uri, model1path, ChangeType.DELETED));
+        rev2.touchedModel(createLocation(model3uri, model1path, ChangeType.DELETED));
         // when
         // ask for contents
         final Collection<URI> addedModelReferencesOnRev1 = rev1.getModelReferences(ChangeType.ADDED);

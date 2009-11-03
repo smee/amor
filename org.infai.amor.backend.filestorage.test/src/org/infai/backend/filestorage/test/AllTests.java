@@ -7,25 +7,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.impl;
+package org.infai.backend.filestorage.test;
 
-import org.infai.amor.backend.internal.impl.NeoBranchFactoryImplTest;
-import org.infai.amor.backend.internal.impl.NeoTransactionTest;
-import org.infai.amor.backend.internal.impl.UriTest;
+import org.infai.amor.backend.filestorage.BlobStorageTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * @author sdienst Run with the following parameters: -ea -Xmx1000M -Djava.util.logging.config.file=logging.properties
+ * @author sdienst
+ * 
  */
 @RunWith(Suite.class)
-@SuiteClasses( {
-    RepositoryTests.class,
-    NeoBranchFactoryImplTest.class,
-    NeoTransactionTest.class,
-    UriTest.class,
-    QueryTests.class})
-    public class AllTests {
+@SuiteClasses( { 
+    IntegrationTests.class, 
+    LinearHistoryFileBlobStorageTest.class,
+    BlobStorageTest.class })
+public class AllTests {
 
 }

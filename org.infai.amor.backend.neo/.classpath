@@ -4,6 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="lib/jta-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/neo-1.0-b9.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/neo-1.0-b9.jar" sourcepath="D:/temp/neo-1.0-b9-source.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

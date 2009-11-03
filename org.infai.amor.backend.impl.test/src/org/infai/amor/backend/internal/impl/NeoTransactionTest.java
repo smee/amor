@@ -12,6 +12,7 @@ package org.infai.amor.backend.internal.impl;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import org.infai.amor.test.AbstractNeo4JTest;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.api.core.Direction;

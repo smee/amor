@@ -1,0 +1,31 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Common Tests Superplugin
+Bundle-SymbolicName: org.infai.backend.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: .,
+ lib/jmock-legacy-2.5.1.jar,
+ lib/jmock-2.5.1.jar,
+ lib/xmlunit-1.2.jar,
+ lib/cglib-nodep-2.1_3.jar,
+ lib/objenesis-1.0.jar,
+ lib/hamcrest-core-1.1.jar,
+ lib/hamcrest-library-1.1.jar
+Import-Package: org.apache.commons.lang;version="2.3.0",
+ org.eclipse.emf.common.util,
+ org.eclipse.emf.compare.diff.metamodel,
+ org.eclipse.emf.compare.diff.service,
+ org.eclipse.emf.compare.epatch,
+ org.eclipse.emf.compare.match,
+ org.eclipse.emf.compare.util,
+ org.eclipse.emf.ecore.resource,
+ org.eclipse.emf.ecore.xmi.impl,
+ org.infai.amor.backend,
+ org.infai.amor.backend.internal,
+ org.junit;version="4.5.0",
+ org.neo4j.api.core
+Export-Package: org.infai.amor.test,
+ org.jmock
+Bundle-Vendor: InfAI e.V.
+
