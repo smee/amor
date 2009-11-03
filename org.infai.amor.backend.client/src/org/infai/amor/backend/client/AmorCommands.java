@@ -11,6 +11,7 @@ package org.infai.amor.backend.client;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -63,8 +64,8 @@ public class AmorCommands implements CommandProvider {
         final Model m = new Model() {
 
             @Override
-            public EObject getContent() {
-                return resource.getContents().get(0);
+            public List<EObject> getContent() {
+                return resource.getContents();
             }
 
             @Override
@@ -141,7 +142,7 @@ public class AmorCommands implements CommandProvider {
         }
     }
 
-    public void _newbranch(final CommandInterpreter ci) {
+    public void _newbranch(final CommandInterpreter ci) throws MalformedURIException {
         final String branchname = ci.nextArgument();
         final String revId = ci.nextArgument();
         if (branchname == null) {
@@ -158,8 +159,14 @@ public class AmorCommands implements CommandProvider {
 
             }
         }
-        // TODO find revision
         final Branch branch = getRepo().createBranch(null, branchname);
+        // TODO use revision to branch from there
+        // if (revisionId == null) {
+        // branch = getRepo().createBranch(null, branchname);
+        // } else {
+        // final Revision revision = getRepo().getRevision(getRepoUri().appendSegments(new String[] { branchname, revId }));
+        // branch = getRepo().createBranch(revision, branchname);
+        // }
         ci.println("Successfully created branch '" + branchname + "'");
     }
 
