@@ -12,7 +12,6 @@ package org.infai.amor.test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -146,15 +145,38 @@ public class ModelUtil {
      * @throws IOException
      */
     public static EObject readInputModel(final String relativePath, final ResourceSet rs) throws IOException {
+        return readInputModels(relativePath, rs).get(0);
+    }
 
-        final Resource resource = rs.getResource(URI.createFileURI(new File(relativePath).getAbsolutePath()), true);
+    /**
+     * @param relativePath
+     * @return
+     * @throws IOException
+     */
+    public static List<EObject> readInputModels(final String relativePath) throws IOException {
+        return readInputModels(relativePath, new ResourceSetImpl());
+    }
+
+    /**
+     * @param string
+     * @return
+     * @throws IOException
+     */
+    public static List<EObject> readInputModels(final String relativePath, final ResourceSet rs) throws IOException {
+
+        String file = ModelUtil.class.getClassLoader().getResource(relativePath).toExternalForm();
+        file = file.substring("file:/".length());
+
+        final Resource resource = rs.getResource(URI.createFileURI(file), true);
         resource.load(null);
+
         // register package
-        final EObject eObject = resource.getContents().get(0);
-        if (eObject instanceof EPackage && !((EPackage) eObject).getNsURI().equals(EcorePackage.eNS_URI)) {
-            rs.getPackageRegistry().put(((EPackage) eObject).getNsURI(), eObject);
+        for (final EObject eObject : resource.getContents()) {
+            if (eObject instanceof EPackage && !((EPackage) eObject).getNsURI().equals(EcorePackage.eNS_URI)) {
+                rs.getPackageRegistry().put(((EPackage) eObject).getNsURI(), eObject);
+            }
         }
-        return eObject;
+        return resource.getContents();
     }
 
     /**
