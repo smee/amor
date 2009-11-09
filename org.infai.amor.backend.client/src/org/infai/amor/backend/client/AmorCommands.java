@@ -40,7 +40,11 @@ public class AmorCommands implements CommandProvider {
 
     private CommitTransaction transaction;
     URI currentUri = getRepoUri();
+    private File crntDir;
 
+    public AmorCommands() throws IOException {
+        crntDir = new File(".").getCanonicalFile();
+    }
     public void _aborttransaction(final CommandInterpreter ci){
         if(transaction!=null){
             getRepo().rollbackTransaction(transaction);
@@ -89,10 +93,10 @@ public class AmorCommands implements CommandProvider {
         }
     }
 
-    public void _committransaction(final CommandInterpreter ci){
+    public void _committransaction(final CommandInterpreter ci) {
         if (transaction == null) {
             ci.println("There is no running transaction, can't commit...");
-        }else{
+        } else {
             final String commitmessage = ci.nextArgument();
             final String username = ci.nextArgument();
             if (commitmessage == null || username == null) {
@@ -103,7 +107,7 @@ public class AmorCommands implements CommandProvider {
 
                 final Response response = getRepo().commitTransaction(transaction);
 
-                if(!(response instanceof CommitSuccessResponse)){
+                if (!(response instanceof CommitSuccessResponse)) {
                     ci.println("Error on commit: " + response.getMessage().getContent());
                 } else {
                     ci.println("Successfully commited " + response.getURI());
@@ -125,6 +129,33 @@ public class AmorCommands implements CommandProvider {
         for (final Branch branch : getRepo().getBranches(getRepoUri())) {
             ci.println(branch.getName());
         }
+    }
+
+    public void _lcd(final CommandInterpreter ci) throws IOException {
+        final String arg = ci.nextArgument();
+        if (arg == null) {
+            crntDir = new File(".").getCanonicalFile();
+        } else if (arg.trim().equals("..")) {
+            crntDir = new File(crntDir.getParent());
+        } else {
+            crntDir = new File(crntDir, arg);
+        }
+    }
+
+    public void _lls(final CommandInterpreter ci){
+        for (final File file : crntDir.listFiles()) {
+            if (file.isDirectory()) {
+                ci.print("[dir]  ");
+            } else {
+                ci.print("[file] ");
+            }
+            ci.println(file.getName());
+        }
+
+    }
+
+    public void _lpwd(final CommandInterpreter ci){
+        ci.println(crntDir.getAbsolutePath());
     }
 
     public void _ls(final CommandInterpreter ci) throws MalformedURIException {
@@ -223,6 +254,10 @@ public class AmorCommands implements CommandProvider {
             { "pwd","show the current amor uri we are looking at" },
             { "ls","show the current amor repository contents using the uri show by 'pwd'" },
             { "cd <string>","append a string to the current amor uri, use '..' to remove the last uri segment, call without parameter to change uri back to the default" },
+            { "Lokale Navigation (zum Finden von lokalen Modellen)" },
+            { "lpwd","show the local file path we are in" },
+            { "lls","show the contents of the local path" },
+            { "lcd <string>","change the local directory" },
             { "" } };
         final StringBuilder sb = new StringBuilder();
         for (final String[] command : commands) {
@@ -234,15 +269,18 @@ public class AmorCommands implements CommandProvider {
         }
         return sb.toString();
     }
+
     private Repository getRepo(){
         return Activator.getInstance().getRepository();
     }
+
     /**
      * @return
      */
     private URI getRepoUri() {
         return URI.createURI("amor://localhost/repo");
     }
+
     /**
      * @param s
      * @return
