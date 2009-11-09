@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -87,6 +88,9 @@ public class AmorCommands implements CommandProvider {
         ci.println(checkin.getMessage().getContent());
     }
 
+    public void _amorhelp(final CommandInterpreter ci){
+        ci.println(getHelp());
+    }
     public void _cd(final CommandInterpreter ci){
         final String arg = ci.nextArgument();
         if (arg == null) {
@@ -97,6 +101,31 @@ public class AmorCommands implements CommandProvider {
             currentUri = currentUri.appendSegments(arg.split("/"));
         }
     }
+
+    public void _checkout(final CommandInterpreter ci) throws MalformedURIException, IOException{
+        final String uriString = ci.nextArgument();
+        if(uriString==null){
+            ci.println("Please specify a complete amor uri as parameter for checkout.");
+            return;
+        }
+        final URI uri = URI.createURI(uriString);
+        final Model model = getRepo().checkout(uri);
+        // recreate folder structure
+        final String[] pathSegments = model.getPersistencePath().segments();
+        String dir = "";
+        for(int i = 0;i< pathSegments.length - 1;i++) {
+            dir += pathSegments[i] + "/";
+        }
+        new File(crntDir.getAbsolutePath(), dir).mkdirs();
+        // store the model locally
+        final ResourceSet rs = new ResourceSetImpl();
+        final String modelFile = dir + pathSegments[pathSegments.length - 1];
+        final Resource resource = rs.createResource(URI.createURI(modelFile));
+        resource.getContents().addAll(model.getContent());
+        resource.save(null);
+        ci.println("Saved model to " + new File(crntDir, modelFile));
+    }
+
     public void _committransaction(final CommandInterpreter ci) {
         if (transaction == null) {
             ci.println("There is no running transaction, can't commit...");
@@ -138,12 +167,18 @@ public class AmorCommands implements CommandProvider {
 
     public void _lcd(final CommandInterpreter ci) throws IOException {
         final String arg = ci.nextArgument();
+        File newDir = null;
         if (arg == null) {
-            crntDir = new File(".").getCanonicalFile();
+            newDir = new File(".").getCanonicalFile();
         } else if (arg.trim().equals("..")) {
-            crntDir = new File(crntDir.getParent());
+            newDir = new File(crntDir.getParent());
         } else {
-            crntDir = new File(crntDir, arg);
+            newDir = new File(crntDir, arg);
+        }
+        if (!newDir.isDirectory()) {
+            ci.println(newDir+" is no valid directory!");
+        } else {
+            crntDir = newDir;
         }
     }
 
@@ -223,7 +258,6 @@ public class AmorCommands implements CommandProvider {
             this.rs = new ResourceSetImpl();
         }
     }
-
     /**
      * @param revision
      * @param added
@@ -237,7 +271,6 @@ public class AmorCommands implements CommandProvider {
         }
         return sb.toString();
     }
-
     /*
      * (non-Javadoc)
      * 
@@ -255,6 +288,7 @@ public class AmorCommands implements CommandProvider {
             { "delete <relative path to model>", "delete a persisted model" },
             {"committransaction <username> <message>","commit all actions done during the current transaction"},
             {"aborttransaction","rollback all actions done during the current transaction"},
+            { "Checkout:" }, { "checkout <complete model uri>", "checkout out the specified model relative to the current directory" },
             {"Navigation:"},
             { "pwd","show the current amor uri we are looking at" },
             { "ls","show the current amor repository contents using the uri show by 'pwd'" },
@@ -263,6 +297,7 @@ public class AmorCommands implements CommandProvider {
             { "lpwd","show the local file path we are in" },
             { "lls","show the contents of the local path" },
             { "lcd <string>","change the local directory" },
+            { "Misc:" }, { "amorhelp", "show these help messages" },
             { "" } };
         final StringBuilder sb = new StringBuilder();
         for (final String[] command : commands) {
