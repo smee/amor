@@ -17,8 +17,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -41,6 +42,7 @@ public class AmorCommands implements CommandProvider {
     private CommitTransaction transaction;
     URI currentUri = getRepoUri();
     private File crntDir;
+    private ResourceSetImpl rs;
 
     public AmorCommands() throws IOException {
         crntDir = new File(".").getCanonicalFile();
@@ -49,6 +51,7 @@ public class AmorCommands implements CommandProvider {
         if(transaction!=null){
             getRepo().rollbackTransaction(transaction);
             transaction = null;
+            rs = null;
             ci.println("Transaction aborted.");
         } else {
             ci.println("No running transaction found.");
@@ -62,9 +65,11 @@ public class AmorCommands implements CommandProvider {
             ci.println("Please specify an existing model file!");
             return;
         }
-        final ResourceSet rs = new ResourceSetImpl();
+
         final Resource resource = rs.getResource(URI.createFileURI(modelfile.getAbsolutePath()), true);
         resource.load(null);
+        registerPackages(resource);
+
         final Model m = new Model() {
 
             @Override
@@ -92,7 +97,6 @@ public class AmorCommands implements CommandProvider {
             currentUri = currentUri.appendSegments(arg.split("/"));
         }
     }
-
     public void _committransaction(final CommandInterpreter ci) {
         if (transaction == null) {
             ci.println("There is no running transaction, can't commit...");
@@ -112,6 +116,7 @@ public class AmorCommands implements CommandProvider {
                 } else {
                     ci.println("Successfully commited " + response.getURI());
                     transaction = null;
+                    rs = null;
                 }
             }
         }
@@ -215,6 +220,7 @@ public class AmorCommands implements CommandProvider {
             ci.println("Please specify the name of the branch this transaction should operate on!");
         } else {
             transaction = getRepo().startCommitTransaction(getRepo().getBranch(getRepoUri().appendSegment(branchname)));
+            this.rs = new ResourceSetImpl();
         }
     }
 
@@ -231,7 +237,6 @@ public class AmorCommands implements CommandProvider {
         }
         return sb.toString();
     }
-
 
     /*
      * (non-Javadoc)
@@ -270,6 +275,7 @@ public class AmorCommands implements CommandProvider {
         return sb.toString();
     }
 
+
     private Repository getRepo(){
         return Activator.getInstance().getRepository();
     }
@@ -292,6 +298,21 @@ public class AmorCommands implements CommandProvider {
             }
         }
         return true;
+    }
+
+    /**
+     * Register all metamodel packages we load. This way we can actually open non registered model instances.
+     * 
+     * @param resource
+     */
+    private void registerPackages(final Resource resource) {
+        // register packages
+        for (final EObject eObject : resource.getContents()) {
+            if (eObject instanceof EPackage && !((EPackage) eObject).getNsURI().equals(EcorePackage.eNS_URI)) {
+                rs.getPackageRegistry().put(((EPackage) eObject).getNsURI(), eObject);
+            }
+        }
+
     }
 
 }
