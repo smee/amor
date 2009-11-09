@@ -57,7 +57,7 @@ public class AmorCommands implements CommandProvider {
 
     public void _add(final CommandInterpreter ci) throws IOException {
         final String path = ci.nextArgument();
-        final File modelfile = new File(path);
+        final File modelfile = new File(crntDir, path);
         if (!modelfile.exists()) {
             ci.println("Please specify an existing model file!");
             return;
