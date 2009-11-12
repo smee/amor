@@ -1,5 +1,8 @@
 package org.infai.amor.backend.impl;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 import org.eclipse.core.runtime.Plugin;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
@@ -17,6 +20,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
+
+import ch.ethz.iks.r_osgi.RemoteOSGiService;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -175,8 +180,12 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         final DelegatingStorageFactory sf = new DelegatingStorageFactory();
         trman.addTransactionListener(sf);
         final Repository repo = new RepositoryImpl(sf, new NeoBranchFactory(this), uriHandler, trman);
+
         // register repository service
-        context.registerService(Repository.class.getName(), repo, null);
+        final Dictionary properties = new Hashtable();
+        properties.put(RemoteOSGiService.R_OSGi_REGISTRATION, Boolean.TRUE);
+
+        context.registerService(Repository.class.getName(), repo, properties);
     }
 
     /*
