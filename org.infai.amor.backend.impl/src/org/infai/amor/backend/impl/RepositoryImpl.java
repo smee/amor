@@ -92,6 +92,9 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Response checkin(final Model model, final CommitTransaction tr) {
+        // FIXME how to assure that multiple invocations of this method will happen on the same thread?
+        // FIXME needs to be to make sure, else we are not within the same neo4j transaction... see
+        // http://www.mail-archive.com/user@lists.neo4j.org/msg01381.html
         try {
             // remember the repository uri for this model
             final URI modeluri = uriHandler.createModelUri(tr, model.getPersistencePath());
