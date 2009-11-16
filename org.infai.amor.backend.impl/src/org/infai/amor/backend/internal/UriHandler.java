@@ -63,6 +63,8 @@ public interface UriHandler {
      */
     URI createUriFor(CommitTransaction tr);
 
+    URI createUriFor(String  branchName);
+
     /**
      * @param uri
      * @return

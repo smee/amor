@@ -126,6 +126,14 @@ public class UriHandlerImpl implements UriHandler {
         return createUriFor(tr.getBranch(), tr.getRevisionId());
     }
 
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.internal.UriHandler#createUriFor(java.lang.String)
+     */
+    @Override
+    public URI createUriFor(final String branchName) {
+        return URI.createHierarchicalURI("amor", hostName, null, new String[] { repoName, branchName }, null, null);
+    }
+
     /*
      * (non-Javadoc)
      * 
