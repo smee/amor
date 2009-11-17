@@ -262,7 +262,7 @@ public class FileBlobStorage implements Storage {
         // load the model
         final Resource resource = rs.createResource(modelStorageUri);
         resource.load(null);
-        return new ModelImpl(resource.getContents().get(0), path);
+        return new ModelImpl(resource.getContents(), path);
     }
 
     /*
