@@ -1,6 +1,10 @@
 package de.modelrepository.test.util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -54,5 +58,22 @@ public class FileUtility {
 			}
 		}
 		d.delete();
+	}
+	
+	public static boolean isEmpty(File f) throws IOException {
+		if(f.isDirectory() && f.listFiles().length > 0)
+			return false;
+		else {
+			BufferedReader br = new BufferedReader(new FileReader(f));
+			String line = br.readLine();
+			if(line != null && line.length() != 0) {
+				char[] chars = line.toCharArray();
+				for (char c : chars) {
+					if(c!=' ' && c!='\t')
+						return false;
+				}
+			}
+		}
+		return true;
 	}
 }

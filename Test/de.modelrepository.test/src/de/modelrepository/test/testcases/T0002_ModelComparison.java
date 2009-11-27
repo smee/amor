@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Vector;
 
 import org.eclipse.emf.common.util.EList;
@@ -18,12 +17,13 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.modelrepository.test.JavaToEMFParser;
 import de.modelrepository.test.ModelComparator;
+import de.modelrepository.test.util.FileUtility;
 
 public class T0002_ModelComparison {
 	ModelComparator comparator;
@@ -40,6 +40,13 @@ public class T0002_ModelComparison {
 		comparator = null;
 		parser = null;
 	}
+	
+//	@AfterClass
+//	public void tearDown() {
+//		File outFolder = new File("res/out/T0002");
+//		if(outFolder.exists())
+//			FileUtility.delete(outFolder);
+//	}
 	
 	@Test
 	/*

@@ -3,7 +3,7 @@ package de.modelrepository.test.util;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class FileIterator implements Iterable<File>{
 	private FileFilter filter;
@@ -14,8 +14,8 @@ public class FileIterator implements Iterable<File>{
 		files = getFiles(entryPoint).iterator();
 	}
 	
-	private Vector<File> getFiles(File parent) {
-		Vector<File> temp = new Vector<File>();
+	private ArrayList<File> getFiles(File parent) {
+		ArrayList<File> temp = new ArrayList<File>();
 		for (File file : parent.listFiles(filter)) {
 			if(file.isFile()) {
 				temp.add(file);

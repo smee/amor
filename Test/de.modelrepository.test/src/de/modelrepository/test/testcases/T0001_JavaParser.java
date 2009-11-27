@@ -7,42 +7,23 @@ import java.util.Vector;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.modelrepository.test.JavaToEMFParser;
 import de.modelrepository.test.ProxyException;
+import de.modelrepository.test.util.FileUtility;
 
 public class T0001_JavaParser {
 	JavaToEMFParser parser;
 	
-	@BeforeClass
-	public static void setUp() {
+	@AfterClass
+	public static void tearDown() {
 //		clear output folder before running the tests
-		File outFolder = new File("res/out");
-		File[] files = outFolder.listFiles();
-		if(files.length > 0) {
-			for (File file : files) {
-				del(file);
-			}
-		}
-	}
-	
-	/*
-	 * deletes the given file or folder by recursively clearing all subfolders
-	 */
-	public static boolean del(File dir){
-		if(dir.isDirectory()) {
-			for(File aktFile : dir.listFiles()) {
-				del(aktFile);
-			}
-			if(dir.delete()) return true;
-			else return false;
-		}else {
-			if(dir.delete()) return true;
-			else return false;
-		}
+		File outFolder = new File("res/out/T0001");
+		if(outFolder.exists())
+			FileUtility.delete(outFolder);
 	}
 	
 	@Before
