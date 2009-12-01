@@ -30,7 +30,6 @@ public class GitFileHistory {
 	private String currentBranch;
 	private ArrayList<ObjectId> ids = new ArrayList<ObjectId>();
 	private ArrayList<ParallelBranches> parallelBranches = new ArrayList<ParallelBranches>();
-	//TODO testrepository und testklassen erstellen.
 	
 	
 	/**
@@ -41,7 +40,7 @@ public class GitFileHistory {
 	 */
 	public GitFileHistory(File originalFile, Repository repo) throws IOException {
 		this.repo = repo;
-		fileRelativePath = FileUtility.getRelativePath(originalFile.getAbsoluteFile(), this.repo.getWorkDir()).replace(File.separator, "/");
+		fileRelativePath = FileUtility.getRelativePath(originalFile.getAbsoluteFile(), repo.getWorkDir()).replace(File.separator, "/");
 		walk = buildWalk();
 		fileRevisions = buildRevisions();
 		parallelBranches = buildParallelBranches();
@@ -49,7 +48,7 @@ public class GitFileHistory {
 	}
 	
 	/**
-	 * @return a ArrayList that contains all Revisions for this file ordered by their commit time (ascending).
+	 * @return an ArrayList that contains all Revisions for this file ordered by their commit time (ascending).
 	 */
 	public ArrayList<FileRevision> getAllFileRevisions() throws IOException {
 		return fileRevisions;
@@ -57,12 +56,16 @@ public class GitFileHistory {
 	
 	
 	/**
-	 * @return a ArrayList that contains branches of parallel development.
+	 * @return an ArrayList that contains branches of parallel development.<br>
+	 * Each {@link ParallelBranches} object does only contain parallel running branches which are merged again.
 	 */
 	public ArrayList<ParallelBranches> getParallelBranches() {
 		return parallelBranches;
 	}
 
+	/*
+	 * builds up a revision walk to walk through the repository for determining all file revisions.
+	 */
 	private RevWalk buildWalk() {
 		RevWalk walk = new RevWalk(repo);
 		walk.sort(RevSort.COMMIT_TIME_DESC, true);
@@ -71,20 +74,29 @@ public class GitFileHistory {
 		return walk;
 	}
 
+	/*
+	 * Mehtod builds up an ArrayList which contains all revisions for the file.
+	 */
 	private ArrayList<FileRevision> buildRevisions() throws IOException {
 		ArrayList<FileRevision> result = new ArrayList<FileRevision>();
 		
+		//for gitk --all behaviour mark each branch as a start point for the revision walk.
 		for (Ref ref : repo.getAllRefs().values())
 			walk.markStart(walk.parseCommit(ref.getObjectId()));
 
+		//build a FileRevision for each RevCommit in the walk
 		for (RevCommit revCommit : walk) {
-			TreeWalk fileWalker = TreeWalk.forPath(repo, fileRelativePath, revCommit.getTree());
 			result.add(new FileRevision(fileRelativePath, revCommit, repo));
 		}
+		//finally sort the list
 		Collections.sort(fileRevisions);
 		return result;
 	}
 
+	/*
+	 * searches all commits of the file within the repository which are merging commits.
+	 * merge commits have multiple parents.
+	 */
 	private ArrayList<RevCommit> getMergeCommits() {
 		ArrayList<RevCommit> merges = new ArrayList<RevCommit>();
 		for (FileRevision fileRev : fileRevisions) {
@@ -96,20 +108,30 @@ public class GitFileHistory {
 		return merges;
 	}
 
+	/*
+	 * searches all commits of the file within the repository which are forking commits.
+	 * fork commits have multiple children.
+	 */
 	private ArrayList<RevCommit> getForkCommits() {
 		ArrayList<RevCommit> forks = new ArrayList<RevCommit>();
 		
 		for (FileRevision fileRev : fileRevisions) {
 			List<RevCommit> children = GitUtility.getDirectChildren(fileRev.getRevCommit(), fileRevisions);
 			if(children != null && children.size() > 1)
+				fileRev.setFork(true);
 				forks.add(fileRev.getRevCommit());
 		}
 		return forks;
 	}
 	
+	/*
+	 * builds up an ArrayList which contains parallel running branches.
+	 */
 	private ArrayList<ParallelBranches> buildParallelBranches() {
+		//get all merges
 		ArrayList<RevCommit> merges = getMergeCommits();
 		ArrayList<ParallelBranches> result = new ArrayList<ParallelBranches>();
+		//build a ParallelBranches object for each merge commit
 		if(merges.size() != 0) {
 			ArrayList<RevCommit> forks = getForkCommits();
 			for (RevCommit merge : merges) {

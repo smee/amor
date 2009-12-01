@@ -14,12 +14,23 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 public class ModelComparator {
-	//IDEA weitere Vergleiche für Listen von Modellen, dann die ähnlichsten ausgeben, ...
+	/**
+	 * Compares two models, each given as an {@link EObject}.
+	 * @param model1 first model
+	 * @param model2 second model
+	 * @return a {@link DiffModel} which contains all differences between both models.
+	 */
 	public DiffModel compare(EObject model1, EObject model2) throws InterruptedException {
 		MatchModel match = MatchService.doMatch(model1, model2, Collections.<String, Object> emptyMap());
 		return DiffService.doDiff(match, false);
 	}
 	
+	/**
+	 * Method compares two emf model files.
+	 * @param model1 first model
+	 * @param model2 second model
+	 * @return a {@link DiffModel} which contains all differences between both models.
+	 */
 	public DiffModel compare(File model1, File model2) throws InterruptedException, IOException {
 		if(model1 != null && model2 != null) {
 			if(model1.exists() && model1.exists()) {

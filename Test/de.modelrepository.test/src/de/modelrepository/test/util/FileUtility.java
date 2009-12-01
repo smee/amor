@@ -2,7 +2,6 @@ package de.modelrepository.test.util;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +9,12 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 public class FileUtility {
+	/**
+	 * Method returns the path of a file relative to another file.
+	 * @param file the file whose path shall be relative.
+	 * @param relativeTo the anchor-file.
+	 * @return the relative path as a String.
+	 */
 	public static String getRelativePath(File file, File relativeTo) {
 	    String path = "";
 	    
@@ -40,26 +45,41 @@ public class FileUtility {
 	    
 	    return path;    
 	}
-	  
-	private static List getDelimitedStringAsList(String str, String delimiter) {
-	  List resultList = new ArrayList();
+	 
+	/*
+	 * Splits the string into tokens with the given delimiter.
+	 */
+	private static ArrayList<String> getDelimitedStringAsList(String str, String delimiter) {
+	  ArrayList<String> resultList = new ArrayList<String>();
     	StringTokenizer st = new StringTokenizer(str, delimiter);
     	while (st.hasMoreTokens())
     		resultList.add(st.nextToken());
     	return resultList;
 	}
 	
-	public static void delete(final File d) {
+	/**
+	 * Deletes a file or directory.<br>
+	 * If the directory is not empty its content will be erased first.
+	 * @param d the file to delete.
+	 */
+	public static void delete(File d) {
 		if (d.isDirectory()) {
-			final File[] items = d.listFiles();
+			File[] items = d.listFiles();
 			if (items != null) {
-				for (final File c : items)
+				for (File c : items)
 					delete(c);
 			}
 		}
 		d.delete();
 	}
 	
+	/**
+	 * Checks if a file is empty.<br>
+	 * If the file is a directory the method checks if it contains other files.<br>
+	 * If the file is a simple file the method checks if the file contains anything except whitespaces.
+	 * @param f the file to check
+	 * @return true if the file or directory is empty.
+	 */
 	public static boolean isEmpty(File f) throws IOException {
 		if(f.isDirectory() && f.listFiles().length > 0)
 			return false;

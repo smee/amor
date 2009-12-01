@@ -162,7 +162,6 @@ public class JavaToEMFParser {
 			
 			for(Resource javaResource : new ArrayList<Resource>(rs.getResources())) {
 				URI srcURI = javaResource.getURI();
-				//IDEA anders implementieren (Konstanten)
 				if(srcURI.toString().endsWith("java.ecore") || srcURI.toString().endsWith("primitive_types.ecore")) continue;
 				srcURI = rs.getURIConverter().normalize(srcURI);
 			 	URI outFileURI = outUri.appendSegments(srcURI.deresolve(srcUri.appendSegment("")).segments()).appendFileExtension("xmi");

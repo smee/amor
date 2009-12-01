@@ -34,6 +34,13 @@ public class GitCloneOperation {
 	private RemoteConfig remoteConfig;
 	private FetchResult fetchResult;
 
+	/**
+	 * Create a new clone operation for cloning the remote uri into the local work dir.
+	 * @param uri the {@link URIish} of the remote repository
+	 * @param workDir the local work dir where the repository shall be cloned to
+	 * @param branch the initial branch from which the repository shall be cloned
+	 * @param remoteName the local name for the remote branch
+	 */
 	public GitCloneOperation(URIish uri, File workDir, String branch, String remoteName) {
 		this.uri = uri;
 		this.workDir = workDir;
@@ -41,6 +48,9 @@ public class GitCloneOperation {
 		this.remoteName = remoteName;
 	}
 	
+	/*
+	 * create a new empty local repository and prepare it for the cloning 
+	 */
 	private void initLocalRepository() throws IOException, URISyntaxException {
 		File gitDir = new File(workDir, ".git");
 		local = new Repository(gitDir);
@@ -64,6 +74,9 @@ public class GitCloneOperation {
 		local.getConfig().save();
 	}
 	
+	/*
+	 * fetches from the remote to local
+	 */
 	private void fetch() throws NotSupportedException, TransportException {
 		Transport transport = Transport.open(local, remoteConfig);
 		try {
@@ -73,6 +86,9 @@ public class GitCloneOperation {
 		}
 	}
 	
+	/*
+	 * checks out the fetched results to the local work dir
+	 */
 	private void checkout() throws IOException {
 		Ref head = fetchResult.getAdvertisedRef(branch);
 		if(head == null || head.getObjectId() == null)
@@ -91,6 +107,9 @@ public class GitCloneOperation {
 		index.write();
 	}
 	
+	/*
+	 * closes the local repository
+	 */
 	private void closeLocal() {
 		if(local != null) {
 			local.close();
@@ -98,11 +117,17 @@ public class GitCloneOperation {
 		}
 	}
 	
+	/**
+	 * Clones the remote repository into the local one.   
+	 */
 	public void cloneRepository() throws InvocationTargetException {
 		try {
 			try {
+				//create a new empty repository
 				initLocalRepository();
+				//fetch the remote content
 				fetch();
+				//checkout the fetched content into the local work dir
 				checkout();
 			}finally {
 				closeLocal();

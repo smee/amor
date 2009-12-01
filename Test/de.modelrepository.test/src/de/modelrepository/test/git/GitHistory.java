@@ -26,6 +26,10 @@ public class GitHistory {
 	private Iterator<File> fileIterator;
 	private File indexFile;
 	
+	/**
+	 * Build a history for a whole repository.
+	 * @param repo the repository
+	 */
 	public GitHistory(Repository repo) throws IOException {
 		this.repo = repo;
 		fileIterator = new FileIterator(repo.getWorkDir(), new FileFilter() {
@@ -33,11 +37,22 @@ public class GitHistory {
 				return pathname.isDirectory() || pathname.getAbsolutePath().endsWith(".java");
 			}
 		}).iterator();
+	}
+	
+	/*
+	 * Builds up an index for the whole repository.<br>
+	 * This index will consist of tuples containing java files and the number of revisions of this file.
+	 */
+	private void buildIndex() throws IOException {
 		indexFile = new File(repo.getDirectory(), "javaFileRevisionCount.csv");
 		if(!indexFile.exists() || FileUtility.isEmpty(indexFile))
 			indexRepository();
 	}
 	
+	/*
+	 * counts the number of revisions for each file.
+	 */
+	//TODO FileHistory für jede Datei im Speicher halten -> geht schneller
 	private ArrayList<Entry<File,Integer>> getFileRevisionCount() throws IOException {
 		Hashtable<File, Integer> ht = new Hashtable<File, Integer>();
 		for(Iterator<File> i=fileIterator; i.hasNext(); ) {
@@ -53,6 +68,9 @@ public class GitHistory {
 		return entryList;
 	}
 	
+	/*
+	 * writes the index for the repository.
+	 */
 	private void indexRepository() throws IOException {
 		indexFile.createNewFile();
 		BufferedWriter bw = new BufferedWriter(new FileWriter(indexFile));
@@ -63,7 +81,14 @@ public class GitHistory {
 		bw.close();
 	}
 	
+	/*
+	 * A comparator for Entries of the index file
+	 */
 	private class EntryComparator implements Comparator<Entry>{
+		/*
+		 * compares two entries by the number of revisions.
+		 * if the number equals the files will be compared.
+		 */
 		public int compare(Entry o1, Entry o2) {
 			int result=0;
 			Integer value1 = (Integer)o1.getValue();
@@ -80,7 +105,15 @@ public class GitHistory {
 		}
 	}
 	
+	/**
+	 * Get a list of the top (X) files of the repository index.<br>
+	 * These files will have the most revisions.
+	 * @param x the number of files
+	 * @return an {@link ArrayList} containing files with the most revisions.
+	 */
 	public ArrayList<File> getTopXFiles(int x) throws IOException {
+		if(!indexFile.exists() || FileUtility.isEmpty(indexFile))
+			buildIndex();
 		ArrayList<File> files = new ArrayList<File>();
 		BufferedReader indexReader = new BufferedReader(new FileReader(indexFile));
 		String line;
@@ -98,10 +131,10 @@ public class GitHistory {
 	public static void main(String[] args) {
 		try {
 			//TODO Testfall erstellen!
-			Repository repo = new Repository(new File("res/out/T0003/01/voldemort/.git"));
+			Repository repo = new Repository(new File("res/in/T0004/voldemort/.git"));
 			GitHistory gh = new GitHistory(repo);
 
-			GitFileHistory fh = new GitFileHistory(new File("D:/Stanley/workspaces/arbeit/workspace/de.modelrepository.test/res/out/T0003/01/voldemort/src/java/voldemort/server/VoldemortConfig.java"), repo);
+			GitFileHistory fh = new GitFileHistory(new File("res/in/T0004/voldemort/src/java/voldemort/server/VoldemortConfig.java"), repo);
 			for (ParallelBranches b : fh.getParallelBranches()) {
 				System.out.println("-----BRANCH-----");
 				System.out.println(b.getForkRevision().getCommitTime());
