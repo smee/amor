@@ -6,11 +6,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.eclipse.jgit.lib.ObjectDatabase;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.lib.WindowCursor;
+import org.eclipse.jgit.lib.Tree;
+import org.eclipse.jgit.lib.TreeEntry;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevSort;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -65,9 +65,11 @@ public class FileRevision implements Comparable<FileRevision>{
 	 * The content is retrieved from the object database using the id.
 	 */
 	public String getFileContent() throws IOException {
-		ObjectDatabase db = repo.getObjectDatabase();
-		byte[] buffer = db.openObject(new WindowCursor(), objectId).getBytes();
-		RawCharSequence seq = new RawCharSequence(buffer, 0, buffer.length);
+		RevWalk walk = new RevWalk(repo);
+		Tree tree = commit.asCommit(walk).getTree();
+		TreeEntry entry = tree.findBlobMember(path);
+		byte[] data = repo.openBlob(entry.getId()).getBytes();
+		RawCharSequence seq = new RawCharSequence(data, 0, data.length);
 		return seq.toString();
 	}
 	
