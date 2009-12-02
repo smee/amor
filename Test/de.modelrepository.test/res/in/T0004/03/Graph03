@@ -1,0 +1,48 @@
+package de.asv.graph;
+
+import java.util.HashSet;
+import java.util.Iterator;
+
+public class Graph {
+	private HashSet<Node> nodes;
+	private HashSet<Edge> edges;
+	
+	//demnächst eine Excepiton werden
+	public void addNode(Node node) throws RedundandItemException{
+		if(nodes == null)
+			nodes = new HashSet<Node>();
+		if(!nodes.add(node))
+			throw new RedundandItemException(node);
+	}
+	
+	public void addEdge(Edge edge) throws RedundandItemException {
+		if(edges == null)
+			edges = new HashSet<Edge>();
+		if(!edges.add(edge))
+			throw new RedundandItemException(edge);
+	}
+	
+	public int nodeCount() {
+		return nodes.size();
+	}
+	
+	public Iterator<Node> getNodes() {
+		return nodes.iterator();
+	}
+	
+	public Iterator<Edge> getEdges() {
+		return edges.iterator();
+	}
+	
+	public int numOfNodes() {
+		return nodes.size();
+	}
+	
+	public Iterator<Node> getNodes() {
+		return nodes.iterator();
+	}
+	
+	public Iterator<Edge> getEdges() {
+		return edges.iterator();
+	}
+}

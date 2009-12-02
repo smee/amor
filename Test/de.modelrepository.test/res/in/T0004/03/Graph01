@@ -1,0 +1,17 @@
+package de.asv.graph;
+
+import java.util.HashSet;
+
+public class Graph {
+	private HashSet<Node> nodes = new HashSet<Node>();
+	private HashSet<Edge> edges = new HashSet<Edge>();
+	
+	//demnächst eine Excepiton werden
+	public boolean addNode(Node node) {
+		return nodes.add(node);
+	}
+	
+	public boolean addEdge(Edge edge) {
+		return edges.add(edge);
+	}
+}
