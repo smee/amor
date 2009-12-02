@@ -1,5 +1,6 @@
 package de.modelrepository.test.git;
 
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -32,33 +33,24 @@ public class GitHistory {
 	 */
 	public GitHistory(Repository repo) throws IOException {
 		this.repo = repo;
+		//create a file iterator which iterates over all java source files of the repository
 		fileIterator = new FileIterator(repo.getWorkDir(), new FileFilter() {
 			public boolean accept(File pathname) {
 				return pathname.isDirectory() || pathname.getAbsolutePath().endsWith(".java");
 			}
 		}).iterator();
+		indexFile = new File(repo.getDirectory(), "javaFileMergeCount.csv");
 	}
 	
 	/*
-	 * Builds up an index for the whole repository.<br>
-	 * This index will consist of tuples containing java files and the number of revisions of this file.
+	 * counts the number of merges for each file.
 	 */
-	private void buildIndex() throws IOException {
-		indexFile = new File(repo.getDirectory(), "javaFileRevisionCount.csv");
-		if(!indexFile.exists() || FileUtility.isEmpty(indexFile))
-			indexRepository();
-	}
-	
-	/*
-	 * counts the number of revisions for each file.
-	 */
-	//TODO FileHistory für jede Datei im Speicher halten -> geht schneller
-	private ArrayList<Entry<File,Integer>> getFileRevisionCount() throws IOException {
+	private ArrayList<Entry<File,Integer>> getFileMergeCount() throws IOException {
 		Hashtable<File, Integer> ht = new Hashtable<File, Integer>();
 		for(Iterator<File> i=fileIterator; i.hasNext(); ) {
 			File file = i.next();
 			GitFileHistory h = new GitFileHistory(file, repo);
-			ht.put(file, h.getAllFileRevisions().size());
+			ht.put(file, h.getParallelBranches().size());
 		}
 		
 		//sort the Hashtable
@@ -74,7 +66,7 @@ public class GitHistory {
 	private void indexRepository() throws IOException {
 		indexFile.createNewFile();
 		BufferedWriter bw = new BufferedWriter(new FileWriter(indexFile));
-		for (Entry<File, Integer> e : getFileRevisionCount()) {
+		for (Entry<File, Integer> e : getFileMergeCount()) {
 			String s = e.getKey() + "," + e.getValue() + "\n";
 			bw.append(s);
 		}
@@ -113,7 +105,7 @@ public class GitHistory {
 	 */
 	public ArrayList<File> getTopXFiles(int x) throws IOException {
 		if(!indexFile.exists() || FileUtility.isEmpty(indexFile))
-			buildIndex();
+			indexRepository();
 		ArrayList<File> files = new ArrayList<File>();
 		BufferedReader indexReader = new BufferedReader(new FileReader(indexFile));
 		String line;
@@ -124,32 +116,5 @@ public class GitHistory {
 		}
 		indexReader.close();
 		return files;
-	}
-	
-	
-	
-	public static void main(String[] args) {
-		try {
-			//TODO Testfall erstellen!
-			Repository repo = new Repository(new File("res/in/T0004/voldemort/.git"));
-			GitHistory gh = new GitHistory(repo);
-
-			GitFileHistory fh = new GitFileHistory(new File("res/in/T0004/voldemort/src/java/voldemort/server/VoldemortConfig.java"), repo);
-			for (ParallelBranches b : fh.getParallelBranches()) {
-				System.out.println("-----BRANCH-----");
-				System.out.println(b.getForkRevision().getCommitTime());
-				System.out.println(b.getMergeRevision().getCommitTime());
-				for (ArrayList<FileRevision> l : b.getRevisonsFromForkToMerge()) {
-					System.out.println("<<<Branch>>>");
-					for (FileRevision fileRevision : l) {
-						System.out.println(fileRevision.getCommitTime());
-					}
-					System.out.println("-----------------------------------------");
-				}
-				System.out.println("=============================================");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 }

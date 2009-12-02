@@ -45,16 +45,14 @@ public class ParallelBranches {
 			//search possible forks for the merge from all forks
 			for (RevCommit forkCandidate : forks) {
 				//search in all children of a fork
-				//look if the merge occurs in every child path of the fork.
+				//look if the merge occurs in at least two outgoing paths of the fork.
+				short count = 0;
 				ArrayList<ArrayList<RevCommit>> children = GitUtility.getAllChildren(forkCandidate, allRevisions);
-				boolean inAllPaths = true;
 				for (ArrayList<RevCommit> childPath : children) {
-					if(!childPath.contains(mergeNode.getId())) {
-						inAllPaths = false;
-						break;
-					}
+					if(childPath.contains(mergeNode.getId()))
+						count++;
 				}
-				if(inAllPaths)
+				if(count > 1)
 					possibleForks.add(forkCandidate);
 			}
 			
@@ -92,8 +90,10 @@ public class ParallelBranches {
 			});
 			//then search the index of the merge commit and get a sublist till the merge.
 			int mergeIndex = childPath.indexOf(merge.getId());
-			List<RevCommit> l = childPath.subList(0, mergeIndex);
-			forkToMergeIds.add(new ArrayList<ObjectId>(l));
+			if(mergeIndex >= 0) {
+				List<RevCommit> l = childPath.subList(0, mergeIndex);
+				forkToMergeIds.add(new ArrayList<ObjectId>(l));
+			}
 		}
 	}
 	

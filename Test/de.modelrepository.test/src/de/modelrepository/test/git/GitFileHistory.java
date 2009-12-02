@@ -117,9 +117,11 @@ public class GitFileHistory {
 		
 		for (FileRevision fileRev : fileRevisions) {
 			List<RevCommit> children = GitUtility.getDirectChildren(fileRev.getRevCommit(), fileRevisions);
-			if(children != null && children.size() > 1)
+			if(children != null && children.size() > 1) {
 				fileRev.setFork(true);
 				forks.add(fileRev.getRevCommit());
+			}
+				
 		}
 		return forks;
 	}

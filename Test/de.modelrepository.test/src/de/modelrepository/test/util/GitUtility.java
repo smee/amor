@@ -103,12 +103,16 @@ public class GitUtility {
 		
 		//for each direct child of the commit a list will be created, the child will be added to this list
 		//and all its children will be added to this list as well.
-		for (RevCommit directChild : getDirectChildren(c, allRevisions)) {
-			ArrayList<RevCommit> childPath = new ArrayList<RevCommit>();
-			childPath.add(directChild);
-			childPath.addAll(getChildrenRecursive(directChild, allRevisions));
-			children.add(childPath);
+		ArrayList<RevCommit> directChildren = getDirectChildren(c, allRevisions);
+		if(directChildren != null) {
+			for (RevCommit directChild : directChildren) {
+				ArrayList<RevCommit> childPath = new ArrayList<RevCommit>();
+				childPath.add(directChild);
+				childPath.addAll(getChildrenRecursive(directChild, allRevisions));
+				children.add(childPath);
+			}
 		}
+		
 		return children;
 	}
 }
