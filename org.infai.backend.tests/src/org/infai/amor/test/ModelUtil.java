@@ -13,39 +13,29 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URL;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.compare.diff.metamodel.AttributeChange;
-import org.eclipse.emf.compare.diff.metamodel.ComparisonResourceSnapshot;
-import org.eclipse.emf.compare.diff.metamodel.DiffElement;
-import org.eclipse.emf.compare.diff.metamodel.DiffFactory;
-import org.eclipse.emf.compare.diff.metamodel.DiffModel;
-import org.eclipse.emf.compare.diff.metamodel.DifferenceKind;
-import org.eclipse.emf.compare.diff.metamodel.ModelElementChangeLeftTarget;
-import org.eclipse.emf.compare.diff.metamodel.ModelElementChangeRightTarget;
+import org.eclipse.emf.compare.diff.metamodel.*;
 import org.eclipse.emf.compare.diff.service.DiffService;
 import org.eclipse.emf.compare.epatch.Epatch;
 import org.eclipse.emf.compare.epatch.diff.DiffEpatchService;
 import org.eclipse.emf.compare.match.MatchOptions;
 import org.eclipse.emf.compare.match.metamodel.MatchModel;
 import org.eclipse.emf.compare.match.service.MatchService;
+import org.eclipse.emf.compare.util.EMFCompareMap;
 import org.eclipse.emf.compare.util.ModelUtils;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
+import org.eclipse.emf.ecore.xmi.XMLResource;
+import org.eclipse.emf.ecore.xmi.impl.*;
+
+import com.google.common.collect.Lists;
 
 /**
  * Just some static helper methods for model io, asserts etc.
@@ -163,10 +153,12 @@ public class ModelUtil {
      * @throws IOException
      */
     public static List<EObject> readInputModels(final String relativePath, final ResourceSet rs) throws IOException {
-
-        String file = ModelUtil.class.getClassLoader().getResource(relativePath).toExternalForm();
-        file = file.substring("file:/".length());
-
+        String file = relativePath;
+        final URL url = ModelUtil.class.getClassLoader().getResource(relativePath);
+        if (url != null) {
+            file = url.toExternalForm();
+            file = file.substring("file:/".length());
+        }
         final Resource resource = rs.getResource(URI.createFileURI(file), true);
         resource.load(null);
 
@@ -198,15 +190,24 @@ public class ModelUtil {
 
     /**
      * @param input
+     * @return
      * @throws IOException
      */
-    public static void storeViaXml(final EObject... input) throws IOException {
+    public static List<String> storeViaXml(final EObject... input) throws IOException {
+        final List<String> result = Lists.newArrayList();
         final ResourceSetImpl rs = new ResourceSetImpl();
+
+        final Map<String, String> options = new EMFCompareMap<String, String>();
+        options.put(XMLResource.OPTION_ENCODING, "UTF8");
+
         for (final EObject eo : input) {
-            final Resource res = rs.createResource(URI.createFileURI("foo/" + eo.hashCode() + ".xml"));
+            final String relativePath = "foo/" + eo.hashCode() + ".xmi";
+            result.add(relativePath);
+            final Resource res = rs.createResource(URI.createFileURI(relativePath));
             res.getContents().add(eo);
-            res.save(null);
+            res.save(options);
         }
+        return result;
     }
 
 }

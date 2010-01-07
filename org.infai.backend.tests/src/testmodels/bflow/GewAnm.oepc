@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.1/notation" xmlns:oepc="org.bflow.toolbox.oepc">
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:oepc="org.bflow.toolbox.oepc">
   <oepc:OEPC xmi:id="_quTyIdvZEd2CF85X4f1r4w">
     <elements xmi:type="oepc:Event" xmi:id="_O2k0QdvvEd2cFsqSaohQfQ" name="Gewerbe-Anmeldung ist unbearbeitet" out="_zbuOYNv-Ed2cFsqSaohQfQ"/>
     <elements xmi:type="oepc:OrganisationUnit" xmi:id="_Pi-nQNvvEd2cFsqSaohQfQ" name="Betriebs-inhaber" out="_MdcmcNv_Ed2cFsqSaohQfQ"/>
