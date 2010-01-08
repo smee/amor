@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.impl;
+package org.infai.amor.backend.neoblobstorage.test;
 
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.not;
@@ -54,7 +54,7 @@ public class ProxyTests {
         }
     }
 
-    private final class SameResource implements Predicate<EObject> {
+    private final static class SameResource implements Predicate<EObject> {
         /**
          * 
          */
@@ -249,5 +249,16 @@ public class ProxyTests {
         assertTrue(uniqueUris.contains(URI.createURI("http://www.eclipse.org/emf/2002/Ecore")));
         // TODO do not use absolute path
         assertTrue(uniqueUris.contains(URI.createURI("file:/D:/Projekte/Amor/amor_ws/org.infai.backend.tests/bin/testmodels/bflow/bflow.ecore")));
+    }
+
+    @Test
+    public void shouldStoreLinkedModels() throws Exception {
+        // given
+        final EObject javaMM = ModelUtil.readInputModel("testmodels/02/java.ecore");
+        final EObject ptMM = ModelUtil.readInputModel("testmodels/02/primitive_types.ecore");
+
+        // when
+
+        // then
     }
 }
