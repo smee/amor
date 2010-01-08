@@ -9,62 +9,33 @@
  *******************************************************************************/
 package org.infai.amor.backend.neostorage;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.EMap;
-import org.eclipse.emf.ecore.EAnnotation;
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EEnumLiteral;
-import org.eclipse.emf.ecore.EFactory;
-import org.eclipse.emf.ecore.EGenericType;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EOperation;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EParameter;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.ETypeParameter;
-import org.eclipse.emf.ecore.EcoreFactory;
-import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.neo4j.api.core.Direction;
-import org.neo4j.api.core.Node;
-import org.neo4j.api.core.Relationship;
-import org.neo4j.api.core.RelationshipType;
-import org.neo4j.api.core.ReturnableEvaluator;
-import org.neo4j.api.core.StopEvaluator;
+import org.neo4j.api.core.*;
 import org.neo4j.api.core.Traverser.Order;
 
 public class NeoRestorer extends AbstractNeoPersistence {
     static class OrderedNodeIterable implements Iterable<Node> {
         private final Node node;
-        private final RelationshipType relType;
-        private final Direction direction;
+        private final Object[] options;
 
-        public OrderedNodeIterable(final Node node, final RelationshipType relType, final Direction direction) {
+        public OrderedNodeIterable(final Node node, final Object... options) {
             this.node = node;
-            this.relType = relType;
-            this.direction = direction;
+            this.options = options;
         }
 
         @Override
         public Iterator<Node> iterator() {
             final Set<Node> nodes = new TreeSet<Node>(NODE_POSITION_COMPARATOR);
-            nodes.addAll(node.traverse(Order.BREADTH_FIRST, StopEvaluator.DEPTH_ONE, ReturnableEvaluator.ALL_BUT_START_NODE, relType, direction).getAllNodes());
+            nodes.addAll(node.traverse(Order.BREADTH_FIRST, StopEvaluator.DEPTH_ONE, ReturnableEvaluator.ALL_BUT_START_NODE, options).getAllNodes());
             return nodes.iterator();
         }
     }
@@ -91,11 +62,39 @@ public class NeoRestorer extends AbstractNeoPersistence {
 
     private Map<Node, EObject> cache;
 
+    private ResourceSetImpl resourceSet;
+
     /**
      * @param neo
      */
     public NeoRestorer(final NeoProvider neo) {
         super(neo);
+    }
+
+    /**
+     * @param aNode
+     */
+    private void debug(final Node n) {
+        for(final String p:n.getPropertyKeys()) {
+            System.out.println(p+": "+n.getProperty(p));
+        }
+        System.out.println();
+
+    }
+
+    /**
+     * @param name
+     * @return
+     */
+    private EDataType fetchEcoreDataTypeViaReflection(final String name) {
+        final EcorePackage ecorePackage = EcoreFactory.eINSTANCE.getEcorePackage();
+        try {
+            final Method method = ecorePackage.getClass().getMethod("get"+name, null);
+            logger.finest(String.format("trying to fetch ecore element named '%s' via method '%s'", name, method));
+            return (EDataType) method.invoke(ecorePackage, null);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     /**
@@ -122,13 +121,19 @@ public class NeoRestorer extends AbstractNeoPersistence {
         return new OrderedNodeIterable(node, relType, direction);
     }
 
+    private Iterable<Node> getOrderedNodes(final Node node, final RelationshipType relType, final Direction direction, final RelationshipType relType2, final Direction direction2) {
+        return new OrderedNodeIterable(node, relType, direction, relType2, direction2);
+    }
+
     /**
      * 
      */
     private void initMembers() {
         this.cache = new HashMap<Node, EObject>();
         this.classifierCache = new HashMap<String, Node>();
-        this.nodeCache = new HashMap<EObject, Object>();
+        this.nodeCache = new HashMap<EObject, Node>();
+        this.resourceSet = new ResourceSetImpl();
+        resourceSet.getResourceFactoryRegistry().getContentTypeToFactoryMap().put("*", new XMIResourceFactoryImpl());
     }
 
     /**
@@ -166,16 +171,25 @@ public class NeoRestorer extends AbstractNeoPersistence {
      * @return
      */
     private EObject loadModel(final Node modelNode) {
-        final ResourceSet rs = new ResourceSetImpl();
-        rs.getResourceFactoryRegistry().getContentTypeToFactoryMap().put("*", new XMIResourceFactoryImpl());
-
+        EcoreFactory.eINSTANCE.eClass();
         // restore all models, that the referenced model depends on
-        for (final Node referenced : modelNode.traverse(Order.BREADTH_FIRST, StopEvaluator.END_OF_GRAPH, ReturnableEvaluator.ALL_BUT_START_NODE, EcoreRelationshipType.DEPENDS, Direction.OUTGOING, EcoreRelationshipType.INSTANCE_MODEL, Direction.INCOMING)) {
+        // this fills our cache of eobjects
+        // TODO remove repeatedly restoring the same models over and over
+        for (final Node referenced : getOrderedNodes(modelNode, EcoreRelationshipType.DEPENDS, Direction.OUTGOING, EcoreRelationshipType.INSTANCE_MODEL, Direction.INCOMING)) {
             final String uri = (String) referenced.getProperty(NS_URI);
-            final XMIResource resource = (XMIResource) rs.createResource(org.eclipse.emf.common.util.URI.createURI(uri));
-            resource.getContents().add(load(uri));
+            // if (uri.toString().equals("http://www.eclipse.org/emf/2002/Ecore")) {
+            // continue;
+            // }
+            XMIResource resource = (XMIResource) resourceSet.getResource(org.eclipse.emf.common.util.URI.createURI(uri), false);
+            if (resource == null) {
+                resource = (XMIResource) resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI(uri));
+                resource.getContents().add(load(uri));
+            }
         }
-        return restore(modelNode);
+        final EObject restored = restore(modelNode);
+        // FIXME use the relative path for this resource instead
+        resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI("foo.xmi")).getContents().add(restored);
+        return restored;
     }
 
     /**
@@ -360,10 +374,18 @@ public class NeoRestorer extends AbstractNeoPersistence {
             return (EDataType) cache.get(node);
         }
 
+        final String name = (String) node.getProperty(NAME);
+        final Node ecoreClassifierNode = determineEcoreClassifierNode(name);
+        if (ecoreClassifierNode != null) {
+            // this is a ecore datatype
+            final EDataType dt = fetchEcoreDataTypeViaReflection(name);
+            cache.put(node, dt);
+            return dt;
+        }
         final EDataType newDatatype = EcoreFactory.eINSTANCE.createEDataType();
 
         // properties
-        newDatatype.setName((String) node.getProperty(NAME));
+        newDatatype.setName(name);
 
         if (node.hasProperty(SERIALIZABLE)) {
             newDatatype.setSerializable((Boolean) node.getProperty(SERIALIZABLE));
@@ -371,7 +393,6 @@ public class NeoRestorer extends AbstractNeoPersistence {
         if (node.hasProperty(INSTANCE_TYPE_NAME)) {
             newDatatype.setInstanceTypeName((String) node.getProperty(INSTANCE_TYPE_NAME));
         }
-
         // relationships
         for (final Node aNode : getOrderedNodes(node, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
             final Node metaNode = aNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
@@ -590,6 +611,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
 
         for (final Node aNode : getOrderedNodes(node, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
             // omit EClass
+            // debug(aNode);
             if (aNode.hasProperty(NAME) && EClass.class.getSimpleName().equals(aNode.getProperty(NAME))) {
                 aPackage.getEClassifiers().add(restoreEClass(aNode));
                 continue;
@@ -597,6 +619,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
 
             final Node metaNode = aNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
             final Object metaNodeName = metaNode.getProperty(NAME);
+//            System.out.println("restoring " + aPackage.getName() + ": " + metaNodeName);
             if (EAnnotation.class.getSimpleName().equals(metaNodeName)) {
                 aPackage.getEAnnotations().add(restoreEAnnotation(aNode));
             } else if (EClass.class.getSimpleName().equals(metaNodeName)) {
