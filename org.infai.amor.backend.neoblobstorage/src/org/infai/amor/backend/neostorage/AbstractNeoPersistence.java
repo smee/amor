@@ -12,16 +12,11 @@ package org.infai.amor.backend.neostorage;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.NeoObjectFactory;
-import org.neo4j.api.core.Direction;
-import org.neo4j.api.core.Node;
-import org.neo4j.api.core.Relationship;
-import org.neo4j.api.core.ReturnableEvaluator;
-import org.neo4j.api.core.StopEvaluator;
+import org.neo4j.api.core.*;
 import org.neo4j.api.core.Traverser.Order;
 
 /**
@@ -32,7 +27,7 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
     /**
      * Map eobject -> neo4j node
      */
-    Map<EObject, Object> nodeCache;
+    Map<EObject, Node> nodeCache;
     Map<String, Node> classifierCache;
 
     /**
@@ -40,7 +35,7 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
      */
     public AbstractNeoPersistence(final NeoProvider neo) {
         super(neo);
-        nodeCache = new HashMap<EObject, Object>();
+        nodeCache = new HashMap<EObject, Node>();
         classifierCache = new HashMap<String, Node>();
     }
 
@@ -124,13 +119,33 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
      * @return corresponding ne4j node
      */
     protected Node getNodeFor(final EObject element) {
-        return (Node) nodeCache.get(element);
+        final Node node = nodeCache.get(element);
+        if (node == null && element instanceof DynamicEObjectImpl) {
+            // TODO is there a catch here? does it work every time?
+            final Node node2 = nodeCache.get(element.eClass());
+            if (node2 != null) {
+                return node2;
+            }
+            /*
+             * DynamicEObjects might get created several times, sadly they do not overwrite hashCode() and equals(...) so we need
+             * to do so manually :(
+             */
+            for (final EObject eo : nodeCache.keySet()) {
+                if (eo instanceof DynamicEObjectImpl) {
+                    // System.out.println(eo.eClass() + ", " + element.eClass().eResource().getURI());
+                    if (element.eClass().getName().equals(eo.eClass().getName())) {
+                        return nodeCache.get(eo);
+                    }
+                }
+            }
+        }
+        return node;
     }
 
     /**
      * @return the registry
      */
-    public Map<EObject, Object> getRegistry() {
+    public Map<EObject, Node> getRegistry() {
         return nodeCache;
     }
 
@@ -168,7 +183,7 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
      * @param registry
      *            the registry to set
      */
-    public void setRegistry(final Map<EObject, Object> registry) {
+    public void setRegistry(final Map<EObject, Node> registry) {
         this.nodeCache = registry;
     }
 
