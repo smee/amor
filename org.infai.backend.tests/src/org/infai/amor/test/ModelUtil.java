@@ -26,7 +26,6 @@ import org.eclipse.emf.compare.epatch.diff.DiffEpatchService;
 import org.eclipse.emf.compare.match.MatchOptions;
 import org.eclipse.emf.compare.match.metamodel.MatchModel;
 import org.eclipse.emf.compare.match.service.MatchService;
-import org.eclipse.emf.compare.util.EMFCompareMap;
 import org.eclipse.emf.compare.util.ModelUtils;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -36,6 +35,7 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.*;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Just some static helper methods for model io, asserts etc.
@@ -197,7 +197,7 @@ public class ModelUtil {
         final List<String> result = Lists.newArrayList();
         final ResourceSetImpl rs = new ResourceSetImpl();
 
-        final Map<String, String> options = new EMFCompareMap<String, String>();
+        final Map<String, String> options = Maps.newHashMap();
         options.put(XMLResource.OPTION_ENCODING, "UTF8");
 
         for (final EObject eo : input) {
