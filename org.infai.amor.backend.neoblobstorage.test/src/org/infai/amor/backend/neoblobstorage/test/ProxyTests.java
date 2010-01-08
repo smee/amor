@@ -41,43 +41,39 @@ import com.google.common.collect.Sets;
  *
  */
 public class ProxyTests {
-    public final static class GetResourceUri implements Function<EObject, URI> {
-        public final static GetResourceUri INSTANCE = new GetResourceUri();
-        @Override
-        public URI apply(final EObject from) {
-            final Resource res = from.eResource();
-            if (res != null) {
-                return res.getURI();
-            } else {
-                return null;
+
+    private static <T> Set<T> flatten(final Iterator<Set<T>> nestedSet) {
+        final Set<T> result = Sets.newHashSet();
+        while(nestedSet.hasNext()) {
+            result.addAll(nestedSet.next());
+        }
+        return result;
+    }
+
+    private static Function<? super EObject, ? extends Set<URI>> getReferencesToExternalModels(final URI resourceUri) {
+        return new Function<EObject, Set<URI>>() {
+            @Override
+            public Set<URI> apply(final EObject eo) {
+                final HashSet<URI> set = Sets.newHashSet();
+                final Iterator<URI> uris = transform(eo.eCrossReferences().iterator(), getResourceUri());
+                addAll(set, filter(uris, not(equalTo(resourceUri))));
+                return set;
             }
-        }
+        };
+    }
+    private static Function<EObject, URI> getResourceUri(){
+        return new Function<EObject, URI>(){
+            @Override
+            public URI apply(final EObject from) {
+                final Resource res = from.eResource();
+                if (res != null) {
+                    return res.getURI();
+                } else {
+                    return null;
+                }
+            }};
     }
 
-    private final static class SameResource implements Predicate<EObject> {
-        /**
-         * 
-         */
-        private final URI mainUri;
-
-        /**
-         * @param mainUri
-         */
-        private SameResource(final URI mainUri) {
-            this.mainUri = mainUri;
-        }
-
-        @Override
-        public boolean apply(final EObject input) {
-            final Resource resource = input.eResource();
-            return resource != null && resource.getURI().equals(mainUri);
-        }
-    }
-
-
-    /**
-     * @return
-     */
     private static Predicate<EObject> isEString() {
         return new Predicate<EObject>() {
 
@@ -88,9 +84,25 @@ public class ProxyTests {
         };
     }
 
-    /**
-     * @param map
-     */
+    private static Predicate<EObject> sameResource(final URI mainUri){
+        return new Predicate<EObject>(){
+            @Override
+            public boolean apply(final EObject input) {
+                final Resource resource = input.eResource();
+                return resource != null && resource.getURI().equals(mainUri);
+            }
+        };
+    }
+
+    private static Predicate<URI> uriEndsWith(final String string) {
+        return new Predicate<URI>() {
+            @Override
+            public boolean apply(final URI uri) {
+                return uri.toString().endsWith(string);
+            }
+        };
+    }
+
     private void debugPrint(final Map<EObject, Collection<Setting>> map) {
         for (final EObject eo : map.keySet()) {
             String k = eo.toString();
@@ -109,28 +121,12 @@ public class ProxyTests {
             }));
         }
     }
-    /**
-     * @param extUriSets
-     * @return
-     */
-    private <T> Set<T> flatten(final Iterator<Set<T>> nestedSet) {
-        final Set<T> result = Sets.newHashSet();
-        while(nestedSet.hasNext()) {
-            result.addAll(nestedSet.next());
-        }
-        return result;
-    }
 
-    /**
-     * @param model
-     * @param resourceUri
-     * @return
-     */
     private Iterator<EObject> getObjectsWithExternalReferences(final EObject model, final URI resourceUri) {
         final Predicate<EObject> proxiedEobjectPredicate = new Predicate<EObject>() {
             @Override
             public boolean apply(final EObject eo) {
-                return any(eo.eCrossReferences(), not(new SameResource(resourceUri)));
+                return any(eo.eCrossReferences(), not(sameResource(resourceUri)));
             }
         };
 
@@ -138,14 +134,14 @@ public class ProxyTests {
         final Iterator<EObject> proxiedEobjects = filter(model.eAllContents(), proxiedEobjectPredicate);
         return proxiedEobjects;
     }
-
     @Test
     public void shouldFindExternalReferences() throws Exception {
         // given
         final EObject model = ModelUtil.readInputModel("testmodels/bflow/oepc.ecore");
         // when
         final Map<EObject, Collection<Setting>> map = ExternalCrossReferencer.find(model);
-        debugPrint(map);
+        // debugPrint(map);
+
         // then
         // there are references to 16 external elements,14 of the bflow.ecore meta model, 1 to ecore EString and one to the
         // opec-package factory
@@ -165,8 +161,9 @@ public class ProxyTests {
         final int size = size(proxiedEobjects);
         assertEquals(34, size);
     }
+
     @Test
-    @Ignore
+    @Ignore(value = "GMF is pretty f***ed up...")
     public void shouldFindProxiedElementsInM1() throws Exception {
         // given
         // an available gmf notation package
@@ -228,27 +225,38 @@ public class ProxyTests {
         final EObject model = ModelUtil.readInputModel("testmodels/bflow/oepc.ecore");
         final URI resourceUri = model.eResource().getURI();
 
-
         // when
         final Iterator<EObject> proxiedEobjects = getObjectsWithExternalReferences(model, resourceUri);
         // find all uris!=oepc that each object references to
-        final Iterator<Set<URI>> extUriSets = transform(proxiedEobjects, new Function<EObject, Set<URI>>() {
-            @Override
-            public Set<URI> apply(final EObject eo) {
-                final HashSet<URI> set = Sets.newHashSet();
-                final Iterator<URI> uris = transform(eo.eCrossReferences().iterator(), GetResourceUri.INSTANCE);
-                addAll(set, filter(uris, not(equalTo(resourceUri))));
-                return set;
-            }
-
-        });
+        final Iterator<Set<URI>> extUriSets = transform(proxiedEobjects, getReferencesToExternalModels(resourceUri));
 
         final Set<URI> uniqueUris = flatten(extUriSets);
 
         assertEquals(2, uniqueUris.size());
-        assertTrue(uniqueUris.contains(URI.createURI("http://www.eclipse.org/emf/2002/Ecore")));
-        // TODO do not use absolute path
-        assertTrue(uniqueUris.contains(URI.createURI("file:/D:/Projekte/Amor/amor_ws/org.infai.backend.tests/bin/testmodels/bflow/bflow.ecore")));
+        assertTrue(any(uniqueUris, uriEndsWith("http://www.eclipse.org/emf/2002/Ecore")));
+        assertTrue(any(uniqueUris, uriEndsWith("testmodels/bflow/bflow.ecore")));
+    }
+
+    @Test
+    public void shouldFindReferencedProxyResourcesForJavaXMI() throws Exception {
+        // given
+        final ResourceSetImpl rs = new ResourceSetImpl();
+        ModelUtil.readInputModels("testmodels/02/primitive_types.ecore", rs);
+        ModelUtil.readInputModels("testmodels/02/java.ecore", rs);
+        final EObject model = ModelUtil.readInputModel("testmodels/02/Hello.java.xmi", rs);
+        final URI resourceUri = model.eResource().getURI();
+
+        // when
+        final Iterator<EObject> proxiedEobjects = getObjectsWithExternalReferences(model, resourceUri);
+        // find all uris!=oepc that each object references to
+        final Iterator<Set<URI>> extUriSets = transform(proxiedEobjects, getReferencesToExternalModels(resourceUri));
+
+        final Set<URI> uniqueUris = flatten(extUriSets);
+
+        assertEquals(3, uniqueUris.size());
+        assertTrue(any(uniqueUris, uriEndsWith("java/lang/System.class.xmi")));
+        assertTrue(any(uniqueUris, uriEndsWith("java/io/PrintStream.class.xmi")));
+        assertTrue(any(uniqueUris, uriEndsWith("java/lang/String.class.xmi")));
     }
 
     @Test
