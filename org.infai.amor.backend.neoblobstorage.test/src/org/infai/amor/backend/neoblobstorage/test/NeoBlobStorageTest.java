@@ -9,46 +9,34 @@
  *******************************************************************************/
 package org.infai.amor.backend.neoblobstorage.test;
 
-import static org.infai.amor.test.ModelUtil.readInputModel;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.infai.amor.test.ModelUtil.readInputModels;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.*;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Model;
-import org.infai.amor.backend.Repository;
-import org.infai.amor.backend.Response;
-import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.impl.RepositoryImpl;
-import org.infai.amor.backend.internal.ModelImpl;
-import org.infai.amor.backend.internal.NeoProvider;
-import org.infai.amor.backend.internal.TransactionManager;
-import org.infai.amor.backend.internal.UriHandler;
-import org.infai.amor.backend.internal.impl.NeoBranchFactory;
-import org.infai.amor.backend.internal.impl.TransactionManagerImpl;
-import org.infai.amor.backend.internal.impl.UriHandlerImpl;
+import org.infai.amor.backend.internal.*;
+import org.infai.amor.backend.internal.impl.*;
 import org.infai.amor.backend.neostorage.NeoBlobStorageFactory;
 import org.infai.amor.backend.responses.CheckinResponse;
 import org.infai.amor.test.AbstractNeo4JPerformanceTest;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.infai.amor.test.ModelUtil;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.neo4j.api.core.NeoService;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * @author sdienst
@@ -58,8 +46,8 @@ import com.google.common.collect.Lists;
 public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
     private static final Logger logger = Logger.getLogger(NeoBlobStorageTest.class.getName());
     private Repository repository;
-    private final String m1Location, m2Location;
     private CountingNeoProxy proxy;
+    private final String[] modelLocations;
 
     /**
      * Run one roundtrip for every pair of m2/m1 model.
@@ -68,20 +56,27 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
      * @throws InterruptedException
      */
     @Parameters
-    public static Collection<String[]> getTestParameters() {
-        final Collection<String[]> params = Lists.newArrayList();
-        params.add(new String[] { "testmodels/filesystem.ecore", "testmodels/simplefilesystem.xmi" });
-        params.add(new String[] { "testmodels/filesystem.ecore", "testmodels/fs/simplefilesystem_v1.filesystem" });
-        params.add(new String[] { "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
+    public static Collection<Object[]> getTestParameters() {
+        final List<String[]> testdata = Lists.newArrayList();
+        testdata.add(new String[] { "testmodels/filesystem.ecore", "testmodels/simplefilesystem.xmi" });
+        testdata.add(new String[] { "testmodels/filesystem.ecore", "testmodels/fs/simplefilesystem_v1.filesystem" });
+        // testdata.add(new String[] { "testmodels/02/primitive_types.ecore", "testmodels/02/java.ecore",
+        // "testmodels/02/Hello.java.xmi" });
+        // CAUTION: takes some time, huge model!
+        testdata.add(new String[] { "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
+
+        final Collection<Object[]> params = Lists.newArrayList();
+        for(final String[] data: testdata) {
+            params.add(new Object[] {data});
+        }
         return params;
     }
 
     /**
      * @param modelLocations
      */
-    public NeoBlobStorageTest(final String m2, final String m1) {
-        this.m1Location = m1;
-        this.m2Location = m2;
+    public NeoBlobStorageTest(final String... m) {
+        this.modelLocations = m;
     }
 
     @After
@@ -110,12 +105,14 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
 
     @Test
     public void shouldSaveModelIntoNeo() throws Exception {
-        split("Before loading models " + m2Location + " and " + m1Location);
+        split(String.format("Before loading %d models ", modelLocations.length, Arrays.asList(modelLocations)));
         // given
         final ResourceSet rs = new ResourceSetImpl();
-        final EObject input = readInputModel("testmodels/Ecore.ecore", rs);
-        final EObject input2 = readInputModel(m2Location, rs);
-        final EObject input3 = readInputModel(m1Location, rs);
+        final Map<String, List<EObject>> models = Maps.newLinkedHashMap();
+        models.put("testmodels/Ecore.ecore", readInputModels("testmodels/Ecore.ecore", rs));
+        for(final String location: modelLocations) {
+            models.put(location, readInputModels(location, rs));
+        }
         split("After loading models");
 
         final Branch branch = repository.createBranch(null, "trunk");
@@ -124,31 +121,32 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         ct.setUser("mustermann");
         // when
         // model checked in successfully
-        final Response checkin = repository.checkin(new ModelImpl(input, "testmodels/Ecore.ecore"), ct);
-        split("Neo4j - Ecore");
-        final Response checkin2 = repository.checkin(new ModelImpl(input2, m2Location), ct);
-        split("Neo4j - M2");
-        final Response checkin3 = repository.checkin(new ModelImpl(input3, m1Location), ct);
-        split("Neo4j - M1");
+        final List<URI> repoUris = Lists.newArrayList();
+        for (final String loc : models.keySet()) {
+            final Response response = repository.checkin(new ModelImpl(models.get(loc), loc), ct);
+            assertTrue(response instanceof CheckinResponse);
+
+            repoUris.add(response.getURI());
+            split("Neo4j - Added "+loc);
+        }
         final Response commitResponse = repository.commitTransaction(ct);
-        split("Neo4j - Commit");
         // then
-        assertTrue(checkin instanceof CheckinResponse);
         // all models should be known to the corresponding revision
         final Revision revision = repository.getRevision(commitResponse.getURI());
         final Collection<URI> modelReferences = revision.getModelReferences(ChangeType.ADDED);
 
-        assertEquals(3, modelReferences.size());
-        assertTrue(modelReferences.contains(checkin.getURI()));
-        assertTrue(modelReferences.contains(checkin2.getURI()));
-        assertTrue(modelReferences.contains(checkin3.getURI()));
+        assertEquals(models.size(), modelReferences.size());
+        for(final URI uri: repoUris) {
+            assertTrue(modelReferences.contains(uri));
+        }
 
         split("Accessing model references of the last revision");
         // storeViaXml(input, input2, input3);
-        final Model checkedoutmodel = repository.checkout(checkin3.getURI());
-        split("Restoring M1");
+        final Model checkedoutmodel = repository.checkout(repoUris.get(repoUris.size()-1));
+        split("Restoring last checked in model");
         assertNotNull(checkedoutmodel.getContent());
-        // ModelUtil.storeViaXml(checkedoutmodel.getContent());
-        // split("Writing XML");
+        ModelUtil.storeViaXml(checkedoutmodel.getContent().toArray(new EObject[0]));
+        split("Writing XML");
+        ModelUtil.assertModelEqual(models.get(this.modelLocations[modelLocations.length - 1]).get(0), checkedoutmodel.getContent().get(0));
     }
 }
