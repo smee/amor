@@ -18,19 +18,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.infai.amor.backend.ChangedModel;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Model;
-import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.exception.TransactionException;
-import org.infai.amor.backend.internal.InternalRevision;
-import org.infai.amor.backend.internal.ModelImpl;
-import org.infai.amor.backend.internal.NeoProvider;
-import org.infai.amor.backend.internal.impl.NeoBranch;
-import org.infai.amor.backend.internal.impl.NeoModelLocation;
-import org.infai.amor.backend.internal.impl.NeoObjectFactory;
-import org.infai.amor.backend.internal.impl.NeoRevision;
+import org.infai.amor.backend.internal.*;
+import org.infai.amor.backend.internal.impl.*;
 import org.infai.amor.backend.storage.Storage;
 import org.neo4j.api.core.Node;
 
@@ -46,6 +38,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
     private final static Logger logger = Logger.getLogger(NeoBlobStorage.class.getName());
     private Map<URI, NeoModelLocation> addedModelNodes;
     private final NeoBranch branch;
+    private Map<EObject, Node> cache;
 
     private static String createModelSpecificPath(final IPath modelPath) {
         if (modelPath != null && !modelPath.isAbsolute()) {
@@ -87,10 +80,13 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         // store all eobjects/epackages
         logger.finer("----------1-Storing contents----------");
         final NeoMappingDispatcher disp1 = new NeoMappingDispatcher(getNeoProvider());
+        disp1.setRegistry(cache);
+
         for (final EObject eo : model.getContent()) {
             disp1.dispatch(eo);
             for (final TreeIterator<EObject> it = eo.eAllContents(); it.hasNext();) {
                 final EObject eoSub = it.next();
+                // System.out.println("storing " + eoSub);
                 disp1.dispatch(eoSub);
             }
         }
@@ -107,9 +103,10 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
                 disp2.dispatch(eoSub);
             }
         }
+        this.cache = disp2.getRegistry();
         // remember new model node
         // FIXME we wrote several model elements, need to link to all of them, not just to the first
-        this.addedModelNodes.put(externalUri, new NeoModelLocation(getNeoProvider(), (Node) disp2.getRegistry().get(model.getContent().get(0)), createModelSpecificPath(model.getPersistencePath()), externalUri, ChangeType.ADDED));
+        this.addedModelNodes.put(externalUri, new NeoModelLocation(getNeoProvider(), disp2.getRegistry().get(model.getContent().get(0)), createModelSpecificPath(model.getPersistencePath()), externalUri, ChangeType.ADDED));
     }
 
     /*
@@ -143,6 +140,8 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
                 revision.touchedModel(loc);
 
             }
+            cache = null;
+            addedModelNodes = null;
         } else {
             throw new TransactionException("Internal error: Do not know how to commit to revision of type " + rev.getClass());
         }
@@ -165,7 +164,8 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
     @Override
     public void rollback(final CommitTransaction tr) {
         // nothing to do, gets handled by the neo4j transaction
-
+        cache = null;
+        addedModelNodes = null;
     }
 
     /*
@@ -176,6 +176,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
     @Override
     public void startTransaction(final CommitTransaction tr) {
         this.addedModelNodes = Maps.newHashMap();
+        cache = Maps.newHashMap();
     }
 
     /*
