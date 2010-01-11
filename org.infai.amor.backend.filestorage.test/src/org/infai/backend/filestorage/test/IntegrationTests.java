@@ -10,20 +10,14 @@
 package org.infai.backend.filestorage.test;
 
 import static org.infai.amor.test.ModelUtil.readInputModel;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Model;
-import org.infai.amor.backend.Response;
-import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.responses.CommitSuccessResponse;
@@ -105,12 +99,14 @@ public class IntegrationTests extends AbstractIntegrationTest {
         ct.setCommitMessage("test");
         ct.setUser("mustermann");
         // add a model
-        final Response checkin = repository.checkin(new ModelImpl(input, "testmodels/base.ecore"), ct);
+        repository.checkin(new ModelImpl(input, "testmodels/base.ecore"), ct);
         final CommitSuccessResponse commitResponse = (CommitSuccessResponse) repository.commitTransaction(ct);
         // then the revision should know about this model
         final Revision revision = repository.getRevision(commitResponse.getURI());
         assertEquals(1, revision.getModelReferences(ChangeType.ADDED).size());
-
+        // also the current repository contents should not be empty
+        final Iterable<URI> intermediaryContents = repository.getActiveContents(commitResponse.getURI());
+        assertEquals(1, Iterables.size(intermediaryContents));
         // now delete the model
         final CommitTransaction ct2 = repository.startCommitTransaction(branch);
         ct2.setCommitMessage("delete model");
