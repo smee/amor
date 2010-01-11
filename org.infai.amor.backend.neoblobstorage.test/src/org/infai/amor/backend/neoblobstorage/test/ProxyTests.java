@@ -9,10 +9,9 @@
  *******************************************************************************/
 package org.infai.amor.backend.neoblobstorage.test;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterators.*;
+import static org.infai.amor.backend.util.EcoreModelHelper.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -27,12 +26,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil.ExternalCrossReferencer;
 import org.eclipse.emf.ecore.util.EcoreUtil.ProxyCrossReferencer;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
+import org.infai.amor.backend.util.EcoreModelHelper;
 import org.infai.amor.test.ModelUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -41,67 +40,6 @@ import com.google.common.collect.Sets;
  *
  */
 public class ProxyTests {
-
-    private static <T> Set<T> flatten(final Iterator<Set<T>> nestedSet) {
-        final Set<T> result = Sets.newHashSet();
-        while(nestedSet.hasNext()) {
-            result.addAll(nestedSet.next());
-        }
-        return result;
-    }
-
-    private static Function<? super EObject, ? extends Set<URI>> getReferencesToExternalModels(final URI resourceUri) {
-        return new Function<EObject, Set<URI>>() {
-            @Override
-            public Set<URI> apply(final EObject eo) {
-                final HashSet<URI> set = Sets.newHashSet();
-                final Iterator<URI> uris = transform(eo.eCrossReferences().iterator(), getResourceUri());
-                addAll(set, filter(uris, not(equalTo(resourceUri))));
-                return set;
-            }
-        };
-    }
-    private static Function<EObject, URI> getResourceUri(){
-        return new Function<EObject, URI>(){
-            @Override
-            public URI apply(final EObject from) {
-                final Resource res = from.eResource();
-                if (res != null) {
-                    return res.getURI();
-                } else {
-                    return null;
-                }
-            }};
-    }
-
-    private static Predicate<EObject> isEString() {
-        return new Predicate<EObject>() {
-
-            @Override
-            public boolean apply(final EObject eo) {
-                return eo instanceof EDataType && ((EDataType)eo).getName().equals("EString");
-            }
-        };
-    }
-
-    private static Predicate<EObject> sameResource(final URI mainUri){
-        return new Predicate<EObject>(){
-            @Override
-            public boolean apply(final EObject input) {
-                final Resource resource = input.eResource();
-                return resource != null && resource.getURI().equals(mainUri);
-            }
-        };
-    }
-
-    private static Predicate<URI> uriEndsWith(final String string) {
-        return new Predicate<URI>() {
-            @Override
-            public boolean apply(final URI uri) {
-                return uri.toString().endsWith(string);
-            }
-        };
-    }
 
     private void debugPrint(final Map<EObject, Collection<Setting>> map) {
         for (final EObject eo : map.keySet()) {
@@ -122,18 +60,6 @@ public class ProxyTests {
         }
     }
 
-    private Iterator<EObject> getObjectsWithExternalReferences(final EObject model, final URI resourceUri) {
-        final Predicate<EObject> proxiedEobjectPredicate = new Predicate<EObject>() {
-            @Override
-            public boolean apply(final EObject eo) {
-                return any(eo.eCrossReferences(), not(sameResource(resourceUri)));
-            }
-        };
-
-        // when
-        final Iterator<EObject> proxiedEobjects = filter(model.eAllContents(), proxiedEobjectPredicate);
-        return proxiedEobjects;
-    }
     @Test
     public void shouldFindExternalReferences() throws Exception {
         // given
@@ -156,7 +82,7 @@ public class ProxyTests {
         final EObject model = ModelUtil.readInputModel("testmodels/bflow/oepc.ecore");
         final URI resourceUri = model.eResource().getURI();
 
-        final Iterator<EObject> proxiedEobjects = getObjectsWithExternalReferences(model, resourceUri);
+        final Iterator<EObject> proxiedEobjects = EcoreModelHelper.getObjectsWithExternalReferences(model, resourceUri);
         // then there should be 34 eobjects with references to at least one other ecore file
         final int size = size(proxiedEobjects);
         assertEquals(34, size);
@@ -251,14 +177,15 @@ public class ProxyTests {
         // find all uris!=oepc that each object references to
         final Iterator<Set<URI>> extUriSets = transform(proxiedEobjects, getReferencesToExternalModels(resourceUri));
 
-        final Set<URI> uniqueUris = flatten(extUriSets);
+        final Set<URI> uniqueRelativeUris = Sets.newHashSet();
+        addAll(uniqueRelativeUris, transform(flatten(extUriSets).iterator(), makeUriRelativeTo(resourceUri)));
 
-        assertEquals(3, uniqueUris.size());
-        assertTrue(any(uniqueUris, uriEndsWith("java/lang/System.class.xmi")));
-        assertTrue(any(uniqueUris, uriEndsWith("java/io/PrintStream.class.xmi")));
-        assertTrue(any(uniqueUris, uriEndsWith("java/lang/String.class.xmi")));
+        // then
+        assertEquals(3, uniqueRelativeUris.size());
+        assertTrue(any(uniqueRelativeUris, uriEndsWith("java/lang/System.class.xmi")));
+        assertTrue(any(uniqueRelativeUris, uriEndsWith("java/io/PrintStream.class.xmi")));
+        assertTrue(any(uniqueRelativeUris, uriEndsWith("java/lang/String.class.xmi")));
     }
-
     @Test
     public void shouldStoreLinkedModels() throws Exception {
         // given

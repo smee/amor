@@ -37,4 +37,5 @@ Export-Package: com.google.common.annotations;version="1.0.0",
  org.apache.commons.lang.mutable,
  org.apache.commons.lang.text,
  org.apache.commons.lang.time,
- org.infai.amor.backend.internal
+ org.infai.amor.backend.internal,
+ org.infai.amor.backend.util
