@@ -31,20 +31,35 @@ import com.google.common.collect.Sets;
  */
 public class EcoreModelHelper {
     private static URI ecoreUri = URI.createURI(EcorePackage.eNS_URI);
+
     /**
-     * Return all externally referenced models, ignoring Ecore itself.
+     * Return all externally referenced models, ignoring Ecore itself. Deresolves agains <code>resourceUri</code>.
      * 
      * @param model
      * @param resourceUri
      * @return
      */
-    public static Set<URI> findReferencedModels(final EObject model, final URI resourceUri){
+    public static Set<URI> findReferencedModels(final EObject model, final URI resourceUri) {
+        return findReferencedModels(model, resourceUri, resourceUri);
+    }
+
+    /**
+     * Return all externally referenced models, ignoring Ecore itself.
+     * 
+     * @param model
+     * @param resourceUri
+     *            absolute uri locating the resource of model
+     * @param baseUri
+     *            absolute uri that all referenced uri should be deresolved agains
+     * @return Set of relative paths that address the dependencies of model
+     */
+    public static Set<URI> findReferencedModels(final EObject model, final URI resourceUri, final URI baseUri) {
         final Iterator<EObject> proxiedEobjects = getObjectsWithExternalReferences(model, resourceUri);
         // find all uris!=oepc that each object references to
         final Iterator<Set<URI>> extUriSets = transform(proxiedEobjects, getReferencesToExternalModels(resourceUri));
 
         final Set<URI> uniqueRelativeUris = Sets.newHashSet();
-        addAll(uniqueRelativeUris, transform(flatten(extUriSets).iterator(), makeUriRelativeTo(resourceUri)));
+        addAll(uniqueRelativeUris, transform(flatten(extUriSets).iterator(), makeUriRelativeTo(baseUri)));
 
         return uniqueRelativeUris;
     }
@@ -112,11 +127,12 @@ public class EcoreModelHelper {
         };
     }
 
-    public static Function<URI, URI> makeUriRelativeTo(final URI basiUri) {
+    public static Function<URI, URI> makeUriRelativeTo(final URI baseUri) {
         return new Function<URI, URI>() {
             @Override
             public URI apply(final URI absUri) {
-                return absUri.deresolve(basiUri);
+                assert !absUri.isRelative();
+                return absUri.deresolve(baseUri);
             }
 
         };

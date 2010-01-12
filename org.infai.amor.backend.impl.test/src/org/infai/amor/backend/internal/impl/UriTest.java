@@ -9,9 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
@@ -93,6 +91,24 @@ public class UriTest {
         assertTrue(isPrefix2);
         assertFalse(isPrefix3);
         assertFalse(isPrefix4);
+    }
+
+    @Test
+    public void shouldResolveRelativeUrisWhilePreservingCommonPath() throws Exception {
+        // given
+        final URI uriAbsolute = URI.createURI("file://base/base1/base2/rel1/rel2/model.xmi");
+        final URI uriRelative = URI.createURI("rel1/rel2/model.xmi");
+        final URI anotherUriAbsolute = URI.createURI("file://base/base1/base2/rel1/rel2/dependency.xmi");
+
+        // when
+        // see rfc2396 5.2.6.b, everything past the last / will get excluded from the resolution process
+        // strip down uri to make it point to the first common segment
+        final URI baseUri = uriAbsolute.trimSegments(uriRelative.segmentCount() - 1);
+        final URI newRelativeUri = anotherUriAbsolute.deresolve(baseUri);
+        // then
+        // System.out.println(resolvedUri);
+        assertTrue(newRelativeUri.isRelative());
+        assertEquals("rel1/rel2/dependency.xmi", newRelativeUri.toString());
     }
 
     @Test
