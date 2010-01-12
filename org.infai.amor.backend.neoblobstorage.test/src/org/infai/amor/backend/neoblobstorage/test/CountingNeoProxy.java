@@ -12,15 +12,7 @@ package org.infai.amor.backend.neoblobstorage.test;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.neo4j.api.core.Direction;
-import org.neo4j.api.core.NeoService;
-import org.neo4j.api.core.Node;
-import org.neo4j.api.core.Relationship;
-import org.neo4j.api.core.RelationshipType;
-import org.neo4j.api.core.ReturnableEvaluator;
-import org.neo4j.api.core.StopEvaluator;
-import org.neo4j.api.core.Transaction;
-import org.neo4j.api.core.Traverser;
+import org.neo4j.api.core.*;
 import org.neo4j.api.core.Traverser.Order;
 
 /**
@@ -45,8 +37,7 @@ public class CountingNeoProxy implements NeoService {
         public Relationship createRelationshipTo(final Node arg0, final RelationshipType arg1) {
             countRelationShip();
             return node.createRelationshipTo(arg0, arg1);
-        }
-
+        };
         /**
          * 
          * @see org.neo4j.api.core.Node#delete()
@@ -208,6 +199,11 @@ public class CountingNeoProxy implements NeoService {
         public void setProperty(final String arg0, final Object arg1) {
             countProperty();
             node.setProperty(arg0, arg1);
+        }
+
+        @Override
+        public String toString() {
+            return this.getClass().getSimpleName() + ":" + node.toString();
         }
 
         /**

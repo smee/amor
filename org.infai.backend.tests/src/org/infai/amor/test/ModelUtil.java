@@ -15,6 +15,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.EList;
@@ -30,6 +31,7 @@ import org.eclipse.emf.compare.util.ModelUtils;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.*;
@@ -50,8 +52,9 @@ public class ModelUtil {
         Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
         Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xml", new XMLResourceFactoryImpl());
         Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("filesystem", new XMIResourceFactoryImpl());
-
     }
+
+    private static final Logger logger = Logger.getLogger(ModelUtil.class.getName());
 
     /**
      * @param content
@@ -66,8 +69,8 @@ public class ModelUtil {
             final DiffModel diff = DiffService.doDiff(match, false);
 
             final List<DiffElement> differences = new ArrayList<DiffElement>(diff.getOwnedElements());
-            // saveDiff(diff, match);
-            // describeDiff(differences, 0);
+            saveDiff(diff, match);
+            describeDiff(differences, 0);
             // if there are no differences, there is still an empty change, bug in emfcompare?
             assertTrue(differences.isEmpty() || differences.get(0).getSubDiffElements().isEmpty());
         } catch (final InterruptedException e) {
@@ -118,6 +121,20 @@ public class ModelUtil {
                 describeDiff(subDiffs, depth + 1);
             }
         }
+    }
+
+    /**
+     * @param eResource
+     */
+    private static void logResourceErrors(final Resource res) {
+        if(res==null || res.getErrors().isEmpty()){
+            return;
+        }
+        logger.info("There are errors in resource " + res);
+        for (final Diagnostic diag : res.getErrors()) {
+            logger.info(diag.toString());
+        }
+
     }
 
     /**
@@ -181,7 +198,7 @@ public class ModelUtil {
         snapshot.setMatch(match);
         snapshot.setDiff(diff);
         try {
-            ModelUtils.save(snapshot, "result.emfdiff");
+            ModelUtils.save(snapshot, "foo/result.emfdiff");
         } catch (final IOException e) {
             e.printStackTrace();
         } //$NON-NLS-1$
@@ -199,6 +216,7 @@ public class ModelUtil {
 
         final Map<String, String> options = Maps.newHashMap();
         options.put(XMLResource.OPTION_ENCODING, "UTF8");
+        options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_RECORD);
 
         for (final EObject eo : input) {
             final String relativePath = "foo/" + eo.hashCode() + ".xmi";
@@ -206,8 +224,24 @@ public class ModelUtil {
             final Resource res = rs.createResource(URI.createFileURI(relativePath));
             res.getContents().add(eo);
             res.save(options);
+            logResourceErrors(eo.eResource());
         }
         return result;
+    }
+
+    public static void storeViaXml(final List<EObject> model, final String relPath) throws IOException {
+        final ResourceSetImpl rs = new ResourceSetImpl();
+
+        final Map<String, String> options = Maps.newHashMap();
+        options.put(XMLResource.OPTION_ENCODING, "UTF8");
+        options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_RECORD);
+
+        final Resource res = rs.createResource(URI.createFileURI("foo/" + System.currentTimeMillis() + "/" + relPath));
+        res.getContents().addAll(model);
+        res.save(options);
+        for(final EObject eo:model) {
+            logResourceErrors(eo.eResource());
+        }
     }
 
 }
