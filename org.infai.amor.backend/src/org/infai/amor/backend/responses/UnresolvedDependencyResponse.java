@@ -40,4 +40,14 @@ public class UnresolvedDependencyResponse extends AbstractResponse {
         return dependencies;
     }
 
+    /**
+     * Return null, as the model was not stored in the backend.
+     * 
+     * @see org.infai.amor.backend.responses.AbstractResponse#getURI()
+     */
+    @Override
+    public URI getURI() {
+        return null;
+    }
+
 }
