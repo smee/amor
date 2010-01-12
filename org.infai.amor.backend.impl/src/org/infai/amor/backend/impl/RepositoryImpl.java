@@ -63,6 +63,8 @@ public class RepositoryImpl implements Repository {
             // remember the repository uri for this model
             final URI modeluri = uriHandler.createModelUri(tr, model.getPath());
             storageFactory.getStorage(tr.getBranch()).checkin(model, modeluri, tr.getRevisionId());
+            // remember this model path
+            ((CommitTransactionImpl) tr).addStoredModel(model.getPath().toString());
 
             return new CheckinResponse("Success.", modeluri);
         } catch (final IOException e) {
@@ -87,12 +89,15 @@ public class RepositoryImpl implements Repository {
             final URI modeluri = uriHandler.createModelUri(tr, model.getPersistencePath());
             final Storage storage = storageFactory.getStorage(tr.getBranch());
 
-            final Collection<URI> dependencies = findModelDependenciesOf(model.getContent(), tr);
+            final Collection<URI> dependencies = findModelDependenciesOf(model, tr);
             if (!dependencies.isEmpty()) {
-                return new UnresolvedDependencyResponse("Please checkin the models with the given uris, it's needed as a dependency.", modeluri, dependencies);
+                // do not store model yet, ask for its dependencies
+                return new UnresolvedDependencyResponse("Model not stored! Please checkin the dependencies of this model.", modeluri, dependencies);
             } else {
-
+                // store the model
                 storage.checkin(model, modeluri, tr.getRevisionId());
+                // remember this model path
+                ((CommitTransactionImpl) tr).addStoredModel(model.getPersistencePath().toString());
                 return new CheckinResponse("Success.", modeluri);
             }
         } catch (final IOException e) {
@@ -205,20 +210,24 @@ public class RepositoryImpl implements Repository {
     /**
      * Find all models that get referenced by any eobject within the containment hierarchies of each root element in contents.
      * 
-     * @param content
-     *            list of model root elements
+     * @param model
+     *            .getContent() list of model root elements
      * @param transaction
      * @return
      */
-    private Collection<URI> findModelDependenciesOf(final List<EObject> content, final CommitTransaction transaction) {
+    private Collection<URI> findModelDependenciesOf(final Model model, final CommitTransaction transaction) {
         final Set<URI> refs = Sets.newHashSet();
-        for (final EObject root : content) {
+        for (final EObject root : model.getContent()) {
             // find relative uris to referenced models
-            final Set<URI> referencedModels = EcoreModelHelper.findReferencedModels(root, root.eResource().getURI());
+            // see rfc2396 5.2.6.b: everything past the last / will get excluded from the resolution process
+            // strip down uri to make it point to the first common segment
+            final URI baseUri = root.eResource().getURI().trimSegments(model.getPersistencePath().segmentCount() - 1);
+
+            final Set<URI> referencedModels = EcoreModelHelper.findReferencedModels(root, root.eResource().getURI(), baseUri);
             for (final URI refuri : referencedModels) {
                 assert refuri.isRelative();
                 // if we don't have a copy of this model yet
-                if (!isKnownModel(refuri, transaction.getBranch())) {
+                if (!isKnownModel(refuri, transaction)) {
                     // remember it
                     refs.add(refuri);
                 }
@@ -428,14 +437,14 @@ public class RepositoryImpl implements Repository {
     /**
      * Do we know this model?
      * 
-     * @param branch
+     * @param transaction
      * 
      * @param refuri
      * @return
      */
-    private boolean isKnownModel(final URI relativeRefToModelUri, final Branch branch) {
+    private boolean isKnownModel(final URI relativeRefToModelUri, final CommitTransaction transaction) {
         final String relPath = relativeRefToModelUri.toString();
-        return branch.findRevisionOf(relPath) != null;
+        return ((CommitTransactionImpl) transaction).hasStoredModel(relPath) || transaction.getBranch().findRevisionOf(relPath) != null;
     }
 
     /*

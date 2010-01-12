@@ -9,9 +9,13 @@
  *******************************************************************************/
 package org.infai.amor.backend.impl;
 
+import java.util.Set;
+
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
 import org.neo4j.api.core.Transaction;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author sdienst
@@ -22,6 +26,7 @@ public class CommitTransactionImpl implements CommitTransaction {
     private final long revId;
     private final Branch branch;
     private final Transaction neoTransaction;
+    private final Set<String> storedModels;
 
     /**
      * @param revId
@@ -31,6 +36,14 @@ public class CommitTransactionImpl implements CommitTransaction {
         this.branch = b;
         this.revId = revId;
         this.neoTransaction = neoTransaction;
+        this.storedModels = Sets.newHashSet();
+    }
+
+    /**
+     * @param relPath
+     */
+    void addStoredModel(final String relPath){
+        this.storedModels.add(relPath);
     }
 
     /*
@@ -78,6 +91,15 @@ public class CommitTransactionImpl implements CommitTransaction {
     @Override
     public String getUser() {
         return username;
+    }
+
+
+    /**
+     * @param relPath
+     * @return
+     */
+    boolean hasStoredModel(final String relPath){
+        return storedModels.contains(relPath);
     }
 
     /*
