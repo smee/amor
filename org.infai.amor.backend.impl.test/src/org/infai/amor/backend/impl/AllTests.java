@@ -9,9 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.backend.impl;
 
-import org.infai.amor.backend.internal.impl.NeoBranchFactoryImplTest;
-import org.infai.amor.backend.internal.impl.NeoTransactionTest;
-import org.infai.amor.backend.internal.impl.UriTest;
+import org.infai.amor.backend.internal.impl.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -25,7 +23,8 @@ import org.junit.runners.Suite.SuiteClasses;
     NeoBranchFactoryImplTest.class,
     NeoTransactionTest.class,
     UriTest.class,
-    QueryTests.class})
+ QueryTests.class,
+    ModelDependencyLoopTest.class})
     public class AllTests {
 
 }
