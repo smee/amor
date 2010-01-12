@@ -43,7 +43,7 @@ public interface Revision {
      * 
      * @return
      */
-    Collection<URI> getModelReferences(ChangeType ct);
+    Collection<URI> getModelReferences(ChangeType... ct);
 
     /**
      * Get the parent revision of this one.

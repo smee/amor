@@ -14,13 +14,8 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
-import org.infai.amor.backend.internal.InternalRevision;
-import org.infai.amor.backend.internal.ModelLocation;
-import org.infai.amor.backend.internal.NeoProvider;
-import org.neo4j.api.core.Direction;
-import org.neo4j.api.core.DynamicRelationshipType;
-import org.neo4j.api.core.Node;
-import org.neo4j.api.core.Relationship;
+import org.infai.amor.backend.internal.*;
+import org.neo4j.api.core.*;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -153,15 +148,18 @@ public class NeoRevision extends NeoObject implements InternalRevision {
      * @see org.infai.amor.backend.Revision#getModelReferences()
      */
     @Override
-    public Collection<URI> getModelReferences(final ChangeType ct) {
+    public Collection<URI> getModelReferences(final ChangeType... ct) {
         dumpOutRels(getNode());
         final Collection<URI> modelUris = Lists.newArrayList();
-        for (final Relationship rel : getNode().getRelationships(DynamicRelationshipType.withName(MODELLOCATION + ct.name()), Direction.OUTGOING)) {
-            final Node n = rel.getEndNode();
-            dumpOutRels(n);
-            for (final Relationship rel2 : n.getRelationships(DynamicRelationshipType.withName(MODELLOCATION), Direction.OUTGOING)) {
-                final ModelLocation mloc = new NeoModelLocation(getNeoProvider(), rel2.getEndNode());
-                modelUris.add(mloc.getExternalUri());
+
+        for (final ChangeType type : ct) {
+            for (final Relationship rel : getNode().getRelationships(DynamicRelationshipType.withName(MODELLOCATION + type.name()), Direction.OUTGOING)) {
+                final Node n = rel.getEndNode();
+                // dumpOutRels(n);
+                for (final Relationship rel2 : n.getRelationships(DynamicRelationshipType.withName(MODELLOCATION), Direction.OUTGOING)) {
+                    final ModelLocation mloc = new NeoModelLocation(getNeoProvider(), rel2.getEndNode());
+                    modelUris.add(mloc.getExternalUri());
+                }
             }
         }
         return modelUris;

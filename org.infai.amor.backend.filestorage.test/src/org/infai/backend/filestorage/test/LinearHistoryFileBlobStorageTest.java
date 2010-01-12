@@ -19,18 +19,11 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.infai.amor.backend.ChangedModel;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Model;
-import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.filestorage.FileBlobStorage;
-import org.infai.amor.backend.internal.InternalRevision;
-import org.infai.amor.backend.internal.ModelImpl;
-import org.infai.amor.backend.internal.ModelLocation;
+import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.internal.impl.ChangedModelImpl;
-import org.infai.amor.test.AbstractNeo4JPerformanceTest;
-import org.infai.amor.test.ModelUtil;
-import org.infai.amor.test.TestUtils;
+import org.infai.amor.test.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -79,7 +72,7 @@ public class LinearHistoryFileBlobStorageTest extends AbstractNeo4JPerformanceTe
             }
 
             @Override
-            public Collection<URI> getModelReferences(final ChangeType ct) {
+            public Collection<URI> getModelReferences(final ChangeType... ct) {
                 return null;
             }
 

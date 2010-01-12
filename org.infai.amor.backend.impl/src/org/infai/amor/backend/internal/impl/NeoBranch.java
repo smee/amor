@@ -9,16 +9,13 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal.impl;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import org.infai.amor.backend.Branch;
+import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.internal.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.neo4j.api.core.Direction;
-import org.neo4j.api.core.DynamicRelationshipType;
-import org.neo4j.api.core.Node;
-import org.neo4j.api.core.Relationship;
+import org.neo4j.api.core.*;
 
 /**
  * @author sdienst
@@ -51,6 +48,20 @@ public class NeoBranch extends NeoObject implements Branch {
         set(BRANCHNAME, name);
         set(CREATIONDATE, new Date().getTime());
     }
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.Branch#findRevisionOf(java.lang.String)
+     */
+    @Override
+    public Revision findRevisionOf(final String relativePath) {
+        final NeoRevision rev = getHeadRevision();
+        while(rev!=null){
+            final ModelLocation loc = rev.getModelLocation(relativePath);
+            if(loc !=null) {
+                return rev;
+            }
+        }
+        return null;
+    }
     /*
      * (non-Javadoc)
      * 
@@ -60,6 +71,7 @@ public class NeoBranch extends NeoObject implements Branch {
     public Date getCreationTime() {
         return new Date((Long) get(CREATIONDATE));
     }
+
     /*
      * (non-Javadoc)
      * 

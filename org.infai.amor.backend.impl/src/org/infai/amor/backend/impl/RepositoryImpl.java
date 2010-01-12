@@ -10,36 +10,23 @@
 package org.infai.amor.backend.impl;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
-import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.ChangedModel;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Model;
-import org.infai.amor.backend.Repository;
-import org.infai.amor.backend.Response;
-import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
-import org.infai.amor.backend.internal.BranchFactory;
-import org.infai.amor.backend.internal.TransactionManager;
-import org.infai.amor.backend.internal.UriHandler;
-import org.infai.amor.backend.responses.CheckinErrorResponse;
-import org.infai.amor.backend.responses.CheckinResponse;
-import org.infai.amor.backend.responses.DeleteErrorResponse;
-import org.infai.amor.backend.responses.DeleteSuccessResponse;
+import org.infai.amor.backend.internal.*;
+import org.infai.amor.backend.responses.*;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
+import org.infai.amor.backend.util.EcoreModelHelper;
 import org.infai.amor.backend.util.Pair;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 
 /**
  * Default implementation of the amor repository backend.
@@ -96,12 +83,18 @@ public class RepositoryImpl implements Repository {
         // FIXME needs to be to make sure, else we are not within the same neo4j transaction... see
         // http://www.mail-archive.com/user@lists.neo4j.org/msg01381.html
         try {
-            // remember the repository uri for this model
+            // what is the externally referenceable uri of this model, if it would get persisted?
             final URI modeluri = uriHandler.createModelUri(tr, model.getPersistencePath());
             final Storage storage = storageFactory.getStorage(tr.getBranch());
-            storage.checkin(model, modeluri, tr.getRevisionId());
 
-            return new CheckinResponse("Success.", modeluri);
+            final Collection<URI> dependencies = findModelDependenciesOf(model.getContent(), tr);
+            if (!dependencies.isEmpty()) {
+                return new UnresolvedDependencyResponse("Please checkin the models with the given uris, it's needed as a dependency.", modeluri, dependencies);
+            } else {
+
+                storage.checkin(model, modeluri, tr.getRevisionId());
+                return new CheckinResponse("Success.", modeluri);
+            }
         } catch (final IOException e) {
             e.printStackTrace();
             return new CheckinErrorResponse("Could not persist this model, reason: " + e.getMessage(), null);
@@ -207,6 +200,31 @@ public class RepositoryImpl implements Repository {
             ioe.printStackTrace();
             return new DeleteErrorResponse(ioe.getMessage(), uriHandler.createModelUri(tr, modelPath));
         }
+    }
+
+    /**
+     * Find all models that get referenced by any eobject within the containment hierarchies of each root element in contents.
+     * 
+     * @param content
+     *            list of model root elements
+     * @param transaction
+     * @return
+     */
+    private Collection<URI> findModelDependenciesOf(final List<EObject> content, final CommitTransaction transaction) {
+        final Set<URI> refs = Sets.newHashSet();
+        for (final EObject root : content) {
+            // find relative uris to referenced models
+            final Set<URI> referencedModels = EcoreModelHelper.findReferencedModels(root, root.eResource().getURI());
+            for (final URI refuri : referencedModels) {
+                assert refuri.isRelative();
+                // if we don't have a copy of this model yet
+                if (!isKnownModel(refuri, transaction.getBranch())) {
+                    // remember it
+                    refs.add(refuri);
+                }
+            }
+        }
+        return refs;
     }
 
     /*
@@ -405,6 +423,19 @@ public class RepositoryImpl implements Repository {
         final Branch branch = branchFactory.getBranch(branchname);
         final Storage storage = storageFactory.getStorage(branch);
         return storage;
+    }
+
+    /**
+     * Do we know this model?
+     * 
+     * @param branch
+     * 
+     * @param refuri
+     * @return
+     */
+    private boolean isKnownModel(final URI relativeRefToModelUri, final Branch branch) {
+        final String relPath = relativeRefToModelUri.toString();
+        return branch.findRevisionOf(relPath) != null;
     }
 
     /*

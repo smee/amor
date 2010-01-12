@@ -17,6 +17,14 @@ import java.util.Date;
  */
 public interface Branch {
     /**
+     * Find the most recent revision where the model addressed by <code>relativePath</code> was added/changed.
+     * If there is no such revision, return null.
+     * @param relativePath a relative path to a model as given by {@link Model#getPersistencePath()}
+     * @return
+     */
+    Revision findRevisionOf(String relativePath);
+
+    /**
      * Get creation time of this branch.
      * 
      * @return

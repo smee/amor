@@ -57,6 +57,13 @@ public class EcoreModelHelper {
         return result;
     }
 
+    /**
+     * Find all eobjects which have at least one reference to another resource.
+     * 
+     * @param model
+     * @param resourceUri
+     * @return
+     */
     public static Iterator<EObject> getObjectsWithExternalReferences(final EObject model, final URI resourceUri) {
         final Predicate<EObject> proxiedEobjectPredicate = new Predicate<EObject>() {
             @Override
