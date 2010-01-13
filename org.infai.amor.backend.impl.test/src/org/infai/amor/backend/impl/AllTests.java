@@ -23,8 +23,7 @@ import org.junit.runners.Suite.SuiteClasses;
     NeoBranchFactoryImplTest.class,
     NeoTransactionTest.class,
     UriTest.class,
- QueryTests.class,
-    ModelDependencyLoopTest.class})
+    QueryTests.class })
     public class AllTests {
 
 }
