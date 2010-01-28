@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0"
-   xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="packageB"
-   nsURI="http://mymodels.org/packageB" nsPrefix="pb">
- <eClassifiers xsi:type="ecore:EClass" name="classB">
-   <eStructuralFeatures xsi:type="ecore:EAttribute" name="attrB" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-   <eStructuralFeatures xsi:type="ecore:EReference" name="refA" eType="ecore:EClass A.ecore#//classA"
-       eOpposite="A.ecore#//classA/refB"/>
- </eClassifiers>
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="packageB"
+    nsURI="http://mymodels.org/packageB" nsPrefix="pb">
+  <eClassifiers xsi:type="ecore:EClass" name="classB">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attrB" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
 </ecore:EPackage>

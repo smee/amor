@@ -89,7 +89,7 @@ public class RepositoryImpl implements Repository {
             final URI modeluri = uriHandler.createModelUri(tr, model.getPersistencePath());
             final Storage storage = storageFactory.getStorage(tr.getBranch());
 
-            final Collection<URI> dependencies = findModelDependenciesOf(model, tr);
+            final Collection<URI> dependencies = findUnknownModelDependenciesOf(model, tr);
             if (!dependencies.isEmpty()) {
                 // do not store model yet, ask for its dependencies
                 return new UnresolvedDependencyResponse("Model not stored! Please checkin the dependencies of this model.", modeluri, dependencies);
@@ -215,7 +215,7 @@ public class RepositoryImpl implements Repository {
      * @param transaction
      * @return
      */
-    private Collection<URI> findModelDependenciesOf(final Model model, final CommitTransaction transaction) {
+    private Collection<URI> findUnknownModelDependenciesOf(final Model model, final CommitTransaction transaction) {
         final Set<URI> refs = Sets.newHashSet();
         for (final EObject root : model.getContent()) {
             // find relative uris to referenced models

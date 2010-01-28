@@ -14,13 +14,18 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.EMap;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.internal.impl.NeoModelLocation;
 import org.neo4j.api.core.*;
 import org.neo4j.api.core.Traverser.Order;
+
+import com.google.common.collect.Lists;
 
 public class NeoRestorer extends AbstractNeoPersistence {
     static class OrderedNodeIterable implements Iterable<Node> {
@@ -69,17 +74,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
      */
     public NeoRestorer(final NeoProvider neo) {
         super(neo);
-    }
-
-    /**
-     * @param aNode
-     */
-    private void debug(final Node n) {
-        for(final String p:n.getPropertyKeys()) {
-            System.out.println(p+": "+n.getProperty(p));
-        }
-        System.out.println();
-
+        initMembers();
     }
 
     /**
@@ -111,7 +106,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
                 while (container.hasRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING)) {
                     container = container.getSingleRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING).getStartNode();
                 }
-                return (EPackage) load((String) container.getProperty(NS_URI));
+                return (EPackage) load(getString(container, NS_URI));
             }
         }
         return null;
@@ -131,19 +126,35 @@ public class NeoRestorer extends AbstractNeoPersistence {
     private void initMembers() {
         this.cache = new HashMap<Node, EObject>();
         this.classifierCache = new HashMap<String, Node>();
-        this.nodeCache = new HashMap<EObject, Node>();
         this.resourceSet = new ResourceSetImpl();
         resourceSet.getResourceFactoryRegistry().getContentTypeToFactoryMap().put("*", new XMIResourceFactoryImpl());
     }
 
     /**
-     * @param startNode
+     * @param modelLocation.getModelHead()
      *            toplevel node for a persisted model
      * @return
      */
-    public EObject load(final Node startNode) {
+    public List<EObject> load(final NeoModelLocation modelLocation) {
         initMembers();
-        return loadModel(startNode);
+        // FIXME when checking out model with reference to another object of a different package,
+        // FIXME the reference will point to the eclass instead of the eobject :(
+        final List<EObject> result = Lists.newArrayList();
+        final Resource resource = resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI(modelLocation.getRelativePath()));
+
+        final Node rootNode = modelLocation.getModelHead();
+
+        for (Node modelHeadNode : new OrderedNodeIterable(rootNode, EcoreRelationshipType.MODEL_CONTENT, Direction.OUTGOING)) {
+            debug(modelHeadNode);
+            // TODO why do we need to do this for instance models again?
+            final Relationship isInstanceModelRel = modelHeadNode.getSingleRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING);
+            if (isInstanceModelRel != null) {
+                modelHeadNode = isInstanceModelRel.getOtherNode(modelHeadNode);
+            }
+            result.add(loadModel(modelHeadNode));
+        }
+        resource.getContents().addAll(result);
+        return result;
     }
 
     /**
@@ -152,7 +163,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
      * @param nsUri
      * @return
      */
-    public EObject load(final String nsUri) {
+    private EObject load(final String nsUri) {
         logger.fine("loading model " + nsUri);
 
         // initMembers();
@@ -174,21 +185,20 @@ public class NeoRestorer extends AbstractNeoPersistence {
         EcoreFactory.eINSTANCE.eClass();
         // restore all models, that the referenced model depends on
         // this fills our cache of eobjects
-        // TODO remove repeatedly restoring the same models over and over
         for (final Node referenced : getOrderedNodes(modelNode, EcoreRelationshipType.DEPENDS, Direction.OUTGOING, EcoreRelationshipType.INSTANCE_MODEL, Direction.INCOMING)) {
-            final String uri = (String) referenced.getProperty(NS_URI);
+            final String uri = getString(referenced, NS_URI);
             // if (uri.toString().equals("http://www.eclipse.org/emf/2002/Ecore")) {
             // continue;
             // }
             XMIResource resource = (XMIResource) resourceSet.getResource(org.eclipse.emf.common.util.URI.createURI(uri), false);
             if (resource == null) {
                 resource = (XMIResource) resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI(uri));
-                resource.getContents().add(load(uri));
+                logger.finest("restoring package " + uri);
+                resource.getContents().add(loadModel(referenced));
             }
         }
         final EObject restored = restore(modelNode);
         // FIXME use the relative path for this resource instead
-        resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI("foo.xmi")).getContents().add(restored);
         return restored;
     }
 
@@ -234,13 +244,13 @@ public class NeoRestorer extends AbstractNeoPersistence {
         final EAnnotation annotation = EcoreFactory.eINSTANCE.createEAnnotation();
 
         // properties
-        annotation.setSource((String) node.getProperty(SOURCE));
+        annotation.setSource(getString(node, SOURCE));
 
         // relationships: entries
         final EMap<String, String> entries = annotation.getDetails();
         for (final Node aNode : getOrderedNodes(node, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
-            final String key = aNode.hasProperty(KEY_IS_NULL) ? null : (String) aNode.getProperty(KEY);
-            final String val = aNode.hasProperty(VALUE_IS_NULL) ? null : (String) aNode.getProperty(VALUE);
+            final String key = aNode.hasProperty(KEY_IS_NULL) ? null : getString(aNode, KEY);
+            final String val = aNode.hasProperty(VALUE_IS_NULL) ? null : getString(aNode, VALUE);
 
             entries.put(key, val);
         }
@@ -257,21 +267,21 @@ public class NeoRestorer extends AbstractNeoPersistence {
         cache.put(node, attribute);
 
         // properties
-        attribute.setChangeable((Boolean) node.getProperty(CHANGEABLE));
+        attribute.setChangeable(getBool(node, CHANGEABLE));
         // container is set automatically
-        attribute.setDerived((Boolean) node.getProperty(DERIVED));
-        attribute.setID((Boolean) node.getProperty(ID));
-        attribute.setLowerBound((Integer) node.getProperty(LOWER_BOUND));
-        attribute.setName((String) node.getProperty(NAME));
-        attribute.setOrdered((Boolean) node.getProperty(ORDERED));
-        attribute.setTransient((Boolean) node.getProperty(TRANSIENT));
-        attribute.setUnique((Boolean) node.getProperty(UNIQUE));
-        attribute.setUnsettable((Boolean) node.getProperty(UNSETTABLE));
-        attribute.setUpperBound((Integer) node.getProperty(UPPER_BOUND));
-        attribute.setVolatile((Boolean) node.getProperty(VOLATILE));
+        attribute.setDerived(getBool(node, DERIVED));
+        attribute.setID(getBool(node, ID));
+        attribute.setLowerBound(getInt(node, LOWER_BOUND));
+        attribute.setName(getString(node, NAME));
+        attribute.setOrdered(getBool(node, ORDERED));
+        attribute.setTransient(getBool(node, TRANSIENT));
+        attribute.setUnique(getBool(node, UNIQUE));
+        attribute.setUnsettable(getBool(node, UNSETTABLE));
+        attribute.setUpperBound(getInt(node, UPPER_BOUND));
+        attribute.setVolatile(getBool(node, VOLATILE));
 
         if (node.hasProperty(DEFAULT_VALUE_LITERAL)) {
-            attribute.setDefaultValueLiteral((String) node.getProperty(DEFAULT_VALUE_LITERAL));
+            attribute.setDefaultValueLiteral(getString(node, DEFAULT_VALUE_LITERAL));
         }
         // relationships
         // type
@@ -284,7 +294,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
         for (final Node aNode : getOrderedNodes(node, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
             final Node metaNode = aNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
 
-            if (EAnnotation.class.getSimpleName().equals(metaNode.getProperty(NAME))) {
+            if (EAnnotation.class.getSimpleName().equals(getString(metaNode, NAME))) {
                 attribute.getEAnnotations().add(restoreEAnnotation(aNode));
             }
         }
@@ -296,20 +306,22 @@ public class NeoRestorer extends AbstractNeoPersistence {
         if (null != cache.get(node)) {
             return (EClass) cache.get(node);
         }
-
+        // TODO need to restore package as well, if we haven't yet
         final EClass aClass = EcoreFactory.eINSTANCE.createEClass();
 
         cache.put(node, aClass);
 
         // properties
-        aClass.setName((String) node.getProperty(NAME));
+        aClass.setName(getString(node, NAME));
+
+        logger.finest("restoring eclass " + aClass.getName());
 
         if (node.hasProperty(INSTANCE_TYPE_NAME)) {
-            aClass.setInstanceTypeName((String) node.getProperty(INSTANCE_TYPE_NAME));
+            aClass.setInstanceTypeName(getString(node, INSTANCE_TYPE_NAME));
         }
 
-        aClass.setAbstract((Boolean) node.getProperty(INTERFACE));
-        aClass.setAbstract((Boolean) node.getProperty(ABSTRACT));
+        aClass.setAbstract(getBool(node, INTERFACE));
+        aClass.setAbstract(getBool(node, ABSTRACT));
 
         // relationships
         // supertypes
@@ -358,7 +370,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
         }
 
         final Node metaNode = node.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
-        final String metaNodeName = (String) metaNode.getProperty(NAME);
+        final String metaNodeName = getString(metaNode, NAME);
         if (EClass.class.getSimpleName().equals(metaNodeName)) {
             return restoreEClass(node);
         } else if (EEnum.class.getSimpleName().equals(metaNodeName)) {
@@ -374,7 +386,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
             return (EDataType) cache.get(node);
         }
 
-        final String name = (String) node.getProperty(NAME);
+        final String name = getString(node, NAME);
         final Node ecoreClassifierNode = determineEcoreClassifierNode(name);
         if (ecoreClassifierNode != null) {
             // this is a ecore datatype
@@ -388,10 +400,10 @@ public class NeoRestorer extends AbstractNeoPersistence {
         newDatatype.setName(name);
 
         if (node.hasProperty(SERIALIZABLE)) {
-            newDatatype.setSerializable((Boolean) node.getProperty(SERIALIZABLE));
+            newDatatype.setSerializable(getBool(node, SERIALIZABLE));
         }
         if (node.hasProperty(INSTANCE_TYPE_NAME)) {
-            newDatatype.setInstanceTypeName((String) node.getProperty(INSTANCE_TYPE_NAME));
+            newDatatype.setInstanceTypeName(getString(node, INSTANCE_TYPE_NAME));
         }
         // relationships
         for (final Node aNode : getOrderedNodes(node, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
@@ -422,14 +434,14 @@ public class NeoRestorer extends AbstractNeoPersistence {
         cache.put(node, anEnum);
 
         // properties
-        anEnum.setName((String) node.getProperty(NAME));
+        anEnum.setName(getString(node, NAME));
 
         if (node.hasProperty(SERIALIZABLE)) {
-            anEnum.setSerializable((Boolean) node.getProperty(SERIALIZABLE));
+            anEnum.setSerializable(getBool(node, SERIALIZABLE));
         }
 
         if (node.hasProperty(INSTANCE_TYPE_NAME)) {
-            anEnum.setInstanceTypeName((String) node.getProperty(INSTANCE_TYPE_NAME));
+            anEnum.setInstanceTypeName(getString(node, INSTANCE_TYPE_NAME));
         }
 
         // relationships
@@ -456,9 +468,9 @@ public class NeoRestorer extends AbstractNeoPersistence {
         cache.put(node, enumLiteral);
 
         // properties
-        enumLiteral.setName((String) node.getProperty(NAME));
-        enumLiteral.setLiteral((String) node.getProperty(LITERAL));
-        enumLiteral.setValue((Integer) node.getProperty(VALUE));
+        enumLiteral.setName(getString(node, NAME));
+        enumLiteral.setLiteral(getString(node, LITERAL));
+        enumLiteral.setValue(getInt(node, VALUE));
 
         // CONTAINS relationship
         for (final Node aNode : getOrderedNodes(node, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
@@ -502,7 +514,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
 
         // get the meta EClass node
         final Node classNode = objectNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
-        final String className = (String) classNode.getProperty(NAME);
+        final String className = getString(classNode, NAME);
 
         // get the meta (sub-)package node
         final Node packageNode = classNode.getSingleRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING).getStartNode();
@@ -514,40 +526,49 @@ public class NeoRestorer extends AbstractNeoPersistence {
         final EObject object = factory.create(eClass);
 
         cache.put(objectNode, object);
+        logger.finest("restoring object of type " + className);
 
-        // set structural features
-        for (final Node featureNode : getOrderedNodes(objectNode, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
-            // find out if the saved feature is a reference or a containment reference
-            // or an attribute
-            final boolean hasRef = featureNode.hasRelationship(EcoreRelationshipType.REFERENCES, Direction.OUTGOING);
-            final boolean hasRefCont = featureNode.hasRelationship(EcoreRelationshipType.REFERENCES_AS_CONTAINMENT, Direction.OUTGOING);
-            if (!hasRef && !hasRefCont) {
-                // set attribute and its values
-                final Node metaNode = featureNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
-                final EAttribute attribute = restoreEAttribute(metaNode);
-                if (attribute.isMany()) {
-                    @SuppressWarnings("unchecked")
-                    final List<Object> attributes = (List<Object>) object.eGet(attribute);
-                    attributes.add(featureNode.getProperty(VALUE));
+        if (objectNode.hasProperty("proxyUri")) {
+            final URI proxyUri = org.eclipse.emf.common.util.URI.createURI((String) objectNode.getProperty("proxyUri"));
+            ((InternalEObject) object).eSetProxyURI(proxyUri);
+            logger.finest("using proxy to " + proxyUri);
+        } else {
+            // set structural features
+            for (final Node featureNode : getOrderedNodes(objectNode, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
+                // find out if the saved feature is a reference or a containment reference
+                // or an attribute
+                final boolean hasRef = featureNode.hasRelationship(EcoreRelationshipType.REFERENCES, Direction.OUTGOING);
+                final boolean hasRefCont = featureNode.hasRelationship(EcoreRelationshipType.REFERENCES_AS_CONTAINMENT, Direction.OUTGOING);
+                if (!hasRef && !hasRefCont) {
+                    // set attribute and its values
+                    final Node metaNode = featureNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
+                    final EAttribute attribute = restoreEAttribute(metaNode);
+                    logger.finest(String.format("  attr '%s' of type '%s'", attribute.getName(), attribute.getEType().getName()));
+                    if (attribute.isMany()) {
+                        @SuppressWarnings("unchecked")
+                        final List<Object> attributes = (List<Object>) object.eGet(attribute);
+                        attributes.add(featureNode.getProperty(VALUE));
+                    } else {
+                        object.eSet(attribute, featureNode.getProperty(VALUE));
+                    }
                 } else {
-                    object.eSet(attribute, featureNode.getProperty(VALUE));
-                }
-            } else {
-                EcoreRelationshipType relType = null;
-                if (hasRef) {
-                    relType = EcoreRelationshipType.REFERENCES;
-                } else if (hasRefCont) {
-                    relType = EcoreRelationshipType.REFERENCES_AS_CONTAINMENT;
-                }
-                // set reference
-                final Node metaNode = featureNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
-                final EReference reference = restoreEReference(metaNode);
-                if (reference.isMany()) {
-                    @SuppressWarnings("unchecked")
-                    final List<Object> references = (List<Object>) object.eGet(reference);
-                    references.add(restoreEObject(featureNode.getSingleRelationship(relType, Direction.OUTGOING).getEndNode()));
-                } else {
-                    object.eSet(reference, restoreEObject(featureNode.getSingleRelationship(relType, Direction.OUTGOING).getEndNode()));
+                    EcoreRelationshipType relType = null;
+                    if (hasRef) {
+                        relType = EcoreRelationshipType.REFERENCES;
+                    } else if (hasRefCont) {
+                        relType = EcoreRelationshipType.REFERENCES_AS_CONTAINMENT;
+                    }
+                    // set reference
+                    final Node metaNode = featureNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
+                    final EReference reference = restoreEReference(metaNode);
+                    logger.finest(String.format("  ref '%s' to type '%s'", reference.getName(), reference.getEReferenceType().getName()));
+                    if (reference.isMany()) {
+                        @SuppressWarnings("unchecked")
+                        final List<Object> references = (List<Object>) object.eGet(reference);
+                        references.add(restoreEObject(featureNode.getSingleRelationship(relType, Direction.OUTGOING).getEndNode()));
+                    } else {
+                        object.eSet(reference, restoreEObject(featureNode.getSingleRelationship(relType, Direction.OUTGOING).getEndNode()));
+                    }
                 }
             }
         }
@@ -558,11 +579,11 @@ public class NeoRestorer extends AbstractNeoPersistence {
         final EOperation operation = EcoreFactory.eINSTANCE.createEOperation();
 
         // properties
-        operation.setName((String) node.getProperty(NAME));
-        operation.setOrdered((Boolean) node.getProperty(ORDERED));
-        operation.setUnique((Boolean) node.getProperty(UNIQUE));
-        operation.setLowerBound((Integer) node.getProperty(LOWER_BOUND));
-        operation.setUpperBound((Integer) node.getProperty(UPPER_BOUND));
+        operation.setName(getString(node, NAME));
+        operation.setOrdered(getBool(node, ORDERED));
+        operation.setUnique(getBool(node, UNIQUE));
+        operation.setLowerBound(getInt(node, LOWER_BOUND));
+        operation.setUpperBound(getInt(node, UPPER_BOUND));
 
         // relationships
 
@@ -605,9 +626,9 @@ public class NeoRestorer extends AbstractNeoPersistence {
         final EPackage aPackage = EcoreFactory.eINSTANCE.createEPackage();
         cache.put(node, aPackage);
 
-        aPackage.setName((String) node.getProperty(NAME));
-        aPackage.setNsURI((String) node.getProperty(NS_URI));
-        aPackage.setNsPrefix((String) node.getProperty(NS_PREFIX));
+        aPackage.setName(getString(node, NAME));
+        aPackage.setNsURI(getString(node, NS_URI));
+        aPackage.setNsPrefix(getString(node, NS_PREFIX));
 
         for (final Node aNode : getOrderedNodes(node, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
             // omit EClass
@@ -619,7 +640,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
 
             final Node metaNode = aNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
             final Object metaNodeName = metaNode.getProperty(NAME);
-//            System.out.println("restoring " + aPackage.getName() + ": " + metaNodeName);
+            //            System.out.println("restoring " + aPackage.getName() + ": " + metaNodeName);
             if (EAnnotation.class.getSimpleName().equals(metaNodeName)) {
                 aPackage.getEAnnotations().add(restoreEAnnotation(aNode));
             } else if (EClass.class.getSimpleName().equals(metaNodeName)) {
@@ -639,12 +660,12 @@ public class NeoRestorer extends AbstractNeoPersistence {
         final EParameter parameter = EcoreFactory.eINSTANCE.createEParameter();
 
         // properties
-        parameter.setName((String) node.getProperty(NAME));
-        parameter.setOrdered((Boolean) node.getProperty(ORDERED));
+        parameter.setName(getString(node, NAME));
+        parameter.setOrdered(getBool(node, ORDERED));
         // many and required can not be set
-        parameter.setUnique((Boolean) node.getProperty(UNIQUE));
-        parameter.setLowerBound((Integer) node.getProperty(LOWER_BOUND));
-        parameter.setUpperBound((Integer) node.getProperty(UPPER_BOUND));
+        parameter.setUnique(getBool(node, UNIQUE));
+        parameter.setLowerBound(getInt(node, LOWER_BOUND));
+        parameter.setUpperBound(getInt(node, UPPER_BOUND));
 
         // relationships
         // type
@@ -673,22 +694,22 @@ public class NeoRestorer extends AbstractNeoPersistence {
         cache.put(node, reference);
 
         // properties
-        reference.setChangeable((Boolean) node.getProperty(CHANGEABLE));
+        reference.setChangeable(getBool(node, CHANGEABLE));
         // container is set automatically
-        reference.setContainment((Boolean) node.getProperty(CONTAINMENT));
-        reference.setDerived((Boolean) node.getProperty(DERIVED));
-        reference.setLowerBound((Integer) node.getProperty(LOWER_BOUND));
-        reference.setName((String) node.getProperty(NAME));
-        reference.setOrdered((Boolean) node.getProperty(ORDERED));
-        reference.setResolveProxies((Boolean) node.getProperty(RESOLVE_PROXIES));
-        reference.setTransient((Boolean) node.getProperty(TRANSIENT));
-        reference.setUnique((Boolean) node.getProperty(UNIQUE));
-        reference.setUnsettable((Boolean) node.getProperty(UNSETTABLE));
-        reference.setUpperBound((Integer) node.getProperty(UPPER_BOUND));
-        reference.setVolatile((Boolean) node.getProperty(VOLATILE));
+        reference.setContainment(getBool(node, CONTAINMENT));
+        reference.setDerived(getBool(node, DERIVED));
+        reference.setLowerBound(getInt(node, LOWER_BOUND));
+        reference.setName(getString(node, NAME));
+        reference.setOrdered(getBool(node, ORDERED));
+        reference.setResolveProxies(getBool(node, RESOLVE_PROXIES));
+        reference.setTransient(getBool(node, TRANSIENT));
+        reference.setUnique(getBool(node, UNIQUE));
+        reference.setUnsettable(getBool(node, UNSETTABLE));
+        reference.setUpperBound(getInt(node, UPPER_BOUND));
+        reference.setVolatile(getBool(node, VOLATILE));
 
         if (node.hasProperty(DEFAULT_VALUE_LITERAL)) {
-            reference.setDefaultValueLiteral((String) node.getProperty(DEFAULT_VALUE_LITERAL));
+            reference.setDefaultValueLiteral(getString(node, DEFAULT_VALUE_LITERAL));
         }
         // relationships
         // type
@@ -727,7 +748,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
         cache.put(node, typeParameter);
 
         // properties
-        typeParameter.setName((String) node.getProperty(NAME));
+        typeParameter.setName(getString(node, NAME));
 
         // CONTAINS relationship
         for (final Node aNode : getOrderedNodes(node, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {

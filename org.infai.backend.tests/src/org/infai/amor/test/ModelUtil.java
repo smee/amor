@@ -12,8 +12,9 @@ package org.infai.amor.test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
+import java.nio.channels.FileChannel;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -77,6 +78,46 @@ public class ModelUtil {
             fail();
         }
 
+    }
+
+    public static void copyFile(final File in, final File out)
+    throws IOException
+    {
+        final FileChannel inChannel = new
+        FileInputStream(in).getChannel();
+        final FileChannel outChannel = new
+        FileOutputStream(out).getChannel();
+        try {
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+        }
+        catch (final IOException e) {
+            throw e;
+        }
+        finally {
+            if (inChannel != null) {
+                inChannel.close();
+            }
+            if (outChannel != null) {
+                outChannel.close();
+            }
+        }
+    }
+
+    /**
+     * @param file
+     * @return
+     */
+    private static String copyToTempDirectory(final String file) {
+        try {
+            final String ending = file.substring(file.lastIndexOf('.'));
+            final File tempfile = File.createTempFile("model", ending);
+            copyFile(new File(file), tempfile);
+            return tempfile.getAbsolutePath();
+        } catch (final IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -154,7 +195,6 @@ public class ModelUtil {
     public static EObject readInputModel(final String relativePath, final ResourceSet rs) throws IOException {
         return readInputModels(relativePath, rs).get(0);
     }
-
     /**
      * @param relativePath
      * @return
@@ -170,11 +210,19 @@ public class ModelUtil {
      * @throws IOException
      */
     public static List<EObject> readInputModels(final String relativePath, final ResourceSet rs) throws IOException {
+        return readInputModels(relativePath, rs,false);
+    }
+
+    public static List<EObject> readInputModels(final String relativePath, final ResourceSet rs, final boolean simulateRemote) throws IOException {
+
         String file = relativePath;
         final URL url = ModelUtil.class.getClassLoader().getResource(relativePath);
         if (url != null) {
             file = url.toExternalForm();
             file = file.substring("file:/".length());
+        }
+        if (simulateRemote && relativePath.endsWith(".xmi")) {
+            file = copyToTempDirectory(file);
         }
         final Resource resource = rs.getResource(URI.createFileURI(file), true);
         resource.load(null);
@@ -186,6 +234,7 @@ public class ModelUtil {
             }
         }
         return resource.getContents();
+
     }
 
     /**
@@ -225,6 +274,7 @@ public class ModelUtil {
             res.getContents().add(eo);
             res.save(options);
             logResourceErrors(eo.eResource());
+            // TODO throw some exception to fail tests
         }
         return result;
     }

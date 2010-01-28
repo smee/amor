@@ -9,21 +9,10 @@
  *******************************************************************************/
 package org.infai.amor.backend.neostorage;
 
+import java.util.logging.Logger;
+
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EAnnotation;
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EEnumLiteral;
-import org.eclipse.emf.ecore.EGenericType;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EOperation;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EParameter;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.ETypeParameter;
+import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.neo4j.api.core.Node;
@@ -32,7 +21,7 @@ import org.neo4j.api.core.Node;
  * Import all {@link EObject}s into neo.
  */
 public class NeoMappingDispatcher extends AbstractNeoDispatcher {
-
+    private static Logger logger = Logger.getLogger(NeoMappingDispatcher.class.getName());
     /**
      * @param neo
      */
@@ -60,7 +49,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
         set(node, SOURCE, element.getSource(), "");
         // TODO add contents
         addContains(element.getEModelElement(), node);
-        nodeCache.put(element, node);
+        cache(element, node);
     }
 
     /*
@@ -85,7 +74,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
         set(node, DEFAULT_VALUE_LITERAL, element.getDefaultValueLiteral());
 
         addContains(element.getEContainingClass(), node);
-        nodeCache.put(element, node);
+        cache(element, node);
     }
 
     /*
@@ -103,7 +92,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
         set(node, DEFAULT_VALUE, element.getDefaultValue());
 
         addContains(element.getEPackage(), node);
-        nodeCache.put(element, node);
+        cache(element, node);
     }
 
     /*
@@ -121,7 +110,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
         set(node, DEFAULT_VALUE, element.getDefaultValue());
 
         addContains(element.getEPackage(), node);
-        nodeCache.put(element, node);
+        cache(element, node);
     }
 
     /*
@@ -137,7 +126,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
         set(node, INSTANCE_TYPE_NAME, element.getInstanceTypeName());
 
         addContains(element.getEPackage(), node);
-        nodeCache.put(element, node);
+        cache(element, node);
     }
 
     /*
@@ -161,7 +150,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
             final Node containerNode = getNodeFor(container);
             node.createRelationshipTo(containerNode, EcoreRelationshipType.DEFAULT_VALUE);
         }
-        nodeCache.put(element, node);
+        cache(element, node);
     }
 
     /*
@@ -177,7 +166,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
         addContains(container, genericTypeNode);
         getNodeFor(container).createRelationshipTo(genericTypeNode, EcoreRelationshipType.GENERIC_TYPE);
 
-        nodeCache.put(element, genericTypeNode);
+        cache(element, genericTypeNode);
     }
 
     /*
@@ -188,16 +177,18 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
     @Override
     public void store(final EObject element) {
         final Node objectNode = createNode();
-
+        logger.finest("(1) storing object of type " + element.eClass().getName());
         // relationships
         final EObject container = element.eContainer();
         if (null == container) {
+            logger.finest("(1) creating modelnode");
             final Node modelNode = createNode();
 
             // bind dummy node to MODELS
             final String metaNsUri = element.eClass().getEPackage().getNsURI();
             set(modelNode, NS_URI, metaNsUri + " [" + element.eResource().getURI() + "]");
             set(modelNode, URI, String.valueOf(element.eResource().getURI()));
+            // TODO global references not needed
             getFactoryNode(EcoreRelationshipType.RESOURCES).createRelationshipTo(modelNode, EcoreRelationshipType.RESOURCE);
 
             // bind node to dummy container node
@@ -210,8 +201,8 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
             final Node metaPackageNode = getModelNode(topLevelPackage.getNsURI());
             metaPackageNode.createRelationshipTo(modelNode, EcoreRelationshipType.INSTANCE_MODEL);
         }
-        // TODO why not nodeCache.put(element, modelNode)?
-        nodeCache.put(element, objectNode);
+        // TODO why not cache(element, modelNode)?
+        cache(element, objectNode);
     }
 
     /*
@@ -235,7 +226,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
             node.createRelationshipTo(getNodeFor(exception), EcoreRelationshipType.EXCEPTION);
         }
 
-        nodeCache.put(element, node);
+        cache(element, node);
     }
 
     /*
@@ -261,7 +252,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
             addContains(container, node);
         }
 
-        nodeCache.put(element, node);
+        cache(element, node);
     }
 
     /*
@@ -281,7 +272,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
         set(node, MANY, element.isMany());
 
         addContains(element.getEOperation(), node);
-        nodeCache.put(element, node);
+        cache(element, node);
     }
 
     /*
@@ -323,7 +314,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
             node.createRelationshipTo(getNodeFor(opposite), EcoreRelationshipType.OPPOSITE);
         }
 
-        nodeCache.put(element, node);
+        cache(element, node);
     }
 
     /*
@@ -352,7 +343,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
         }
 
         addContains(element.eContainer(), node);
-        nodeCache.put(element, node);
+        cache(element, node);
     }
 
     /*
@@ -366,6 +357,6 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
         set(node, NAME, element.getName());
 
         addContains(element.eContainer(), node);
-        nodeCache.put(element, node);
+        cache(element, node);
     }
 }

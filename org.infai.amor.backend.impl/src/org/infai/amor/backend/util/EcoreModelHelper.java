@@ -17,7 +17,9 @@ import java.util.*;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -30,7 +32,7 @@ import com.google.common.collect.Sets;
  * 
  */
 public class EcoreModelHelper {
-    private static URI ecoreUri = URI.createURI(EcorePackage.eNS_URI);
+    private static String ecoreUri = URI.createURI(EcorePackage.eNS_URI).toString();
 
     /**
      * Return all externally referenced models, ignoring Ecore itself. Deresolves agains <code>resourceUri</code>.
@@ -54,13 +56,19 @@ public class EcoreModelHelper {
      * @return Set of relative paths that address the dependencies of model
      */
     public static Set<URI> findReferencedModels(final EObject model, final URI resourceUri, final URI baseUri) {
-        final Iterator<EObject> proxiedEobjects = getObjectsWithExternalReferences(model, resourceUri);
-        // find all uris!=oepc that each object references to
-        final Iterator<Set<URI>> extUriSets = transform(proxiedEobjects, getReferencesToExternalModels(resourceUri));
-
+        final Map<EObject, Collection<Setting>> map = EcoreUtil.ProxyCrossReferencer.find(model);
+        // final Iterator<EObject> proxiedEobjects = getObjectsWithExternalReferences(model, resourceUri);
+        // // find all uris!=oepc that each object references to
+        // final Iterator<Set<URI>> extUriSets = transform(proxiedEobjects, getReferencesToExternalModels(resourceUri));
+        //
         final Set<URI> uniqueRelativeUris = Sets.newHashSet();
-        addAll(uniqueRelativeUris, transform(flatten(extUriSets).iterator(), makeUriRelativeTo(baseUri)));
-
+        // addAll(uniqueRelativeUris, transform(flatten(extUriSets).iterator(), makeUriRelativeTo(baseUri)));
+        //
+        addAll(uniqueRelativeUris,
+                filter(transform(transform(map.keySet().iterator(),
+                        getProxyUri()),
+                        makeUriRelativeTo(baseUri)),
+                        and(not(startsWith(ecoreUri)), not(isFragmentOnly()))));
         return uniqueRelativeUris;
     }
 
@@ -92,13 +100,25 @@ public class EcoreModelHelper {
         return proxiedEobjects;
     }
 
+    /**
+     * @return
+     */
+    private static Function<EObject, URI> getProxyUri() {
+        return new Function<EObject, URI>() {
+            @Override
+            public URI apply(final EObject eo) {
+                return ((InternalEObject)eo).eProxyURI();
+            }
+        };
+    }
+
     public static Function<? super EObject, ? extends Set<URI>> getReferencesToExternalModels(final URI resourceUri) {
         return new Function<EObject, Set<URI>>() {
             @Override
             public Set<URI> apply(final EObject eo) {
                 final HashSet<URI> set = Sets.newHashSet();
                 final Iterator<URI> uris = transform(eo.eCrossReferences().iterator(), getResourceUri());
-                addAll(set, filter(uris, not(or(equalTo(ecoreUri), equalTo(resourceUri)))));
+                addAll(set, filter(uris, not(or(startsWith(ecoreUri), equalTo(resourceUri)))));
                 return set;
             }
         };
@@ -127,6 +147,18 @@ public class EcoreModelHelper {
         };
     }
 
+    /**
+     * @return
+     */
+    private static Predicate<URI> isFragmentOnly() {
+        return new Predicate<URI>() {
+            @Override
+            public boolean apply(final URI input) {
+                return input.hasFragment() && input.hasEmptyPath();
+            }
+        };
+    }
+
     public static Function<URI, URI> makeUriRelativeTo(final URI baseUri) {
         return new Function<URI, URI>() {
             @Override
@@ -144,6 +176,19 @@ public class EcoreModelHelper {
             public boolean apply(final EObject input) {
                 final Resource resource = input.eResource();
                 return resource != null && resource.getURI().equals(uri);
+            }
+        };
+    }
+
+    /**
+     * @param ecoreUri2
+     * @return
+     */
+    private static Predicate<URI> startsWith(final String uri) {
+        return new Predicate<URI>() {
+            @Override
+            public boolean apply(final URI input) {
+                return input.toString().startsWith(uri);
             }
         };
     }

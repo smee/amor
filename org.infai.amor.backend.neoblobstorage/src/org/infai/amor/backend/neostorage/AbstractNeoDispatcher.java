@@ -10,22 +10,13 @@
 package org.infai.amor.backend.neostorage;
 
 import org.eclipse.emf.common.util.TreeIterator;
-import org.eclipse.emf.ecore.EAnnotation;
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EEnumLiteral;
-import org.eclipse.emf.ecore.EGenericType;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EOperation;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EParameter;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.ETypeParameter;
+import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.infai.amor.backend.Model;
 import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.internal.impl.NeoModelLocation;
+import org.neo4j.api.core.*;
 
 /**
  * Abstract implementation that iterates a model and calls the relevant {@link EMFDispatcher} methods for every type.
@@ -34,7 +25,7 @@ import org.infai.amor.backend.internal.NeoProvider;
  * 
  */
 public abstract class AbstractNeoDispatcher extends AbstractNeoPersistence implements EMFDispatcher {
-
+    // TODO use org.eclipse.emf.ecore.util.EcoreSwitch
     /**
      * @param neo
      */
@@ -84,9 +75,55 @@ public abstract class AbstractNeoDispatcher extends AbstractNeoPersistence imple
         } else if (element instanceof EStringToStringMapEntryImpl) {
             store((EStringToStringMapEntryImpl) element);
         } else {
-            // fallback, will this ever be reached?
             store(element);
         }
+    }
+
+    /**
+     * Find the root node, that points to all contents of a {@link Model}.
+     * 
+     * @param model
+     * @return
+     */
+    private Node findModelLocationNode(final Model model) {
+        // TODO meh, might have several items in its econtents
+        final Node node = getNodeFor(model.getContent().get(0));
+        if (node != null) {
+            final Relationship relationship = node.getSingleRelationship(EcoreRelationshipType.MODEL_CONTENT, Direction.INCOMING);
+            if (relationship != null) {
+                return relationship.getStartNode();
+            }
+        } else {
+            return createNode();
+        }
+        return node;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.infai.amor.backend.neostorage.EMFDispatcher#store(org.infai.amor.backend.Model)
+     */
+    @Override
+    public NeoModelLocation store(final Model model) {
+        final Node rootNode = findModelLocationNode(model);
+        // System.out.println("using rootnode " + rootNode);
+        for (final EObject eo : model.getContent()) {
+            // XXX ugly hack to provide the current resource uri for deresolving absolute proxy uris later on
+            currentResourceUri.set(eo.eResource().getURI());
+            dispatch(eo);
+            // link from modellocation root node to this content
+            if (!rootNode.hasRelationship(EcoreRelationshipType.MODEL_CONTENT, Direction.OUTGOING)) {
+                rootNode.createRelationshipTo(getNodeFor(eo), EcoreRelationshipType.MODEL_CONTENT);
+            }
+
+            for (final TreeIterator<EObject> it = eo.eAllContents(); it.hasNext();) {
+                final EObject eoSub = it.next();
+                // System.out.println("storing " + eoSub);
+                dispatch(eoSub);
+            }
+        }
+        return new NeoModelLocation(getNeoProvider(), rootNode);
     }
 
     /*

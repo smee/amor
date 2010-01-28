@@ -63,5 +63,10 @@ public enum EcoreRelationshipType implements RelationshipType {
     REFERENCES_AS_CONTAINMENT,
 
     /** Relationship from a model to another model it depends on. */
-    DEPENDS
+    DEPENDS,
+
+    /**
+     * References from neomodellocation to its contents
+     */
+    MODEL_CONTENT
 }

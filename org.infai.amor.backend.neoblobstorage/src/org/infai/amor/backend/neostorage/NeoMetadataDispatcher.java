@@ -9,36 +9,20 @@
  *******************************************************************************/
 package org.infai.amor.backend.neostorage;
 
+import java.util.logging.Logger;
+
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EAnnotation;
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EEnumLiteral;
-import org.eclipse.emf.ecore.EGenericType;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EOperation;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EParameter;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.ETypeParameter;
-import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.neo4j.api.core.Direction;
-import org.neo4j.api.core.Node;
-import org.neo4j.api.core.Relationship;
-import org.neo4j.api.core.ReturnableEvaluator;
-import org.neo4j.api.core.StopEvaluator;
+import org.neo4j.api.core.*;
 import org.neo4j.api.core.Traverser.Order;
 
 /**
  * Import references to other models, meta classes etc.
  */
 public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
+    private static Logger logger = Logger.getLogger(NeoMetadataDispatcher.class.getName());
     /**
      * @param neo
      */
@@ -47,46 +31,28 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
     }
 
     /**
-     * Finds the neo4j node for the given {@link EClassifier}.
-     * 
      * @param element
-     *            the {@link EClassifier}
-     * @return the classifier node
+     * @param anotherElement
      */
-    private Node findClassifierNode(final EClassifier element) {
-        final Node node = getNodeFor(element);
-        if (node != null) {
-            return node;
-        }
+    private void addDependency(final Node element, final Node anotherElement) {
+        // find toplevel container
+        final Node container = findToplevelContainer(element);
 
-        final Node packageNode = findPackageNode(element.getEPackage());
-        if (null == packageNode) {
-            throw new IllegalStateException("The package with namespace uri [" + element.getEPackage().getNsURI() + "] could not be found!");
-        }
-        // traverse contents of this package
-        for (final Node aNode : packageNode.traverse(Order.BREADTH_FIRST, StopEvaluator.DEPTH_ONE, ReturnableEvaluator.ALL_BUT_START_NODE, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
-            if (aNode.hasProperty(NAME)) {
-                final String classifierName = (String) aNode.getProperty(NAME);
-                if (classifierName.equals(element.getName())) {
-                    // // meta relationship?
-                    final Relationship metaRel = aNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING);
-                    if (metaRel == null) {
-                        // only in ecore there are, sometimes, no meta relationships
-                        nodeCache.put(element, aNode);
-                        return aNode;
-                    }
-                    final Node metaNode = metaRel.getStartNode();
-                    final Object metaNodeName = metaNode.getProperty(NAME);
-                    if (EcorePackage.Literals.ECLASS.getName().equals(metaNodeName) || EcorePackage.Literals.EDATA_TYPE.getName().equals(metaNodeName) || EcorePackage.Literals.EENUM.getName().equals(metaNodeName)) {
-                        // cache the element node
-                        nodeCache.put(element, aNode);
-                        return aNode;
-                    }
+        // find toplevel typecontainer
+        final Node typeContainer = findToplevelContainer(anotherElement);
+
+        if (!container.equals(typeContainer)) {
+            boolean foundDependency = false;
+            for (final Relationship rel : container.getRelationships(Direction.OUTGOING)) {
+                if (rel.getEndNode() == typeContainer) {
+                    foundDependency = true;
+                    break;
                 }
             }
+            if (!foundDependency) {
+                container.createRelationshipTo(typeContainer, EcoreRelationshipType.DEPENDS);
+            }
         }
-
-        return null;
     }
 
     /**
@@ -113,7 +79,7 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
                     final Node metaNode = aNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
                     if (!EcorePackage.Literals.EOPERATION.getName().equals(metaNode.getProperty(NAME))) {
                         // cache the element node
-                        nodeCache.put(feature, aNode);
+                        cache(feature, aNode);
                         return aNode;
                     }
                 }
@@ -123,22 +89,18 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
     }
 
     /**
-     * Searches the neo4j node corresponding to the given {@link EPackage}.
-     * <p>
+     * Create the transitive enclosure via traversing incoming relationships of type {@link EcoreRelationshipType#CONTAINS} to
+     * find the topmost container of the given node.
      * 
-     * @param aPackage
-     *            {@link EPackage} to search
-     * @return the package node
+     * @param node
+     * @return
      */
-    private Node findPackageNode(final EPackage aPackage) {
-        final Node ePackageNode = determineEcoreClassifierNode(EcorePackage.Literals.EPACKAGE.getName());
-
-        for (final Node pkgNode : ePackageNode.traverse(Order.BREADTH_FIRST, StopEvaluator.DEPTH_ONE, ReturnableEvaluator.ALL_BUT_START_NODE, EcoreRelationshipType.INSTANCE, Direction.OUTGOING)) {
-            if (aPackage.getNsURI().equals(pkgNode.getProperty(NS_URI))) {
-                return pkgNode;
-            }
+    private Node findToplevelContainer(final Node node) {
+        Node container = node;
+        while (container.hasRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING)) {
+            container = container.getSingleRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING).getStartNode();
         }
-        return null;
+        return container;
     }
 
     /**
@@ -202,23 +164,7 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
             if (null == eTypeNode) {
                 throw new IllegalStateException("The type element " + eType + " could not be found!");
             }
-            // find toplevel container
-            Node container = getNodeFor(element);
-            while (container.hasRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING)) {
-                container = container.getSingleRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING).getStartNode();
-            }
-
-            // find toplevel typecontainer
-            Node typeContainer = eTypeNode;
-            while (typeContainer.hasRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING)) {
-                typeContainer = typeContainer.getSingleRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING).getStartNode();
-            }
-
-            if (!container.equals(typeContainer)) {
-                if (!container.hasRelationship(EcoreRelationshipType.DEPENDS, Direction.OUTGOING)) {
-                    container.createRelationshipTo(typeContainer, EcoreRelationshipType.DEPENDS);
-                }
-            }
+            addDependency(getNodeFor(element), eTypeNode);
 
             getNodeFor(element).createRelationshipTo(eTypeNode, EcoreRelationshipType.TYPE);
         }
@@ -253,6 +199,7 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
      */
     @Override
     public void store(final EClass element) {
+        logger.finest("storing eclass " + element.getName());
         // set inheritance relationship.
         setSuperElements(element);
 
@@ -316,6 +263,7 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
     @Override
     public void store(final EObject element) {
         final Node eObjectNode = getNodeFor(element);
+        logger.finest("(2)storing object of type " + element.eClass().getName());
 
         // link to class
         final Node classNode = findClassifierNode(element.eClass());
@@ -329,6 +277,7 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
             }
             final Object attributeValue = element.eGet(attribute);
             if (attributeValue != null) {
+                logger.finest(String.format("      storing attr '%s'='%s'", attribute.getName(), attributeValue));
                 final Node attributeMetaNode = findFeatureNode(attribute);
                 if (attribute.isMany()) {
                     for (final Object singleValue : (EList<?>) attributeValue) {
@@ -352,20 +301,24 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
             if (eReference.isTransient() || eReference.isDerived()) {
                 continue;
             }
+            final boolean isContainment = eReference.isContainment();
+            final RelationshipType relType = isContainment ? EcoreRelationshipType.REFERENCES_AS_CONTAINMENT : EcoreRelationshipType.REFERENCES;
+            // TODO find the package the referenced class is contained in to add a dependency to this package
             final Object referenceValue = element.eGet(eReference);
             if (referenceValue != null) {
+                logger.finest(String.format("      storing ref '%s'='%s'", eReference.getName(), referenceValue));
                 final Node eReferenceMetaNode = findFeatureNode(eReference);
                 if (eReference.isMany()) {
                     for (final Object singleReference : (EList<?>) referenceValue) {
                         final Node referenceNode = createNodeWithRelationship(eObjectNode, EcoreRelationshipType.CONTAINS, true);
-                        referenceNode.createRelationshipTo(getNodeFor((EObject) singleReference), eReference.isContainment() ? EcoreRelationshipType.REFERENCES_AS_CONTAINMENT : EcoreRelationshipType.REFERENCES);
+                        referenceNode.createRelationshipTo(getNodeFor((EObject) singleReference), relType);
 
                         // set meta relationship
                         eReferenceMetaNode.createRelationshipTo(referenceNode, EcoreRelationshipType.INSTANCE);
                     }
                 } else {
                     final Node referenceNode = createNodeWithRelationship(eObjectNode, EcoreRelationshipType.CONTAINS, true);
-                    referenceNode.createRelationshipTo(getNodeFor((EObject) referenceValue), eReference.isContainment() ? EcoreRelationshipType.REFERENCES_AS_CONTAINMENT : EcoreRelationshipType.REFERENCES);
+                    referenceNode.createRelationshipTo(getNodeFor((EObject) referenceValue), relType);
 
                     // set meta relationship
                     eReferenceMetaNode.createRelationshipTo(referenceNode, EcoreRelationshipType.INSTANCE);
@@ -392,6 +345,7 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
      */
     @Override
     public void store(final EPackage element) {
+        logger.finest("storing epackage " + element.getName());
         // relationships
         final EPackage container = element.getESuperPackage();
         if (null == container && !element.getNsURI().equals(EcorePackage.eNS_URI)) {
@@ -427,6 +381,10 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
     public void store(final EReference element) {
         // eReference -> EReference
         setMetaElement(element, EReference.class);
+
+        if (!element.isContainment()) {
+            addDependency(getNodeFor(element), getNodeFor(element.getEReferenceType()));
+        }
     }
 
     /*

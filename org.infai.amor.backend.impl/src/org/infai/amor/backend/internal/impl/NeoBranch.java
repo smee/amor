@@ -57,7 +57,13 @@ public class NeoBranch extends NeoObject implements Branch {
         while(rev!=null){
             final ModelLocation loc = rev.getModelLocation(relativePath);
             if(loc !=null) {
-                return rev;
+                if (loc.getChangeType().equals(Revision.ChangeType.DELETED)) {
+                    // if the newest change to this relative path was a deletion,
+                    // we do not have this model stored
+                    return null;
+                } else {
+                    return rev;
+                }
             }
         }
         return null;

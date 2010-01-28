@@ -12,9 +12,7 @@ package org.infai.amor.backend.log;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Formatter;
-import java.util.logging.LogRecord;
-import java.util.logging.SimpleFormatter;
+import java.util.logging.*;
 
 /**
  * Print log message as one line instead of two like {@link SimpleFormatter}...
@@ -25,7 +23,7 @@ import java.util.logging.SimpleFormatter;
 public class CompactFormatter extends Formatter {
 
     private static final DateFormat format = new SimpleDateFormat("h:mm:ss");
-    private static final String lineSeperator = System.getProperty("line.separator");
+    private static final String lineSeparator = System.getProperty("line.separator");
 
     /*
      * (non-Javadoc)
@@ -38,11 +36,16 @@ public class CompactFormatter extends Formatter {
         if (loggerName == null) {
             loggerName = "root";
         }
+        // use classname only
+        final int idx = loggerName.lastIndexOf('.');
+        if (idx != -1) {
+            loggerName=loggerName.substring(idx+1);
+        }
         final StringBuilder sb = new StringBuilder(loggerName);
         sb.append("[").append(record.getLevel()).append('|');
         sb.append(Thread.currentThread().getName()).append('|');
         sb.append(format.format(new Date(record.getMillis()))).append("]:\t");
-        sb.append(record.getMessage()).append(lineSeperator);
+        sb.append(record.getMessage()).append(lineSeparator);
         return sb.toString();
     }
 

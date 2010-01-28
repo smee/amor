@@ -20,7 +20,7 @@ import org.junit.Before;
  * 
  */
 public class AbstractNeo4JPerformanceTest extends AbstractNeo4JTest {
-    private static final Logger logger = Logger.getLogger(AbstractNeo4JPerformanceTest.class.getName());
+    protected static final Logger logger = Logger.getLogger(AbstractNeo4JPerformanceTest.class.getName());
 
     private StopWatch stopwatch;
     private long lastSplit = 0;

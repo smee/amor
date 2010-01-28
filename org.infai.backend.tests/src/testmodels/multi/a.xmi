@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pa:classA xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:pa="http://mymodels.org/packageA" attrA="ein Wert">
+  <refB href="My.packageb#/"/>
+</pa:classA>

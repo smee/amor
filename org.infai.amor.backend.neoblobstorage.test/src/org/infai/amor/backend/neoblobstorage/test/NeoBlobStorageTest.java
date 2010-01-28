@@ -28,6 +28,7 @@ import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.internal.impl.*;
 import org.infai.amor.backend.neostorage.NeoBlobStorageFactory;
 import org.infai.amor.backend.responses.CheckinResponse;
+import org.infai.amor.backend.util.EcoreModelHelper;
 import org.infai.amor.test.AbstractNeo4JPerformanceTest;
 import org.infai.amor.test.ModelUtil;
 import org.junit.*;
@@ -59,11 +60,12 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
     @Parameters
     public static Collection<Object[]> getTestParameters() {
         final List<String[]> testdata = Lists.newArrayList();
-        testdata.add(new String[] { "testmodels/filesystem.ecore", "testmodels/simplefilesystem.xmi" });
-        testdata.add(new String[] { "testmodels/filesystem.ecore", "testmodels/fs/simplefilesystem_v1.filesystem" });
+        // testdata.add(new String[] { "testmodels/filesystem.ecore", "testmodels/simplefilesystem.xmi" });
+        // testdata.add(new String[] { "testmodels/filesystem.ecore", "testmodels/fs/simplefilesystem_v1.filesystem" });
         // CAUTION: takes some time, huge model!
         // testdata.add(new String[] { "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
-        testdata.add(new String[] { "testmodels/02/primitive_types.ecore", "testmodels/02/java.ecore" });// ,"testmodels/02/Hello.java.xmi"});
+        testdata.add(new String[] { "testmodels/02/primitive_types.ecore", "testmodels/02/java.ecore", "testmodels/02/Hello.java.xmi" });
+        // testdata.add(new String[] { "testmodels/multi/B.ecore", "testmodels/multi/A.ecore", "testmodels/multi/a.xmi" });
 
         final Collection<Object[]> params = Lists.newArrayList();
         for(final String[] data: testdata) {
@@ -114,9 +116,17 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         // given
         final ResourceSet rs = new ResourceSetImpl();
         final Map<String, List<EObject>> models = Maps.newLinkedHashMap();
-        models.put("testmodels/Ecore.ecore", readInputModels("testmodels/Ecore.ecore", rs));
-        for(final String location: modelLocations) {
-            models.put(location, readInputModels(location, rs));
+        models.put("testmodels/Ecore.ecore", readInputModels("testmodels/Ecore.ecore", rs, true));
+        for (final String location : modelLocations) {
+            final List<EObject> currentModelContents = readInputModels(location, rs, true);
+            for (final EObject eo : currentModelContents) {
+                final Set<URI> proxyUrls = EcoreModelHelper.findReferencedModels(eo, eo.eResource().getURI());
+                if (!proxyUrls.isEmpty()) {
+                    System.out.println("Unresolved proxies: " + proxyUrls);
+                    // TODO restore from repo or ask for these dependencies
+                }
+            }
+            models.put(location, currentModelContents);
         }
         split("After loading models");
 
@@ -129,7 +139,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         final List<URI> repoUris = Lists.newArrayList();
         for (final String loc : models.keySet()) {
             final Response response = repository.checkin(new ModelImpl(models.get(loc), loc), ct);
-            assertTrue(response instanceof CheckinResponse);
+            assertTrue("Class is " + response.getClass(), response instanceof CheckinResponse);
 
             repoUris.add(response.getURI());
             split("Neo4j - Added "+loc);
@@ -155,6 +165,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         split("Restoring last checked in model");
         assertNotNull(checkedoutmodel.getContent());
         ModelUtil.storeViaXml(checkedoutmodel.getContent(), checkedoutmodel.getPersistencePath().toString());
+
         split("Writing XML");
 
         // ModelUtil.assertModelEqual(models.get(this.modelLocations[modelLocations.length - 1]).get(0),

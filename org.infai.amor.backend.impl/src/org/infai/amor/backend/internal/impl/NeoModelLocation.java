@@ -16,10 +16,7 @@ import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.internal.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.neo4j.api.core.Direction;
-import org.neo4j.api.core.DynamicRelationshipType;
-import org.neo4j.api.core.Node;
-import org.neo4j.api.core.Relationship;
+import org.neo4j.api.core.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -44,7 +41,6 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      */
     public NeoModelLocation(final NeoProvider np,final Node contentNode) {
         super(np, contentNode);
-
     }
 
     /**
@@ -66,14 +62,13 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      * @param node
      */
     public NeoModelLocation(final NeoProvider np, final Node contentNode, final String relativePath, final URI externalUri, final ChangeType changeType) {
-        super(np);
+        this(np, contentNode);
 
-        getNode().createRelationshipTo(contentNode, DynamicRelationshipType.withName(MODEL_HEAD));
-        set(RELATIVE_PATH, relativePath);
+        setRelativePath(relativePath);
         if (externalUri != null) {
-            set(EXTERNAL_URI, externalUri.toString());
+            setExternalUri(externalUri);
         }
-        set(CHANGETYPE, changeType.name());
+        setChangetype(changeType);
     }
 
     /* (non-Javadoc)
@@ -114,13 +109,7 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      * @return
      */
     public Node getModelHead() {
-        final Node modelHeadNode = getNode().getSingleRelationship(DynamicRelationshipType.withName(MODEL_HEAD), Direction.OUTGOING).getEndNode();
-        final Relationship isInstanceModelRel = modelHeadNode.getSingleRelationship(DynamicRelationshipType.withName("CONTAINS"), Direction.INCOMING);
-        if (isInstanceModelRel != null) {
-            return isInstanceModelRel.getOtherNode(modelHeadNode);
-        } else {
-            return modelHeadNode;
-        }
+        return getNode();
     }
 
     /* (non-Javadoc)
@@ -128,6 +117,27 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      */
     public String getRelativePath() {
         return (String) get(RELATIVE_PATH);
+    }
+
+    /**
+     * @param added
+     */
+    public void setChangetype(final ChangeType changeType) {
+        set(CHANGETYPE, changeType.name());
+    }
+
+    /**
+     * 
+     */
+    public void setExternalUri(final URI uri){
+        set(EXTERNAL_URI, uri.toString());
+    }
+
+    /**
+     * @param relPath
+     */
+    public void setRelativePath(final String relPath){
+        set(RELATIVE_PATH,relPath);
     }
 
     /**

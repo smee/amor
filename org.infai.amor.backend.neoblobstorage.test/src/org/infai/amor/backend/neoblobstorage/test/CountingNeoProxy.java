@@ -22,7 +22,7 @@ import org.neo4j.api.core.Traverser.Order;
 public class CountingNeoProxy implements NeoService {
 
     private class CountingNode implements Node {
-        private final Node node;
+        public final Node node;
 
         CountingNode(final Node node) {
             this.node = node;
@@ -203,7 +203,17 @@ public class CountingNeoProxy implements NeoService {
 
         @Override
         public String toString() {
-            return this.getClass().getSimpleName() + ":" + node.toString();
+            final StringBuilder sb = new StringBuilder();
+            for (final String key : getPropertyKeys()) {
+                sb.append(key).append(": ").append(getProperty(key)).append("\n");
+            }
+            for (final Relationship rel : getRelationships(Direction.INCOMING)) {
+                sb.append("IN: " + rel.getType()).append("\n");
+            }
+            for (final Relationship rel : getRelationships(Direction.OUTGOING)) {
+                sb.append("OUT: " + rel.getType()).append("\n");
+            }
+            return sb.toString();
         }
 
         /**

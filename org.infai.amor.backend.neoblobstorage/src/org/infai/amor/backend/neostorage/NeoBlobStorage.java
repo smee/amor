@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.infai.amor.backend.*;
@@ -81,32 +80,20 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         logger.finer("----------1-Storing contents----------");
         final NeoMappingDispatcher disp1 = new NeoMappingDispatcher(getNeoProvider());
         disp1.setRegistry(cache);
-
-        for (final EObject eo : model.getContent()) {
-            disp1.dispatch(eo);
-            for (final TreeIterator<EObject> it = eo.eAllContents(); it.hasNext();) {
-                final EObject eoSub = it.next();
-                // System.out.println("storing " + eoSub);
-                disp1.dispatch(eoSub);
-            }
-        }
+        final NeoModelLocation modelLocation = disp1.store(model);
         logger.finer("----------2-Storing metadata----------");
-        final NeoMetadataDispatcher disp2 = new NeoMetadataDispatcher(getNeoProvider());
+        final AbstractNeoDispatcher disp2 = new NeoMetadataDispatcher(getNeoProvider());
         // reuse the eobject->neo4j node map
         disp2.setRegistry(disp1.getRegistry());
-
         // store all additional references and meta relationships
-        for (final EObject eo : model.getContent()) {
-            disp2.dispatch(eo);
-            for (final TreeIterator<EObject> it = eo.eAllContents(); it.hasNext();) {
-                final EObject eoSub = it.next();
-                disp2.dispatch(eoSub);
-            }
-        }
+        disp2.store(model);
         this.cache = disp2.getRegistry();
+
+        modelLocation.setExternalUri(externalUri);
+        modelLocation.setRelativePath(createModelSpecificPath(model.getPersistencePath()));
+        modelLocation.setChangetype(ChangeType.ADDED);
+        this.addedModelNodes.put(externalUri, modelLocation);
         // remember new model node
-        // FIXME we wrote several model elements, need to link to all of them, not just to the first
-        this.addedModelNodes.put(externalUri, new NeoModelLocation(getNeoProvider(), disp2.getRegistry().get(model.getContent().get(0)), createModelSpecificPath(model.getPersistencePath()), externalUri, ChangeType.ADDED));
     }
 
     /*
@@ -122,7 +109,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         final NeoModelLocation modelLocation = (NeoModelLocation) revision.getModelLocation(createModelSpecificPath(path));
 
         final NeoRestorer restorer = new NeoRestorer(getNeoProvider());
-        return new ModelImpl(restorer.load(modelLocation.getModelHead()), path);
+        return new ModelImpl(restorer.load(modelLocation), path);
     }
 
     /*
@@ -152,7 +139,8 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      */
     @Override
     public void delete(final IPath modelPath, final URI externalUri,final long revisionId) throws IOException {
-        throw new UnsupportedOperationException("not implemented");
+        // TODO test!
+        addedModelNodes.put(externalUri, new NeoModelLocation(getNeoProvider(), getNeo().createNode(), modelPath.toString(), externalUri, ChangeType.DELETED));
     }
 
 
