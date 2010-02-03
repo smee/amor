@@ -165,6 +165,21 @@ public class ModelUtil {
     }
 
     /**
+     * @param relativePath
+     * @param file
+     * @return
+     */
+    private static String getAbsolutePathToTestModel(final String relativePath) {
+        String file = relativePath;
+        final URL url = ModelUtil.class.getClassLoader().getResource(relativePath);
+        if (url != null) {
+            file = url.toExternalForm();
+            file = file.substring("file:/".length());
+        }
+        return file;
+    }
+
+    /**
      * @param eResource
      */
     private static void logResourceErrors(final Resource res) {
@@ -186,7 +201,6 @@ public class ModelUtil {
     public static EObject readInputModel(final String relativePath) throws IOException {
         return readInputModel(relativePath, new ResourceSetImpl());
     }
-
     /**
      * @param string
      * @return
@@ -195,6 +209,7 @@ public class ModelUtil {
     public static EObject readInputModel(final String relativePath, final ResourceSet rs) throws IOException {
         return readInputModels(relativePath, rs).get(0);
     }
+
     /**
      * @param relativePath
      * @return
@@ -215,12 +230,7 @@ public class ModelUtil {
 
     public static List<EObject> readInputModels(final String relativePath, final ResourceSet rs, final boolean simulateRemote) throws IOException {
 
-        String file = relativePath;
-        final URL url = ModelUtil.class.getClassLoader().getResource(relativePath);
-        if (url != null) {
-            file = url.toExternalForm();
-            file = file.substring("file:/".length());
-        }
+        String file = getAbsolutePathToTestModel(relativePath);
         if (simulateRemote && relativePath.endsWith(".xmi")) {
             file = copyToTempDirectory(file);
         }
@@ -235,6 +245,37 @@ public class ModelUtil {
         }
         return resource.getContents();
 
+    }
+
+    /**
+     * Load test model into string.
+     * 
+     * @param relativePath
+     *            to test model
+     * @return
+     */
+    public static String readModel(final String relativePath){
+        final String absPath = getAbsolutePathToTestModel(relativePath);
+        final StringBuilder sb =new StringBuilder();
+        BufferedReader br=null;
+        try {
+            br = new BufferedReader(new FileReader(absPath));
+            String line = null;
+            while((line = br.readLine())!=null){
+                sb.append(line).append("\n");
+            }
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }finally{
+            if(br!=null) {
+                try {
+                    br.close();
+                } catch (final IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return sb.toString();
     }
 
     /**

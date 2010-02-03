@@ -158,8 +158,7 @@ public class ProxyTests {
 
         final Set<URI> uniqueUris = flatten(extUriSets);
 
-        assertEquals(2, uniqueUris.size());
-        assertTrue(any(uniqueUris, uriEndsWith("http://www.eclipse.org/emf/2002/Ecore")));
+        assertEquals(1, uniqueUris.size());
         assertTrue(any(uniqueUris, uriEndsWith("testmodels/bflow/bflow.ecore")));
     }
 

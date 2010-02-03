@@ -159,12 +159,18 @@ public class EcoreModelHelper {
         };
     }
 
+    /**
+     * Make uri relative to another common base uri, strip any fragments.
+     * 
+     * @param baseUri
+     * @return
+     */
     public static Function<URI, URI> makeUriRelativeTo(final URI baseUri) {
         return new Function<URI, URI>() {
             @Override
             public URI apply(final URI absUri) {
-                assert !absUri.isRelative();
-                return absUri.deresolve(baseUri);
+                // assert !absUri.isRelative();
+                return absUri.deresolve(baseUri).trimFragment();
             }
 
         };

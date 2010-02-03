@@ -81,7 +81,6 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Response checkin(final Model model, final CommitTransaction tr) {
-        // FIXME how to assure that multiple invocations of this method will happen on the same thread?
         // FIXME needs to be to make sure, else we are not within the same neo4j transaction... see
         // http://www.mail-archive.com/user@lists.neo4j.org/msg01381.html
         try {
@@ -221,13 +220,17 @@ public class RepositoryImpl implements Repository {
             // find relative uris to referenced models
             // see rfc2396 5.2.6.b: everything past the last / will get excluded from the resolution process
             // strip down uri to make it point to the first common segment
-            final URI baseUri = root.eResource().getURI().trimSegments(model.getPersistencePath().segmentCount() - 1);
+            URI baseUri = root.eResource().getURI();
+            if (!baseUri.isRelative()) {
+                baseUri = baseUri.trimSegments(model.getPersistencePath().segmentCount() - 1);
+            }
 
             final Set<URI> referencedModels = EcoreModelHelper.findReferencedModels(root, root.eResource().getURI(), baseUri);
             for (final URI refuri : referencedModels) {
                 assert refuri.isRelative();
                 // if we don't have a copy of this model yet
-                if (!isKnownModel(refuri, transaction)) {
+                final URI modelUri = URI.createURI(model.getPersistencePath().toString());
+                if (!isKnownModel(modelUri.trimSegments(1).appendSegments(refuri.segments()), transaction)) {
                     // remember it
                     refs.add(refuri);
                 }

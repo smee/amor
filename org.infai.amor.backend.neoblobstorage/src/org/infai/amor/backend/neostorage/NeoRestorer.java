@@ -187,9 +187,9 @@ public class NeoRestorer extends AbstractNeoPersistence {
         // this fills our cache of eobjects
         for (final Node referenced : getOrderedNodes(modelNode, EcoreRelationshipType.DEPENDS, Direction.OUTGOING, EcoreRelationshipType.INSTANCE_MODEL, Direction.INCOMING)) {
             final String uri = getString(referenced, NS_URI);
-            // if (uri.toString().equals("http://www.eclipse.org/emf/2002/Ecore")) {
-            // continue;
-            // }
+            if (uri == null) {
+                continue;
+            }
             XMIResource resource = (XMIResource) resourceSet.getResource(org.eclipse.emf.common.util.URI.createURI(uri), false);
             if (resource == null) {
                 resource = (XMIResource) resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI(uri));
@@ -311,50 +311,54 @@ public class NeoRestorer extends AbstractNeoPersistence {
 
         cache.put(node, aClass);
 
-        // properties
-        aClass.setName(getString(node, NAME));
+        if (node.hasProperty("proxyUri")) {
+            ((InternalEObject) aClass).eSetProxyURI(org.eclipse.emf.common.util.URI.createURI(getString(node, "proxyUri")));
+        } else {
 
-        logger.finest("restoring eclass " + aClass.getName());
+            // properties
+            aClass.setName(getString(node, NAME));
 
-        if (node.hasProperty(INSTANCE_TYPE_NAME)) {
-            aClass.setInstanceTypeName(getString(node, INSTANCE_TYPE_NAME));
-        }
+            logger.finest("restoring eclass " + aClass.getName());
 
-        aClass.setAbstract(getBool(node, INTERFACE));
-        aClass.setAbstract(getBool(node, ABSTRACT));
+            if (node.hasProperty(INSTANCE_TYPE_NAME)) {
+                aClass.setInstanceTypeName(getString(node, INSTANCE_TYPE_NAME));
+            }
 
-        // relationships
-        // supertypes
-        if (node.hasRelationship(EcoreRelationshipType.SUPER, Direction.OUTGOING)) {
-            for (final Node superNode : getOrderedNodes(node, EcoreRelationshipType.SUPER, Direction.OUTGOING)) {
-                final EClass superType = (EClass) restoreEClassifier(superNode);
-                if (superType != null) {
-                    aClass.getESuperTypes().add(superType);
+            aClass.setAbstract(getBool(node, INTERFACE));
+            aClass.setAbstract(getBool(node, ABSTRACT));
+
+            // relationships
+            // supertypes
+            if (node.hasRelationship(EcoreRelationshipType.SUPER, Direction.OUTGOING)) {
+                for (final Node superNode : getOrderedNodes(node, EcoreRelationshipType.SUPER, Direction.OUTGOING)) {
+                    final EClass superType = (EClass) restoreEClassifier(superNode);
+                    if (superType != null) {
+                        aClass.getESuperTypes().add(superType);
+                    }
+                }
+            }
+
+            // CONTAINS relationship
+            for (final Node aNode : getOrderedNodes(node, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
+                final Node metaNode = aNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
+
+                final Object metaNodeName = metaNode.getProperty(NAME);
+                if (EAnnotation.class.getSimpleName().equals(metaNodeName)) {
+                    aClass.getEAnnotations().add(restoreEAnnotation(aNode));
+                } else if (EAttribute.class.getSimpleName().equals(metaNodeName)) {
+                    aClass.getEStructuralFeatures().add(restoreEAttribute(aNode));
+                } else if (EReference.class.getSimpleName().equals(metaNodeName)) {
+                    aClass.getEStructuralFeatures().add(restoreEReference(aNode));
+                } else if (EOperation.class.getSimpleName().equals(metaNodeName)) {
+                    aClass.getEOperations().add(restoreEOperation(aNode));
+                } else if (ETypeParameter.class.getSimpleName().equals(metaNodeName)) {
+                    final ETypeParameter typeParameter = restoreETypeParameter(aNode);
+                    if (!aClass.getETypeParameters().contains(typeParameter)) {
+                        aClass.getETypeParameters().add(typeParameter);
+                    }
                 }
             }
         }
-
-        // CONTAINS relationship
-        for (final Node aNode : getOrderedNodes(node, EcoreRelationshipType.CONTAINS, Direction.OUTGOING)) {
-            final Node metaNode = aNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
-
-            final Object metaNodeName = metaNode.getProperty(NAME);
-            if (EAnnotation.class.getSimpleName().equals(metaNodeName)) {
-                aClass.getEAnnotations().add(restoreEAnnotation(aNode));
-            } else if (EAttribute.class.getSimpleName().equals(metaNodeName)) {
-                aClass.getEStructuralFeatures().add(restoreEAttribute(aNode));
-            } else if (EReference.class.getSimpleName().equals(metaNodeName)) {
-                aClass.getEStructuralFeatures().add(restoreEReference(aNode));
-            } else if (EOperation.class.getSimpleName().equals(metaNodeName)) {
-                aClass.getEOperations().add(restoreEOperation(aNode));
-            } else if (ETypeParameter.class.getSimpleName().equals(metaNodeName)) {
-                final ETypeParameter typeParameter = restoreETypeParameter(aNode);
-                if (!aClass.getETypeParameters().contains(typeParameter)) {
-                    aClass.getETypeParameters().add(typeParameter);
-                }
-            }
-        }
-
         return aClass;
     }
 

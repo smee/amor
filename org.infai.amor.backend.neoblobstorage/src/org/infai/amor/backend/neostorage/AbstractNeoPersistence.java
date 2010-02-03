@@ -64,7 +64,25 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
      * @return
      */
     protected static String getString(final Node node, final String key){
+        if (!node.hasProperty(key)) {
+            return null;
+        }
         return (String)node.getProperty(key);
+    }
+
+    public static String nodeStats(final Node n){
+        final StringBuilder sb = new StringBuilder(n.toString());
+
+        for(final String p:n.getPropertyKeys()) {
+            sb.append(p+": "+n.getProperty(p)).append("\n");
+        }
+        for (final Relationship rel : n.getRelationships(Direction.INCOMING)) {
+            sb.append("IN " + rel.getType()).append("\n");
+        }
+        for (final Relationship rel : n.getRelationships(Direction.OUTGOING)) {
+            sb.append("OUT " + rel.getType()).append("\n");
+        }
+        return sb.append("\n").toString();
     }
 
     /**
@@ -148,17 +166,7 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
      * @param aNode
      */
     protected void debug(final Node n) {
-        System.out.println(n);
-        for(final String p:n.getPropertyKeys()) {
-            System.out.println(p+": "+n.getProperty(p));
-        }
-        for (final Relationship rel : n.getRelationships(Direction.INCOMING)) {
-            System.out.println("IN " + rel.getType());
-        }
-        for (final Relationship rel : n.getRelationships(Direction.OUTGOING)) {
-            System.out.println("OUT " + rel.getType());
-        }
-        System.out.println();
+        System.out.println(AbstractNeoPersistence.nodeStats(n));
 
     }
 
@@ -281,27 +289,26 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
         // System.out.println(element.hashCode() + ": " + EcoreUtil.getURI(element));
         final Node node = nodeCache.get(element);
 
+        if (node == null && element.eIsProxy()) {
+            // TODO find node by traversing known models
+            // create a proxy node
+            final Node proxyNode = createNode();
+            set(proxyNode, NAME, "ProxyNode");
+            // make proxy uri relative to current resource's uri
+            final URI relativeProxyUri = ((InternalEObject) element).eProxyURI().deresolve(currentResourceUri.get());
+            set(proxyNode, "proxyUri", relativeProxyUri.toString());
+            final Node classNode = findClassifierNode(element.eClass());
+            classNode.createRelationshipTo(proxyNode, EcoreRelationshipType.INSTANCE);
+
+            logger.finest("storing proxy to " + relativeProxyUri);
+
+            cache(element, proxyNode);
+            return proxyNode;
+        }
         if (node == null && element instanceof DynamicEObjectImpl) {
 
             // DynamicEObjects might get created several times, sadly they do not overwrite hashCode() and equals(...) so we need to
             // do so manually :(
-            // FIXME doesn't work for proxies
-            if (element.eIsProxy()) {
-                // TODO find node by traversing known models
-                // create a proxy node
-                final Node proxyNode = createNode();
-                set(proxyNode, NAME, "ProxyNode");
-                // make proxy uri relative to current resource's uri
-                final URI relativeProxyUri = ((InternalEObject) element).eProxyURI().deresolve(currentResourceUri.get());
-                set(proxyNode, "proxyUri", relativeProxyUri.toString());
-                final Node classNode = findClassifierNode(element.eClass());
-                classNode.createRelationshipTo(proxyNode, EcoreRelationshipType.INSTANCE);
-
-                logger.finest("storing proxy to " + relativeProxyUri);
-
-                cache(element, proxyNode);
-                return proxyNode;
-            }
             return nodeCache.get(element.eClass());
         }
         return node;
