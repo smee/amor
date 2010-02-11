@@ -24,9 +24,8 @@ public class FileRevision implements Comparable<FileRevision>{
 	private ArrayList<String> branches;
 	private RevCommit commit;
 	private Repository repo;
-	private boolean isFork = false;
-	private boolean isMerge = false;
 	private String path;
+	private List<RevCommit> children;
 	
 	/**
 	 * Create a new FileRevision object which will contain useful informations.
@@ -91,30 +90,16 @@ public class FileRevision implements Comparable<FileRevision>{
 	 * @return true if the commit is a fork.
 	 */
 	public boolean isFork() {
-		return isFork;
-	}
-
-	/**
-	 * @param isFork whether the commit is a fork.
-	 */
-	public void setFork(boolean isFork) {
-		this.isFork = isFork;
+		return children.size()>1;
 	}
 
 	/**
 	 * @return true if the commit is a merge.
 	 */
 	public boolean isMerge() {
-		return isMerge;
+		return commit.getParentCount()>1;
 	}
 	
-	/**
-	 * @param isMerge whether the commit is a merge.
-	 */
-	public void setMerge(boolean isMerge) {
-		this.isMerge = isMerge;
-	}
-
 	/**
 	 * Compares this revision with <code>rev</code> using the commit time.
 	 * @param rev the FileRevision to compare with.
@@ -143,5 +128,33 @@ public class FileRevision implements Comparable<FileRevision>{
 		}
 		
 		return branches;
+	}
+	
+	/**
+	 * @param forkedChildren the forkedChildren to set
+	 */
+	public void setChildren(List<RevCommit> children) {
+		this.children = children;
+	}
+	
+	/**
+	 * @return the forkedChildren
+	 */
+	public List<RevCommit> getChildren() {
+		return children;
+	}
+
+	/**
+	 * @return the repository which contains this commit.
+	 */
+	public Repository getRepository() {
+		return repo;
+	}
+	
+	/**
+	 * @return the relative path of the source file which was used to create the Revision.
+	 */
+	public String getSourceFileRelativePath() {
+		return path;
 	}
 }

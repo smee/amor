@@ -1,7 +1,9 @@
 package de.modelrepository.test;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,9 +22,12 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
 import org.emftext.language.java.JavaClasspath;
 import org.emftext.language.java.JavaPackage;
+import org.emftext.language.java.resource.JavaSourceOrClassFileResource;
 import org.emftext.language.java.resource.JavaSourceOrClassFileResourceFactoryImpl;
+import org.emftext.language.java.resource.java.JavaResource;
 import org.emftext.language.java.resource.java.analysis.helper.JavaPostProcessor;
 import org.emftext.language.primitive_types.Primitive_typesPackage;
 import org.emftext.runtime.IOptions;
@@ -50,7 +55,7 @@ public class JavaToEMFParser {
 	 * @throws ProxyException This exception will be thrown if there are any referenced classes which can not be resolved by this parser.<br>
 	 * Normally there are missing libraries which you have to specify for parsing the file. 
 	 */
-	public ResourceSet parseJavaFile(File javaFile, Vector<File> JarArchives) throws ProxyException {
+	public ResourceSet parseJavaFile(File javaFile, Vector<File> JarArchives) {
 		parseJavaFiles(javaFile, getAllJarFilesFromSource(JarArchives));
 		return rs;
 	}
@@ -66,7 +71,7 @@ public class JavaToEMFParser {
 	 * @throws ProxyException This exception will be thrown if there are any referenced classes which can not be resolved by this parser.<br>
 	 * Normally there are missing libraries which you have to specify for parsing the file. 
 	 */
-	public ResourceSet parseAllJavaFiles(File inputFolder, Vector<File> JarArchives) throws ProxyException {
+	public ResourceSet parseAllJavaFiles(File inputFolder, Vector<File> JarArchives) {
 		parseJavaFiles(inputFolder, getAllJarFilesFromSource(JarArchives));
 		return rs;
 	}
@@ -81,7 +86,7 @@ public class JavaToEMFParser {
 	 * @throws ProxyException This exception will be thrown if there are any referenced classes which can not be resolved by this parser.<br>
 	 * Normally there are missing libraries which you have to specify for parsing the file. 
 	 */
-	public void parseAndSerializeAllJavaFiles(File inputFolder, Vector<File> JarArchives, File outputFolder) throws ProxyException {
+	public void parseAndSerializeAllJavaFiles(File inputFolder, Vector<File> JarArchives, File outputFolder) {
 		parseJavaFiles(inputFolder, getAllJarFilesFromSource(JarArchives));
 		serializeMetaModel(outputFolder);
 		serializeModel(inputFolder, outputFolder);
@@ -97,7 +102,7 @@ public class JavaToEMFParser {
 	 * @throws ProxyException This exception will be thrown if there are any referenced classes which can not be resolved by this parser.<br>
 	 * Normally there are missing libraries which you have to specify for parsing the file. 
 	 */
-	public void parseAndSerializeJavaFile(File javaFile, Vector<File> JarArchives, File outputFolder) throws ProxyException {
+	public void parseAndSerializeJavaFile(File javaFile, Vector<File> JarArchives, File outputFolder) {
 		parseJavaFiles(javaFile, getAllJarFilesFromSource(JarArchives));
 		serializeMetaModel(outputFolder);
 		serializeModel(javaFile.getParentFile(), outputFolder);
@@ -107,7 +112,7 @@ public class JavaToEMFParser {
 	 * This method is responsible for parsing the file(s) given at the input.
 	 * The input may be a single java file or a folder that contains several java files.
 	 */
-	private void parseJavaFiles(File input, Vector<File> JarArchives) throws ProxyException {
+	private void parseJavaFiles(File input, Vector<File> JarArchives) {
 		try {
 			//if there are archives register them at the classpath so that they will also be parsed.
 			if(JarArchives != null) {
@@ -122,6 +127,7 @@ public class JavaToEMFParser {
 			
 			//loads all files into the ResourceSet and resolves the proxies (for getting valid links within the models).
 			loadAllFilesInResourceSet(input, "java");
+			//TODO Proxies testweise ausgeschaltet!!! -> gab probleme
 			resolveAllProxies();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -231,10 +237,32 @@ public class JavaToEMFParser {
 		rs.getResource(uri, true);
 	}
 	
+	//TODO String laden
+	public ResourceSet parseFromString(String content) {
+		try {
+			loadResourceFromString(content);
+			resolveAllProxies();
+//			serializeMetaModel(new File("D:/test"));
+//			serializeModel(new File("D:/test"), new File("D:/test"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+	
+	private void loadResourceFromString(String content) throws IOException {
+		URI uri = URI.createDeviceURI("");
+		JavaSourceOrClassFileResource resource = new JavaSourceOrClassFileResource(uri);
+		InputStream str = new ByteArrayInputStream(content.getBytes());
+		resource.load(str, null);
+		str.close();
+		rs.getResources().add(resource);
+	}
+	
 	/*
 	 * Resolves all proxies within the Resources of the ResourceSet.
 	 */
-	private void resolveAllProxies() throws ProxyException {
+	private void resolveAllProxies() {
 		boolean failure = false;
 		//contains the proxies which couldn't be resolved (maybe there is a missing library)
 		Vector<URI> notFoundProxies = new Vector<URI>();
@@ -254,10 +282,11 @@ public class JavaToEMFParser {
 				}
 			}
 		}
-		if(failure) {
-			ProxyException e = new ProxyException(notFoundProxies);
-			throw e;
-		}
+		//TODO ProxyException ist ausgeschaltet --> Macht Fehler, wenn Proxies erhalten bleiben --> Abbruch
+//		if(failure) {
+//			ProxyException e = new ProxyException(notFoundProxies);
+//			throw e;
+//		}
 	}
 	
 	/*

@@ -12,7 +12,6 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevSort;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.AndTreeFilter;
 import org.eclipse.jgit.treewalk.filter.PathFilterGroup;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
@@ -101,7 +100,6 @@ public class GitFileHistory {
 		ArrayList<RevCommit> merges = new ArrayList<RevCommit>();
 		for (FileRevision fileRev : fileRevisions) {
 			if(fileRev.getRevCommit().getParentCount() > 1) {
-				fileRev.setMerge(true);
 				merges.add(fileRev.getRevCommit());
 			}
 		}
@@ -117,11 +115,11 @@ public class GitFileHistory {
 		
 		for (FileRevision fileRev : fileRevisions) {
 			List<RevCommit> children = GitUtility.getDirectChildren(fileRev.getRevCommit(), fileRevisions);
-			if(children != null && children.size() > 1) {
-				fileRev.setFork(true);
-				forks.add(fileRev.getRevCommit());
+			if(children != null) {
+				fileRev.setChildren(children);
+				if(children.size()>1)
+					forks.add(fileRev.getRevCommit());
 			}
-				
 		}
 		return forks;
 	}

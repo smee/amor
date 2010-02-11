@@ -46,12 +46,8 @@ public class T0001_JavaParser {
 		File inFile = new File("res/in/T0001/" + fileName);
 		assertTrue("The file \"res/in/T0001/" + fileName + "\" which shall be parsed does not exist.", inFile.exists());
 		
-		try {
-			ResourceSet result = parser.parseJavaFile(inFile, null);
-			assertEquals("The file \"" + fileName + "\" is not contained in the ResourceSet.", fileName, result.getResources().get(0).getURI().lastSegment());
-		} catch (ProxyException e) {
-			e.printStackTrace();
-		}
+		ResourceSet result = parser.parseJavaFile(inFile, null);
+		assertEquals("The file \"" + fileName + "\" is not contained in the ResourceSet.", fileName, result.getResources().get(0).getURI().lastSegment());
 	}
 	
 	@Test
@@ -65,14 +61,10 @@ public class T0001_JavaParser {
 		File outFolder = new File("res/out/T0001/02");
 		assertTrue("The file \"res/in/T0001/" + fileName + "\" which shall be parsed does not exist.", inFile.exists());
 		
-		try {
-			parser.parseAndSerializeJavaFile(inFile, null, outFolder);
-			assertTrue("The parsed java file (" + fileName + ") wasn't serialized correctly.", new File(outFolder, fileName + ".xmi").exists());
-			assertTrue("The Java metamodel (java.ecore) wasn't serialized correctly.", new File(outFolder, "java.ecore").exists());
-			assertTrue("The Primitive Types metamodel (primitive_types.ecore) wasn't serialized correctly.", new File(outFolder, "primitive_types.ecore").exists());
-		} catch (ProxyException e) {
-			e.printStackTrace();
-		}
+		parser.parseAndSerializeJavaFile(inFile, null, outFolder);
+		assertTrue("The parsed java file (" + fileName + ") wasn't serialized correctly.", new File(outFolder, fileName + ".xmi").exists());
+		assertTrue("The Java metamodel (java.ecore) wasn't serialized correctly.", new File(outFolder, "java.ecore").exists());
+		assertTrue("The Primitive Types metamodel (primitive_types.ecore) wasn't serialized correctly.", new File(outFolder, "primitive_types.ecore").exists());
 	}
 	
 	@Test
@@ -89,12 +81,8 @@ public class T0001_JavaParser {
 		libs.add(new File("res/in/T0001/lib/org.eclipse.emf.ecore_2.5.0.v200906151043.jar"));
 		libs.add(new File("res/in/T0001/lib/org.eclipse.emf.common_2.5.0.v200906151043.jar"));
 		
-		try {
-			ResourceSet result = parser.parseJavaFile(inFile, libs);
-			assertEquals("The file \"" + fileName + "\" is not contained in the ResourceSet.", fileName, result.getResources().get(0).getURI().lastSegment());
-		} catch (ProxyException e) {
-			e.printStackTrace();
-		}
+		ResourceSet result = parser.parseJavaFile(inFile, libs);
+		assertEquals("The file \"" + fileName + "\" is not contained in the ResourceSet.", fileName, result.getResources().get(0).getURI().lastSegment());
 	}
 	
 	@Test
@@ -110,12 +98,8 @@ public class T0001_JavaParser {
 		Vector<File> libs = new Vector<File>();
 		libs.add(new File("res/in/T0001/lib"));
 		
-		try {
-			ResourceSet result = parser.parseJavaFile(inFile, libs);
-			assertEquals("The file \"" + fileName + "\" is not contained in the ResourceSet.", fileName, result.getResources().get(0).getURI().lastSegment());
-		} catch (ProxyException e) {
-			e.printStackTrace();
-		}
+		ResourceSet result = parser.parseJavaFile(inFile, libs);
+		assertEquals("The file \"" + fileName + "\" is not contained in the ResourceSet.", fileName, result.getResources().get(0).getURI().lastSegment());
 	}
 	
 	@Test
@@ -134,15 +118,11 @@ public class T0001_JavaParser {
 		libs.add(new File("res/in/T0001/lib/org.eclipse.emf.ecore_2.5.0.v200906151043.jar"));
 		libs.add(new File("res/in/T0001/lib/org.eclipse.emf.common_2.5.0.v200906151043.jar"));
 		
-		try {
-			parser.parseAndSerializeJavaFile(inFile, libs, outFolder);
-			assertTrue("The parsed java file (" + fileName + ") wasn't serialized correctly.", new File(outFolder, fileName + ".xmi").exists());
-			assertTrue("The Java metamodel (java.ecore) wasn't serialized correctly.", new File(outFolder, "java.ecore").exists());
-			assertTrue("The Primitive Types metamodel (primitive_types.ecore) wasn't serialized correctly.", new File(outFolder, "primitive_types.ecore").exists());
-			//TODO Test der Lib-files (ob serialisiert)
-		} catch (ProxyException e) {
-			e.printStackTrace();
-		}
+		parser.parseAndSerializeJavaFile(inFile, libs, outFolder);
+		assertTrue("The parsed java file (" + fileName + ") wasn't serialized correctly.", new File(outFolder, fileName + ".xmi").exists());
+		assertTrue("The Java metamodel (java.ecore) wasn't serialized correctly.", new File(outFolder, "java.ecore").exists());
+		assertTrue("The Primitive Types metamodel (primitive_types.ecore) wasn't serialized correctly.", new File(outFolder, "primitive_types.ecore").exists());
+		//TODO Test der Lib-files (ob serialisiert)
 	}
 	
 	@Test
@@ -160,15 +140,11 @@ public class T0001_JavaParser {
 		Vector<File> libs = new Vector<File>();
 		libs.add(new File("res/in/T0001/lib"));
 		
-		try {
-			parser.parseAndSerializeJavaFile(inFile, libs, outFolder);
-			assertTrue("The parsed java file (" + fileName + ") wasn't serialized correctly.", new File(outFolder, fileName + ".xmi").exists());
-			assertTrue("The Java metamodel (java.ecore) wasn't serialized correctly.", new File(outFolder, "java.ecore").exists());
-			assertTrue("The Primitive Types metamodel (primitive_types.ecore) wasn't serialized correctly.", new File(outFolder, "primitive_types.ecore").exists());
-			//TODO Test der Lib-files (ob serialisiert)
-		} catch (ProxyException e) {
-			e.printStackTrace();
-		}
+		parser.parseAndSerializeJavaFile(inFile, libs, outFolder);
+		assertTrue("The parsed java file (" + fileName + ") wasn't serialized correctly.", new File(outFolder, fileName + ".xmi").exists());
+		assertTrue("The Java metamodel (java.ecore) wasn't serialized correctly.", new File(outFolder, "java.ecore").exists());
+		assertTrue("The Primitive Types metamodel (primitive_types.ecore) wasn't serialized correctly.", new File(outFolder, "primitive_types.ecore").exists());
+		//TODO Test der Lib-files (ob serialisiert)
 	}
 	
 	@Test
@@ -181,13 +157,9 @@ public class T0001_JavaParser {
 		Vector<File> libs = new Vector<File>();
 		libs.add(new File("res/in/T0001/lib/org.eclipse.emf.ecore_2.5.0.v200906151043.jar"));
 		libs.add(new File("res/in/T0001/lib/org.eclipse.emf.common_2.5.0.v200906151043.jar"));
-		try {
-			ResourceSet result = parser.parseAllJavaFiles(inFolder, libs);
-			assertEquals("The file \"Hello.java\" is not contained in the ResourceSet.", "Hello.java", result.getResources().get(0).getURI().lastSegment());
-			assertEquals("The file \"ProxyTest.java\" is not contained in the ResourceSet.", "ProxyTest.java", result.getResources().get(2).getURI().lastSegment());
-		} catch (ProxyException e) {
-			e.printStackTrace();
-		}
+		ResourceSet result = parser.parseAllJavaFiles(inFolder, libs);
+		assertEquals("The file \"Hello.java\" is not contained in the ResourceSet.", "Hello.java", result.getResources().get(0).getURI().lastSegment());
+		assertEquals("The file \"ProxyTest.java\" is not contained in the ResourceSet.", "ProxyTest.java", result.getResources().get(2).getURI().lastSegment());
 	}
 	
 	@Test
@@ -202,15 +174,11 @@ public class T0001_JavaParser {
 		Vector<File> libs = new Vector<File>();
 		libs.add(new File("res/in/T0001/lib/org.eclipse.emf.ecore_2.5.0.v200906151043.jar"));
 		libs.add(new File("res/in/T0001/lib/org.eclipse.emf.common_2.5.0.v200906151043.jar"));
-		try {
-			parser.parseAndSerializeAllJavaFiles(inFolder, libs, outFolder);
-			assertTrue("The parsed java file (Hello.java) wasn't serialized correctly.", new File(outFolder, "Hello.java.xmi").exists());
-			assertTrue("The parsed java file (ProxyTest.java) wasn't serialized correctly.", new File(outFolder, "ProxyTest.java.xmi").exists());
-			assertTrue("The Java metamodel (java.ecore) wasn't serialized correctly.", new File(outFolder, "java.ecore").exists());
-			assertTrue("The Primitive Types metamodel (primitive_types.ecore) wasn't serialized correctly.", new File(outFolder, "primitive_types.ecore").exists());
-		} catch (ProxyException e) {
-			e.printStackTrace();
-		}
+		parser.parseAndSerializeAllJavaFiles(inFolder, libs, outFolder);
+		assertTrue("The parsed java file (Hello.java) wasn't serialized correctly.", new File(outFolder, "Hello.java.xmi").exists());
+		assertTrue("The parsed java file (ProxyTest.java) wasn't serialized correctly.", new File(outFolder, "ProxyTest.java.xmi").exists());
+		assertTrue("The Java metamodel (java.ecore) wasn't serialized correctly.", new File(outFolder, "java.ecore").exists());
+		assertTrue("The Primitive Types metamodel (primitive_types.ecore) wasn't serialized correctly.", new File(outFolder, "primitive_types.ecore").exists());
 	}
 	
 	@Test
@@ -222,13 +190,9 @@ public class T0001_JavaParser {
 		File inFolder = new File("res/in/T0001/");
 		Vector<File> libs = new Vector<File>();
 		libs.add(new File("res/in/T0001/lib"));
-		try {
-			ResourceSet result = parser.parseAllJavaFiles(inFolder, libs);
-			assertEquals("The file \"Hello.java\" is not contained in the ResourceSet.", "Hello.java", result.getResources().get(0).getURI().lastSegment());
-			assertEquals("The file \"ProxyTest.java\" is not contained in the ResourceSet.", "ProxyTest.java", result.getResources().get(2).getURI().lastSegment());
-		} catch (ProxyException e) {
-			e.printStackTrace();
-		}
+		ResourceSet result = parser.parseAllJavaFiles(inFolder, libs);
+		assertEquals("The file \"Hello.java\" is not contained in the ResourceSet.", "Hello.java", result.getResources().get(0).getURI().lastSegment());
+		assertEquals("The file \"ProxyTest.java\" is not contained in the ResourceSet.", "ProxyTest.java", result.getResources().get(2).getURI().lastSegment());
 	}
 	
 	@Test
@@ -242,14 +206,10 @@ public class T0001_JavaParser {
 		File outFolder = new File("res/out/T0001/14");
 		Vector<File> libs = new Vector<File>();
 		libs.add(new File("res/in/T0001/lib"));
-		try {
-			parser.parseAndSerializeAllJavaFiles(inFolder, libs, outFolder);
-			assertTrue("The parsed java file (Hello.java) wasn't serialized correctly.", new File(outFolder, "Hello.java.xmi").exists());
-			assertTrue("The parsed java file (ProxyTest.java) wasn't serialized correctly.", new File(outFolder, "ProxyTest.java.xmi").exists());
-			assertTrue("The Java metamodel (java.ecore) wasn't serialized correctly.", new File(outFolder, "java.ecore").exists());
-			assertTrue("The Primitive Types metamodel (primitive_types.ecore) wasn't serialized correctly.", new File(outFolder, "primitive_types.ecore").exists());
-		} catch (ProxyException e) {
-			e.printStackTrace();
-		}
+		parser.parseAndSerializeAllJavaFiles(inFolder, libs, outFolder);
+		assertTrue("The parsed java file (Hello.java) wasn't serialized correctly.", new File(outFolder, "Hello.java.xmi").exists());
+		assertTrue("The parsed java file (ProxyTest.java) wasn't serialized correctly.", new File(outFolder, "ProxyTest.java.xmi").exists());
+		assertTrue("The Java metamodel (java.ecore) wasn't serialized correctly.", new File(outFolder, "java.ecore").exists());
+		assertTrue("The Primitive Types metamodel (primitive_types.ecore) wasn't serialized correctly.", new File(outFolder, "primitive_types.ecore").exists());
 	}
 }

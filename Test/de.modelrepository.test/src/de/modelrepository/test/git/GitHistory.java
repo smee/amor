@@ -1,6 +1,5 @@
 package de.modelrepository.test.git;
 
-import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,9 +17,7 @@ import java.util.Map.Entry;
 import org.eclipse.jgit.lib.Repository;
 
 import de.modelrepository.test.util.FileIterator;
-import de.modelrepository.test.util.FileRevision;
 import de.modelrepository.test.util.FileUtility;
-import de.modelrepository.test.util.ParallelBranches;
 
 public class GitHistory {
 	private Repository repo;
