@@ -84,10 +84,9 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         logger.finer("----------2-Storing metadata----------");
         final AbstractNeoDispatcher disp2 = new NeoMetadataDispatcher(getNeoProvider());
         // reuse the eobject->neo4j node map
-        disp2.setRegistry(disp1.getRegistry());
+        disp2.setRegistry(cache);
         // store all additional references and meta relationships
         disp2.store(model);
-        this.cache = disp2.getRegistry();
 
         modelLocation.setExternalUri(externalUri);
         modelLocation.setRelativePath(createModelSpecificPath(model.getPersistencePath()));

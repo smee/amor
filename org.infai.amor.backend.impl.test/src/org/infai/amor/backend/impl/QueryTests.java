@@ -19,17 +19,13 @@ import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.Revision.ChangeType;
-import org.infai.amor.backend.internal.BranchFactory;
-import org.infai.amor.backend.internal.TransactionManager;
-import org.infai.amor.backend.internal.UriHandler;
+import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.internal.impl.UriHandlerImpl;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import com.google.common.collect.Iterables;
 
@@ -118,6 +114,7 @@ public class QueryTests {
     }
 
     @Test
+    @Ignore(value = "unclear, tests mocked stuff only?")
     public void shouldReturnAllBranches() throws Exception {
         // given
 
@@ -128,6 +125,7 @@ public class QueryTests {
     }
 
     @Test
+    @Ignore(value = "unclear, tests mocked stuff only?")
     public void shouldReturnAllPathsForRevision1() throws Exception {
         // given
 
@@ -139,6 +137,7 @@ public class QueryTests {
     }
 
     @Test
+    @Ignore(value = "unclear, tests mocked stuff only?")
     public void shouldReturnAllPathsForRevision1Path1() throws Exception {
         // given
 
@@ -150,6 +149,7 @@ public class QueryTests {
     }
 
     @Test
+    @Ignore(value = "unclear, tests mocked stuff only?")
     public void shouldReturnAllPathsForRevision2Path1() throws Exception {
         // given
 
@@ -163,6 +163,7 @@ public class QueryTests {
     }
 
     @Test
+    @Ignore(value = "unclear, tests mocked stuff only?")
     public void shouldReturnAllPathsForRevision3Path1() throws Exception {
         // given
 
@@ -177,6 +178,7 @@ public class QueryTests {
     }
 
     @Test
+    @Ignore(value = "unclear, tests mocked stuff only?")
     public void shouldReturnAllRevisionsOfBranch1() throws Exception {
         // given
 
@@ -190,6 +192,7 @@ public class QueryTests {
     }
 
     @Test
+    @Ignore(value = "unclear, tests mocked stuff only?")
     public void shouldReturnNoPathsForRevision2Path1() throws Exception {
         // given
 
@@ -201,6 +204,7 @@ public class QueryTests {
     }
 
     @Test
+    @Ignore(value = "unclear, tests mocked stuff only?")
     public void shouldReturnPathsForRevision2() throws Exception {
         // given
 

@@ -15,13 +15,13 @@ import java.util.Collection;
 import java.util.Date;
 
 import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.filestorage.FileBlobStorage;
-import org.infai.amor.backend.internal.*;
+import org.infai.amor.backend.internal.InternalRevision;
+import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.internal.impl.ChangedModelImpl;
 import org.infai.amor.test.*;
 import org.junit.Before;
@@ -72,7 +72,7 @@ public class LinearHistoryFileBlobStorageTest extends AbstractNeo4JPerformanceTe
             }
 
             @Override
-            public Collection<URI> getModelReferences(final ChangeType... ct) {
+            public Collection<ModelLocation> getModelReferences(final ChangeType... ct) {
                 return null;
             }
 

@@ -12,7 +12,7 @@ package org.infai.amor.backend.impl;
 import java.util.Set;
 
 import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.CommitTransaction;
+import org.infai.amor.backend.internal.InternalCommitTransaction;
 import org.neo4j.api.core.Transaction;
 
 import com.google.common.collect.Sets;
@@ -21,7 +21,7 @@ import com.google.common.collect.Sets;
  * @author sdienst
  * 
  */
-public class CommitTransactionImpl implements CommitTransaction {
+public class CommitTransactionImpl implements InternalCommitTransaction {
     private String commitMessage, username;
     private final long revId;
     private final Branch branch;
@@ -42,7 +42,7 @@ public class CommitTransactionImpl implements CommitTransaction {
     /**
      * @param relPath
      */
-    void addStoredModel(final String relPath){
+    public void addStoredModel(final String relPath) {
         this.storedModels.add(relPath);
     }
 
@@ -98,7 +98,7 @@ public class CommitTransactionImpl implements CommitTransaction {
      * @param relPath
      * @return
      */
-    boolean hasStoredModel(final String relPath){
+    public boolean hasStoredModel(final String relPath) {
         return storedModels.contains(relPath);
     }
 

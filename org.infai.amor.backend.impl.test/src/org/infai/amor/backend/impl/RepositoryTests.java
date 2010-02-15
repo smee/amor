@@ -9,27 +9,17 @@
  *******************************************************************************/
 package org.infai.amor.backend.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
-import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.ChangedModel;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Model;
-import org.infai.amor.backend.Revision;
-import org.infai.amor.backend.internal.BranchFactory;
-import org.infai.amor.backend.internal.TransactionManager;
-import org.infai.amor.backend.internal.UriHandler;
+import org.infai.amor.backend.*;
+import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 /**
  * @author sdienst
@@ -104,7 +94,7 @@ public class RepositoryTests {
     public void testSavesChangedModelIntoStorage() throws IOException {
         final ChangedModel model = context.mock(ChangedModel.class);
         final Branch branch = context.mock(Branch.class);
-        final CommitTransaction tr = context.mock(CommitTransaction.class);
+        final InternalCommitTransaction tr = context.mock(InternalCommitTransaction.class);
 
         context.checking(new Expectations() {
             {
@@ -119,6 +109,7 @@ public class RepositoryTests {
                 allowing(branchFactory);
                 allowing(tr).getRevisionId();
                 will(returnValue(1L));
+                allowing(tr).addStoredModel(with(any(String.class)));
             }
         });
 
@@ -128,7 +119,7 @@ public class RepositoryTests {
     @Test
     public void testSavesIntoStorage() throws IOException {
         final Model model = context.mock(Model.class);
-        final CommitTransaction tr = context.mock(CommitTransaction.class);
+        final InternalCommitTransaction tr = context.mock(InternalCommitTransaction.class);
         final Branch branch = context.mock(Branch.class);
 
         context.checking(new Expectations() {
@@ -143,6 +134,7 @@ public class RepositoryTests {
                 allowing(branchFactory);
                 allowing(tr).getRevisionId();
                 will(returnValue(1L));
+                allowing(tr).addStoredModel(with(any(String.class)));
             }
         });
 

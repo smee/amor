@@ -9,26 +9,21 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal.impl;
 
+import static org.infai.amor.test.TestUtils.createLocation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.infai.amor.test.TestUtils.createLocation;
+
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.emf.common.util.URI;
-import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.test.AbstractNeo4JTest;
 import org.infai.amor.test.MockedTransactionNeoWrapper;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.neo4j.api.core.NeoService;
 
 import com.google.common.collect.Iterables;
@@ -149,9 +144,9 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
         rev2.touchedModel(createLocation(model3uri, model1path, ChangeType.DELETED));
         // when
         // ask for contents
-        final Collection<URI> addedModelReferencesOnRev1 = rev1.getModelReferences(ChangeType.ADDED);
-        final Collection<URI> addedModelReferencesOnRev2 = rev2.getModelReferences(ChangeType.ADDED);
-        final Collection<URI> deletedModelReferencesOnRev2 = rev2.getModelReferences(ChangeType.DELETED);
+        final Collection<ModelLocation> addedModelReferencesOnRev1 = rev1.getModelReferences(ChangeType.ADDED);
+        final Collection<ModelLocation> addedModelReferencesOnRev2 = rev2.getModelReferences(ChangeType.ADDED);
+        final Collection<ModelLocation> deletedModelReferencesOnRev2 = rev2.getModelReferences(ChangeType.DELETED);
         // then
         assertEquals(2, addedModelReferencesOnRev1.size());
         assertEquals(0, addedModelReferencesOnRev2.size());

@@ -45,7 +45,7 @@ public class IntegrationTests extends AbstractIntegrationTest {
      * 
      */
     private void addOneDependency(final CommitTransaction ct, final Collection<URI> deps, final ResourceSet rs) throws IOException {
-        final String firstDepPath = "testmodels/02/" + deps.iterator().next().toString();
+        final String firstDepPath = deps.iterator().next().toString();
         final List<EObject> firstDependency = readInputModels(firstDepPath, rs);
         // when
         final Response checkin = repository.checkin(new ModelImpl(firstDependency, firstDepPath), ct);

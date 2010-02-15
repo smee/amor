@@ -61,33 +61,37 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         }
         final Resource resource = rs.createResource(fileUri);
 
-        try {
-            resource.load(new ByteArrayInputStream(ecoreXmi.getBytes()), transactionMap);
+        final CommitTransaction transaction = this.transactionMap.get(transactionId);
+        while (!resource.isLoaded()) {
+            try {
+                resource.load(new ByteArrayInputStream(ecoreXmi.getBytes()), transactionMap);
 
-            final Response response = repo.checkin(new ModelImpl(resource.getContents(), new Path(relativePath)), this.transactionMap.get(transactionId));
+                final Response response = repo.checkin(new ModelImpl(resource.getContents(), new Path(relativePath)), transaction);
 
-            if (response instanceof UnresolvedDependencyResponse) {
-                final Collection<URI> dependencies = ((UnresolvedDependencyResponse) response).getDependencies();
-                final List<String> missingDeps = Lists.newArrayList();
-                for (final URI uri : dependencies) {
-                    missingDeps.add(uri.toString());
+                if (response instanceof UnresolvedDependencyResponse) {
+                    return extractMissingDependencies((UnresolvedDependencyResponse) response);
                 }
-                return missingDeps;
-            } else {
-                return Collections.EMPTY_LIST;
-            }
-        } catch (final IOException e) {
-            final Throwable cause = e.getCause();
-            if (cause instanceof PackageNotFoundException) {
-                // we are missing at least one other epackage
-                return Arrays.asList(((PackageNotFoundException) cause).uri());
-            } else {
-                throw new RuntimeException(e);
+            } catch (final IOException e) {
+                final Throwable cause = e.getCause();
+                if (cause instanceof PackageNotFoundException) {
+                    // we are missing at least one other epackage
+                    final String missingPackageUri = ((PackageNotFoundException) cause).uri();
+                    if (weKnowThisPackage(missingPackageUri, transaction)) {
+                        loadEPackage(rs.createResource(URI.createURI(missingPackageUri)));
+                        continue;
+                    } else {
+                        return Arrays.asList(missingPackageUri);
+                    }
+                } else {
+                    throw new RuntimeException(e);
+                }
             }
         }
+        return Collections.EMPTY_LIST;
     }
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.SimpleRepository#checkinXmi(java.lang.String, java.lang.String)
      */
     @Override
@@ -125,7 +129,6 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         }
         return transaction;
     }
-
     /* (non-Javadoc)
      * @see org.infai.amor.backend.SimpleRepository#commitTransaction(long)
      */
@@ -153,6 +156,19 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         repo.createBranch(null, branchname);
     }
 
+    /**
+     * @param response
+     * @return
+     */
+    private List<String> extractMissingDependencies(final UnresolvedDependencyResponse response) {
+        final Collection<URI> dependencies = response.getDependencies();
+        final List<String> missingDeps = Lists.newArrayList();
+        for (final URI uri : dependencies) {
+            missingDeps.add(uri.toString());
+        }
+        return missingDeps;
+    }
+
     /* (non-Javadoc)
      * @see org.infai.amor.backend.SimpleRepository#getBranches()
      */
@@ -177,6 +193,14 @@ public class SimpleRepositoryImpl implements SimpleRepository {
                 return branch.getName();
             }
         };
+    }
+
+    /**
+     * @param createResource
+     */
+    private void loadEPackage(final Resource res) {
+        final URI nsUri = res.getURI();
+        // TODO find ecore that contains this namespace uri
     }
 
     /* (non-Javadoc)
@@ -220,6 +244,17 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         } catch (final MalformedURIException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * @param transaction
+     * @param missingPackageUri
+     * @return
+     */
+    private boolean weKnowThisPackage(final String ePackageUri, final CommitTransaction transaction) {
+        // return ((CommitTransactionImpl) transaction).hasStoredModel(ePackageUri) ||
+        // transaction.getBranch().findRevisionOf(relPath) != null;
+        return false;
     }
 
 

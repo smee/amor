@@ -19,12 +19,15 @@ import org.infai.amor.backend.internal.impl.NeoModelLocation;
 import org.neo4j.api.core.*;
 
 /**
- * Abstract implementation that iterates a model and calls the relevant {@link EMFDispatcher} methods for every type.
+ * Abstract implementation that iterates a model and calls the relevant {@link EMFDispatcher} methods for every type. This class
+ * is not threadsafe!
  * 
  * @author sdienst
  * 
  */
 public abstract class AbstractNeoDispatcher extends AbstractNeoPersistence implements EMFDispatcher {
+    protected NeoModelLocation currentModelLocation;
+
     // TODO use org.eclipse.emf.ecore.util.EcoreSwitch
     /**
      * @param neo
@@ -107,10 +110,12 @@ public abstract class AbstractNeoDispatcher extends AbstractNeoPersistence imple
     @Override
     public NeoModelLocation store(final Model model) {
         final Node rootNode = findModelLocationNode(model);
+        currentModelLocation = new NeoModelLocation(getNeoProvider(), rootNode);
+
         // System.out.println("using rootnode " + rootNode);
         for (final EObject eo : model.getContent()) {
-            // XXX ugly hack to provide the current resource uri for deresolving absolute proxy uris later on
-            currentResourceUri.set(eo.eResource().getURI());
+            // provide the current resource uri for deresolving absolute proxy uris later on
+            currentResourceUri = eo.eResource().getURI();
             dispatch(eo);
             // link from modellocation root node to this content
             if (!rootNode.hasRelationship(EcoreRelationshipType.MODEL_CONTENT, Direction.OUTGOING)) {
@@ -123,7 +128,7 @@ public abstract class AbstractNeoDispatcher extends AbstractNeoPersistence imple
                 dispatch(eoSub);
             }
         }
-        return new NeoModelLocation(getNeoProvider(), rootNode);
+        return currentModelLocation;
     }
 
     /*

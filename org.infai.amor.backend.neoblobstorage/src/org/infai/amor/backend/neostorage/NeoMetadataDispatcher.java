@@ -31,26 +31,26 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
     }
 
     /**
-     * @param element
-     * @param anotherElement
+     * @param from
+     * @param to
      */
-    private void addDependency(final Node element, final Node anotherElement) {
+    private void addDependency(final Node from, final Node to) {
         // find toplevel container
-        final Node container = findToplevelContainer(element);
+        final Node fromContainer = findToplevelContainer(from);
 
         // find toplevel typecontainer
-        final Node typeContainer = findToplevelContainer(anotherElement);
+        final Node toContainer = findToplevelContainer(to);
 
-        if (!container.equals(typeContainer)) {
+        if (!fromContainer.equals(toContainer)) {
             boolean foundDependency = false;
-            for (final Relationship rel : container.getRelationships(Direction.OUTGOING)) {
-                if (rel.getEndNode() == typeContainer) {
+            for (final Relationship rel : fromContainer.getRelationships(Direction.OUTGOING)) {
+                if (rel.getEndNode() == toContainer) {
                     foundDependency = true;
                     break;
                 }
             }
             if (!foundDependency) {
-                container.createRelationshipTo(typeContainer, EcoreRelationshipType.DEPENDS);
+                fromContainer.createRelationshipTo(toContainer, EcoreRelationshipType.DEPENDS);
             }
         }
     }
@@ -378,12 +378,12 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
      * @see org.infai.amor.backend.internal.storage.neo.EMFDispatcher#store(org.eclipse.emf.ecore.EReference)
      */
     @Override
-    public void store(final EReference element) {
+    public void store(final EReference reference) {
         // eReference -> EReference
-        setMetaElement(element, EReference.class);
+        setMetaElement(reference, EReference.class);
 
-        if (!element.isContainment()) {
-            addDependency(getNodeFor(element), getNodeFor(element.getEReferenceType()));
+        if (!reference.isContainment()) {
+            addDependency(getNodeFor(reference), getNodeFor(reference.getEReferenceType()));
         }
     }
 

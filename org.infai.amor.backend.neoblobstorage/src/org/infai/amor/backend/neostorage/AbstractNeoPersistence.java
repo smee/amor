@@ -32,7 +32,7 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
      */
     private Map<EObject, Node> nodeCache;
     Map<String, Node> classifierCache;
-    protected ThreadLocal<org.eclipse.emf.common.util.URI> currentResourceUri = new ThreadLocal();
+    protected org.eclipse.emf.common.util.URI currentResourceUri = null;
 
     /**
      * Get {@link Boolean} property value from this node's properties.
@@ -295,7 +295,7 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
             final Node proxyNode = createNode();
             set(proxyNode, NAME, "ProxyNode");
             // make proxy uri relative to current resource's uri
-            final URI relativeProxyUri = ((InternalEObject) element).eProxyURI().deresolve(currentResourceUri.get());
+            final URI relativeProxyUri = ((InternalEObject) element).eProxyURI().deresolve(currentResourceUri);
             set(proxyNode, "proxyUri", relativeProxyUri.toString());
             final Node classNode = findClassifierNode(element.eClass());
             classNode.createRelationshipTo(proxyNode, EcoreRelationshipType.INSTANCE);
@@ -314,12 +314,6 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
         return node;
     }
 
-    /**
-     * @return the registry
-     */
-    public Map<EObject, Node> getRegistry() {
-        return nodeCache;
-    }
 
     /**
      * Setter for cache map.

@@ -39,7 +39,7 @@ public class TestUtils {
             }
 
             @Override
-            public Map<String, Object> getCustomProperties() {
+            public Map<String, Object> getMetaData() {
                 return Collections.EMPTY_MAP;
             }
 

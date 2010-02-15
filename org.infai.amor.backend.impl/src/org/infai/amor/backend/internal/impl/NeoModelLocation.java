@@ -82,7 +82,18 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
     }
 
     /* (non-Javadoc)
-     * @see org.infai.amor.backend.internal.ModelLocation#getCustomProperties()
+     * @see org.infai.amor.backend.internal.storage.neo.ModelLocation#getExternalUri()
+     */
+    public URI getExternalUri() {
+        if (getNode().hasProperty(EXTERNAL_URI)) {
+            return URI.createURI((String) get(EXTERNAL_URI));
+        } else {
+            return null;
+            // TODO nodes fuer modellocations und Changetypespezifische Knoten ueberpruefen, ist inkonsistent!
+        }
+    }
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.ModelLocation#getMetaData()
      */
     @Override
     public Map<String, Object> getMetaData() {
@@ -93,18 +104,6 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
             mb.put(key, propertiesNode.getProperty(key));
         }
         return mb.build();
-    }
-
-    /* (non-Javadoc)
-     * @see org.infai.amor.backend.internal.storage.neo.ModelLocation#getExternalUri()
-     */
-    public URI getExternalUri() {
-        if (getNode().hasProperty(EXTERNAL_URI)) {
-            return URI.createURI((String) get(EXTERNAL_URI));
-        } else {
-            return null;
-            // TODO nodes fuer modellocations und Changetypespezifische Knoten ueberpruefen, ist inkonsistent!
-        }
     }
 
     /**

@@ -13,9 +13,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.ModelLocation;
-import org.infai.amor.backend.internal.*;
+import org.infai.amor.backend.internal.InternalRevision;
+import org.infai.amor.backend.internal.NeoProvider;
 import org.neo4j.api.core.*;
 
 import com.google.common.collect.Iterables;
@@ -149,9 +149,9 @@ public class NeoRevision extends NeoObject implements InternalRevision {
      * @see org.infai.amor.backend.Revision#getModelReferences()
      */
     @Override
-    public Collection<URI> getModelReferences(final ChangeType... ct) {
+    public Collection<ModelLocation> getModelReferences(final ChangeType... ct) {
         dumpOutRels(getNode());
-        final Collection<URI> modelUris = Lists.newArrayList();
+        final Collection<ModelLocation> modelRefs = Lists.newArrayList();
 
         for (final ChangeType type : ct) {
             for (final Relationship rel : getNode().getRelationships(DynamicRelationshipType.withName(MODELLOCATION + type.name()), Direction.OUTGOING)) {
@@ -159,11 +159,11 @@ public class NeoRevision extends NeoObject implements InternalRevision {
                 // dumpOutRels(n);
                 for (final Relationship rel2 : n.getRelationships(DynamicRelationshipType.withName(MODELLOCATION), Direction.OUTGOING)) {
                     final ModelLocation mloc = new NeoModelLocation(getNeoProvider(), rel2.getEndNode());
-                    modelUris.add(mloc.getExternalUri());
+                    modelRefs.add(mloc);
                 }
             }
         }
-        return modelUris;
+        return modelRefs;
     }
     /*
      * (non-Javadoc)

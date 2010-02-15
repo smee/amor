@@ -33,6 +33,7 @@ import org.neo4j.api.core.NeoService;
 public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
     private static final String BRANCHNAME = "main";
     private SimpleRepository repo;
+    private long trId;
 
     /**
      * Strip all whitespaces and line wrappings before comparing both strings.
@@ -44,11 +45,17 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         assertEquals(expected.replaceAll("\\s+", ""),actual.replaceAll("\\s+", ""));
     }
 
+    /**
+     * @param string
+     */
+    private void checkin(final String path) {
+        final String file = ModelUtil.readModel(path);
+        repo.checkinEcore(file, path, trId);
+    }
+
     private void checkinEcoreM3() throws Exception {
         // given
         final String ecore = ModelUtil.readModel("testmodels/Ecore.ecore");
-        repo.createBranch(BRANCHNAME, -1);
-        final long trId = repo.startTransaction(BRANCHNAME);
         // when
         final List<String> missing = repo.checkinEcore(ecore, "testmodel/Ecore.ecore", trId);
         // then
@@ -72,14 +79,15 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
 
         final Repository repository = new RepositoryImpl(sf, bf, uh, tm);
         repo = new SimpleRepositoryImpl(repository, uh);
+
+        repo.createBranch(BRANCHNAME, -1);
+        trId = repo.startTransaction(BRANCHNAME);
         checkinEcoreM3();
     }
-
     @Test
     public void shouldAskForDependency() throws Exception {
         // given
         final String ecore = ModelUtil.readModel("testmodels/multi/A.ecore");
-        final long trId = repo.startTransaction(BRANCHNAME);
         // when
         final List<String> missing = repo.checkinEcore(ecore, "testmodel/multi/A.ecore", trId);
         // then
@@ -87,23 +95,34 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         assertEquals("B.ecore", missing.get(0));
     }
     @Test
+    public void shouldAskForUnknownMetamodel() throws Exception {
+        // given
+        final String path = "testmodels/multi/b.xmi";
+        final String model = ModelUtil.readModel(path);
+        // when
+        final List<String> missing = repo.checkinEcore(model, path, trId);
+        // then
+        assertFalse(missing.isEmpty());
+        assertEquals("http://mymodels.org/packageB", missing.get(0));
+    }
+
+    @Test
     public void shouldCheckinDependencies() throws Exception {
         // given
-        final long trId = repo.startTransaction(BRANCHNAME);
-        // when
         final String ecoreB = ModelUtil.readModel("testmodels/multi/B.ecore");
-        final List<String> missing1 = repo.checkinEcore(ecoreB, "testmodel/multi/B.ecore", trId);
         final String ecoreA = ModelUtil.readModel("testmodels/multi/A.ecore");
+        // when
+        final List<String> missing1 = repo.checkinEcore(ecoreB, "testmodel/multi/B.ecore", trId);
         final List<String> missing2 = repo.checkinEcore(ecoreA, "testmodel/multi/A.ecore", trId);
         // then
         assertTrue(missing1.isEmpty());
         assertTrue(missing2.isEmpty());
     }
+
     @Test
     public void shouldCheckinSimpleM2() throws Exception {
         // given
         final String ecore = ModelUtil.readModel("testmodels/base.ecore");
-        final long trId = repo.startTransaction(BRANCHNAME);
         // when
         final List<String> missing = repo.checkinEcore(ecore, "testmodel/base.ecore", trId);
         final long revId = repo.commitTransaction(trId, "testuser", "added simple meta model");
@@ -115,11 +134,10 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
     @Test
     public void shouldRestoreModelWithDependency() throws Exception {
         // given
-        final long trId = repo.startTransaction(BRANCHNAME);
-        // when
         final String ecoreB = ModelUtil.readModel("testmodels/multi/B.ecore");
-        final List<String> missing1 = repo.checkinEcore(ecoreB, "testmodel/multi/B.ecore", trId);
         final String ecoreA = ModelUtil.readModel("testmodels/multi/A.ecore");
+        // when
+        final List<String> missing1 = repo.checkinEcore(ecoreB, "testmodel/multi/B.ecore", trId);
         final List<String> missing2 = repo.checkinEcore(ecoreA, "testmodel/multi/A.ecore", trId);
         final long revisionId = repo.commitTransaction(trId, "user", "bla");
 
@@ -133,10 +151,13 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
     @Test
     public void shouldStoreInstanceModel() throws Exception {
         // given
-        final String ecoreB = ModelUtil.readModel("testmodels/multi");
-
+        checkin("testmodels/multi/B.ecore");
+        checkin("testmodels/multi/A.ecore");
+        final String path = "testmodels/multi/b.xmi";
+        final String model = ModelUtil.readModel(path);
         // when
-
+        final List<String> missing = repo.checkinEcore(model, path, trId);
         // then
+        assertTrue(missing.isEmpty());
     }
 }

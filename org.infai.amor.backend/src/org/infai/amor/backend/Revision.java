@@ -12,8 +12,6 @@ package org.infai.amor.backend;
 import java.util.Collection;
 import java.util.Date;
 
-import org.eclipse.emf.common.util.URI;
-
 /**
  * @author sdienst
  * 
@@ -43,7 +41,7 @@ public interface Revision {
      * 
      * @return
      */
-    Collection<URI> getModelReferences(ChangeType... ct);
+    Collection<ModelLocation> getModelReferences(ChangeType... ct);
 
     /**
      * Get the parent revision of this one.

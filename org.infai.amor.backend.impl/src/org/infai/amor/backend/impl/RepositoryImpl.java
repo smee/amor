@@ -64,7 +64,7 @@ public class RepositoryImpl implements Repository {
             final URI modeluri = uriHandler.createModelUri(tr, model.getPath());
             storageFactory.getStorage(tr.getBranch()).checkin(model, modeluri, tr.getRevisionId());
             // remember this model path
-            ((CommitTransactionImpl) tr).addStoredModel(model.getPath().toString());
+            ((InternalCommitTransaction) tr).addStoredModel(model.getPath().toString());
 
             return new CheckinResponse("Success.", modeluri);
         } catch (final IOException e) {
@@ -96,7 +96,7 @@ public class RepositoryImpl implements Repository {
                 // store the model
                 storage.checkin(model, modeluri, tr.getRevisionId());
                 // remember this model path
-                ((CommitTransactionImpl) tr).addStoredModel(model.getPersistencePath().toString());
+                ((InternalCommitTransaction) tr).addStoredModel(model.getPersistencePath().toString());
                 return new CheckinResponse("Success.", modeluri);
             }
         } catch (final IOException e) {
@@ -140,28 +140,28 @@ public class RepositoryImpl implements Repository {
     private Iterable<URI> constructActiveRepositoryContents(Revision rev, final URI uri)
     throws MalformedURIException {
         final Map<IPath, Pair<Long, URI>> activeModels = Maps.newHashMap();
-        final Map<IPath, Pair<Long, URI>> deletedModels = Maps.newHashMap();
+        final Map<IPath, Pair<Long, URI>> removedModels = Maps.newHashMap();
         // cycle through to all older revisions
         while (rev != null) {
-            final Iterable<URI> addedModelUris = Iterables.concat(rev
+            final Iterable<ModelLocation> addedModels = Iterables.concat(rev
                     .getModelReferences(ChangeType.ADDED), rev
                     .getModelReferences(ChangeType.CHANGED));
-            final Iterable<URI> deletedModelUris = rev.getModelReferences(ChangeType.DELETED);
+            final Iterable<ModelLocation> deletedModels = rev.getModelReferences(ChangeType.DELETED);
 
-            for (final URI deletedModelUri : deletedModelUris) {
-                deletedModels.put(uriHandler.extractModelPathFrom(deletedModelUri),
-                        new Pair(rev.getRevisionId(), deletedModelUri));
+            for (final ModelLocation deletedModel : deletedModels) {
+                removedModels.put(uriHandler.extractModelPathFrom(deletedModel.getExternalUri()),
+                        new Pair(rev.getRevisionId(), deletedModel));
             }
-            for (final URI touchedModelUri : addedModelUris) {
+            for (final ModelLocation touchedModel : addedModels) {
                 // extract model path+name
-                final IPath path = uriHandler.extractModelPathFrom(touchedModelUri);
+                final IPath path = uriHandler.extractModelPathFrom(touchedModel.getExternalUri());
                 // was it deleted in a later revision?
-                final Pair<Long, URI> p = deletedModels.get(path);
+                final Pair<Long, URI> p = removedModels.get(path);
                 if (p == null || p.first < rev.getRevisionId()) {
                     // was never deleted or was deleted prior to the current
                     // revision
                     if (!activeModels.containsKey(path)) {
-                        activeModels.put(path, new Pair(rev.getRevisionId(),touchedModelUri));
+                        activeModels.put(path, new Pair(rev.getRevisionId(), touchedModel.getExternalUri()));
                     }
                 } else {
                     // will get deleted in a later revision, not active at this
@@ -383,9 +383,10 @@ public class RepositoryImpl implements Repository {
                 throw new MalformedURIException("Unknown revision: " + uri);
             } else {
                 // TODO also show changed (and deleted?) models
-                final Iterable<URI> knownModels = Iterables.concat(
+                final Iterable<ModelLocation> knownModels = Iterables.concat(
                         rev.getModelReferences(ChangeType.ADDED));
-                for (final URI modelUri : knownModels) {
+                for (final ModelLocation modelLoc : knownModels) {
+                    final URI modelUri = modelLoc.getExternalUri();
                     if (uriHandler.isPrefix(uri, modelUri)) {
                         result.add(uriHandler.trimToNextSegment(uri, modelUri));
                     }
