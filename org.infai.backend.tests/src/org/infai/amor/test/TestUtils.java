@@ -13,11 +13,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
-import org.infai.amor.backend.internal.ModelLocation;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 

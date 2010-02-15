@@ -10,17 +10,23 @@
 package org.infai.backend.filestorage.test;
 
 import static org.infai.amor.test.ModelUtil.readInputModel;
+import static org.infai.amor.test.ModelUtil.readInputModels;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.responses.CommitSuccessResponse;
+import org.infai.amor.backend.responses.UnresolvedDependencyResponse;
 import org.infai.amor.test.ModelUtil;
 import org.junit.Test;
 
@@ -31,6 +37,51 @@ import com.google.common.collect.Iterables;
  * 
  */
 public class IntegrationTests extends AbstractIntegrationTest {
+    /**
+     * @param deps
+     * @param ct
+     * @param rs
+     * @throws IOException
+     * 
+     */
+    private void addOneDependency(final CommitTransaction ct, final Collection<URI> deps, final ResourceSet rs) throws IOException {
+        final String firstDepPath = "testmodels/02/" + deps.iterator().next().toString();
+        final List<EObject> firstDependency = readInputModels(firstDepPath, rs);
+        // when
+        final Response checkin = repository.checkin(new ModelImpl(firstDependency, firstDepPath), ct);
+        // then
+        assertTrue(checkin instanceof UnresolvedDependencyResponse);
+        final Collection<URI> deps2 = ((UnresolvedDependencyResponse) checkin).getDependencies();
+        assertEquals(10, deps2.size());
+
+        // etc.
+    }
+
+    @Test
+    public void shouldAlertOnUnknownDependencies() throws Exception {
+        // given
+        final ResourceSet rs = new ResourceSetImpl();
+        readInputModels("testmodels/02/primitive_types.ecore",rs);
+        readInputModels("testmodels/02/java.ecore",rs);
+        // a model with external dependencies
+        final EObject input = readInputModel("testmodels/02/Hello.java.xmi",rs);
+        // and a branch
+        final Branch branch = repository.createBranch(null, "trunk");
+        // and a transaction
+        final CommitTransaction ct = repository.startCommitTransaction(branch);
+        ct.setCommitMessage("test");
+        ct.setUser("mustermann");
+        // when
+        final Response checkin = repository.checkin(new ModelImpl(input, "testmodels/02/Hello.java.xmi"), ct);
+
+        // then there should be 3 dependencies we don't have stored yet.
+        assertTrue(checkin instanceof UnresolvedDependencyResponse);
+        final Collection<URI> deps = ((UnresolvedDependencyResponse) checkin).getDependencies();
+        assertEquals(3, deps.size());
+
+        addOneDependency(ct, deps, rs);
+    }
+
     @Test
     public void shouldBeAbleToCreateBranch() throws Exception {
         // given

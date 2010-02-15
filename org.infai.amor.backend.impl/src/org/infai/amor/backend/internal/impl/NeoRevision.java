@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
+import org.infai.amor.backend.ModelLocation;
 import org.infai.amor.backend.internal.*;
 import org.neo4j.api.core.*;
 

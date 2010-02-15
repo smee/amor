@@ -12,9 +12,9 @@ package org.infai.amor.backend.internal.impl;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
+import org.infai.amor.backend.ModelLocation;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.Revision.ChangeType;
-import org.infai.amor.backend.internal.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.neo4j.api.core.*;
 
@@ -44,6 +44,8 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
     }
 
     /**
+     * Wrap another {@link ModelLocation} implementation.
+     * 
      * @param np
      * @param contentNode
      * @param loc

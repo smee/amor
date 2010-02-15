@@ -7,12 +7,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.internal;
+package org.infai.amor.backend;
 
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.infai.amor.backend.Revision;
 
 /**
  * @author sdienst
@@ -35,7 +34,7 @@ public interface ModelLocation {
     Map<String,Object> getCustomProperties();
 
     /**
-     * @return
+     * @return amor uri that references this model
      */
     URI getExternalUri();
 

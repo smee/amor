@@ -11,9 +11,7 @@ package org.infai.amor.backend.internal.impl;
 
 import java.util.*;
 
-import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.Revision;
-import org.infai.amor.backend.internal.ModelLocation;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.neo4j.api.core.*;
 
