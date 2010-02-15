@@ -4,15 +4,10 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.Plugin;
-import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Repository;
-import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.infai.amor.backend.internal.impl.NeoBranchFactory;
-import org.infai.amor.backend.internal.impl.TransactionManagerImpl;
-import org.infai.amor.backend.internal.impl.UriHandlerImpl;
+import org.infai.amor.backend.internal.impl.*;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
 import org.neo4j.api.core.NeoService;
@@ -49,6 +44,18 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
                 return null;
             } else {
                 return getStorageFactory().getStorage(branch);
+            }
+        }
+
+        /* (non-Javadoc)
+         * @see org.infai.amor.backend.storage.StorageFactory#getStorage(org.infai.amor.backend.CommitTransaction)
+         */
+        @Override
+        public Storage getStorage(final CommitTransaction tr) {
+            if (getStorageFactory() == null) {
+                return null;
+            }else{
+            return  getStorageFactory().getStorage(tr);
             }
         }
 

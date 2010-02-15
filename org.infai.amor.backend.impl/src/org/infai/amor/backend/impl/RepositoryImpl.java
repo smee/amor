@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
@@ -62,7 +63,7 @@ public class RepositoryImpl implements Repository {
         try {
             // remember the repository uri for this model
             final URI modeluri = uriHandler.createModelUri(tr, model.getPath());
-            storageFactory.getStorage(tr.getBranch()).checkin(model, modeluri, tr.getRevisionId());
+            storageFactory.getStorage(tr).checkin(model, modeluri, tr.getRevisionId());
             // remember this model path
             ((InternalCommitTransaction) tr).addStoredModel(model.getPath().toString());
 
@@ -86,7 +87,7 @@ public class RepositoryImpl implements Repository {
         try {
             // what is the externally referenceable uri of this model, if it would get persisted?
             final URI modeluri = uriHandler.createModelUri(tr, model.getPersistencePath());
-            final Storage storage = storageFactory.getStorage(tr.getBranch());
+            final Storage storage = storageFactory.getStorage(tr);
 
             final Collection<URI> dependencies = findUnknownModelDependenciesOf(model, tr);
             if (!dependencies.isEmpty()) {
@@ -94,9 +95,14 @@ public class RepositoryImpl implements Repository {
                 return new UnresolvedDependencyResponse("Model not stored! Please checkin the dependencies of this model.", modeluri, dependencies);
             } else {
                 // store the model
+                final Collection<String> packages = getEPackageUrisFrom(model.getContent());
                 storage.checkin(model, modeluri, tr.getRevisionId());
                 // remember this model path
                 ((InternalCommitTransaction) tr).addStoredModel(model.getPersistencePath().toString());
+                for (final String nsUri : packages) {
+                    ((InternalCommitTransaction) tr).addStoredModel(nsUri);
+
+                }
                 return new CheckinResponse("Success.", modeluri);
             }
         } catch (final IOException e) {
@@ -198,7 +204,7 @@ public class RepositoryImpl implements Repository {
     public Response deleteModel(final IPath modelPath, final CommitTransaction tr) throws IOException {
         try {
             final URI modeluri = uriHandler.createModelUri(tr, modelPath);
-            storageFactory.getStorage(tr.getBranch()).delete(modelPath, modeluri,tr.getRevisionId());
+            storageFactory.getStorage(tr).delete(modelPath, modeluri, tr.getRevisionId());
             return new DeleteSuccessResponse("Model deleted successfully", uriHandler.createModelUri(tr, modelPath));
         } catch (final IOException ioe) {
             ioe.printStackTrace();
@@ -406,6 +412,21 @@ public class RepositoryImpl implements Repository {
     @Override
     public Iterable<URI> getDependencies(final URI uri) throws MalformedURIException {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Returns the {@link EPackage} namespace uri for every {@link EObject} in <code>content</code> that is an instance of {@link EPackage}.
+     * @param content
+     * @return
+     */
+    private Collection<String> getEPackageUrisFrom(final List<EObject> content) {
+        final Collection<String> res = Lists.newArrayList();
+        for(final EObject eo: content){
+            if(eo instanceof EPackage) {
+                res.add(((EPackage) eo).getNsURI());
+            }
+        }
+        return res;
     }
 
     /*

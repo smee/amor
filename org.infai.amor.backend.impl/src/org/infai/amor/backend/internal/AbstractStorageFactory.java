@@ -9,12 +9,14 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Revision;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
@@ -26,8 +28,7 @@ import org.infai.amor.backend.storage.StorageFactory;
  */
 public abstract class AbstractStorageFactory implements StorageFactory {
     private final Map<String, Storage> storages = new HashMap<String, Storage>();
-
-    // TODO make sure, we cache each storage per transaction, else we mix different user's models
+    private final Map<Long, Storage> runningStorages = new HashMap<Long, Storage>();
 
     /**
      * @param branchname
@@ -42,8 +43,12 @@ public abstract class AbstractStorageFactory implements StorageFactory {
      */
     @Override
     public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {
-        final Storage storage = getStorage(tr.getBranch());
-        storage.commit(tr, rev);
+        final Storage storage = getStorage(tr);
+        try {
+            storage.commit(tr, rev);
+        } finally {
+            runningStorages.remove(tr.getRevisionId());
+        }
     }
 
     /**
@@ -62,10 +67,68 @@ public abstract class AbstractStorageFactory implements StorageFactory {
         final String bname = branch.getName();
         Storage storage = storages.get(bname);
         if (storage == null) {
-            storage = createNewStorage(branch);
+            storage = makeReadOnly(createNewStorage(branch));
             storages.put(bname, storage);
         }
         return storage;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.infai.amor.backend.storage.StorageFactory#getStorage(org.infai.amor.backend.CommitTransaction)
+     */
+    public Storage getStorage(final CommitTransaction tr) {
+        return runningStorages.get(tr.getRevisionId());
+    }
+
+    /**
+     * @param createNewStorage
+     * @return
+     */
+    private Storage makeReadOnly(final Storage wrappedStorage) {
+        return new Storage() {
+
+            @Override
+            public void checkin(final ChangedModel model, final URI externalUri, final long revisionId) throws IOException {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void checkin(final Model model, final URI externalUri, final long revisionId) throws IOException {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public Model checkout(final IPath path, final long revisionId) throws IOException {
+                return wrappedStorage.checkout(path, revisionId);
+            }
+
+            @Override
+            public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void delete(final IPath modelPath, final URI externalUri, final long revisionId) throws IOException {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void rollback(final CommitTransaction tr) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void startTransaction(final CommitTransaction tr) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public EObject view(final IPath path, final long revisionId) throws IOException {
+                return wrappedStorage.view(path, revisionId);
+            }
+        };
     }
 
     /*
@@ -75,8 +138,12 @@ public abstract class AbstractStorageFactory implements StorageFactory {
      */
     @Override
     public void rollback(final CommitTransaction tr) {
-        final Storage storage = getStorage(tr.getBranch());
-        storage.rollback(tr);
+        final Storage storage = getStorage(tr);
+        try {
+            storage.rollback(tr);
+        } finally {
+            runningStorages.remove(tr.getRevisionId());
+        }
     }
 
     /*
@@ -86,7 +153,9 @@ public abstract class AbstractStorageFactory implements StorageFactory {
      */
     @Override
     public void startTransaction(final CommitTransaction tr) {
-        final Storage storage = getStorage(tr.getBranch());
+        final Storage storage = createNewStorage(tr.getBranch());
+        runningStorages.put(tr.getRevisionId(), storage);
+
         storage.startTransaction(tr);
     }
 

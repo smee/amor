@@ -10,6 +10,7 @@
 package org.infai.amor.backend.storage;
 
 import org.infai.amor.backend.Branch;
+import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.exception.TransactionListener;
 
 /**
@@ -19,9 +20,18 @@ import org.infai.amor.backend.exception.TransactionListener;
 public interface StorageFactory extends TransactionListener {
 
     /**
+     * Get read-only instance of a {@link Storage} to be used for viewing/checking out models.
+     * 
      * @param branch
      * @return
      */
     Storage getStorage(Branch branch);
 
+    /**
+     * Get read/write instance of {@link Storage}.
+     * 
+     * @param tr
+     * @return
+     */
+    Storage getStorage(CommitTransaction tr);
 }
