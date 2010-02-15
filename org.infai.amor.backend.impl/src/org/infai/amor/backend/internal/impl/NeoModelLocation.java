@@ -52,7 +52,7 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      */
     public NeoModelLocation(final NeoProvider np, final Node contentNode,final ModelLocation loc){
         this(np, contentNode, loc.getRelativePath(), loc.getExternalUri(), loc.getChangeType());
-        storeCustomProperties(loc.getCustomProperties());
+        storeCustomProperties(loc.getMetaData());
     }
 
     /**
@@ -85,7 +85,7 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      * @see org.infai.amor.backend.internal.ModelLocation#getCustomProperties()
      */
     @Override
-    public Map<String, Object> getCustomProperties() {
+    public Map<String, Object> getMetaData() {
         final Node propertiesNode = getNode().getSingleRelationship(DynamicRelationshipType.withName(CUSTOMPROPERTIES), Direction.OUTGOING).getEndNode();
 
         final Builder<String, Object> mb = new ImmutableMap.Builder<String, Object>();

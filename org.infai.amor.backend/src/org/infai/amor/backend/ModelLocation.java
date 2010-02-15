@@ -31,7 +31,7 @@ public interface ModelLocation {
      * 
      * @return
      */
-    Map<String,Object> getCustomProperties();
+    Map<String,Object> getMetaData();
 
     /**
      * @return amor uri that references this model

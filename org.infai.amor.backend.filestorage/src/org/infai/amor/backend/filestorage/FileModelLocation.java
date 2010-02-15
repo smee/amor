@@ -13,9 +13,9 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
+import org.infai.amor.backend.ModelLocation;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.Revision.ChangeType;
-import org.infai.amor.backend.internal.ModelLocation;
 
 /**
  * @author sdienst
@@ -48,19 +48,19 @@ public class FileModelLocation implements ModelLocation {
     }
 
     /* (non-Javadoc)
-     * @see org.infai.amor.backend.internal.ModelLocation#getCustomProperties()
-     */
-    @Override
-    public Map<String, Object> getCustomProperties() {
-        return props;
-    }
-
-    /* (non-Javadoc)
      * @see org.infai.amor.backend.internal.ModelLocation#getExternalUri()
      */
     @Override
     public URI getExternalUri() {
         return exUri;
+    }
+
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.internal.ModelLocation#getCustomProperties()
+     */
+    @Override
+    public Map<String, Object> getMetaData() {
+        return props;
     }
 
     /*
