@@ -18,7 +18,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses( { NeoBlobStorageTest.class, ProxyTests.class })
+@SuiteClasses( { NeoBlobStorageTest.class, ProxyTests.class, SimpleRepoIntegrationTests.class })
 public class AllTests {
 
 }

@@ -42,12 +42,12 @@ public abstract class AbstractStorageFactory implements StorageFactory {
      * @see org.infai.amor.backend.exception.TransactionListener#commit(org.infai.amor.backend.CommitTransaction)
      */
     @Override
-    public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {
+    public void commit(final CommitTransaction tr) throws TransactionException {
         final Storage storage = getStorage(tr);
         try {
-            storage.commit(tr, rev);
+            storage.commit(tr);
         } finally {
-            runningStorages.remove(tr.getRevisionId());
+            runningStorages.remove(tr.getRevision().getRevisionId());
         }
     }
 
@@ -79,7 +79,7 @@ public abstract class AbstractStorageFactory implements StorageFactory {
      * @see org.infai.amor.backend.storage.StorageFactory#getStorage(org.infai.amor.backend.CommitTransaction)
      */
     public Storage getStorage(final CommitTransaction tr) {
-        return runningStorages.get(tr.getRevisionId());
+        return runningStorages.get(tr.getRevision().getRevisionId());
     }
 
     /**
@@ -90,27 +90,27 @@ public abstract class AbstractStorageFactory implements StorageFactory {
         return new Storage() {
 
             @Override
-            public void checkin(final ChangedModel model, final URI externalUri, final long revisionId) throws IOException {
+            public void checkin(final ChangedModel model, final URI externalUri, final Revision revision) throws IOException {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void checkin(final Model model, final URI externalUri, final long revisionId) throws IOException {
+            public void checkin(final Model model, final URI externalUri, final Revision revision) throws IOException {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public Model checkout(final IPath path, final long revisionId) throws IOException {
-                return wrappedStorage.checkout(path, revisionId);
+            public Model checkout(final IPath path, final Revision revision) throws IOException {
+                return wrappedStorage.checkout(path, revision);
             }
 
             @Override
-            public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {
+            public void commit(final CommitTransaction tr) throws TransactionException {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void delete(final IPath modelPath, final URI externalUri, final long revisionId) throws IOException {
+            public void delete(final IPath modelPath, final URI externalUri, final Revision revision) throws IOException {
                 throw new UnsupportedOperationException();
             }
 
@@ -125,8 +125,8 @@ public abstract class AbstractStorageFactory implements StorageFactory {
             }
 
             @Override
-            public EObject view(final IPath path, final long revisionId) throws IOException {
-                return wrappedStorage.view(path, revisionId);
+            public EObject view(final IPath path, final Revision revision) throws IOException {
+                return wrappedStorage.view(path, revision);
             }
         };
     }
@@ -142,7 +142,7 @@ public abstract class AbstractStorageFactory implements StorageFactory {
         try {
             storage.rollback(tr);
         } finally {
-            runningStorages.remove(tr.getRevisionId());
+            runningStorages.remove(tr.getRevision().getRevisionId());
         }
     }
 
@@ -154,7 +154,7 @@ public abstract class AbstractStorageFactory implements StorageFactory {
     @Override
     public void startTransaction(final CommitTransaction tr) {
         final Storage storage = createNewStorage(tr.getBranch());
-        runningStorages.put(tr.getRevisionId(), storage);
+        runningStorages.put(tr.getRevision().getRevisionId(), storage);
 
         storage.startTransaction(tr);
     }

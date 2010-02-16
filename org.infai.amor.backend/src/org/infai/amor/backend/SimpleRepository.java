@@ -63,14 +63,16 @@ public interface SimpleRepository {
     /**
      * Create a new branch with name <code>branchname</code>.
      * 
-     * @param branchname
+     * @param newbranchname
      *            name of the new branch
+     * @param oldbranchname
+     *            null or name of the parent branch
      * @param startRevisionIdw
      *            -1 or a valid revisionid that resembles the {@link Branch#getHeadRevision()} of the new branch
      * @throws TODO
      *             which exceptions exactly?
      */
-    void createBranch(String branchname, long startRevisionId) throws Exception;
+    void createBranch(String newbranchname, String oldbranchname, long startRevisionId) throws Exception;
 
     /**
      * @see Repository#getBranches(org.eclipse.emf.common.util.URI)

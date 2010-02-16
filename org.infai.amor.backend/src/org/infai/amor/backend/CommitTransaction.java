@@ -27,7 +27,7 @@ public interface CommitTransaction {
     /**
      * @return
      */
-    long getRevisionId();
+    Revision getRevision();
 
     /**
      * @return

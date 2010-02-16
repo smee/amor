@@ -51,7 +51,6 @@ public class LinearHistoryFileBlobStorageTest extends AbstractNeo4JPerformanceTe
 
 
 
-
     @Before
     public void setUp() throws IOException {
         tempDir = File.createTempFile("storage", "temp");
@@ -92,6 +91,18 @@ public class LinearHistoryFileBlobStorageTest extends AbstractNeo4JPerformanceTe
             }
 
             @Override
+            public void setCommitMessage(final String message) {
+            }
+
+            @Override
+            public void setTimestamp(final long currentTimeMillis) {
+            }
+
+            @Override
+            public void setUser(final String username) {
+            }
+
+            @Override
             public void touchedModel(final ModelLocation loc) {
             }
         };
@@ -105,16 +116,16 @@ public class LinearHistoryFileBlobStorageTest extends AbstractNeo4JPerformanceTe
         final Model mm = new ModelImpl(ModelUtil.readInputModel(models[0], rs), models[0]);
         CommitTransaction tr = TestUtils.createTransaction(BRANCHNAME, 0);
         storage.startTransaction(tr);
-        storage.checkin(mm, null, tr.getRevisionId());
-        storage.commit(tr, rev);
+        storage.checkin(mm, null, tr.getRevision());
+        storage.commit(tr);
         split("Committed M2");
 
         // checked in first model revision
         final Model m = new ModelImpl(ModelUtil.readInputModel(models[1], rs), modelName);
         tr = TestUtils.createTransaction(BRANCHNAME, 1);
         storage.startTransaction(tr);
-        storage.checkin(m, null, tr.getRevisionId());
-        storage.commit(tr, rev);
+        storage.checkin(m, null, tr.getRevision());
+        storage.commit(tr);
         split("Committed initial M1");
 
         EObject lastModel = m.getContent().get(0);
@@ -124,10 +135,10 @@ public class LinearHistoryFileBlobStorageTest extends AbstractNeo4JPerformanceTe
             storage.startTransaction(tr);
             final EObject changedModel = ModelUtil.readInputModel(models[i], rs);
             final ChangedModel cm = new ChangedModelImpl(ModelUtil.createEpatch(lastModel, changedModel), modelName);
-            storage.checkin(cm, null, tr.getRevisionId());
-            storage.commit(tr, rev);
+            storage.checkin(cm, null, tr.getRevision());
+            storage.commit(tr);
 
-            final Model checkedoutmodel = storage.checkout(new Path(modelName), i);
+            final Model checkedoutmodel = storage.checkout(new Path(modelName), TestUtils.createRevision(i));
             ModelUtil.assertModelEqual(changedModel, checkedoutmodel.getContent().get(0));
             lastModel = changedModel;
             split("Roundtrip completed for M1 revision " + i);

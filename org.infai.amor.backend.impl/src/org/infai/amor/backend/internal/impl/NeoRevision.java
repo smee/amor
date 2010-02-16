@@ -36,12 +36,9 @@ public class NeoRevision extends NeoObject implements InternalRevision {
     private static final String REVISIONID = "revId";
     private static final String MODELLOCATION = "modellocation";
 
-    public NeoRevision(final NeoProvider np, final long revisionId, final String commitMessage, final String username, final NeoRevision previousRevision) {
+    public NeoRevision(final NeoProvider np, final long revisionId, final NeoRevision previousRevision) {
         super(np);
         getNode().setProperty(REVISIONID, revisionId);
-        getNode().setProperty(COMMITMESSAGE, commitMessage);
-        getNode().setProperty(COMMITTIME, System.currentTimeMillis());
-        getNode().setProperty(USER, username);
         if (previousRevision != null) {
             getNode().createRelationshipTo(previousRevision.getNode(), DynamicRelationshipType.withName(PREVIOUSREVISION));
         }
@@ -224,6 +221,28 @@ public class NeoRevision extends NeoObject implements InternalRevision {
         dumpOutRels(getNode());
     }
 
+    /**
+     * @param message
+     */
+    public void setCommitMessage(final String message) {
+        getNode().setProperty(COMMITMESSAGE, message);
+    }
+
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.internal.InternalRevision#setTimestamp(long)
+     */
+    @Override
+    public void setTimestamp(final long currentTimeMillis) {
+        getNode().setProperty(COMMITTIME, currentTimeMillis);
+    }
+
+    /**
+     * @param username
+     */
+    public void setUser(final String username) {
+        getNode().setProperty(USER, username);
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -234,7 +253,9 @@ public class NeoRevision extends NeoObject implements InternalRevision {
         return "NeoRevision [commitMessage=" + getCommitMessage() + ", commitTimestamp=" + getCommitTimestamp() + ", revisionId=" + getRevisionId() + ", user=" + getUser() + "]";
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.internal.impl.InternalRevision#touchedModel(org.infai.amor.backend.internal.ModelLocation)
      */
     public void touchedModel(final ModelLocation loc) {

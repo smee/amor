@@ -63,7 +63,7 @@ public class RepositoryImpl implements Repository {
         try {
             // remember the repository uri for this model
             final URI modeluri = uriHandler.createModelUri(tr, model.getPath());
-            storageFactory.getStorage(tr).checkin(model, modeluri, tr.getRevisionId());
+            storageFactory.getStorage(tr).checkin(model, modeluri, tr.getRevision());
             // remember this model path
             ((InternalCommitTransaction) tr).addStoredModel(model.getPath().toString());
 
@@ -96,7 +96,7 @@ public class RepositoryImpl implements Repository {
             } else {
                 // store the model
                 final Collection<String> packages = getEPackageUrisFrom(model.getContent());
-                storage.checkin(model, modeluri, tr.getRevisionId());
+                storage.checkin(model, modeluri, tr.getRevision());
                 // remember this model path
                 ((InternalCommitTransaction) tr).addStoredModel(model.getPersistencePath().toString());
                 for (final String nsUri : packages) {
@@ -121,7 +121,11 @@ public class RepositoryImpl implements Repository {
         transactionManager.startReadTransaction();
         try {
             final Storage storage = getStorage(uri);
-            return storage.checkout(uriHandler.extractModelPathFrom(uri), uriHandler.extractRevision(uri));
+            final Branch branch = branchFactory.getBranch(uriHandler.extractBranchName(uri));
+            final long revisionId = uriHandler.extractRevision(uri);
+            final Revision revision = branch.getRevision(revisionId);
+
+            return storage.checkout(uriHandler.extractModelPathFrom(uri), revision);
         } finally {
             transactionManager.closeReadTransaction();
         }
@@ -134,8 +138,7 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Response commitTransaction(final CommitTransaction tr) {
-        final Revision revision = branchFactory.createRevision(tr);
-        return transactionManager.commit(tr, revision);
+        return transactionManager.commit(tr);
     }
 
     /**
@@ -204,7 +207,7 @@ public class RepositoryImpl implements Repository {
     public Response deleteModel(final IPath modelPath, final CommitTransaction tr) throws IOException {
         try {
             final URI modeluri = uriHandler.createModelUri(tr, modelPath);
-            storageFactory.getStorage(tr).delete(modelPath, modeluri, tr.getRevisionId());
+            storageFactory.getStorage(tr).delete(modelPath, modeluri, tr.getRevision());
             return new DeleteSuccessResponse("Model deleted successfully", uriHandler.createModelUri(tr, modelPath));
         } catch (final IOException ioe) {
             ioe.printStackTrace();
@@ -504,7 +507,8 @@ public class RepositoryImpl implements Repository {
         try {
 
             final Storage storage = getStorage(uri);
-            return storage.view(uriHandler.extractModelPathFrom(uri), uriHandler.extractRevision(uri));
+            final Revision revision = branchFactory.getBranch(uriHandler.extractBranchName(uri)).getRevision(uriHandler.extractRevision(uri));
+            return storage.view(uriHandler.extractModelPathFrom(uri), revision);
         } finally {
             transactionManager.closeReadTransaction();
         }

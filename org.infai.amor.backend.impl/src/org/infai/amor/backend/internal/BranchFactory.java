@@ -10,7 +10,6 @@
 package org.infai.amor.backend.internal;
 
 import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.Revision;
 
 /**
@@ -35,7 +34,7 @@ public interface BranchFactory {
      * @param transaction
      * @return
      */
-    Revision createRevision(CommitTransaction transaction);
+    Revision createRevision(Branch origin, long revisionId);
 
     /**
      * Find the branch with the given name.

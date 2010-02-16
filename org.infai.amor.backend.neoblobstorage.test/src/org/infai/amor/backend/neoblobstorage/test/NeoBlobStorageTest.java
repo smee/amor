@@ -102,8 +102,8 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
                 return proxy;
             }
         };
-        final TransactionManager tm = new TransactionManagerImpl(uh, np);
         final NeoBranchFactory bf = new NeoBranchFactory(np);
+        final TransactionManager tm = new TransactionManagerImpl(uh, np, bf);
         final NeoBlobStorageFactory sf = new NeoBlobStorageFactory(np);
         tm.addTransactionListener(sf);
 
@@ -139,7 +139,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         final List<URI> repoUris = Lists.newArrayList();
         for (final String loc : models.keySet()) {
             final Response response = repository.checkin(new ModelImpl(models.get(loc), loc), ct);
-            assertTrue("Class is " + response.getClass(), response instanceof CheckinResponse);
+            assertTrue("Class should not be " + response.getClass(), response instanceof CheckinResponse);
 
             repoUris.add(response.getURI());
             split("Neo4j - Added "+loc);

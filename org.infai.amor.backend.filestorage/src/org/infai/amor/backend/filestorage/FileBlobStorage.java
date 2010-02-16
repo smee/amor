@@ -9,30 +9,13 @@
  *******************************************************************************/
 package org.infai.amor.backend.filestorage;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
@@ -43,10 +26,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.infai.amor.backend.ChangedModel;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Model;
-import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.InternalRevision;
@@ -57,9 +37,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
+import com.google.common.collect.*;
 
 /**
  * Store models as xml documents without messing with their internal structures.
@@ -195,7 +173,8 @@ public class FileBlobStorage implements Storage {
      * long)
      */
     @Override
-    public void checkin(final ChangedModel model, final URI externalUri, final long revisionId) throws IOException {
+    public void checkin(final ChangedModel model, final URI externalUri, final Revision revision) throws IOException {
+        final long revisionId = revision.getRevisionId();
         // we ignore dependant models altogether
         final ResourceSet inputRS = findMostRecentModelFor(model.getPath(), revisionId);
         // apply the model patch
@@ -217,7 +196,8 @@ public class FileBlobStorage implements Storage {
      * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.Model, org.eclipse.emf.common.util.URI, long)
      */
     @Override
-    public void checkin(final Model model, final URI externalUri, final long revisionId) throws IOException {
+    public void checkin(final Model model, final URI externalUri, final Revision revision) throws IOException {
+        final long revisionId = revision.getRevisionId();
         final URI storagePath = createStorageUriFor(model.getPersistencePath(), revisionId, true);
         final Resource resource = resourceSet.createResource(storagePath);
 
@@ -243,7 +223,8 @@ public class FileBlobStorage implements Storage {
      * @see org.infai.amor.backend.storage.Storage#checkout(org.eclipse.emf.common.util.URI)
      */
     @Override
-    public Model checkout(final IPath path, final long revisionId) throws IOException {
+    public Model checkout(final IPath path, final Revision revision) throws IOException {
+        final long revisionId = revision.getRevisionId();
         final ResourceSet rs = new ResourceSetImpl();
         final URI modelStorageUri = createStorageUriFor(path, revisionId, true);
         // first load the metamodel to prevent exception
@@ -271,9 +252,10 @@ public class FileBlobStorage implements Storage {
      * @see org.infai.amor.backend.exception.TransactionListener#commit(org.infai.amor.backend.CommitTransaction)
      */
     @Override
-    public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {
+    public void commit(final CommitTransaction tr) throws TransactionException {
         // nothing to do
         resourceSet = null;
+        final Revision rev = tr.getRevision();
         if (rev instanceof InternalRevision) {
             final InternalRevision revision = (InternalRevision) rev;
             for (final FileModelLocation fml : addedModelUris) {
@@ -309,7 +291,7 @@ public class FileBlobStorage implements Storage {
      * @see org.infai.amor.backend.storage.Storage#delete(org.eclipse.core.runtime.IPath, long)
      */
     @Override
-    public void delete(final IPath modelPath, final URI externalUri,final long revisionId) throws IOException {
+    public void delete(final IPath modelPath, final URI externalUri, final Revision revision) throws IOException {
         addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(modelPath), ChangeType.DELETED));
         // TODO make sure to signal an error, if anyone checks in another model that depends on this deleted model
         // throw new UnsupportedOperationException("not implemented");
@@ -424,7 +406,7 @@ public class FileBlobStorage implements Storage {
     @Override
     public void rollback(final CommitTransaction tr) {
         // TODO all created tagfiles
-        final URI fileURI = createStorageUriFor(null, tr.getRevisionId(), false);
+        final URI fileURI = createStorageUriFor(null, tr.getRevision().getRevisionId(), false);
         // delete the directory of this revision
         try {
             final File dir = new File(new java.net.URI(fileURI.toString()));
@@ -451,7 +433,7 @@ public class FileBlobStorage implements Storage {
      * @see org.infai.amor.backend.storage.Storage#view(org.eclipse.emf.common.util.URI)
      */
     @Override
-    public EObject view(final IPath path, final long revisionId) throws IOException {
+    public EObject view(final IPath path, final Revision revision) throws IOException {
         throw new UnsupportedOperationException("not implemented");
     }
 

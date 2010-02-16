@@ -15,6 +15,8 @@ import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
+import org.infai.amor.backend.internal.InternalCommitTransaction;
+import org.infai.amor.backend.internal.InternalRevision;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 
@@ -39,13 +41,13 @@ public class TestUtils {
             }
 
             @Override
-            public Map<String, Object> getMetaData() {
-                return Collections.EMPTY_MAP;
+            public URI getExternalUri() {
+                return uri;
             }
 
             @Override
-            public URI getExternalUri() {
-                return uri;
+            public Map<String, Object> getMetaData() {
+                return Collections.EMPTY_MAP;
             }
 
             @Override
@@ -60,16 +62,36 @@ public class TestUtils {
      * @param revisionId
      * @return
      */
+    public static InternalRevision createRevision(final long revisionId) {
+        final Mockery context = new Mockery();
+        final InternalRevision revision = context.mock(InternalRevision.class, "" + Math.random());
+        context.checking(new Expectations() {
+            {
+                allowing(revision).getRevisionId();
+                will(returnValue(revisionId));
+                allowing(revision).touchedModel(with(any(ModelLocation.class)));
+                allowing(revision);
+            }
+        });
+        return revision;
+    }
+
+    /**
+     * @param branchname
+     * @param revisionId
+     * @return
+     */
     public static CommitTransaction createTransaction(final String branchname, final long revisionId) {
         final Mockery context = new Mockery();
         final Branch branch = context.mock(Branch.class, "" + Math.random());
-        final CommitTransaction ct = context.mock(CommitTransaction.class);
+        final InternalRevision revision = createRevision(revisionId);
+        final InternalCommitTransaction ct = context.mock(InternalCommitTransaction.class);
         context.checking(new Expectations() {
             {
                 allowing(branch).getName();
                 will(returnValue(branchname));
-                allowing(ct).getRevisionId();
-                will(returnValue(revisionId));
+                allowing(ct).getRevision();
+                will(returnValue(revision));
                 allowing(ct).getBranch();
                 will(returnValue(branch));
             }

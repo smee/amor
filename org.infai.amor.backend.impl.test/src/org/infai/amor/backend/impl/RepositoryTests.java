@@ -17,6 +17,7 @@ import org.infai.amor.backend.*;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
+import org.infai.amor.test.TestUtils;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.*;
@@ -95,20 +96,20 @@ public class RepositoryTests {
         final ChangedModel model = context.mock(ChangedModel.class);
         final Branch branch = context.mock(Branch.class);
         final InternalCommitTransaction tr = context.mock(InternalCommitTransaction.class);
-
+        final InternalRevision revision = TestUtils.createRevision(1);
         context.checking(new Expectations() {
             {
                 allowing(tr).getBranch();
                 will(returnValue(branch));
-                one(storageFactory).getStorage(branch);
+                one(storageFactory).getStorage(tr);
                 will(returnValue(storage));
                 // needs to checkin into our given storage
-                one(storage).checkin(model, null, 1);
+                one(storage).checkin(model, null, revision);
                 allowing(model);
                 allowing(uriHandler);
                 allowing(branchFactory);
-                allowing(tr).getRevisionId();
-                will(returnValue(1L));
+                allowing(tr).getRevision();
+                will(returnValue(revision));
                 allowing(tr).addStoredModel(with(any(String.class)));
             }
         });
@@ -121,19 +122,20 @@ public class RepositoryTests {
         final Model model = context.mock(Model.class);
         final InternalCommitTransaction tr = context.mock(InternalCommitTransaction.class);
         final Branch branch = context.mock(Branch.class);
+        final InternalRevision revision = TestUtils.createRevision(1);
 
         context.checking(new Expectations() {
             {
                 allowing(tr).getBranch();
                 will(returnValue(branch));
-                one(storageFactory).getStorage(branch);
+                one(storageFactory).getStorage(tr);
                 will(returnValue(storage));
-                one(storage).checkin(model, null, 1);
+                one(storage).checkin(model, null, revision);
                 allowing(model);
                 allowing(uriHandler);
                 allowing(branchFactory);
-                allowing(tr).getRevisionId();
-                will(returnValue(1L));
+                allowing(tr).getRevision();
+                will(returnValue(revision));
                 allowing(tr).addStoredModel(with(any(String.class)));
             }
         });

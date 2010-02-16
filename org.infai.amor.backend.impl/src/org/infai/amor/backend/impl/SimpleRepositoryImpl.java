@@ -20,14 +20,14 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.PackageNotFoundException;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.*;
-import org.infai.amor.backend.internal.ModelImpl;
-import org.infai.amor.backend.internal.UriHandler;
+import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.responses.UnresolvedDependencyResponse;
 
 import com.google.common.base.Function;
@@ -40,8 +40,17 @@ import com.google.common.collect.Maps;
  *
  */
 public class SimpleRepositoryImpl implements SimpleRepository {
+    /*
+     * TODOS:
+     * - remember package nsuris for stored ecores, within transaction as well as within revisions
+     * - load package prior to loading a model instance
+     * - clean up api
+     */
     final Repository repo;
     final UriHandler uh;
+    /**
+     * TODO neo4j transactions are bound to a specific thread, need to cope with!
+     */
     final Map<Long, CommitTransaction> transactionMap = Maps.newHashMap();
 
 
@@ -54,7 +63,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      */
     @Override
     public List<String> checkinEcore(final String ecoreXmi, final String relativePath, final long transactionId) {
-        final ResourceSet rs = new ResourceSetImpl();
+        final ResourceSet rs = createResourceSet();
         final URI fileUri = URI.createURI(relativePath);
         if (!fileUri.isRelative()) {
             throw new IllegalArgumentException("Path must be relative");
@@ -77,7 +86,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
                     // we are missing at least one other epackage
                     final String missingPackageUri = ((PackageNotFoundException) cause).uri();
                     if (weKnowThisPackage(missingPackageUri, transaction)) {
-                        loadEPackage(rs.createResource(URI.createURI(missingPackageUri)));
+                        loadEPackage(rs, missingPackageUri, (InternalCommitTransaction) transaction);
                         continue;
                     } else {
                         return Arrays.asList(missingPackageUri);
@@ -89,6 +98,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         }
         return Collections.EMPTY_LIST;
     }
+
     /*
      * (non-Javadoc)
      * 
@@ -99,7 +109,6 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         // TODO Auto-generated method stub
         return null;
     }
-
     /* (non-Javadoc)
      * @see org.infai.amor.backend.SimpleRepository#checkoutEcore(long, java.lang.String)
      */
@@ -117,7 +126,6 @@ public class SimpleRepositoryImpl implements SimpleRepository {
             throw new IllegalArgumentException(String.format("Could not find revision '%d' on branch '%s'", revisionId, branch), e);
         }
     }
-
     /**
      * @param transactionId
      * @return
@@ -129,6 +137,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         }
         return transaction;
     }
+
     /* (non-Javadoc)
      * @see org.infai.amor.backend.SimpleRepository#commitTransaction(long)
      */
@@ -140,20 +149,44 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         final CommitTransaction transaction = checkTransaction(transactionId);
         transaction.setUser(username);
         transaction.setCommitMessage(commitMessage);
-
-        final Response response = repo.commitTransaction(transaction);
-        // TODO handle responses
-        transactionMap.remove(transactionId);
-        return transaction.getRevisionId();
+        try{
+            final Response response = repo.commitTransaction(transaction);
+            // TODO handle responses
+            return transaction.getRevision().getRevisionId();
+        } finally {
+            transactionMap.remove(transactionId);
+        }
     }
 
     /* (non-Javadoc)
      * @see org.infai.amor.backend.SimpleRepository#createBranch(java.lang.String)
      */
     @Override
-    public void createBranch(final String branchname, final long startRevisionId) {
-        // TODO respect the revisionid
-        repo.createBranch(null, branchname);
+    public void createBranch(final String newBranchname, final String oldbranchname, final long startRevisionId) {
+        if (oldbranchname == null || startRevisionId < 0) {
+            repo.createBranch(null, newBranchname);
+        } else {
+            try {
+                final Revision rev = repo.getRevision(uh.createUriFor(repo.getBranch(uh.createUriFor(oldbranchname)), startRevisionId));
+                repo.createBranch(rev, newBranchname);
+            } catch (final MalformedURIException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    /**
+     * @return
+     */
+    private ResourceSet createResourceSet() {
+        final ResourceSet rs =  new ResourceSetImpl();
+        rs.getResourceFactoryRegistry().getProtocolToFactoryMap().put("amor", new ResourceFactoryImpl(){
+            @Override
+            public Resource createResource(final URI uri){
+                // TODO return resource that reads from our storage
+                return super.createResource(uri);
+            }
+        });
+        return rs;
     }
 
     /**
@@ -196,12 +229,20 @@ public class SimpleRepositoryImpl implements SimpleRepository {
     }
 
     /**
-     * @param createResource
+     * @param rs
+     * @param missingPackageUri
+     * @param transaction
      */
-    private void loadEPackage(final Resource res) {
-        final URI nsUri = res.getURI();
-        // TODO find ecore that contains this namespace uri
+    private void loadEPackage(final ResourceSet rs, final String missingPackageUri, final InternalCommitTransaction transaction) {
+        // TODO either we saved it during the current transaction
+        if (transaction.hasStoredModel(missingPackageUri)) {
+
+        } else {
+            // TODO or we saved this package in one of our former revisions
+
+        }
     }
+
 
     /* (non-Javadoc)
      * @see org.infai.amor.backend.SimpleRepository#rollbackTransaction(long)
@@ -220,7 +261,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      * @throws IOException
      */
     private String serializeModel(final List<EObject> contents) throws IOException {
-        final ResourceSet rs = new ResourceSetImpl();
+        final ResourceSet rs = createResourceSet();
         rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
         rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
 
@@ -239,8 +280,9 @@ public class SimpleRepositoryImpl implements SimpleRepository {
     public long startTransaction(final String branchname) {
         try {
             final CommitTransaction tr = repo.startCommitTransaction(repo.getBranch(uh.createUriFor(branchname)));
-            transactionMap.put(tr.getRevisionId(), tr);
-            return tr.getRevisionId();
+            final long revisionId = tr.getRevision().getRevisionId();
+            transactionMap.put(revisionId, tr);
+            return revisionId;
         } catch (final MalformedURIException e) {
             throw new RuntimeException(e);
         }
@@ -252,9 +294,9 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      * @return
      */
     private boolean weKnowThisPackage(final String ePackageUri, final CommitTransaction transaction) {
-        // return ((CommitTransactionImpl) transaction).hasStoredModel(ePackageUri) ||
-        // transaction.getBranch().findRevisionOf(relPath) != null;
-        return false;
+        return ((InternalCommitTransaction) transaction).hasStoredModel(ePackageUri);
+        // || transaction.getBranch().findRevisionOf(relPath) != null;
+        // return false;
     }
 
 

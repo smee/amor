@@ -10,14 +10,9 @@
 package org.infai.amor.backend.filestorage;
 
 import static org.infai.amor.test.TestUtils.createTransaction;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 import org.custommonkey.xmlunit.XMLAssert;
 import org.eclipse.core.runtime.Path;
@@ -25,15 +20,14 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.infai.amor.backend.ChangedModel;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Model;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.InternalRevision;
 import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.internal.impl.ChangedModelImpl;
 import org.infai.amor.backend.internal.impl.NeoRevision;
 import org.infai.amor.test.ModelUtil;
+import org.infai.amor.test.TestUtils;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -65,23 +59,23 @@ public class BlobStorageTest {
         // rev 33
         CommitTransaction tr = createTransaction(BRANCHNAME, 33);
         storage.startTransaction(tr);
-        storage.checkin(m, null, tr.getRevisionId());
-        storage.commit(tr, rev);
+        storage.checkin(m, null, tr.getRevision());
+        storage.commit(tr);
         // rev 55
         tr = createTransaction(BRANCHNAME, 55);
         storage.startTransaction(tr);
-        storage.checkin(new ModelImpl(m.getContent(), "testmodel/base.ecore"), null, tr.getRevisionId());
-        storage.commit(tr, rev);
+        storage.checkin(new ModelImpl(m.getContent(), "testmodel/base.ecore"), null, tr.getRevision());
+        storage.commit(tr);
         // rev 88
         tr = createTransaction(BRANCHNAME, 88);
         storage.startTransaction(tr);
-        storage.checkin(new ModelImpl(m.getContent(), "testmodel/foo.ecore"), null, tr.getRevisionId());
-        storage.commit(tr, rev);
+        storage.checkin(new ModelImpl(m.getContent(), "testmodel/foo.ecore"), null, tr.getRevision());
+        storage.commit(tr);
         // rev 99
         tr = createTransaction(BRANCHNAME, 99);
         storage.startTransaction(tr);
-        storage.checkin(new ModelImpl(m.getContent(), "testmodel/foo.ecore"), null, tr.getRevisionId());
-        storage.commit(tr, rev);
+        storage.checkin(new ModelImpl(m.getContent(), "testmodel/foo.ecore"), null, tr.getRevision());
+        storage.commit(tr);
     }
 
     @Before
@@ -104,8 +98,8 @@ public class BlobStorageTest {
 
         // when
         storage.startTransaction(tr);
-        storage.checkin(m, null, tr.getRevisionId());
-        final Model checkedout = storage.checkout(m.getPersistencePath(), tr.getRevisionId());
+        storage.checkin(m, null, tr.getRevision());
+        final Model checkedout = storage.checkout(m.getPersistencePath(), tr.getRevision());
 
         // then
         ModelUtil.assertModelEqual(m.getContent().get(0), checkedout.getContent().get(0));
@@ -165,7 +159,7 @@ public class BlobStorageTest {
         // store the model
         shouldSaveModelWithoutChanges();
 
-        final Model model = storage.checkout(new Path("testmodels/base.ecore"), 55);
+        final Model model = storage.checkout(new Path("testmodels/base.ecore"), TestUtils.createRevision(55));
         assertNotNull(model.getContent());
     }
 
@@ -177,7 +171,7 @@ public class BlobStorageTest {
         final CommitTransaction tr = createTransaction(BRANCHNAME, 55);
         storage.startTransaction(tr);
         // store it into branch testBranch and revision 55
-        storage.checkin(m, null, tr.getRevisionId());
+        storage.checkin(m, null, tr.getRevision());
 
         final File storedFile = new File(tempDir, "testBranch/55/testmodels/base.ecore");
         assertTrue(storedFile.exists());
@@ -194,16 +188,16 @@ public class BlobStorageTest {
         final Model mm = new ModelImpl(ModelUtil.readInputModel("testmodels/filesystem.ecore", rs), "testmodels/filesystem.ecore");
         CommitTransaction tr = createTransaction(BRANCHNAME, 1);
         storage.startTransaction(tr);
-        storage.checkin(mm, null, tr.getRevisionId());
-        storage.commit(tr, rev);
+        storage.checkin(mm, null, tr.getRevision());
+        storage.commit(tr);
         // given several older revisions
         final String modelpath = "model/simplefilesystem.filesystem";
         final Model m = new ModelImpl(ModelUtil.readInputModel("testmodels/fs/simplefilesystem_v1.filesystem", rs), modelpath);
         // rev 33
         tr = createTransaction(BRANCHNAME, 33);
         storage.startTransaction(tr);
-        storage.checkin(m, null, tr.getRevisionId());
-        storage.commit(tr, rev);
+        storage.checkin(m, null, tr.getRevision());
+        storage.commit(tr);
         // rev 55
         tr = createTransaction(BRANCHNAME, 55);
         storage.startTransaction(tr);
@@ -212,10 +206,10 @@ public class BlobStorageTest {
         final EObject changedModel = ModelUtil.readInputModel("testmodels/fs/simplefilesystem_v2.filesystem", rs);
         final ChangedModel cm = new ChangedModelImpl(ModelUtil.createEpatch(m.getContent().get(0), changedModel), modelpath);
 
-        storage.checkin(cm, null, tr.getRevisionId());
-        storage.commit(tr, rev);
+        storage.checkin(cm, null, tr.getRevision());
+        storage.commit(tr);
         // then ??
-        final Model checkedoutmodel = storage.checkout(new Path(modelpath), 55);
+        final Model checkedoutmodel = storage.checkout(new Path(modelpath), tr.getRevision());
 
         // ModelUtil.storeViaXml(changedModel, checkedoutmodel.getContent());
 
@@ -225,7 +219,7 @@ public class BlobStorageTest {
     @Test
     public void testCreatesLocalDirectories() {
         final CommitTransaction tr = createTransaction(BRANCHNAME, 55);
-        final URI fileUri = storage.createStorageUriFor(new Path("testmodels/dummymodel.xmi"), tr.getRevisionId(), false);
+        final URI fileUri = storage.createStorageUriFor(new Path("testmodels/dummymodel.xmi"), tr.getRevision().getRevisionId(), false);
         assertEquals(new File(tempDir, "testBranch/55/testmodels").toURI().toString(), fileUri.toString());
     }
 }

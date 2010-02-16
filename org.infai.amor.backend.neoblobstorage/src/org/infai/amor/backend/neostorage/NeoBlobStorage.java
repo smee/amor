@@ -35,7 +35,6 @@ import com.google.common.collect.Maps;
  */
 public class NeoBlobStorage extends NeoObjectFactory implements Storage {
     private final static Logger logger = Logger.getLogger(NeoBlobStorage.class.getName());
-    private Map<URI, NeoModelLocation> addedModelNodes;
     private final NeoBranch branch;
     private Map<EObject, Node> cache;
 
@@ -65,7 +64,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      * long)
      */
     @Override
-    public void checkin(final ChangedModel model, final URI externalUri, final long revisionId) throws IOException {
+    public void checkin(final ChangedModel model, final URI externalUri, final Revision revision) throws IOException {
         throw new UnsupportedOperationException("not implemented");
     }
 
@@ -75,24 +74,24 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.Model, org.eclipse.emf.common.util.URI, long)
      */
     @Override
-    public void checkin(final Model model, final URI externalUri, final long revisionId) throws IOException {
+    public void checkin(final Model model, final URI externalUri, final Revision revision) throws IOException {
         // store all eobjects/epackages
         logger.finer("----------1-Storing contents----------");
         final NeoMappingDispatcher disp1 = new NeoMappingDispatcher(getNeoProvider());
         disp1.setRegistry(cache);
-        final NeoModelLocation modelLocation = disp1.store(model);
+        disp1.store(model);
         logger.finer("----------2-Storing metadata----------");
         final AbstractNeoDispatcher disp2 = new NeoMetadataDispatcher(getNeoProvider());
         // reuse the eobject->neo4j node map
         disp2.setRegistry(cache);
         // store all additional references and meta relationships
-        disp2.store(model);
+        final NeoModelLocation modelLocation = disp2.store(model);
 
         modelLocation.setExternalUri(externalUri);
         modelLocation.setRelativePath(createModelSpecificPath(model.getPersistencePath()));
         modelLocation.setChangetype(ChangeType.ADDED);
-        this.addedModelNodes.put(externalUri, modelLocation);
         // remember new model node
+        ((InternalRevision) revision).touchedModel(modelLocation);
     }
 
     /*
@@ -101,11 +100,11 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      * @see org.infai.amor.backend.storage.Storage#checkout(org.eclipse.core.runtime.IPath, long)
      */
     @Override
-    public Model checkout(final IPath path, final long revisionId) throws IOException {
-        logger.finer(String.format("checking out %s of revision %d", path.toString(), revisionId));
+    public Model checkout(final IPath path, final Revision revision) throws IOException {
+        logger.finer(String.format("checking out %s of revision %d", path.toString(), revision.getRevisionId()));
 
-        final NeoRevision revision = branch.getRevision(revisionId);
-        final NeoModelLocation modelLocation = (NeoModelLocation) revision.getModelLocation(createModelSpecificPath(path));
+        final NeoRevision neoRev = (NeoRevision) revision;
+        final NeoModelLocation modelLocation = (NeoModelLocation) neoRev.getModelLocation(createModelSpecificPath(path));
 
         final NeoRestorer restorer = new NeoRestorer(getNeoProvider());
         return new ModelImpl(restorer.load(modelLocation), path);
@@ -117,29 +116,18 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      * @see org.infai.amor.backend.exception.TransactionListener#commit(org.infai.amor.backend.CommitTransaction)
      */
     @Override
-    public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {
-        if (rev instanceof InternalRevision) {
-            // add all modelLocations to the revision
-            final InternalRevision revision = (InternalRevision) rev;
-            for (final URI uri : addedModelNodes.keySet()) {
-                final NeoModelLocation loc = addedModelNodes.get(uri);
-                revision.touchedModel(loc);
-
-            }
+    public void commit(final CommitTransaction tr) throws TransactionException {
             cache = null;
-            addedModelNodes = null;
-        } else {
-            throw new TransactionException("Internal error: Do not know how to commit to revision of type " + rev.getClass());
-        }
     }
 
     /* (non-Javadoc)
      * @see org.infai.amor.backend.storage.Storage#delete(org.eclipse.core.runtime.IPath, long)
      */
     @Override
-    public void delete(final IPath modelPath, final URI externalUri,final long revisionId) throws IOException {
+    public void delete(final IPath modelPath, final URI externalUri, final Revision revision) throws IOException {
         // TODO test!
-        addedModelNodes.put(externalUri, new NeoModelLocation(getNeoProvider(), getNeo().createNode(), modelPath.toString(), externalUri, ChangeType.DELETED));
+        // remember deleted model node
+        ((InternalRevision) revision).touchedModel(new NeoModelLocation(getNeoProvider(), getNeo().createNode(), modelPath.toString(), externalUri, ChangeType.DELETED));
     }
 
 
@@ -152,7 +140,6 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
     public void rollback(final CommitTransaction tr) {
         // nothing to do, gets handled by the neo4j transaction
         cache = null;
-        addedModelNodes = null;
     }
 
     /*
@@ -162,7 +149,6 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      */
     @Override
     public void startTransaction(final CommitTransaction tr) {
-        this.addedModelNodes = Maps.newHashMap();
         cache = Maps.newHashMap();
     }
 
@@ -172,7 +158,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      * @see org.infai.amor.backend.storage.Storage#view(org.eclipse.core.runtime.IPath, long)
      */
     @Override
-    public EObject view(final IPath path, final long revisionId) throws IOException {
+    public EObject view(final IPath path, final Revision revision) throws IOException {
         throw new UnsupportedOperationException("not implemented");
     }
 }

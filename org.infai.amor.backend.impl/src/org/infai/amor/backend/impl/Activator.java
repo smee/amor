@@ -31,9 +31,9 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
      */
     private final class DelegatingStorageFactory implements StorageFactory {
         @Override
-        public void commit(final CommitTransaction tr, final Revision rev) throws TransactionException {
+        public void commit(final CommitTransaction tr) throws TransactionException {
             if (getStorageFactory() != null) {
-                getStorageFactory().commit(tr, rev);
+                getStorageFactory().commit(tr);
             }
         }
 
@@ -55,7 +55,7 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
             if (getStorageFactory() == null) {
                 return null;
             }else{
-            return  getStorageFactory().getStorage(tr);
+                return  getStorageFactory().getStorage(tr);
             }
         }
 
@@ -183,10 +183,11 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         // instantiate our repository
         // TODO make settings configurable
         final UriHandlerImpl uriHandler = new UriHandlerImpl("localhost", "repo");
-        final TransactionManagerImpl trman = new TransactionManagerImpl(uriHandler, this);
+        final NeoBranchFactory branchFactory = new NeoBranchFactory(this);
+        final TransactionManagerImpl trman = new TransactionManagerImpl(uriHandler, this, branchFactory);
         final DelegatingStorageFactory sf = new DelegatingStorageFactory();
         trman.addTransactionListener(sf);
-        final Repository repo = new RepositoryImpl(sf, new NeoBranchFactory(this), uriHandler, trman);
+        final Repository repo = new RepositoryImpl(sf, branchFactory, uriHandler, trman);
 
         // register repository service
         final Dictionary properties = new Hashtable();

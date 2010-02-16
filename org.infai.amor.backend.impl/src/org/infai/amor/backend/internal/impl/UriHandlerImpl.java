@@ -123,7 +123,7 @@ public class UriHandlerImpl implements UriHandler {
      */
     @Override
     public URI createUriFor(final CommitTransaction tr) {
-        return createUriFor(tr.getBranch(), tr.getRevisionId());
+        return createUriFor(tr.getBranch(), tr.getRevision().getRevisionId());
     }
 
     /* (non-Javadoc)

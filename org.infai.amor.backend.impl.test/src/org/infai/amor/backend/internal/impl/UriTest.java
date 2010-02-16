@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIExcepti
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.CommitTransaction;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
+import org.infai.amor.test.TestUtils;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
@@ -121,7 +122,7 @@ public class UriTest {
                 will(returnValue("branch"));
             }
         });
-        final CommitTransaction tr = new CommitTransactionImpl(branch, 55, null);
+        final CommitTransaction tr = new CommitTransactionImpl(branch, TestUtils.createRevision(55), null);
 
         final URI uri = uh.createUriFor(tr);
         assertEquals("amor://localhost/repo/branch/55", uri.toString());

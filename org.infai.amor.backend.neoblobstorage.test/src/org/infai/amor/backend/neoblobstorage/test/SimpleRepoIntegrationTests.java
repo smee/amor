@@ -72,15 +72,15 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
                 return neoservice;
             }
         };
-        final TransactionManager tm = new TransactionManagerImpl(uh, np);
         final NeoBranchFactory bf = new NeoBranchFactory(np);
+        final TransactionManager tm = new TransactionManagerImpl(uh, np, bf);
         final NeoBlobStorageFactory sf = new NeoBlobStorageFactory(np);
         tm.addTransactionListener(sf);
 
         final Repository repository = new RepositoryImpl(sf, bf, uh, tm);
         repo = new SimpleRepositoryImpl(repository, uh);
 
-        repo.createBranch(BRANCHNAME, -1);
+        repo.createBranch(BRANCHNAME, null, -1);
         trId = repo.startTransaction(BRANCHNAME);
         checkinEcoreM3();
     }

@@ -10,8 +10,7 @@
 package org.infai.amor.backend.internal.impl;
 
 import org.infai.amor.backend.internal.NeoProvider;
-import org.neo4j.api.core.Node;
-import org.neo4j.api.core.Transaction;
+import org.neo4j.api.core.*;
 
 /**
  * @author sdienst
@@ -85,5 +84,26 @@ public class NeoObject {
         if (value != null) {
             node.setProperty(key, value);
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(this.toString());
+
+        for (final String p : node.getPropertyKeys()) {
+            sb.append(p + ": " + node.getProperty(p)).append("\n");
+        }
+        for (final Relationship rel : node.getRelationships(Direction.INCOMING)) {
+            sb.append("IN " + rel.getType()).append("\n");
+        }
+        for (final Relationship rel : node.getRelationships(Direction.OUTGOING)) {
+            sb.append("OUT " + rel.getType()).append("\n");
+        }
+        return sb.toString();
     }
 }

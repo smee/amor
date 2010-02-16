@@ -9,14 +9,11 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal.impl;
 
-import org.infai.amor.backend.CommitTransaction;
+import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.internal.BranchFactory;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.neo4j.api.core.DynamicRelationshipType;
-import org.neo4j.api.core.Node;
-import org.neo4j.api.core.Relationship;
-import org.neo4j.api.core.Transaction;
+import org.neo4j.api.core.*;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -85,10 +82,10 @@ public class NeoBranchFactory extends NeoObjectFactory implements BranchFactory 
      * org.infai.amor.backend.CommitTransaction)
      */
     @Override
-    public NeoRevision createRevision(final CommitTransaction transaction) {
-        final NeoBranch neobranch = (NeoBranch) transaction.getBranch();
-        final NeoRevision oldHeadRevision = (NeoRevision) transaction.getBranch().getHeadRevision();
-        final NeoRevision newRevision = new NeoRevision(getNeoProvider(), transaction.getRevisionId(), transaction.getCommitMessage(), transaction.getUser(), oldHeadRevision);
+    public NeoRevision createRevision(final Branch origin, final long revisionId) {
+        final NeoBranch neobranch = (NeoBranch) origin;
+        final NeoRevision oldHeadRevision = neobranch.getHeadRevision();
+        final NeoRevision newRevision = new NeoRevision(getNeoProvider(), revisionId, oldHeadRevision);
 
         // set the new head revision of this branch
         neobranch.setHeadRevisionTo(newRevision);

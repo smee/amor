@@ -51,7 +51,7 @@ public class NeoBranch extends NeoObject implements Branch {
      */
     @Override
     public Revision findRevisionOf(final String relativePath) {
-        final NeoRevision rev = getHeadRevision();
+        NeoRevision rev = getHeadRevision();
         while(rev!=null){
             final ModelLocation loc = rev.getModelLocation(relativePath);
             if(loc !=null) {
@@ -63,6 +63,7 @@ public class NeoBranch extends NeoObject implements Branch {
                     return rev;
                 }
             }
+            rev = rev.getPreviousRevision();
         }
         return null;
     }

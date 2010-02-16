@@ -14,21 +14,14 @@ import java.io.PrintStream;
 
 import javax.swing.event.EventListenerList;
 
-import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Response;
-import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.exception.TransactionListener;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
-import org.infai.amor.backend.internal.NeoProvider;
-import org.infai.amor.backend.internal.TransactionManager;
-import org.infai.amor.backend.internal.UriHandler;
+import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.responses.CommitSuccessResponse;
 import org.infai.amor.backend.responses.TransactionErrorResponse;
-import org.neo4j.api.core.DynamicRelationshipType;
-import org.neo4j.api.core.Node;
-import org.neo4j.api.core.Transaction;
+import org.neo4j.api.core.*;
 
 /**
  * @author sdienst
@@ -42,14 +35,16 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
     private static final String REVISIONCOUNTER_PROPERTY = "revisionCounter";
     private final EventListenerList listeners = new EventListenerList();
     private final UriHandler urihandler;
+    private final BranchFactory branchFactory;
 
     /**
      * @param uh
      * @param np
      */
-    public TransactionManagerImpl(final UriHandler uh, final NeoProvider np) {
+    public TransactionManagerImpl(final UriHandler uh, final NeoProvider np, final BranchFactory bf) {
         super(np);
         this.urihandler = uh;
+        this.branchFactory = bf;
     }
 
     /*
@@ -85,8 +80,9 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
      * @see org.infai.amor.backend.internal.TransactionManager#commit(org.infai.amor.backend.CommitTransaction)
      */
     @Override
-    public Response commit(final CommitTransaction tr, final Revision rev) {
+    public Response commit(final CommitTransaction tr) {
         try {
+
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             final PrintStream ps = new PrintStream(baos);
             boolean failure = false;
@@ -94,7 +90,7 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
             // and log errors
             for (final TransactionListener listener : listeners.getListeners(TransactionListener.class)) {
                 try {
-                    listener.commit(tr, rev);
+                    listener.commit(tr);
                 } catch (final TransactionException e) {
                     failure = true;
                     e.printStackTrace(ps);
@@ -109,6 +105,7 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
             }
         } finally {
             if (tr instanceof CommitTransactionImpl) {
+                ((InternalRevision) tr.getRevision()).setTimestamp(System.currentTimeMillis());
                 // commit to neo4j
                 final Transaction transaction = ((CommitTransactionImpl) tr).getNeoTransaction();
                 transaction.success();
@@ -185,7 +182,9 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
         final long revisionId = createNextRevisionId();
         // create a new neo transaction, increment revisioncounter
         final Transaction tx = getNeo().beginTx();
-        final CommitTransaction tr = new CommitTransactionImpl(branch, revisionId, tx);
+        // create a new revision
+        final Revision newRevision = branchFactory.createRevision(branch, revisionId);
+        final CommitTransaction tr = new CommitTransactionImpl(branch, (InternalRevision) newRevision, tx);
         // inform listeners
         for (final TransactionListener listener : listeners.getListeners(TransactionListener.class)) {
             listener.startTransaction(tr);

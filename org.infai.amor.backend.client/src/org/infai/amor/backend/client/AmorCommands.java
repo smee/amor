@@ -16,21 +16,14 @@ import java.util.List;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Model;
-import org.infai.amor.backend.Repository;
-import org.infai.amor.backend.Response;
-import org.infai.amor.backend.Revision;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.responses.CommitSuccessResponse;
 
@@ -266,8 +259,8 @@ public class AmorCommands implements CommandProvider {
     private String dumpTouchedModels(final Revision revision, final ChangeType ct) {
         final StringBuilder sb = new StringBuilder(ct.name().toUpperCase());
         sb.append(":\n");
-        for(final URI uri: revision.getModelReferences(ct)) {
-            sb.append(uri).append("\n");
+        for (final ModelLocation loc : revision.getModelReferences(ct)) {
+            sb.append(loc.getExternalUri()).append("\n");
         }
         return sb.toString();
     }

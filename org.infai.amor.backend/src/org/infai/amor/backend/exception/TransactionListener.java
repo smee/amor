@@ -12,7 +12,6 @@ package org.infai.amor.backend.exception;
 import java.util.EventListener;
 
 import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Revision;
 
 /**
  * @author sdienst
@@ -24,7 +23,7 @@ public interface TransactionListener extends EventListener {
      * @param tr
      * @param rev
      */
-    void commit(CommitTransaction tr, Revision rev) throws TransactionException;
+    void commit(CommitTransaction tr) throws TransactionException;
 
     /**
      * @param tr

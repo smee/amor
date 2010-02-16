@@ -12,7 +12,9 @@ package org.infai.amor.backend.impl;
 import java.util.Set;
 
 import org.infai.amor.backend.Branch;
+import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.internal.InternalCommitTransaction;
+import org.infai.amor.backend.internal.InternalRevision;
 import org.neo4j.api.core.Transaction;
 
 import com.google.common.collect.Sets;
@@ -22,8 +24,7 @@ import com.google.common.collect.Sets;
  * 
  */
 public class CommitTransactionImpl implements InternalCommitTransaction {
-    private String commitMessage, username;
-    private final long revId;
+    private final InternalRevision rev;
     private final Branch branch;
     private final Transaction neoTransaction;
     private final Set<String> storedModels;
@@ -32,9 +33,9 @@ public class CommitTransactionImpl implements InternalCommitTransaction {
      * @param revId
      * @param branch2
      */
-    public CommitTransactionImpl(final Branch b, final long revId, final Transaction neoTransaction) {
+    public CommitTransactionImpl(final Branch b, final InternalRevision rev, final Transaction neoTransaction) {
         this.branch = b;
-        this.revId = revId;
+        this.rev = rev;
         this.neoTransaction = neoTransaction;
         this.storedModels = Sets.newHashSet();
     }
@@ -63,7 +64,7 @@ public class CommitTransactionImpl implements InternalCommitTransaction {
      */
     @Override
     public String getCommitMessage() {
-        return commitMessage;
+        return rev.getCommitMessage();
     }
 
     /**
@@ -79,8 +80,8 @@ public class CommitTransactionImpl implements InternalCommitTransaction {
      * @see org.infai.amor.backend.CommitTransaction#getRevisionId()
      */
     @Override
-    public long getRevisionId() {
-        return revId;
+    public Revision getRevision() {
+        return rev;
     }
 
     /*
@@ -90,7 +91,7 @@ public class CommitTransactionImpl implements InternalCommitTransaction {
      */
     @Override
     public String getUser() {
-        return username;
+        return rev.getUser();
     }
 
 
@@ -109,7 +110,7 @@ public class CommitTransactionImpl implements InternalCommitTransaction {
      */
     @Override
     public void setCommitMessage(final String message) {
-        this.commitMessage = message;
+        rev.setCommitMessage(message);
     }
 
     /*
@@ -119,7 +120,7 @@ public class CommitTransactionImpl implements InternalCommitTransaction {
      */
     @Override
     public void setUser(final String username) {
-        this.username = username;
+        rev.setUser(username);
     }
 
 }
