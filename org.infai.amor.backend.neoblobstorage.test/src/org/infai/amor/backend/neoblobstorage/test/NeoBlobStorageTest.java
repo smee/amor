@@ -60,12 +60,13 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
     @Parameters
     public static Collection<Object[]> getTestParameters() {
         final List<String[]> testdata = Lists.newArrayList();
-        // testdata.add(new String[] { "testmodels/filesystem.ecore", "testmodels/simplefilesystem.xmi" });
-        // testdata.add(new String[] { "testmodels/filesystem.ecore", "testmodels/fs/simplefilesystem_v1.filesystem" });
+        testdata.add(new String[] { "testmodels/filesystem.ecore", "testmodels/simplefilesystem.xmi" });
+        testdata.add(new String[] { "testmodels/filesystem.ecore", "testmodels/fs/simplefilesystem_v1.filesystem" });
         // CAUTION: takes some time, huge model!
-        // testdata.add(new String[] { "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
-        testdata.add(new String[] { "testmodels/02/primitive_types.ecore", "testmodels/02/java.ecore", "testmodels/02/Hello.java.xmi" });
-        // testdata.add(new String[] { "testmodels/multi/B.ecore", "testmodels/multi/A.ecore", "testmodels/multi/a.xmi" });
+        testdata.add(new String[] { "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
+        // testdata.add(new String[] { "testmodels/02/primitive_types.ecore", "testmodels/02/java.ecore",
+        // "testmodels/02/Hello.java.xmi" });
+        testdata.add(new String[] { "testmodels/multi/B.ecore", "testmodels/multi/A.ecore", "testmodels/multi/a.xmi" });
 
         final Collection<Object[]> params = Lists.newArrayList();
         for(final String[] data: testdata) {

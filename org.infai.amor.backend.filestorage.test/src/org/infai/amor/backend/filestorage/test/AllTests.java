@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.backend.filestorage.test;
+package org.infai.amor.backend.filestorage.test;
 
 import org.infai.amor.backend.filestorage.BlobStorageTest;
 import org.junit.runner.RunWith;

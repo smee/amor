@@ -37,9 +37,6 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.*;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 /**
  * Just some static helper methods for model io, asserts etc.
  * 
@@ -301,10 +298,10 @@ public class ModelUtil {
      * @throws IOException
      */
     public static List<String> storeViaXml(final EObject... input) throws IOException {
-        final List<String> result = Lists.newArrayList();
+        final List<String> result = new ArrayList<String>();
         final ResourceSetImpl rs = new ResourceSetImpl();
 
-        final Map<String, String> options = Maps.newHashMap();
+        final Map<String, String> options = new HashMap<String, String>();
         options.put(XMLResource.OPTION_ENCODING, "UTF8");
         options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_RECORD);
 
@@ -323,7 +320,7 @@ public class ModelUtil {
     public static void storeViaXml(final List<EObject> model, final String relPath) throws IOException {
         final ResourceSetImpl rs = new ResourceSetImpl();
 
-        final Map<String, String> options = Maps.newHashMap();
+        final Map<String, String> options = new HashMap<String, String>();
         options.put(XMLResource.OPTION_ENCODING, "UTF8");
         options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_RECORD);
 

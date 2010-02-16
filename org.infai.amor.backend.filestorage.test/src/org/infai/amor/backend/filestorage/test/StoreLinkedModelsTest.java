@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.backend.filestorage.test;
+package org.infai.amor.backend.filestorage.test;
 
 import static org.infai.amor.test.ModelUtil.readInputModel;
 import static org.infai.amor.test.ModelUtil.readInputModels;

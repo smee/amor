@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Eclipse-ExtensibleAPI: true
 Bundle-ManifestVersion: 2
 Bundle-Name: Backen Default Implementation
 Bundle-SymbolicName: org.infai.amor.backend.impl;singleton:=true

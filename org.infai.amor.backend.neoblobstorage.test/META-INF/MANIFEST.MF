@@ -13,3 +13,4 @@ Import-Package: org.infai.amor.backend.util,
 Bundle-ActivationPolicy: lazy
 Fragment-Host: org.infai.amor.backend.neoblobstorage
 Require-Bundle: org.eclipse.gmf.runtime.notation;bundle-version="1.2.0"
+Export-Package: org.infai.amor.backend.neoblobstorage.test
