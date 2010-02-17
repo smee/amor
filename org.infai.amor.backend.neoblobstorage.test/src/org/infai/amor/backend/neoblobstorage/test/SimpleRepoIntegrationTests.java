@@ -50,14 +50,14 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
      */
     private void checkin(final String path) {
         final String file = ModelUtil.readModel(path);
-        repo.checkinEcore(file, path, trId);
+        repo.checkin(file, path, trId);
     }
 
     private void checkinEcoreM3() throws Exception {
         // given
         final String ecore = ModelUtil.readModel("testmodels/Ecore.ecore");
         // when
-        final List<String> missing = repo.checkinEcore(ecore, "testmodel/Ecore.ecore", trId);
+        final List<String> missing = repo.checkin(ecore, "testmodel/Ecore.ecore", trId);
         // then
         assertTrue(missing.isEmpty());
     }
@@ -89,7 +89,7 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         // given
         final String ecore = ModelUtil.readModel("testmodels/multi/A.ecore");
         // when
-        final List<String> missing = repo.checkinEcore(ecore, "testmodel/multi/A.ecore", trId);
+        final List<String> missing = repo.checkin(ecore, "testmodel/multi/A.ecore", trId);
         // then
         assertEquals(1, missing.size());
         assertEquals("B.ecore", missing.get(0));
@@ -100,7 +100,7 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         final String path = "testmodels/multi/b.xmi";
         final String model = ModelUtil.readModel(path);
         // when
-        final List<String> missing = repo.checkinEcore(model, path, trId);
+        final List<String> missing = repo.checkin(model, path, trId);
         // then
         assertFalse(missing.isEmpty());
         assertEquals("http://mymodels.org/packageB", missing.get(0));
@@ -112,8 +112,8 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         final String ecoreB = ModelUtil.readModel("testmodels/multi/B.ecore");
         final String ecoreA = ModelUtil.readModel("testmodels/multi/A.ecore");
         // when
-        final List<String> missing1 = repo.checkinEcore(ecoreB, "testmodel/multi/B.ecore", trId);
-        final List<String> missing2 = repo.checkinEcore(ecoreA, "testmodel/multi/A.ecore", trId);
+        final List<String> missing1 = repo.checkin(ecoreB, "testmodel/multi/B.ecore", trId);
+        final List<String> missing2 = repo.checkin(ecoreA, "testmodel/multi/A.ecore", trId);
         // then
         assertTrue(missing1.isEmpty());
         assertTrue(missing2.isEmpty());
@@ -124,7 +124,7 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         // given
         final String ecore = ModelUtil.readModel("testmodels/base.ecore");
         // when
-        final List<String> missing = repo.checkinEcore(ecore, "testmodel/base.ecore", trId);
+        final List<String> missing = repo.checkin(ecore, "testmodel/base.ecore", trId);
         final long revId = repo.commitTransaction(trId, "testuser", "added simple meta model");
         // then
         assertTrue(missing.isEmpty());
@@ -137,11 +137,11 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         final String ecoreB = ModelUtil.readModel("testmodels/multi/B.ecore");
         final String ecoreA = ModelUtil.readModel("testmodels/multi/A.ecore");
         // when
-        final List<String> missing1 = repo.checkinEcore(ecoreB, "testmodel/multi/B.ecore", trId);
-        final List<String> missing2 = repo.checkinEcore(ecoreA, "testmodel/multi/A.ecore", trId);
+        final List<String> missing1 = repo.checkin(ecoreB, "testmodel/multi/B.ecore", trId);
+        final List<String> missing2 = repo.checkin(ecoreA, "testmodel/multi/A.ecore", trId);
         final long revisionId = repo.commitTransaction(trId, "user", "bla");
 
-        final String ecoreXml = repo.checkoutEcore(BRANCHNAME, revisionId, "testmodel/multi/A.ecore");
+        final String ecoreXml = repo.checkout(BRANCHNAME, revisionId, "testmodel/multi/A.ecore");
         // then
         System.out.println(ecoreXml);
         assertNotNull(ecoreXml);
@@ -156,7 +156,7 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         final String path = "testmodels/multi/b.xmi";
         final String model = ModelUtil.readModel(path);
         // when
-        final List<String> missing = repo.checkinEcore(model, path, trId);
+        final List<String> missing = repo.checkin(model, path, trId);
         // then
         assertTrue(missing.isEmpty());
     }

@@ -10,7 +10,8 @@
 package org.infai.amor.backend.neoblobstorage.test;
 
 import static org.infai.amor.test.ModelUtil.readInputModels;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.*;
@@ -27,7 +28,6 @@ import org.infai.amor.backend.impl.RepositoryImpl;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.internal.impl.*;
 import org.infai.amor.backend.neostorage.NeoBlobStorageFactory;
-import org.infai.amor.backend.responses.CheckinResponse;
 import org.infai.amor.backend.util.EcoreModelHelper;
 import org.infai.amor.test.AbstractNeo4JPerformanceTest;
 import org.infai.amor.test.ModelUtil;
@@ -140,7 +140,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         final List<URI> repoUris = Lists.newArrayList();
         for (final String loc : models.keySet()) {
             final Response response = repository.checkin(new ModelImpl(models.get(loc), loc), ct);
-            assertTrue("Class should not be " + response.getClass(), response instanceof CheckinResponse);
+            // assertTrue("Class should not be " + response.getClass(), response instanceof CheckinResponse);
 
             repoUris.add(response.getURI());
             split("Neo4j - Added "+loc);

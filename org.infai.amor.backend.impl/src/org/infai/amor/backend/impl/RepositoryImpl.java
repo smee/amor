@@ -86,13 +86,14 @@ public class RepositoryImpl implements Repository {
             final URI modeluri = uriHandler.createModelUri(tr, model.getPersistencePath());
             final Storage storage = storageFactory.getStorage(tr);
 
+            // store the model
+            storage.checkin(model, modeluri, tr.getRevision());
+
             final Collection<URI> dependencies = findUnknownModelDependenciesOf(model, tr);
             if (!dependencies.isEmpty()) {
                 // do not store model yet, ask for its dependencies
                 return new UnresolvedDependencyResponse("Model not stored! Please checkin the dependencies of this model.", modeluri, dependencies);
             } else {
-                // store the model
-                storage.checkin(model, modeluri, tr.getRevision());
                 return new CheckinResponse("Success.", modeluri);
             }
         } catch (final IOException e) {

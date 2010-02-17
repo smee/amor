@@ -30,16 +30,7 @@ public interface SimpleRepository {
      * @param relativePath
      * @return
      */
-    List<String> checkinEcore(String ecoreXmi, String relativePath, long transactionId);
-
-    /**
-     * Like {@link #checkinEcore(String, String)} but for instance models. The returned list contains a mix of needed ecore metamodels as well as instance models
-     * that get referenced by this model.
-     * @param xmi
-     * @param relativePath
-     * @return
-     */
-    List<String> checkinXmi(String xmi, String relativePath, long transactionId);
+    List<String> checkin(String ecoreXmi, String relativePath, long transactionId);
 
     /**
      * @param branch
@@ -48,7 +39,7 @@ public interface SimpleRepository {
      * @return
      * @throws IOException
      */
-    String checkoutEcore(String branch, long revisionId, String relativePath) throws IOException;
+    String checkout(String branch, long revisionId, String relativePath) throws IOException;
 
     /**
      * Commit a transaction.

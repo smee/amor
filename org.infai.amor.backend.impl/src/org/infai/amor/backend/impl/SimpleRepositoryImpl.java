@@ -65,7 +65,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      * @see org.infai.amor.backend.SimpleRepository#checkinEcore(java.lang.String, java.lang.String)
      */
     @Override
-    public List<String> checkinEcore(final String ecoreXmi, final String relativePath, final long transactionId) {
+    public List<String> checkin(final String ecoreXmi, final String relativePath, final long transactionId) {
         final ResourceSet rs = createResourceSet();
         final URI fileUri = URI.createURI(relativePath);
         if (!fileUri.isRelative()) {
@@ -108,21 +108,11 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         return Collections.EMPTY_LIST;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.infai.amor.backend.SimpleRepository#checkinXmi(java.lang.String, java.lang.String)
-     */
-    @Override
-    public List<String> checkinXmi(final String xmi, final String relativePath, final long transactionId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
     /* (non-Javadoc)
      * @see org.infai.amor.backend.SimpleRepository#checkoutEcore(long, java.lang.String)
      */
     @Override
-    public String checkoutEcore(final String branch, final long revisionId, final String relativePath) throws IOException {
+    public String checkout(final String branch, final long revisionId, final String relativePath) throws IOException {
         Preconditions.checkNotNull(branch);
 
         try {
