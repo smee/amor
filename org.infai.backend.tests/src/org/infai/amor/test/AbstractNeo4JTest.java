@@ -13,13 +13,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.neo4j.api.core.EmbeddedNeo;
-import org.neo4j.api.core.NeoService;
-import org.neo4j.api.core.Transaction;
+import org.junit.*;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 /**
  * Base test class that provides a neo4j database with a running transaction per test. The transaction gets rolled back after each
@@ -30,7 +27,7 @@ import org.neo4j.api.core.Transaction;
  */
 public abstract class AbstractNeo4JTest {
     protected Transaction tx;
-    protected static NeoService neoservice;
+    protected static GraphDatabaseService neoservice;
 
     @BeforeClass
     public static void createNeo() throws IOException {
@@ -38,7 +35,7 @@ public abstract class AbstractNeo4JTest {
         tempFile.delete();
         tempFile.mkdirs();
 
-        neoservice = new EmbeddedNeo(tempFile.getAbsolutePath(), new HashMap<String, String>() {
+        neoservice = new EmbeddedGraphDatabase(tempFile.getAbsolutePath(), new HashMap<String, String>() {
             {
                 // put("min_relationship_cache_size", "15000");
                 // put("min_node_cache_size", "10000");

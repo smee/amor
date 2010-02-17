@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.NeoModelLocation;
-import org.neo4j.api.core.*;
+import org.neo4j.graphdb.*;
 
 /**
  * Abstract implementation that iterates a model and calls the relevant {@link EMFDispatcher} methods for every type. This class

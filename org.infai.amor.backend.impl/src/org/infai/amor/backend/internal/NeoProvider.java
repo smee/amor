@@ -9,7 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal;
 
-import org.neo4j.api.core.NeoService;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
  * @author sdienst
@@ -20,5 +20,5 @@ public interface NeoProvider {
     /**
      * @return
      */
-    NeoService getNeo();
+    GraphDatabaseService getNeo();
 }

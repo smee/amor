@@ -18,8 +18,8 @@ import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.NeoObjectFactory;
-import org.neo4j.api.core.*;
-import org.neo4j.api.core.Traverser.Order;
+import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.Traverser.Order;
 
 /**
  * 

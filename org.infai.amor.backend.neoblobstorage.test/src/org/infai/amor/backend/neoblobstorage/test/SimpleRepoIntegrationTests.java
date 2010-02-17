@@ -24,7 +24,7 @@ import org.infai.amor.test.AbstractNeo4JTest;
 import org.infai.amor.test.ModelUtil;
 import org.junit.Before;
 import org.junit.Test;
-import org.neo4j.api.core.NeoService;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
  * @author sdienst
@@ -68,7 +68,7 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         final NeoProvider np = new NeoProvider() {
 
             @Override
-            public NeoService getNeo() {
+            public GraphDatabaseService getNeo() {
                 return neoservice;
             }
         };

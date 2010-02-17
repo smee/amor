@@ -15,8 +15,8 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.neo4j.api.core.*;
-import org.neo4j.api.core.Traverser.Order;
+import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.Traverser.Order;
 
 /**
  * Import references to other models, meta classes etc.

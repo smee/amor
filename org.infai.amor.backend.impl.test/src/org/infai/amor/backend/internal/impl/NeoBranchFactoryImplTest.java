@@ -23,7 +23,7 @@ import org.infai.amor.backend.impl.CommitTransactionImpl;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.test.*;
 import org.junit.*;
-import org.neo4j.api.core.NeoService;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 import com.google.common.collect.Iterables;
 
@@ -117,7 +117,7 @@ public class NeoBranchFactoryImplTest extends AbstractNeo4JTest {
     public void setUp() {
         factory = new NeoBranchFactory(new NeoProvider() {
             @Override
-            public NeoService getNeo() {
+            public GraphDatabaseService getNeo() {
                 return neoWithMockTransaction;
             }
         });

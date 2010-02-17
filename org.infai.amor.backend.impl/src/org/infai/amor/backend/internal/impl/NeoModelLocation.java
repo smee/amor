@@ -9,14 +9,14 @@
  *******************************************************************************/
 package org.infai.amor.backend.internal.impl;
 
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.ModelLocation;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.neo4j.api.core.*;
+import org.neo4j.graphdb.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -114,10 +114,32 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
     }
 
     /* (non-Javadoc)
+     * @see org.infai.amor.backend.ModelLocation#getNamespaceUris()
+     */
+    @Override
+    public Collection<String> getNamespaceUris() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
      * @see org.infai.amor.backend.internal.storage.neo.ModelLocation#getRelativePath()
      */
     public String getRelativePath() {
         return (String) get(RELATIVE_PATH);
+    }
+
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.ModelLocation#isMetaModel()
+     */
+    @Override
+    public boolean isMetaModel() {
+        final Relationship rel = getNode().getSingleRelationship(DynamicRelationshipType.withName(CUSTOMPROPERTIES), Direction.OUTGOING);
+        if (rel != null) {
+            final Node node = rel.getEndNode();
+            return node.hasProperty(NAMESPACE_URIS) && !toList(node.getProperty(NAMESPACE_URIS)).isEmpty();
+        }
+        return false;
     }
 
     /**
@@ -137,8 +159,8 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
     /**
      * @param relPath
      */
-    public void setRelativePath(final String relPath){
-        set(RELATIVE_PATH,relPath);
+    public void setRelativePath(final String relPath) {
+        set(RELATIVE_PATH, relPath);
     }
 
     /**
@@ -150,6 +172,13 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
         for (final String key : customProperties.keySet()) {
             propertiesNode.setProperty(key, customProperties.get(key));
         }
+    }
 
+    /**
+     * @param property
+     * @return
+     */
+    private Collection<String> toList(final Object val) {
+        return Arrays.asList((String[]) val);
     }
 }

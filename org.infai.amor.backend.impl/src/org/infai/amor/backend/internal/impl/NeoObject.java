@@ -10,7 +10,7 @@
 package org.infai.amor.backend.internal.impl;
 
 import org.infai.amor.backend.internal.NeoProvider;
-import org.neo4j.api.core.*;
+import org.neo4j.graphdb.*;
 
 /**
  * @author sdienst

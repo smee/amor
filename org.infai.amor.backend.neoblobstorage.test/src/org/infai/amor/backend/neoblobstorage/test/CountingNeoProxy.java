@@ -12,14 +12,14 @@ package org.infai.amor.backend.neoblobstorage.test;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.neo4j.api.core.*;
-import org.neo4j.api.core.Traverser.Order;
+import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.Traverser.Order;
 
 /**
  * @author sdienst
  * 
  */
-public class CountingNeoProxy implements NeoService {
+public class CountingNeoProxy implements GraphDatabaseService {
 
     private class CountingNode implements Node {
         public final Node node;
@@ -262,18 +262,18 @@ public class CountingNeoProxy implements NeoService {
 
     }
 
-    private final NeoService service;
+    private final GraphDatabaseService service;
     private long numRels;
     private long numNodes;
     private long numProps;
 
-    public CountingNeoProxy(final NeoService ns) {
+    public CountingNeoProxy(final GraphDatabaseService ns) {
         this.service = ns;
     }
 
     /**
      * @return
-     * @see org.neo4j.api.core.NeoService#beginTx()
+     * @see org.neo4j.api.core.GraphDatabaseService#beginTx()
      */
     public Transaction beginTx() {
         return service.beginTx();
@@ -295,7 +295,7 @@ public class CountingNeoProxy implements NeoService {
 
     /**
      * @return
-     * @see org.neo4j.api.core.NeoService#createNode()
+     * @see org.neo4j.api.core.GraphDatabaseService#createNode()
      */
     public Node createNode() {
         numNodes++;
@@ -304,7 +304,7 @@ public class CountingNeoProxy implements NeoService {
 
     /**
      * @return
-     * @see org.neo4j.api.core.NeoService#enableRemoteShell()
+     * @see org.neo4j.api.core.GraphDatabaseService#enableRemoteShell()
      */
     public boolean enableRemoteShell() {
         return service.enableRemoteShell();
@@ -313,7 +313,7 @@ public class CountingNeoProxy implements NeoService {
     /**
      * @param arg0
      * @return
-     * @see org.neo4j.api.core.NeoService#enableRemoteShell(java.util.Map)
+     * @see org.neo4j.api.core.GraphDatabaseService#enableRemoteShell(java.util.Map)
      */
     public boolean enableRemoteShell(final Map<String, Serializable> arg0) {
         return service.enableRemoteShell(arg0);
@@ -321,7 +321,7 @@ public class CountingNeoProxy implements NeoService {
 
     /**
      * @return
-     * @see org.neo4j.api.core.NeoService#getAllNodes()
+     * @see org.neo4j.api.core.GraphDatabaseService#getAllNodes()
      */
     public Iterable<Node> getAllNodes() {
         return service.getAllNodes();
@@ -330,7 +330,7 @@ public class CountingNeoProxy implements NeoService {
     /**
      * @param arg0
      * @return
-     * @see org.neo4j.api.core.NeoService#getNodeById(long)
+     * @see org.neo4j.api.core.GraphDatabaseService#getNodeById(long)
      */
     public Node getNodeById(final long arg0) {
         return service.getNodeById(arg0);
@@ -359,7 +359,7 @@ public class CountingNeoProxy implements NeoService {
 
     /**
      * @return
-     * @see org.neo4j.api.core.NeoService#getReferenceNode()
+     * @see org.neo4j.api.core.GraphDatabaseService#getReferenceNode()
      */
     public Node getReferenceNode() {
         return service.getReferenceNode();
@@ -368,7 +368,7 @@ public class CountingNeoProxy implements NeoService {
     /**
      * @param arg0
      * @return
-     * @see org.neo4j.api.core.NeoService#getRelationshipById(long)
+     * @see org.neo4j.api.core.GraphDatabaseService#getRelationshipById(long)
      */
     public Relationship getRelationshipById(final long arg0) {
         return service.getRelationshipById(arg0);
@@ -376,7 +376,7 @@ public class CountingNeoProxy implements NeoService {
 
     /**
      * @return
-     * @see org.neo4j.api.core.NeoService#getRelationshipTypes()
+     * @see org.neo4j.api.core.GraphDatabaseService#getRelationshipTypes()
      */
     public Iterable<RelationshipType> getRelationshipTypes() {
         return service.getRelationshipTypes();
@@ -384,7 +384,7 @@ public class CountingNeoProxy implements NeoService {
 
     /**
      * 
-     * @see org.neo4j.api.core.NeoService#shutdown()
+     * @see org.neo4j.api.core.GraphDatabaseService#shutdown()
      */
     public void shutdown() {
         service.shutdown();

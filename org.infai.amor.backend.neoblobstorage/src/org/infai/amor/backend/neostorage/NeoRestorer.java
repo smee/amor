@@ -22,8 +22,8 @@ import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.NeoModelLocation;
-import org.neo4j.api.core.*;
-import org.neo4j.api.core.Traverser.Order;
+import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.Traverser.Order;
 
 import com.google.common.collect.Lists;
 

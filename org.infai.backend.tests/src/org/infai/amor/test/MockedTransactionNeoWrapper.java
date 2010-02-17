@@ -12,23 +12,23 @@ package org.infai.amor.test;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.neo4j.api.core.NeoService;
-import org.neo4j.api.core.Node;
-import org.neo4j.api.core.Relationship;
-import org.neo4j.api.core.RelationshipType;
-import org.neo4j.api.core.Transaction;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.Transaction;
 
 /**
  * @author sdienst
  * 
  */
-public class MockedTransactionNeoWrapper implements NeoService {
+public class MockedTransactionNeoWrapper implements GraphDatabaseService {
 
-    private final NeoService neoservice;
+    private final GraphDatabaseService neoservice;
 
     /**
      * @return
-     * @see org.neo4j.api.core.NeoService#beginTx()
+     * @see org.neo4j.api.core.GraphDatabaseService#beginTx()
      */
     public Transaction beginTx() {
         return new Transaction() {
@@ -49,7 +49,7 @@ public class MockedTransactionNeoWrapper implements NeoService {
 
     /**
      * @return
-     * @see org.neo4j.api.core.NeoService#createNode()
+     * @see org.neo4j.api.core.GraphDatabaseService#createNode()
      */
     public Node createNode() {
         return neoservice.createNode();
@@ -57,7 +57,7 @@ public class MockedTransactionNeoWrapper implements NeoService {
 
     /**
      * @return
-     * @see org.neo4j.api.core.NeoService#enableRemoteShell()
+     * @see org.neo4j.api.core.GraphDatabaseService#enableRemoteShell()
      */
     public boolean enableRemoteShell() {
         return neoservice.enableRemoteShell();
@@ -66,7 +66,7 @@ public class MockedTransactionNeoWrapper implements NeoService {
     /**
      * @param arg0
      * @return
-     * @see org.neo4j.api.core.NeoService#enableRemoteShell(java.util.Map)
+     * @see org.neo4j.api.core.GraphDatabaseService#enableRemoteShell(java.util.Map)
      */
     public boolean enableRemoteShell(final Map<String, Serializable> arg0) {
         return neoservice.enableRemoteShell(arg0);
@@ -74,7 +74,7 @@ public class MockedTransactionNeoWrapper implements NeoService {
 
     /**
      * @return
-     * @see org.neo4j.api.core.NeoService#getAllNodes()
+     * @see org.neo4j.api.core.GraphDatabaseService#getAllNodes()
      */
     public Iterable<Node> getAllNodes() {
         return neoservice.getAllNodes();
@@ -83,7 +83,7 @@ public class MockedTransactionNeoWrapper implements NeoService {
     /**
      * @param arg0
      * @return
-     * @see org.neo4j.api.core.NeoService#getNodeById(long)
+     * @see org.neo4j.api.core.GraphDatabaseService#getNodeById(long)
      */
     public Node getNodeById(final long arg0) {
         return neoservice.getNodeById(arg0);
@@ -91,7 +91,7 @@ public class MockedTransactionNeoWrapper implements NeoService {
 
     /**
      * @return
-     * @see org.neo4j.api.core.NeoService#getReferenceNode()
+     * @see org.neo4j.api.core.GraphDatabaseService#getReferenceNode()
      */
     public Node getReferenceNode() {
         return neoservice.getReferenceNode();
@@ -100,7 +100,7 @@ public class MockedTransactionNeoWrapper implements NeoService {
     /**
      * @param arg0
      * @return
-     * @see org.neo4j.api.core.NeoService#getRelationshipById(long)
+     * @see org.neo4j.api.core.GraphDatabaseService#getRelationshipById(long)
      */
     public Relationship getRelationshipById(final long arg0) {
         return neoservice.getRelationshipById(arg0);
@@ -108,7 +108,7 @@ public class MockedTransactionNeoWrapper implements NeoService {
 
     /**
      * @return
-     * @see org.neo4j.api.core.NeoService#getRelationshipTypes()
+     * @see org.neo4j.api.core.GraphDatabaseService#getRelationshipTypes()
      */
     public Iterable<RelationshipType> getRelationshipTypes() {
         return neoservice.getRelationshipTypes();
@@ -116,7 +116,7 @@ public class MockedTransactionNeoWrapper implements NeoService {
 
     /**
      * 
-     * @see org.neo4j.api.core.NeoService#shutdown()
+     * @see org.neo4j.api.core.GraphDatabaseService#shutdown()
      */
     public void shutdown() {
         neoservice.shutdown();
@@ -125,7 +125,7 @@ public class MockedTransactionNeoWrapper implements NeoService {
     /**
      * @param neoservice
      */
-    public MockedTransactionNeoWrapper(final NeoService neoservice) {
+    public MockedTransactionNeoWrapper(final GraphDatabaseService neoservice) {
         this.neoservice = neoservice;
     }
 

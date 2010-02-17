@@ -30,6 +30,7 @@ import org.eclipse.emf.compare.match.metamodel.MatchModel;
 import org.eclipse.emf.compare.match.service.MatchService;
 import org.eclipse.emf.compare.util.ModelUtils;
 import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.EPackage.Registry;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
@@ -53,6 +54,18 @@ public class ModelUtil {
     }
 
     private static final Logger logger = Logger.getLogger(ModelUtil.class.getName());
+
+    /**
+     * @param epckg
+     * @param packageRegistry
+     */
+    private static void addPackages(final EPackage epckg, final Registry packageRegistry) {
+        packageRegistry.put(epckg.getNsURI(), epckg);
+        for (final EPackage subpck : epckg.getESubpackages()) {
+            addPackages(subpck,packageRegistry);
+        }
+
+    }
 
     /**
      * @param content
@@ -189,7 +202,6 @@ public class ModelUtil {
         }
 
     }
-
     /**
      * @param relativePath
      * @return
@@ -198,6 +210,7 @@ public class ModelUtil {
     public static EObject readInputModel(final String relativePath) throws IOException {
         return readInputModel(relativePath, new ResourceSetImpl());
     }
+
     /**
      * @param string
      * @return
@@ -236,8 +249,11 @@ public class ModelUtil {
 
         // register packages
         for (final EObject eObject : resource.getContents()) {
-            if (eObject instanceof EPackage && !((EPackage) eObject).getNsURI().equals(EcorePackage.eNS_URI)) {
-                rs.getPackageRegistry().put(((EPackage) eObject).getNsURI(), eObject);
+            if (eObject instanceof EPackage) {
+                final EPackage epckg = (EPackage) eObject;
+                if (!epckg.getNsURI().equals(EcorePackage.eNS_URI)) {
+                    addPackages(epckg,rs.getPackageRegistry());
+                }
             }
         }
         return resource.getContents();

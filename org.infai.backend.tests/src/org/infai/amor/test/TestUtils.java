@@ -9,8 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.test;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.*;
@@ -51,8 +50,18 @@ public class TestUtils {
             }
 
             @Override
+            public Collection<String> getNamespaceUris() {
+                return Collections.EMPTY_LIST;
+            }
+
+            @Override
             public String getRelativePath() {
                 return modelPath;
+            }
+
+            @Override
+            public boolean isMetaModel() {
+                return false;
             }
         };
     }

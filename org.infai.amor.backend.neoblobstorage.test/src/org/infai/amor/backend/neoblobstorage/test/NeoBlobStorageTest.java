@@ -35,7 +35,7 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.neo4j.api.core.NeoService;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -99,7 +99,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         final NeoProvider np = new NeoProvider() {
 
             @Override
-            public NeoService getNeo() {
+            public GraphDatabaseService getNeo() {
                 return proxy;
             }
         };

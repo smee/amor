@@ -9,7 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.backend.neostorage;
 
-import org.neo4j.api.core.RelationshipType;
+import org.neo4j.graphdb.RelationshipType;
 
 /**
  * Specifies the types of Ecore specific relationships in neo4j nodespace.

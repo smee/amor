@@ -23,7 +23,7 @@ import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.internal.impl.*;
 import org.infai.amor.backend.storage.Storage;
-import org.neo4j.api.core.Node;
+import org.neo4j.graphdb.Node;
 
 import com.google.common.collect.Maps;
 

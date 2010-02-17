@@ -10,7 +10,7 @@ import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.*;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
-import org.neo4j.api.core.NeoService;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -83,7 +83,7 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
 
     private BundleContext context;
 
-    private NeoService neoService;
+    private GraphDatabaseService neoService;
 
     private StorageFactory storageFactory;
 
@@ -111,8 +111,8 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
     public Object addingService(final ServiceReference reference) {
         final Object service = context.getService(reference);
         // System.out.println("Got new service of type " + service.getClass().getSimpleName());
-        if (service instanceof NeoService) {
-            this.neoService = (NeoService) service;
+        if (service instanceof GraphDatabaseService) {
+            this.neoService = (GraphDatabaseService) service;
         } else if (service instanceof StorageFactory) {
             this.setStorageFactory((StorageFactory) service);
         }
@@ -122,7 +122,7 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
     /**
      * @return
      */
-    public NeoService getNeo() {
+    public GraphDatabaseService getNeo() {
         return neoService;
     }
 
@@ -175,7 +175,7 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         this.context = context;
 
         // let's ask for neoservice implementations
-        final ServiceTracker st = new ServiceTracker(context, NeoService.class.getName(), this);
+        final ServiceTracker st = new ServiceTracker(context, GraphDatabaseService.class.getName(), this);
         st.open();
         final ServiceTracker stSF = new ServiceTracker(context, StorageFactory.class.getName(), this);
         stSF.open();

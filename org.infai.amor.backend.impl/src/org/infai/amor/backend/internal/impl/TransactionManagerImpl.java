@@ -21,7 +21,7 @@ import org.infai.amor.backend.impl.CommitTransactionImpl;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.responses.CommitSuccessResponse;
 import org.infai.amor.backend.responses.TransactionErrorResponse;
-import org.neo4j.api.core.*;
+import org.neo4j.graphdb.*;
 
 /**
  * @author sdienst

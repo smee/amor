@@ -13,7 +13,7 @@ import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.internal.BranchFactory;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.neo4j.api.core.*;
+import org.neo4j.graphdb.*;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;

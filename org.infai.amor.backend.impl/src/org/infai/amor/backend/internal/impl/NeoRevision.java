@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 import org.infai.amor.backend.ModelLocation;
 import org.infai.amor.backend.internal.InternalRevision;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.neo4j.api.core.*;
+import org.neo4j.graphdb.*;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -135,7 +135,6 @@ public class NeoRevision extends NeoObject implements InternalRevision {
                     return new NeoModelLocation(getNeoProvider(), locRel.getEndNode());
                 }
             }
-
         }
         return null;
     }

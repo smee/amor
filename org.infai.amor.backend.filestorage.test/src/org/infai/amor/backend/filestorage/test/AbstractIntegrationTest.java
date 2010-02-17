@@ -18,8 +18,8 @@ import org.infai.amor.backend.impl.RepositoryImpl;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.internal.impl.*;
 import org.junit.*;
-import org.neo4j.api.core.EmbeddedNeo;
-import org.neo4j.api.core.NeoService;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 /**
  * @author sdienst
@@ -28,7 +28,7 @@ import org.neo4j.api.core.NeoService;
 public class AbstractIntegrationTest {
 
     protected Repository repository;
-    private static NeoService neoservice;
+    private static GraphDatabaseService neoservice;
     private static NeoProvider neoprovider;
 
     @BeforeClass
@@ -37,10 +37,10 @@ public class AbstractIntegrationTest {
         tempFile.delete();
         tempFile.mkdirs();
 
-        neoservice = new EmbeddedNeo(tempFile.getAbsolutePath());
+        neoservice = new EmbeddedGraphDatabase(tempFile.getAbsolutePath());
         neoprovider = new NeoProvider() {
             @Override
-            public NeoService getNeo() {
+            public GraphDatabaseService getNeo() {
                 return neoservice;
             }
         };

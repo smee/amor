@@ -13,7 +13,7 @@ import java.util.*;
 
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.neo4j.api.core.*;
+import org.neo4j.graphdb.*;
 
 /**
  * @author sdienst
@@ -49,7 +49,6 @@ public class NeoBranch extends NeoObject implements Branch {
     /* (non-Javadoc)
      * @see org.infai.amor.backend.Branch#findRevisionOf(java.lang.String)
      */
-    @Override
     public Revision findRevisionOf(final String relativePath) {
         NeoRevision rev = getHeadRevision();
         while(rev!=null){

@@ -9,5 +9,5 @@ Import-Package: org.infai.amor.backend.internal,
  org.infai.amor.backend.responses,
  org.infai.amor.test,
  org.junit;version="4.5.0",
- org.neo4j.api.core
+ org.neo4j.graphdb
 Export-Package: org.infai.amor.backend.impl
