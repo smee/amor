@@ -16,7 +16,4 @@ import org.infai.amor.backend.CommitTransaction;
  *
  */
 public interface InternalCommitTransaction extends CommitTransaction {
-    void addStoredModel(final String relPath);
-
-    boolean hasStoredModel(final String relPath);
 }

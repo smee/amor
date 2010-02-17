@@ -187,6 +187,7 @@ public class FileBlobStorage implements Storage {
             res.setURI(createStorageUriFor(model.getPath(), revisionId, true));
             res.save(null);
         }
+        // TODO handle multiple changed models!
         addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(model.getPath()), ChangeType.CHANGED));
     }
 
@@ -201,18 +202,20 @@ public class FileBlobStorage implements Storage {
         final URI storagePath = createStorageUriFor(model.getPersistencePath(), revisionId, true);
         final Resource resource = resourceSet.createResource(storagePath);
 
+        final Collection<String> namespaces = Lists.newArrayList();
         // write a file containing the mapping of revision number to
         // this epackage name
         for (final EObject contents : model.getContent()) {
             if (contents instanceof EPackage) {
                 writeM2TagFile(revisionId, storagePath, ((EPackage) contents).getNsURI());
+                namespaces.add(((EPackage) contents).getNsURI());
             }
         }
 
         resource.getContents().addAll(model.getContent());
         resource.save(null);
 
-        addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(model.getPersistencePath()), ChangeType.ADDED));
+        addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(model.getPersistencePath()), ChangeType.ADDED, namespaces));
 
     }
 
@@ -292,8 +295,9 @@ public class FileBlobStorage implements Storage {
      */
     @Override
     public void delete(final IPath modelPath, final URI externalUri, final Revision revision) throws IOException {
-        addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(modelPath), ChangeType.DELETED));
         // TODO make sure to signal an error, if anyone checks in another model that depends on this deleted model
+        // TODO remember, if this is a metamodel
+        addedModelUris.add(new FileModelLocation(externalUri, createModelSpecificPath(modelPath), ChangeType.DELETED));
         // throw new UnsupportedOperationException("not implemented");
     }
 

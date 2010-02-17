@@ -16,8 +16,10 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
@@ -27,6 +29,7 @@ import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.*;
+import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.responses.UnresolvedDependencyResponse;
 
@@ -73,7 +76,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         final CommitTransaction transaction = this.transactionMap.get(transactionId);
         while (!resource.isLoaded()) {
             try {
-                resource.load(new ByteArrayInputStream(ecoreXmi.getBytes()), transactionMap);
+                resource.load(new ByteArrayInputStream(ecoreXmi.getBytes()), null);
 
                 final Response response = repo.checkin(new ModelImpl(resource.getContents(), new Path(relativePath)), transaction);
 
@@ -86,7 +89,13 @@ public class SimpleRepositoryImpl implements SimpleRepository {
                     // we are missing at least one other epackage
                     final String missingPackageUri = ((PackageNotFoundException) cause).uri();
                     if (weKnowThisPackage(missingPackageUri, transaction)) {
-                        loadEPackage(rs, missingPackageUri, (InternalCommitTransaction) transaction);
+                        try {
+                            loadEPackage(rs, missingPackageUri, (InternalCommitTransaction) transaction);
+                        } catch (final MalformedURIException e1) {
+                            throw new RuntimeException("Internal error!", e1);
+                        } catch (final IOException e1) {
+                            throw new RuntimeException("Internal error!", e1);
+                        }
                         continue;
                     } else {
                         return Arrays.asList(missingPackageUri);
@@ -175,6 +184,22 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         }
     }
     /**
+     * @param contents
+     * @return
+     */
+    private Map<String, Object> createPackageNamespaceMap(final EList<? extends EObject> contents) {
+        final Map<String, Object> res = Maps.newHashMap();
+        for(final EObject eo: contents){
+            if(eo instanceof EPackage){
+                final EPackage epckg = (EPackage) eo;
+                res.put(epckg.getNsURI(), epckg);
+                res.putAll(createPackageNamespaceMap(epckg.getESubpackages()));
+            }
+        }
+        return res;
+    }
+
+    /**
      * @return
      */
     private ResourceSet createResourceSet() {
@@ -228,22 +253,46 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         };
     }
 
+
+    /**
+     * @param ePackageUri
+     * @return
+     */
+    private URI getExternalUriForEPackage(final CommitTransaction transaction, final String ePackageUri) {
+        Revision rev = transaction.getBranch().getHeadRevision();
+        while (rev != null) {
+            for (final ModelLocation loc : rev.getModelReferences(ChangeType.ADDED, ChangeType.CHANGED, ChangeType.DELETED)) {
+
+                if (loc.isMetaModel() && loc.getNamespaceUris().contains(ePackageUri)) {
+                    if (loc.getChangeType().equals(Revision.ChangeType.DELETED)) {
+                        // if the newest change to this relative path was a deletion,
+                        // we do not have this model stored
+                        return null;
+                    } else {
+                        return loc.getExternalUri();
+                    }
+                }
+            }
+            rev = rev.getPreviousRevision();
+        }
+        return null;
+    }
+
     /**
      * @param rs
      * @param missingPackageUri
      * @param transaction
+     * @throws IOException
+     * @throws MalformedURIException
      */
-    private void loadEPackage(final ResourceSet rs, final String missingPackageUri, final InternalCommitTransaction transaction) {
-        // TODO either we saved it during the current transaction
-        if (transaction.hasStoredModel(missingPackageUri)) {
+    private void loadEPackage(final ResourceSet rs, final String missingPackageUri, final InternalCommitTransaction transaction) throws MalformedURIException, IOException {
+        final URI externalUriForEPackage = getExternalUriForEPackage(transaction, missingPackageUri);
 
-        } else {
-            // TODO or we saved this package in one of our former revisions
-
-        }
+        final Model checkout = repo.checkout(externalUriForEPackage);
+        final Resource res = rs.createResource(URI.createURI(checkout.getPersistencePath().toString()));
+        res.getContents().addAll(checkout.getContent());
+        rs.getPackageRegistry().putAll(createPackageNamespaceMap(res.getContents()));
     }
-
-
     /* (non-Javadoc)
      * @see org.infai.amor.backend.SimpleRepository#rollbackTransaction(long)
      */
@@ -294,9 +343,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      * @return
      */
     private boolean weKnowThisPackage(final String ePackageUri, final CommitTransaction transaction) {
-        return ((InternalCommitTransaction) transaction).hasStoredModel(ePackageUri);
-        // || transaction.getBranch().findRevisionOf(relPath) != null;
-        // return false;
+        return getExternalUriForEPackage(transaction,ePackageUri)!=null;
     }
 
 

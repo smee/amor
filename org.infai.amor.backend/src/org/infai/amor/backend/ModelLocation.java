@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.backend;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -20,11 +21,17 @@ import org.eclipse.emf.common.util.URI;
 public interface ModelLocation {
     static final String RELATIVE_PATH = "relativePath";
     static final String EXTERNAL_URI = "externalUri";
+    static final String NAMESPACE_URIS = "namespaceUris";
 
     /**
      * @return
      */
     Revision.ChangeType getChangeType();
+
+    /**
+     * @return amor uri that references this model
+     */
+    URI getExternalUri();
 
     /**
      * Some undefined properties, use them for storage specific informations.
@@ -33,10 +40,7 @@ public interface ModelLocation {
      */
     Map<String,Object> getMetaData();
 
-    /**
-     * @return amor uri that references this model
-     */
-    URI getExternalUri();
+    Collection<String> getNamespaceUris();
 
     /**
      * What is the relative path component of this model?
@@ -44,5 +48,6 @@ public interface ModelLocation {
      * @return
      */
     String getRelativePath();
+    boolean isMetaModel();
 
 }

@@ -9,14 +9,15 @@
  *******************************************************************************/
 package org.infai.amor.backend.neostorage;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.exception.TransactionException;
@@ -25,6 +26,7 @@ import org.infai.amor.backend.internal.impl.*;
 import org.infai.amor.backend.storage.Storage;
 import org.neo4j.graphdb.Node;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -40,13 +42,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
 
     private static String createModelSpecificPath(final IPath modelPath) {
         if (modelPath != null && !modelPath.isAbsolute()) {
-            final int numSegments = modelPath.segmentCount();
-
-            final StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < numSegments; i++) {
-                sb.append(File.separatorChar).append(modelPath.segment(i));
-            }
-            return sb.toString();
+            return StringUtils.join(modelPath.segments(), '/');
         } else {
             throw new IllegalArgumentException("The given path must be relative for storing a model, was absolute: " + modelPath);
         }
@@ -75,6 +71,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      */
     @Override
     public void checkin(final Model model, final URI externalUri, final Revision revision) throws IOException {
+        final Collection<String> ePackageUris = getEPackageUrisFrom(model.getContent());
         // store all eobjects/epackages
         logger.finer("----------1-Storing contents----------");
         final NeoMappingDispatcher disp1 = new NeoMappingDispatcher(getNeoProvider());
@@ -86,14 +83,16 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         disp2.setRegistry(cache);
         // store all additional references and meta relationships
         final NeoModelLocation modelLocation = disp2.store(model);
-
+        // store epackage namespace uris
+        if (!ePackageUris.isEmpty()) {
+            modelLocation.setEPackageNamespaces(ePackageUris);
+        }
         modelLocation.setExternalUri(externalUri);
         modelLocation.setRelativePath(createModelSpecificPath(model.getPersistencePath()));
         modelLocation.setChangetype(ChangeType.ADDED);
         // remember new model node
         ((InternalRevision) revision).touchedModel(modelLocation);
     }
-
     /*
      * (non-Javadoc)
      * 
@@ -117,7 +116,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      */
     @Override
     public void commit(final CommitTransaction tr) throws TransactionException {
-            cache = null;
+        cache = null;
     }
 
     /* (non-Javadoc)
@@ -128,6 +127,23 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         // TODO test!
         // remember deleted model node
         ((InternalRevision) revision).touchedModel(new NeoModelLocation(getNeoProvider(), getNeo().createNode(), modelPath.toString(), externalUri, ChangeType.DELETED));
+    }
+
+    /**
+     * Returns the {@link EPackage} namespace uri for every {@link EObject} in <code>content</code> that is an instance of {@link EPackage}.
+     * @param content
+     * @return
+     */
+    private Collection<String> getEPackageUrisFrom(final List<? extends EObject> content) {
+        final Collection<String> res = Lists.newArrayList();
+        for(final EObject eo: content){
+            if(eo instanceof EPackage) {
+                final EPackage epackage = (EPackage) eo;
+                res.add(epackage.getNsURI());
+                res.addAll(getEPackageUrisFrom(epackage.getESubpackages()));
+            }
+        }
+        return res;
     }
 
 

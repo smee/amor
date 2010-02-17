@@ -97,7 +97,12 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      */
     @Override
     public Map<String, Object> getMetaData() {
-        final Node propertiesNode = getNode().getSingleRelationship(DynamicRelationshipType.withName(CUSTOMPROPERTIES), Direction.OUTGOING).getEndNode();
+        final Relationship rel = getNode().getSingleRelationship(DynamicRelationshipType.withName(CUSTOMPROPERTIES), Direction.OUTGOING);
+        if (rel == null) {
+            return Collections.EMPTY_MAP;
+        }
+
+        final Node propertiesNode = rel.getEndNode();
 
         final Builder<String, Object> mb = new ImmutableMap.Builder<String, Object>();
         for (final String key : propertiesNode.getPropertyKeys()) {
@@ -118,8 +123,12 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      */
     @Override
     public Collection<String> getNamespaceUris() {
-        // TODO Auto-generated method stub
-        return null;
+        final Map<String, Object> metaData = getMetaData();
+        if (metaData.containsKey(NAMESPACE_URIS)) {
+            return Arrays.asList((String[]) metaData.get(NAMESPACE_URIS));
+        } else {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     /* (non-Javadoc)
@@ -134,12 +143,7 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      */
     @Override
     public boolean isMetaModel() {
-        final Relationship rel = getNode().getSingleRelationship(DynamicRelationshipType.withName(CUSTOMPROPERTIES), Direction.OUTGOING);
-        if (rel != null) {
-            final Node node = rel.getEndNode();
-            return node.hasProperty(NAMESPACE_URIS) && !toList(node.getProperty(NAMESPACE_URIS)).isEmpty();
-        }
-        return false;
+        return !getNamespaceUris().isEmpty();
     }
 
     /**
@@ -147,6 +151,18 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      */
     public void setChangetype(final ChangeType changeType) {
         set(CHANGETYPE, changeType.name());
+    }
+
+    /**
+     * @param namespaces
+     */
+    public void setEPackageNamespaces(final Collection<String> namespaces){
+        Relationship rel = getNode().getSingleRelationship(DynamicRelationshipType.withName(CUSTOMPROPERTIES), Direction.OUTGOING);
+        if (rel == null) {
+            rel = getNode().createRelationshipTo(createNode(), DynamicRelationshipType.withName(CUSTOMPROPERTIES));
+        }
+        final Node node = rel.getEndNode();
+        node.setProperty(NAMESPACE_URIS, namespaces.toArray(new String[namespaces.size()]));
     }
 
     /**
@@ -172,13 +188,5 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
         for (final String key : customProperties.keySet()) {
             propertiesNode.setProperty(key, customProperties.get(key));
         }
-    }
-
-    /**
-     * @param property
-     * @return
-     */
-    private Collection<String> toList(final Object val) {
-        return Arrays.asList((String[]) val);
     }
 }

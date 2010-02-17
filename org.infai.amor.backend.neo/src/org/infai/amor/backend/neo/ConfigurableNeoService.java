@@ -17,6 +17,7 @@ import org.osgi.service.cm.ManagedService;
  * @author sdienst
  */
 public final class ConfigurableNeoService implements ManagedService, GraphDatabaseService {
+    // TODO use tinkerpop/blueprint graph abstraction
     private final Logger log = Logger.getLogger(ConfigurableNeoService.class.getName());
 
     private EmbeddedGraphDatabase neo;

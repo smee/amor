@@ -110,7 +110,6 @@ public class RepositoryTests {
                 allowing(branchFactory);
                 allowing(tr).getRevision();
                 will(returnValue(revision));
-                allowing(tr).addStoredModel(with(any(String.class)));
             }
         });
 
@@ -136,7 +135,6 @@ public class RepositoryTests {
                 allowing(branchFactory);
                 allowing(tr).getRevision();
                 will(returnValue(revision));
-                allowing(tr).addStoredModel(with(any(String.class)));
             }
         });
 
