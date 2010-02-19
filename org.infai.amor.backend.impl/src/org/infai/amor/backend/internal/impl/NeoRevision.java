@@ -146,7 +146,7 @@ public class NeoRevision extends NeoObject implements InternalRevision {
      */
     @Override
     public Collection<ModelLocation> getModelReferences(final ChangeType... ct) {
-        dumpOutRels(getNode());
+        // dumpOutRels(getNode());
         final Collection<ModelLocation> modelRefs = Lists.newArrayList();
 
         for (final ChangeType type : ct) {
@@ -217,7 +217,7 @@ public class NeoRevision extends NeoObject implements InternalRevision {
         }
         final Node node = getModelChangeNode(ct);
         node.createRelationshipTo(((NeoObject) loc).getNode(), DynamicRelationshipType.withName(MODELLOCATION));
-        dumpOutRels(getNode());
+        // dumpOutRels(getNode());
     }
 
     /**
