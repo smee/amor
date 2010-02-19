@@ -96,10 +96,8 @@ public abstract class AbstractNeoDispatcher extends AbstractNeoPersistence imple
             if (relationship != null) {
                 return relationship.getStartNode();
             }
-        } else {
-            return createNode();
         }
-        return node;
+        return createNode();
     }
 
     /*
@@ -118,9 +116,7 @@ public abstract class AbstractNeoDispatcher extends AbstractNeoPersistence imple
             currentResourceUri = eo.eResource().getURI();
             dispatch(eo);
             // link from modellocation root node to this content
-            if (!rootNode.hasRelationship(EcoreRelationshipType.MODEL_CONTENT, Direction.OUTGOING)) {
-                rootNode.createRelationshipTo(getNodeFor(eo), EcoreRelationshipType.MODEL_CONTENT);
-            }
+            rootNode.createRelationshipTo(getNodeFor(eo), EcoreRelationshipType.MODEL_CONTENT);
 
             for (final TreeIterator<EObject> it = eo.eAllContents(); it.hasNext();) {
                 final EObject eoSub = it.next();
