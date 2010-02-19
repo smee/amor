@@ -22,7 +22,8 @@ import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.*;
-import org.infai.amor.backend.internal.impl.*;
+import org.infai.amor.backend.internal.impl.NeoModelLocation;
+import org.infai.amor.backend.internal.impl.NeoObjectFactory;
 import org.infai.amor.backend.storage.Storage;
 import org.neo4j.graphdb.Node;
 
@@ -37,7 +38,6 @@ import com.google.common.collect.Maps;
  */
 public class NeoBlobStorage extends NeoObjectFactory implements Storage {
     private final static Logger logger = Logger.getLogger(NeoBlobStorage.class.getName());
-    private final NeoBranch branch;
     private Map<EObject, Node> cache;
 
     private static String createModelSpecificPath(final IPath modelPath) {
@@ -48,9 +48,8 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         }
     }
 
-    public NeoBlobStorage(final NeoProvider np, final NeoBranch branch) {
+    public NeoBlobStorage(final NeoProvider np) {
         super(np);
-        this.branch = branch;
     }
 
     /*
@@ -102,7 +101,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
     public Model checkout(final IPath path, final Revision revision) throws IOException {
         logger.finer(String.format("checking out %s of revision %d", path.toString(), revision.getRevisionId()));
 
-        final NeoRevision neoRev = (NeoRevision) revision;
+        final InternalRevision neoRev = (InternalRevision) revision;
         final NeoModelLocation modelLocation = (NeoModelLocation) neoRev.getModelLocation(createModelSpecificPath(path));
 
         final NeoRestorer restorer = new NeoRestorer(getNeoProvider());

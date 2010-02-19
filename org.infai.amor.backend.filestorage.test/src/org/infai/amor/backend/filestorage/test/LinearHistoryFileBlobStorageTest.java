@@ -71,6 +71,11 @@ public class LinearHistoryFileBlobStorageTest extends AbstractNeo4JPerformanceTe
             }
 
             @Override
+            public ModelLocation getModelLocation(final String modelPath) {
+                return null;
+            }
+
+            @Override
             public Collection<ModelLocation> getModelReferences(final ChangeType... ct) {
                 return null;
             }
