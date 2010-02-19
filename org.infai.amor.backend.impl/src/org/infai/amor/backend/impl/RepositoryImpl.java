@@ -86,10 +86,11 @@ public class RepositoryImpl implements Repository {
             final URI modeluri = uriHandler.createModelUri(tr, model.getPersistencePath());
             final Storage storage = storageFactory.getStorage(tr);
 
+            final Collection<URI> dependencies = findUnknownModelDependenciesOf(model, tr);
             // store the model
+
             storage.checkin(model, modeluri, tr.getRevision());
 
-            final Collection<URI> dependencies = findUnknownModelDependenciesOf(model, tr);
             if (!dependencies.isEmpty()) {
                 // do not store model yet, ask for its dependencies
                 return new UnresolvedDependencyResponse("Model not stored! Please checkin the dependencies of this model.", modeluri, dependencies);
@@ -220,12 +221,8 @@ public class RepositoryImpl implements Repository {
             // find relative uris to referenced models
             // see rfc2396 5.2.6.b: everything past the last / will get excluded from the resolution process
             // strip down uri to make it point to the first common segment
-            URI baseUri = root.eResource().getURI();
-            if (!baseUri.isRelative()) {
-                baseUri = baseUri.trimSegments(model.getPersistencePath().segmentCount() - 1);
-            }
 
-            final Set<URI> referencedModels = EcoreModelHelper.findReferencedModels(root, root.eResource().getURI(), baseUri);
+            final Set<URI> referencedModels = EcoreModelHelper.findReferencedModels(root, root.eResource().getURI());
             for (final URI refuri : referencedModels) {
                 assert refuri.isRelative();
                 // if we don't have a copy of this model yet
