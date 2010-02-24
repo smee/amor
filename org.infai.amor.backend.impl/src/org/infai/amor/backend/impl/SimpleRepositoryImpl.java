@@ -14,6 +14,7 @@ import static com.google.common.collect.Iterables.transform;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
@@ -25,29 +26,28 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.PackageNotFoundException;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.*;
-import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.responses.UnresolvedDependencyResponse;
+import org.infai.amor.backend.util.ModelFinder;
+import org.infai.amor.backend.util.ModelFinder.ModelMatcher;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 
 /**
  * @author sdienst
- *
+ * 
  */
 public class SimpleRepositoryImpl implements SimpleRepository {
+    private static Logger logger = Logger.getLogger(SimpleRepositoryImpl.class.getName());
     /*
-     * TODOS:
-     * - remember package nsuris for stored ecores, within transaction as well as within revisions
-     * - load package prior to loading a model instance
-     * - clean up api
+     * TODOS: - register uri type amor:// with resourcesets - access models with such uris - provide uri without revision ids (?)
      */
     final Repository repo;
     final UriHandler uh;
@@ -56,12 +56,14 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      */
     final Map<Long, CommitTransaction> transactionMap = Maps.newHashMap();
 
-
     public SimpleRepositoryImpl(final Repository r, final UriHandler uh) {
         this.repo = r;
         this.uh = uh;
     }
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.SimpleRepository#checkinEcore(java.lang.String, java.lang.String)
      */
     @Override
@@ -71,18 +73,14 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         if (!fileUri.isRelative()) {
             throw new IllegalArgumentException("Path must be relative");
         }
+        logger.finer("Storing new model with path " + relativePath);
+
         final Resource resource = rs.createResource(fileUri);
 
         final CommitTransaction transaction = this.transactionMap.get(transactionId);
-        while (!resource.isLoaded()) {
+        while (!(resource.isLoaded() && resource.getErrors().isEmpty())) {
             try {
-                resource.load(new ByteArrayInputStream(ecoreXmi.getBytes()), null);
-
-                final Response response = repo.checkin(new ModelImpl(resource.getContents(), new Path(relativePath)), transaction);
-
-                if (response instanceof UnresolvedDependencyResponse) {
-                    return extractMissingDependencies((UnresolvedDependencyResponse) response);
-                }
+                resource.load(new ByteArrayInputStream(ecoreXmi.getBytes()), getLoadOptions());
             } catch (final IOException e) {
                 final Throwable cause = e.getCause();
                 if (cause instanceof PackageNotFoundException) {
@@ -90,7 +88,10 @@ public class SimpleRepositoryImpl implements SimpleRepository {
                     final String missingPackageUri = ((PackageNotFoundException) cause).uri();
                     if (weKnowThisPackage(missingPackageUri, transaction)) {
                         try {
+                            logger.finer("Restoring metamodel package " + missingPackageUri);
                             loadEPackage(rs, missingPackageUri, (InternalCommitTransaction) transaction);
+                            // clear load status
+                            resource.unload();
                         } catch (final MalformedURIException e1) {
                             throw new RuntimeException("Internal error!", e1);
                         } catch (final IOException e1) {
@@ -104,11 +105,19 @@ public class SimpleRepositoryImpl implements SimpleRepository {
                     throw new RuntimeException(e);
                 }
             }
+
+        }
+        final Response response = repo.checkin(new ModelImpl(resource.getContents(), new Path(relativePath)), transaction);
+
+        if (response instanceof UnresolvedDependencyResponse) {
+            return extractMissingDependencies((UnresolvedDependencyResponse) response);
         }
         return Collections.EMPTY_LIST;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.SimpleRepository#checkoutEcore(long, java.lang.String)
      */
     @Override
@@ -119,25 +128,28 @@ public class SimpleRepositoryImpl implements SimpleRepository {
             final URI uriForRevision = uh.createUriFor(repo.getBranch(uh.createUriFor(branch)), revisionId);
             final Model model = repo.checkout(uriForRevision.appendSegments(relativePath.split("/")));
 
-            return serializeModel(model.getContent());
+            return serializeModel(model.getContent(), relativePath);
 
         } catch (final MalformedURIException e) {
             throw new IllegalArgumentException(String.format("Could not find revision '%d' on branch '%s'", revisionId, branch), e);
         }
     }
+
     /**
      * @param transactionId
      * @return
      */
     private CommitTransaction checkTransaction(final long transactionId) {
         final CommitTransaction transaction = transactionMap.get(transactionId);
-        if(transaction == null) {
+        if (transaction == null) {
             throw new IllegalArgumentException("no such transaction!");
         }
         return transaction;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.SimpleRepository#commitTransaction(long)
      */
     @Override
@@ -148,7 +160,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         final CommitTransaction transaction = checkTransaction(transactionId);
         transaction.setUser(username);
         transaction.setCommitMessage(commitMessage);
-        try{
+        try {
             final Response response = repo.commitTransaction(transaction);
             // TODO handle responses
             return transaction.getRevision().getRevisionId();
@@ -157,7 +169,9 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.SimpleRepository#createBranch(java.lang.String)
      */
     @Override
@@ -173,14 +187,17 @@ public class SimpleRepositoryImpl implements SimpleRepository {
             }
         }
     }
+
     /**
+     * Create a map of epackage namespace uris to epackages.
+     * 
      * @param contents
      * @return
      */
     private Map<String, Object> createPackageNamespaceMap(final EList<? extends EObject> contents) {
         final Map<String, Object> res = Maps.newHashMap();
-        for(final EObject eo: contents){
-            if(eo instanceof EPackage){
+        for (final EObject eo : contents) {
+            if (eo instanceof EPackage) {
                 final EPackage epckg = (EPackage) eo;
                 res.put(epckg.getNsURI(), epckg);
                 res.putAll(createPackageNamespaceMap(epckg.getESubpackages()));
@@ -193,10 +210,10 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      * @return
      */
     private ResourceSet createResourceSet() {
-        final ResourceSet rs =  new ResourceSetImpl();
-        rs.getResourceFactoryRegistry().getProtocolToFactoryMap().put("amor", new ResourceFactoryImpl(){
+        final ResourceSet rs = new ResourceSetImpl();
+        rs.getResourceFactoryRegistry().getProtocolToFactoryMap().put("amor", new ResourceFactoryImpl() {
             @Override
-            public Resource createResource(final URI uri){
+            public Resource createResource(final URI uri) {
                 // TODO return resource that reads from our storage
                 return super.createResource(uri);
             }
@@ -217,7 +234,9 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         return missingDeps;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.SimpleRepository#getBranches()
      */
     @Override
@@ -243,29 +262,31 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         };
     }
 
-
     /**
      * @param ePackageUri
      * @return
      */
     private URI getExternalUriForEPackage(final CommitTransaction transaction, final String ePackageUri) {
-        Revision rev = transaction.getBranch().getHeadRevision();
-        while (rev != null) {
-            for (final ModelLocation loc : rev.getModelReferences(ChangeType.ADDED, ChangeType.CHANGED, ChangeType.DELETED)) {
-
-                if (loc.isMetaModel() && loc.getNamespaceUris().contains(ePackageUri)) {
-                    if (loc.getChangeType().equals(Revision.ChangeType.DELETED)) {
-                        // if the newest change to this relative path was a deletion,
-                        // we do not have this model stored
-                        return null;
-                    } else {
-                        return loc.getExternalUri();
-                    }
-                }
+        final Revision rev = transaction.getBranch().getHeadRevision();
+        final ModelLocation loc = ModelFinder.findActiveModel(rev, new ModelMatcher() {
+            @Override
+            public boolean matches(final ModelLocation loc) {
+                return loc.isMetaModel() && loc.getNamespaceUris().contains(ePackageUri);
             }
-            rev = rev.getPreviousRevision();
+        });
+
+        if (loc != null) {
+            return loc.getExternalUri();
+        } else {
+            return null;
         }
-        return null;
+    }
+
+    /**
+     * @return
+     */
+    private Map<?, ?> getLoadOptions() {
+        return ImmutableMap.of(XMLResource.OPTION_EXTENDED_META_DATA, true);
     }
 
     /**
@@ -279,11 +300,26 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         final URI externalUriForEPackage = getExternalUriForEPackage(transaction, missingPackageUri);
 
         final Model checkout = repo.checkout(externalUriForEPackage);
-        final Resource res = rs.createResource(URI.createURI(checkout.getPersistencePath().toString()));
-        res.getContents().addAll(checkout.getContent());
-        rs.getPackageRegistry().putAll(createPackageNamespaceMap(res.getContents()));
+        if (!checkout.getContent().isEmpty()) {
+            /* XXX move all resources that were restored to our resource set
+             * This is needed because EMF does not throw a PackageNotFoundException
+             * if a supertype of an eclass depends on types in another resource, i.e. if
+             * the supertype is a proxy :(
+             * 
+             * TODO think about return type of repository.checkout(...)!
+             */ 
+            final ResourceSet otherResourceSet = checkout.getContent().get(0).eResource().getResourceSet();
+            rs.getResources().addAll(otherResourceSet.getResources());
+            for (final Resource res : rs.getResources()) {
+                rs.getPackageRegistry().putAll(createPackageNamespaceMap(res.getContents()));
+            }
+        }
+
     }
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.SimpleRepository#rollbackTransaction(long)
      */
     @Override
@@ -295,16 +331,17 @@ public class SimpleRepositoryImpl implements SimpleRepository {
     }
 
     /**
+     * @param relativePath
      * @param content
      * @return
      * @throws IOException
      */
-    private String serializeModel(final List<EObject> contents) throws IOException {
+    private String serializeModel(final List<EObject> contents, final String relativePath) throws IOException {
         final ResourceSet rs = createResourceSet();
         rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
         rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
 
-        final Resource res = rs.createResource(URI.createURI("foo.ecore"));
+        final Resource res = rs.createResource(URI.createURI(relativePath));
         res.getContents().addAll(contents);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -312,7 +349,9 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         return baos.toString();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.infai.amor.backend.SimpleRepository#startTransaction(java.lang.String)
      */
     @Override
@@ -333,8 +372,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      * @return
      */
     private boolean weKnowThisPackage(final String ePackageUri, final CommitTransaction transaction) {
-        return getExternalUriForEPackage(transaction,ePackageUri)!=null;
+        return getExternalUriForEPackage(transaction, ePackageUri) != null;
     }
-
 
 }

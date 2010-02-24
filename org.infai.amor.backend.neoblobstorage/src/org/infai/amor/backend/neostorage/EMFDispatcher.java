@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.infai.amor.backend.Model;
+import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.internal.impl.NeoModelLocation;
 
 /**
@@ -149,13 +150,15 @@ public interface EMFDispatcher {
      * Store a {@link Model}.
      * @param model
      */
-    NeoModelLocation store(Model model);
+    NeoModelLocation store(Model model, Revision rev);
 
     /**
      * Store a {@link Resource}.
      * 
      * @param resource
      *            Resource to store
+     * @deprecated
      */
+    @Deprecated
     void store(Resource resource);
 }

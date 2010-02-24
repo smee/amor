@@ -72,17 +72,67 @@ public class TestUtils {
      * @return
      */
     public static InternalRevision createRevision(final long revisionId) {
-        final Mockery context = new Mockery();
-        final InternalRevision revision = context.mock(InternalRevision.class, "" + Math.random());
-        context.checking(new Expectations() {
-            {
-                allowing(revision).getRevisionId();
-                will(returnValue(revisionId));
-                allowing(revision).touchedModel(with(any(ModelLocation.class)));
-                allowing(revision);
+        return new InternalRevision() {
+            Collection<ModelLocation> mlocs = new ArrayList<ModelLocation>();
+
+            @Override
+            public String getCommitMessage() {
+                return null;
             }
-        });
-        return revision;
+
+            @Override
+            public Date getCommitTimestamp() {
+                return null;
+            }
+
+            @Override
+            public ModelLocation getModelLocation(final String modelPath) {
+                for (final ModelLocation mloc : mlocs) {
+                    if (mloc.getRelativePath().equals(modelPath)) {
+                        return mloc;
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public Collection<ModelLocation> getModelReferences(final ChangeType... ct) {
+                return null;
+            }
+
+            @Override
+            public Revision getPreviousRevision() {
+                return null;
+            }
+
+            @Override
+            public long getRevisionId() {
+                return revisionId;
+            }
+
+            @Override
+            public String getUser() {
+                return null;
+            }
+
+            @Override
+            public void setCommitMessage(final String message) {
+            }
+
+            @Override
+            public void setTimestamp(final long currentTimeMillis) {
+            }
+
+            @Override
+            public void setUser(final String username) {
+            }
+
+            @Override
+            public void touchedModel(final ModelLocation loc) {
+                mlocs.add(loc);
+            }
+
+        };
     }
 
     /**

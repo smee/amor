@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.infai.amor.backend.Model;
+import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.NeoModelLocation;
 import org.neo4j.graphdb.*;
@@ -27,6 +28,7 @@ import org.neo4j.graphdb.*;
  */
 public abstract class AbstractNeoDispatcher extends AbstractNeoPersistence implements EMFDispatcher {
     protected NeoModelLocation currentModelLocation;
+    protected Revision currentRevision;
 
     // TODO use org.eclipse.emf.ecore.util.EcoreSwitch
     /**
@@ -106,10 +108,10 @@ public abstract class AbstractNeoDispatcher extends AbstractNeoPersistence imple
      * @see org.infai.amor.backend.neostorage.EMFDispatcher#store(org.infai.amor.backend.Model)
      */
     @Override
-    public NeoModelLocation store(final Model model) {
+    public NeoModelLocation store(final Model model, final Revision rev) {
         final Node rootNode = findModelLocationNode(model);
         currentModelLocation = new NeoModelLocation(getNeoProvider(), rootNode);
-
+        currentRevision = rev;
         // System.out.println("using rootnode " + rootNode);
         for (final EObject eo : model.getContent()) {
             // provide the current resource uri for deresolving absolute proxy uris later on

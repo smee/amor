@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.infai.amor.backend.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.NeoModelLocation;
 import org.neo4j.graphdb.*;
@@ -145,7 +146,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
         final Node rootNode = modelLocation.getModelHead();
 
         for (Node modelHeadNode : new OrderedNodeIterable(rootNode, EcoreRelationshipType.MODEL_CONTENT, Direction.OUTGOING)) {
-            debug(modelHeadNode);
+            // debug(modelHeadNode);
             // TODO why do we need to do this for instance models again?
             final Relationship isInstanceModelRel = modelHeadNode.getSingleRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING);
             if (isInstanceModelRel != null) {
@@ -188,12 +189,19 @@ public class NeoRestorer extends AbstractNeoPersistence {
         for (final Node referenced : getOrderedNodes(modelNode, EcoreRelationshipType.DEPENDS, Direction.OUTGOING, EcoreRelationshipType.INSTANCE_MODEL, Direction.INCOMING)) {
             final String uri = getString(referenced, NS_URI);
             if (uri == null) {
+                if (getString(referenced, ModelLocation.EXTERNAL_URI) != null) {
+                    final NeoModelLocation location = new NeoModelLocation(null, referenced);
+                    if (resourceSet.getResource(org.eclipse.emf.common.util.URI.createURI(location.getRelativePath()), false) == null) {
+                        final Resource resource = resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI(location.getRelativePath()));
+                        resource.getContents().addAll(load(location));
+                    }
+                }
                 continue;
             }
             XMIResource resource = (XMIResource) resourceSet.getResource(org.eclipse.emf.common.util.URI.createURI(uri), false);
             if (resource == null) {
                 resource = (XMIResource) resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI(uri));
-                logger.finest("restoring package " + uri);
+                logger.finer("restoring package " + uri);
                 resource.getContents().add(loadModel(referenced));
             }
         }

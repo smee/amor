@@ -50,12 +50,12 @@ public class NeoObject {
      * @return
      */
     protected Object get(final String key){
-        final Transaction tx = getNeoProvider().getNeo().beginTx();
+        // final Transaction tx = getNeoProvider().getNeo().beginTx();
         try{
             return getNode().getProperty(key);
         }finally{
-            tx.success();
-            tx.finish();
+            // tx.success();
+            // tx.finish();
         }
     }
 

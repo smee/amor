@@ -22,8 +22,8 @@ import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.responses.*;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
-import org.infai.amor.backend.util.EcoreModelHelper;
-import org.infai.amor.backend.util.Pair;
+import org.infai.amor.backend.util.*;
+import org.infai.amor.backend.util.ModelFinder.ModelMatcher;
 
 import com.google.common.base.Function;
 import com.google.common.collect.*;
@@ -445,23 +445,14 @@ public class RepositoryImpl implements Repository {
      */
     private boolean isKnownModel(final URI relativeRefToModelUri, final CommitTransaction transaction) {
         final String relativePath = relativeRefToModelUri.toString();
-        Revision rev = transaction.getBranch().getHeadRevision();
-        while (rev != null) {
-            for (final ModelLocation loc : rev.getModelReferences(ChangeType.ADDED, ChangeType.CHANGED, ChangeType.DELETED)) {
-
-                if (loc.getRelativePath().equals(relativePath)) {
-                    if (loc.getChangeType().equals(Revision.ChangeType.DELETED)) {
-                        // if the newest change to this relative path was a deletion,
-                        // we do not have this model stored
-                        return false;
-                    } else {
-                        return true;
-                    }
-                }
+        final Revision rev = transaction.getBranch().getHeadRevision();
+        final ModelLocation loc = ModelFinder.findActiveModel(rev, new ModelMatcher() {
+            @Override
+            public boolean matches(final ModelLocation loc) {
+                return loc.getRelativePath().equals(relativePath);
             }
-            rev = rev.getPreviousRevision();
-        }
-        return false;
+        });
+        return loc != null;
     }
 
     /*

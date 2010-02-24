@@ -75,13 +75,13 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         logger.finer("----------1-Storing contents----------");
         final NeoMappingDispatcher disp1 = new NeoMappingDispatcher(getNeoProvider());
         disp1.setRegistry(cache);
-        disp1.store(model);
+        disp1.store(model, revision);
         logger.finer("----------2-Storing metadata----------");
         final AbstractNeoDispatcher disp2 = new NeoMetadataDispatcher(getNeoProvider());
         // reuse the eobject->neo4j node map
         disp2.setRegistry(cache);
         // store all additional references and meta relationships
-        final NeoModelLocation modelLocation = disp2.store(model);
+        final NeoModelLocation modelLocation = disp2.store(model, revision);
         // store epackage namespace uris
         if (!ePackageUris.isEmpty()) {
             modelLocation.setEPackageNamespaces(ePackageUris);

@@ -22,8 +22,7 @@ import org.infai.amor.backend.internal.impl.*;
 import org.infai.amor.backend.neostorage.NeoBlobStorageFactory;
 import org.infai.amor.test.AbstractNeo4JTest;
 import org.infai.amor.test.ModelUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
@@ -42,9 +41,9 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
      * @param actual
      */
     private static void assertEqualsIgnoringWhitespace(final String expected, final String actual){
-        assertEquals(expected.replaceAll("\\s+", ""),actual.replaceAll("\\s+", ""));
+        // assertEquals(expected.replaceAll("^ +", ""), actual.replaceAll("^ +", ""));
+        assertEquals(expected.replaceAll("\\s+", ""), actual.replaceAll("\\s+", ""));
     }
-
     /**
      * @param string
      */
@@ -61,6 +60,11 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         // then
         assertTrue(missing.isEmpty());
     }
+
+    // @Override
+    // protected boolean isRollbackAfterTest() {
+    // return false;
+    // }
 
     @Before
     public void setup() throws Exception {
@@ -107,6 +111,17 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
     }
 
     @Test
+    public void shouldCheckinComplexModel() throws Exception {
+        // given
+        checkin("testmodels/02/primitive_types.ecore");
+        checkin("testmodels/02/java.ecore");
+        // when
+        final List<String> missing = repo.checkin(ModelUtil.readModel("testmodels/02/Hello.java.xmi"), "testmodels/02/Hello.java.xmi", trId);
+        // then
+        assertFalse(missing.isEmpty());
+    }
+
+    @Test
     public void shouldCheckinDependencies() throws Exception {
         // given
         final String ecoreB = ModelUtil.readModel("testmodels/multi/B.ecore");
@@ -129,6 +144,23 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         // then
         assertTrue(missing.isEmpty());
         assertTrue(1 <= revId);
+    }
+
+    @Test
+    @Ignore(value = "Comparing XML strings is not sufficient. See JavaEcoreTest.java for same test")
+    public void shouldRestoreComplexEcore() throws Exception {
+        // given
+        final String ecoreB = ModelUtil.readModel("testmodels/02/primitive_types.ecore");
+        final String ecoreA = ModelUtil.readModel("testmodels/02/java.ecore");
+        // when
+        repo.checkin(ecoreB, "primitive_types.ecore", trId);
+        repo.checkin(ecoreA, "java.ecore", trId);
+        final long revisionId = repo.commitTransaction(trId, "user", "bla");
+
+        final String ecoreXml = repo.checkout(BRANCHNAME, revisionId, "java.ecore");
+        // then
+        assertNotNull(ecoreXml);
+        assertEqualsIgnoringWhitespace(ecoreA, ecoreXml);
     }
 
     @Test

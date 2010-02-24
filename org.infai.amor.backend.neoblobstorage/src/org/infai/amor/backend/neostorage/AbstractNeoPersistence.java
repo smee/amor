@@ -129,10 +129,6 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
      * @param node
      */
     protected void cache(final EObject eo, final Node node) {
-        // if (eo instanceof DynamicEObjectImpl) {
-        // System.out.println("c: " + EcoreUtil.getURI(eo));
-        // System.out.println("c: " + EcoreUtil.getURI(eo.eClass()));
-        // }
         nodeCache.put(eo, node);
     }
 
@@ -168,6 +164,20 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
     protected void debug(final Node n) {
         System.out.println(AbstractNeoPersistence.nodeStats(n));
 
+    }
+
+    /**
+     * Find the relative path to the file this proxy uri relates to. The path has the same root as {@link #currentResourceUri}.
+     * @param proxy
+     * @return
+     */
+    private String deresolve(final EObject proxy) {
+        final URI pseudoAbsUri = org.eclipse.emf.common.util.URI.createURI("file://" + currentResourceUri);
+        final URI proxyUri = ((InternalEObject) proxy).eProxyURI();
+
+        final String deresolved = proxyUri.resolve(pseudoAbsUri).toString().substring("file://".length());
+
+        return deresolved;
     }
 
     /**
@@ -295,8 +305,9 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
             final Node proxyNode = createNode();
             set(proxyNode, NAME, "ProxyNode");
             // make proxy uri relative to current resource's uri
-            final URI relativeProxyUri = ((InternalEObject) element).eProxyURI().deresolve(currentResourceUri);
-            set(proxyNode, "proxyUri", relativeProxyUri.toString());
+            final String relativeProxyUri = deresolve(element);
+            // final String relativeProxyUri = ((InternalEObject) element).eProxyURI().toString();
+            set(proxyNode, "proxyUri", relativeProxyUri);
             final Node classNode = findClassifierNode(element.eClass());
             classNode.createRelationshipTo(proxyNode, EcoreRelationshipType.INSTANCE);
 
@@ -307,13 +318,13 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
         }
         if (node == null && element instanceof DynamicEObjectImpl) {
 
-            // DynamicEObjects might get created several times, sadly they do not overwrite hashCode() and equals(...) so we need to
+            // DynamicEObjects might get created several times, sadly they do not overwrite hashCode() and equals(...) so we need
+            // to
             // do so manually :(
             return nodeCache.get(element.eClass());
         }
         return node;
     }
-
 
     /**
      * Setter for cache map.

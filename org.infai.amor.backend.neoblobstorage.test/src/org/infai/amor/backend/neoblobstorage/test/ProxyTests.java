@@ -59,7 +59,6 @@ public class ProxyTests {
             }));
         }
     }
-
     @Test
     public void shouldFindExternalReferences() throws Exception {
         // given
@@ -75,7 +74,6 @@ public class ProxyTests {
         assertEquals(1, size(filter(map.keySet().iterator(), EFactory.class)));
         assertEquals(1, size(filter(map.keySet().iterator(), isEString())));
     }
-
     @Test
     public void shouldFindProxiedElements() throws Exception {
         // given
@@ -185,6 +183,7 @@ public class ProxyTests {
         assertTrue(any(uniqueRelativeUris, uriEndsWith("java/io/PrintStream.class.xmi")));
         assertTrue(any(uniqueRelativeUris, uriEndsWith("java/lang/String.class.xmi")));
     }
+
     @Test
     public void shouldStoreLinkedModels() throws Exception {
         // given

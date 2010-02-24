@@ -11,7 +11,7 @@ package org.infai.amor.backend.internal.impl;
 
 import java.util.*;
 
-import org.infai.amor.backend.*;
+import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.neo4j.graphdb.*;
 
@@ -46,26 +46,7 @@ public class NeoBranch extends NeoObject implements Branch {
         set(BRANCHNAME, name);
         set(CREATIONDATE, new Date().getTime());
     }
-    /* (non-Javadoc)
-     * @see org.infai.amor.backend.Branch#findRevisionOf(java.lang.String)
-     */
-    public Revision findRevisionOf(final String relativePath) {
-        NeoRevision rev = getHeadRevision();
-        while(rev!=null){
-            final ModelLocation loc = rev.getModelLocation(relativePath);
-            if(loc !=null) {
-                if (loc.getChangeType().equals(Revision.ChangeType.DELETED)) {
-                    // if the newest change to this relative path was a deletion,
-                    // we do not have this model stored
-                    return null;
-                } else {
-                    return rev;
-                }
-            }
-            rev = rev.getPreviousRevision();
-        }
-        return null;
-    }
+
     /*
      * (non-Javadoc)
      * 

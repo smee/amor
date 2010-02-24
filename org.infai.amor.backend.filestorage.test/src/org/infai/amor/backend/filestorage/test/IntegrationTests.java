@@ -44,11 +44,10 @@ public class IntegrationTests extends AbstractIntegrationTest {
      * @throws IOException
      * 
      */
-    private void addOneDependency(final CommitTransaction ct, final Collection<URI> deps, final ResourceSet rs) throws IOException {
-        final String firstDepPath = deps.iterator().next().toString();
-        final List<EObject> firstDependency = readInputModels(firstDepPath, rs);
+    private void addOneDependency(final CommitTransaction ct, final String relativePath, final ResourceSet rs) throws IOException {
+        final List<EObject> firstDependency = readInputModels(relativePath, rs);
         // when
-        final Response checkin = repository.checkin(new ModelImpl(firstDependency, firstDepPath), ct);
+        final Response checkin = repository.checkin(new ModelImpl(firstDependency, relativePath), ct);
         // then
         assertTrue(checkin instanceof UnresolvedDependencyResponse);
         final Collection<URI> deps2 = ((UnresolvedDependencyResponse) checkin).getDependencies();
@@ -64,7 +63,7 @@ public class IntegrationTests extends AbstractIntegrationTest {
         readInputModels("testmodels/02/primitive_types.ecore",rs);
         readInputModels("testmodels/02/java.ecore",rs);
         // a model with external dependencies
-        final EObject input = readInputModel("testmodels/02/Hello.java.xmi",rs);
+        final EObject input = readInputModels("testmodels/02/Hello.java.xmi", rs, true).get(0);
         // and a branch
         final Branch branch = repository.createBranch(null, "trunk");
         // and a transaction
@@ -79,7 +78,7 @@ public class IntegrationTests extends AbstractIntegrationTest {
         final Collection<URI> deps = ((UnresolvedDependencyResponse) checkin).getDependencies();
         assertEquals(3, deps.size());
 
-        addOneDependency(ct, deps, rs);
+        addOneDependency(ct, "testmodels/02/" + deps.iterator().next().toString(), rs);
     }
 
     @Test

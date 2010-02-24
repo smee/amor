@@ -72,14 +72,20 @@ public class ModelUtil {
      * @param content2
      */
     public static void assertModelEqual(final EObject orig, final EObject changed) {
+        assertModelEqual(orig.eResource(), changed.eResource());
+    }
+
+    public static void assertModelEqual(final Resource orig, final Resource changed) {
         try {
             // we assume the very same metamodel, no matter where it was loaded from
             final Map<String, Object> options = new HashMap<String, Object>();
             options.put(MatchOptions.OPTION_DISTINCT_METAMODELS, true);
-            final MatchModel match = MatchService.doMatch(orig, changed, options);
+
+            final MatchModel match = MatchService.doResourceMatch(orig, changed, options);
             final DiffModel diff = DiffService.doDiff(match, false);
 
-            final List<DiffElement> differences = new ArrayList<DiffElement>(diff.getOwnedElements());
+            final List<DiffElement> differences = new ArrayList<DiffElement>(stripOrderChanges(diff.getOwnedElements()));
+
             saveDiff(diff, match);
             describeDiff(differences, 0);
             // if there are no differences, there is still an empty change, bug in emfcompare?
@@ -87,23 +93,16 @@ public class ModelUtil {
         } catch (final InterruptedException e) {
             fail();
         }
-
     }
 
-    public static void copyFile(final File in, final File out)
-    throws IOException
-    {
-        final FileChannel inChannel = new
-        FileInputStream(in).getChannel();
-        final FileChannel outChannel = new
-        FileOutputStream(out).getChannel();
+    public static void copyFile(final File in, final File out) throws IOException {
+        final FileChannel inChannel = new FileInputStream(in).getChannel();
+        final FileChannel outChannel = new FileOutputStream(out).getChannel();
         try {
             inChannel.transferTo(0, inChannel.size(), outChannel);
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             throw e;
-        }
-        finally {
+        } finally {
             if (inChannel != null) {
                 inChannel.close();
             }
@@ -202,6 +201,7 @@ public class ModelUtil {
         }
 
     }
+
     /**
      * @param relativePath
      * @return
@@ -210,7 +210,6 @@ public class ModelUtil {
     public static EObject readInputModel(final String relativePath) throws IOException {
         return readInputModel(relativePath, new ResourceSetImpl());
     }
-
     /**
      * @param string
      * @return
@@ -241,7 +240,7 @@ public class ModelUtil {
     public static List<EObject> readInputModels(final String relativePath, final ResourceSet rs, final boolean simulateRemote) throws IOException {
 
         String file = getAbsolutePathToTestModel(relativePath);
-        if (simulateRemote && relativePath.endsWith(".xmi")) {
+        if (simulateRemote) {
             file = copyToTempDirectory(file);
         }
         final Resource resource = rs.getResource(URI.createFileURI(file), true);
@@ -346,6 +345,22 @@ public class ModelUtil {
         for(final EObject eo:model) {
             logResourceErrors(eo.eResource());
         }
+    }
+
+    /**
+     * {@link ReferenceOrderChange} is a irrelevant change for our test cases. Remove all differences of this kind.
+     * 
+     * @param ownedElements
+     * @return
+     */
+    private static Collection<DiffElement> stripOrderChanges(final EList<DiffElement> ownedElements) {
+        final Collection<DiffElement> res = new ArrayList<DiffElement>();
+        for(final DiffElement de: ownedElements){
+            if (!(de instanceof ReferenceOrderChange)) {
+                res.addAll(stripOrderChanges(de.getSubDiffElements()));
+            }
+        }
+        return res;
     }
 
 }

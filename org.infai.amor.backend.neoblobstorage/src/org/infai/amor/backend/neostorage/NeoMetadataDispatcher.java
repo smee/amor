@@ -14,7 +14,11 @@ import java.util.logging.Logger;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl;
+import org.infai.amor.backend.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.internal.impl.NeoModelLocation;
+import org.infai.amor.backend.util.ModelFinder;
+import org.infai.amor.backend.util.ModelFinder.ModelMatcher;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.Traverser.Order;
 
@@ -38,12 +42,21 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
         // find toplevel container
         final Node fromContainer = findToplevelContainer(from);
 
+        // TODO find node for proxies
+
         // find toplevel typecontainer
-        final Node toContainer = findToplevelContainer(to);
+        Node toContainer = findToplevelContainer(to);
 
         if (!fromContainer.equals(toContainer)) {
+            if(toContainer.hasProperty("proxyUri")){
+                final String proxyUri = (String) toContainer.getProperty("proxyUri");
+                final Node tempNode = findEPackage(proxyUri.substring(0, proxyUri.indexOf('#')));
+                if (tempNode != null) {
+                    toContainer = tempNode;
+                }
+            }
             boolean foundDependency = false;
-            for (final Relationship rel : fromContainer.getRelationships(Direction.OUTGOING)) {
+            for (final Relationship rel : fromContainer.getRelationships(EcoreRelationshipType.DEPENDS, Direction.OUTGOING)) {
                 if (rel.getEndNode() == toContainer) {
                     foundDependency = true;
                     break;
@@ -53,6 +66,32 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
                 fromContainer.createRelationshipTo(toContainer, EcoreRelationshipType.DEPENDS);
             }
         }
+    }
+
+    /**
+     * @param substring
+     * @return
+     */
+    private Node findEPackage(final String ecoreFilename) {
+        // XXX hack assumes relative path separated by /
+        final String relativePath = ecoreFilename;// currentResourceUri.trimSegments(1).appendSegments(ecoreFilename.split("/")).toString();
+        final ModelLocation loc = ModelFinder.findActiveModel(currentRevision, new ModelMatcher() {
+            @Override
+            public boolean matches(final ModelLocation loc) {
+                return loc.getRelativePath().equals(relativePath);
+            }
+        });
+        if (loc == null) {
+            return null;
+        }
+        final Node modelHead = ((NeoModelLocation) loc).getModelHead();
+        return modelHead;
+        // for (final Relationship rel : modelHead.getRelationships(EcoreRelationshipType.MODEL_CONTENT, Direction.OUTGOING)) {
+        // final Node pckgNode = rel.getEndNode();
+        // // FIXME returns the first package node, does not match all the time
+        // return pckgNode;
+        // }
+        // return null;
     }
 
     /**
@@ -110,8 +149,6 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
      *            Element to assign with its meta model element
      * @param clazz
      *            Ecore class of meta model element
-     * @param nodeCache
-     *            Node cache
      */
     private void setMetaElement(final EObject element, final Class<? extends EObject> clazz) {
         final String mapEntryName = EcorePackage.Literals.ESTRING_TO_STRING_MAP_ENTRY.getName();
@@ -136,8 +173,6 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
      * 
      * @param element
      *            Element to assign with its super elements.
-     * @param nodeCache
-     *            Node cache
      */
     private void setSuperElements(final EClass element) {
         final Node node = getNodeFor(element);
@@ -153,8 +188,6 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
      * 
      * @param element
      *            EGenericType to assign with its classifier
-     * @param nodeCache
-     *            Node cache
      */
     private void setTypeElement(final EGenericType element) {
         // set EType

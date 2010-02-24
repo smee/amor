@@ -62,11 +62,10 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         final List<String[]> testdata = Lists.newArrayList();
         testdata.add(new String[] { "testmodels/filesystem.ecore", "testmodels/simplefilesystem.xmi" });
         testdata.add(new String[] { "testmodels/filesystem.ecore", "testmodels/fs/simplefilesystem_v1.filesystem" });
+        testdata.add(new String[] { "testmodels/multi/B.ecore", "testmodels/multi/A.ecore", "testmodels/multi/a.xmi" });
         // CAUTION: takes some time, huge model!
         testdata.add(new String[] { "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
-        // testdata.add(new String[] { "testmodels/02/primitive_types.ecore", "testmodels/02/java.ecore",
-        // "testmodels/02/Hello.java.xmi" });
-        testdata.add(new String[] { "testmodels/multi/B.ecore", "testmodels/multi/A.ecore", "testmodels/multi/a.xmi" });
+        testdata.add(new String[] { "testmodels/02/primitive_types.ecore", "testmodels/02/java.ecore", "testmodels/02/Hello.java.xmi" });
 
         final Collection<Object[]> params = Lists.newArrayList();
         for(final String[] data: testdata) {
@@ -117,9 +116,9 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         // given
         final ResourceSet rs = new ResourceSetImpl();
         final Map<String, List<EObject>> models = Maps.newLinkedHashMap();
-        models.put("testmodels/Ecore.ecore", readInputModels("testmodels/Ecore.ecore", rs, true));
+        models.put("testmodels/Ecore.ecore", readInputModels("testmodels/Ecore.ecore", rs, false));
         for (final String location : modelLocations) {
-            final List<EObject> currentModelContents = readInputModels(location, rs, true);
+            final List<EObject> currentModelContents = readInputModels(location, rs, false);
             for (final EObject eo : currentModelContents) {
                 final Set<URI> proxyUrls = EcoreModelHelper.findReferencedModels(eo, eo.eResource().getURI());
                 if (!proxyUrls.isEmpty()) {
@@ -140,7 +139,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
         final List<URI> repoUris = Lists.newArrayList();
         for (final String loc : models.keySet()) {
             final Response response = repository.checkin(new ModelImpl(models.get(loc), loc), ct);
-            // assertTrue("Class should not be " + response.getClass(), response instanceof CheckinResponse);
+            // FIXME assertTrue("Class should not be " + response.getClass(), response instanceof CheckinResponse);
 
             repoUris.add(response.getURI());
             split("Neo4j - Added "+loc);

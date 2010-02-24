@@ -35,14 +35,16 @@ public class EcoreModelHelper {
     private static String ecoreUri = URI.createURI(EcorePackage.eNS_URI).toString();
 
     /**
-     * Return all externally referenced models, ignoring Ecore itself. Deresolves agains <code>resourceUri</code>.
-     * 
-     * @param model
      * @param resourceUri
      * @return
      */
-    public static Set<URI> findReferencedModels(final EObject model, final URI resourceUri) {
-        return findReferencedModels(model, resourceUri, resourceUri);
+    private static Function<URI, URI> deresolve(final URI resourceUri) {
+        return new Function<URI, URI>() {
+            @Override
+            public URI apply(final URI uri){
+                return uri.deresolve(resourceUri);
+            }
+        };
     }
 
     /**
@@ -51,11 +53,9 @@ public class EcoreModelHelper {
      * @param model
      * @param resourceUri
      *            absolute uri locating the resource of model
-     * @param baseUri
-     *            absolute uri that all referenced uri should be deresolved agains
      * @return Set of relative paths that address the dependencies of model
      */
-    public static Set<URI> findReferencedModels(final EObject model, final URI resourceUri, final URI baseUri) {
+    public static Set<URI> findReferencedModels(final EObject model, final URI resourceUri) {
         final Map<EObject, Collection<Setting>> map = EcoreUtil.ProxyCrossReferencer.find(model);
         // final Iterator<EObject> proxiedEobjects = getObjectsWithExternalReferences(model, resourceUri);
         // // find all uris!=oepc that each object references to
@@ -64,11 +64,10 @@ public class EcoreModelHelper {
         final Set<URI> uniqueRelativeUris = Sets.newHashSet();
         // addAll(uniqueRelativeUris, transform(flatten(extUriSets).iterator(), makeUriRelativeTo(baseUri)));
         //
-        addAll(uniqueRelativeUris,
-                filter(transform(transform(map.keySet().iterator(),
-                        getProxyUri()),
-                        makeUriRelativeTo(baseUri)),
-                        and(not(startsWith(ecoreUri)), not(isFragmentOnly()))));
+        final Iterator<EObject> proxies = map.keySet().iterator();
+        addAll(uniqueRelativeUris, filter(transform(proxies, foo(resourceUri)),
+                // transform(transform(proxies,getProxyUri()), deresolve(resourceUri)), prepend(baseUri)),
+                and(not(startsWith(ecoreUri)), not(isFragmentOnly()))));
         return uniqueRelativeUris;
     }
 
@@ -78,6 +77,22 @@ public class EcoreModelHelper {
             result.addAll(nestedSet.next());
         }
         return result;
+    }
+
+    /**
+     * @param baseUri
+     * @param resourceUri
+     * @return
+     */
+    private static Function<EObject, URI> foo(final URI resourceUri) {
+        return new Function<EObject, URI>() {
+
+            @Override
+            public URI apply(final EObject from) {
+                final URI proxyUri = ((InternalEObject) from).eProxyURI().deresolve(resourceUri).trimFragment();
+                return proxyUri;
+            }
+        };
     }
 
     /**
@@ -171,6 +186,17 @@ public class EcoreModelHelper {
             public URI apply(final URI absUri) {
                 // assert !absUri.isRelative();
                 return absUri.deresolve(baseUri).trimFragment();
+            }
+
+        };
+    }
+
+    public static Function<URI, URI> prepend(final URI baseUri) {
+        return new Function<URI, URI>() {
+            @Override
+            public URI apply(final URI segmentsOnlyUri) {
+                // assert segmentsOnlyUri.isRelative() && segmentsOnlyUri.isHierarchical();
+                return baseUri.appendSegments(segmentsOnlyUri.segments());
             }
 
         };
