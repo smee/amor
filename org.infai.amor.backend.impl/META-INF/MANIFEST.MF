@@ -21,6 +21,7 @@ Import-Package: ch.ethz.iks.r_osgi;version="1.0.0",
  org.infai.amor.backend.responses,
  org.infai.amor.backend.storage,
  org.neo4j.graphdb,
+ org.neo4j.kernel,
  org.osgi.framework;version="1.5.0",
  org.osgi.util.tracker;version="1.4.2"
 Bundle-ClassPath: .,

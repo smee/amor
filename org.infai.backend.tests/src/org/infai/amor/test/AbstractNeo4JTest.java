@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import org.junit.*;
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
@@ -27,7 +26,7 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
  */
 public abstract class AbstractNeo4JTest {
     protected Transaction tx;
-    protected static GraphDatabaseService neoservice;
+    protected static EmbeddedGraphDatabase neoservice;
 
     @BeforeClass
     public static void createNeo() throws IOException {
