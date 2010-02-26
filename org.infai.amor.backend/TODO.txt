@@ -1,0 +1,22 @@
+SimpleRepository:
+- return info about external uri?
+- error handling
+- checkin epatches
+
+Storages:
+- non blob storage!
+- dependencies on model element level
+- internally revision per model element
+
+Repository:
+- refactoring (moving/renaming models)
+
+Misc:
+- workaround for loading GMF notation instances
+
+EPatch:
+- does not support multiple root elements per model, problem?
+- uses last segment of a resource uri only, how can we associate this change with stored models?
+
+GraphDB:
+- use http://github.com/tinkerpop/blueprints as graphdb abstraction instead of neo4j. resolves license issues

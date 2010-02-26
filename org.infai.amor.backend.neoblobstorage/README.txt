@@ -1,0 +1,1 @@
+org.infai.amor.backend.storage.Storage implementation for complete models in a graph database (currently neo4j).

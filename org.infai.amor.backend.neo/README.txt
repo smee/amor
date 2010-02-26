@@ -1,0 +1,1 @@
+Provides an instance of the neo4j graph database as configurable OSGi service.
