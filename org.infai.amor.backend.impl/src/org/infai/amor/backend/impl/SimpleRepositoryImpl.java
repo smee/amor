@@ -27,12 +27,11 @@ import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.PackageNotFoundException;
 import org.eclipse.emf.ecore.xmi.XMLResource;
-import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.responses.UnresolvedDependencyResponse;
+import org.infai.amor.backend.util.EcoreModelHelper;
 import org.infai.amor.backend.util.ModelFinder;
 import org.infai.amor.backend.util.ModelFinder.ModelMatcher;
 
@@ -115,6 +114,14 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         return Collections.EMPTY_LIST;
     }
 
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.SimpleRepository#checkinPatch(java.lang.String, java.lang.String, long)
+     */
+    @Override
+    public void checkinPatch(final String epatch, final String relativePath, final long transactionId) throws RuntimeException {
+
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -128,7 +135,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
             final URI uriForRevision = uh.createUriFor(repo.getBranch(uh.createUriFor(branch)), revisionId);
             final Model model = repo.checkout(uriForRevision.appendSegments(relativePath.split("/")));
 
-            return serializeModel(model.getContent(), relativePath);
+            return EcoreModelHelper.serializeModel(model.getContent(), relativePath);
 
         } catch (final MalformedURIException e) {
             throw new IllegalArgumentException(String.format("Could not find revision '%d' on branch '%s'", revisionId, branch), e);
@@ -328,25 +335,6 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         repo.rollbackTransaction(transaction);
         transactionMap.remove(transactionId);
 
-    }
-
-    /**
-     * @param relativePath
-     * @param content
-     * @return
-     * @throws IOException
-     */
-    private String serializeModel(final List<EObject> contents, final String relativePath) throws IOException {
-        final ResourceSet rs = createResourceSet();
-        rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
-        rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-
-        final Resource res = rs.createResource(URI.createURI(relativePath));
-        res.getContents().addAll(contents);
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        res.save(baos, transactionMap);
-        return baos.toString();
     }
 
     /*

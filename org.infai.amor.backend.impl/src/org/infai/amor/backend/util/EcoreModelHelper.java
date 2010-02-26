@@ -13,13 +13,19 @@ import static com.google.common.base.Predicates.*;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterators.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -213,6 +219,24 @@ public class EcoreModelHelper {
     }
 
     /**
+     * @param relativePath
+     * @param content
+     * @return
+     * @throws IOException
+     */
+    public static String serializeModel(final List<? extends EObject> contents, final String relativePath) throws IOException {
+        final ResourceSet rs = new ResourceSetImpl();
+        rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
+        rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+    
+        final Resource res = rs.createResource(URI.createURI(relativePath));
+        res.getContents().addAll(contents);
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    
+        res.save(baos, null);
+        return baos.toString();
+    }
+    /**
      * @param ecoreUri2
      * @return
      */
@@ -224,6 +248,7 @@ public class EcoreModelHelper {
             }
         };
     }
+
     public static Predicate<URI> uriEndsWith(final String string) {
         return new Predicate<URI>() {
             @Override

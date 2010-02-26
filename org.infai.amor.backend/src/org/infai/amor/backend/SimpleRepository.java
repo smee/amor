@@ -33,6 +33,15 @@ public interface SimpleRepository {
     List<String> checkin(String ecoreXmi, String relativePath, long transactionId);
 
     /**
+     * @param epatch
+     * @param relativePath
+     * @param transactionId
+     * @throws RuntimeException
+     *             placeholder
+     */
+    void checkinPatch(String epatch, String relativePath, long transactionId) throws RuntimeException;
+
+    /**
      * @param branch
      * @param revisionId
      * @param relativePath
