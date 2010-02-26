@@ -9,10 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.backend.impl;
 
-import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.Revision;
-import org.infai.amor.backend.internal.InternalCommitTransaction;
-import org.infai.amor.backend.internal.InternalRevision;
+import org.infai.amor.backend.*;
 import org.neo4j.graphdb.Transaction;
 
 /**
