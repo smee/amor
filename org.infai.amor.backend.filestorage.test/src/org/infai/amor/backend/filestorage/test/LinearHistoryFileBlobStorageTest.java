@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.filestorage.FileBlobStorage;
-import org.infai.amor.backend.internal.InternalRevision;
 import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.internal.impl.ChangedModelImpl;
 import org.infai.amor.test.*;

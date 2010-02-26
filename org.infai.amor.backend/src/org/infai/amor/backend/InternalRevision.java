@@ -1,7 +1,5 @@
-package org.infai.amor.backend.internal;
+package org.infai.amor.backend;
 
-import org.infai.amor.backend.ModelLocation;
-import org.infai.amor.backend.Revision;
 
 public interface InternalRevision extends Revision{
 

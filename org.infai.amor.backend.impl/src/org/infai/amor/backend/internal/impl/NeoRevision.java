@@ -13,8 +13,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.logging.Logger;
 
+import org.infai.amor.backend.InternalRevision;
 import org.infai.amor.backend.ModelLocation;
-import org.infai.amor.backend.internal.InternalRevision;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.neo4j.graphdb.*;
 

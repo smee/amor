@@ -14,8 +14,6 @@ import java.util.*;
 import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
-import org.infai.amor.backend.internal.InternalCommitTransaction;
-import org.infai.amor.backend.internal.InternalRevision;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 

@@ -7,9 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.internal;
+package org.infai.amor.backend;
 
-import org.infai.amor.backend.CommitTransaction;
 
 /**
  * @author sdienst
