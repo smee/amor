@@ -1,19 +1,17 @@
 package org.infai.amor.backend.neo;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.cm.ManagedService;
 
 /**
  * @author sdienst
  * 
  */
 public class Activator implements BundleActivator {
-    private ConfigurableNeoService managedNeo;
+
+    private EmbeddedGraphDatabase neo;
 
     /*
      * (non-Javadoc)
@@ -21,11 +19,7 @@ public class Activator implements BundleActivator {
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
     public void start(final BundleContext bc) throws Exception {
-        final Dictionary<String, String> props = new Hashtable<String, String>();
-        props.put("service.pid", GraphDatabaseService.class.getName());
-
-        managedNeo = new ConfigurableNeoService(bc);
-        bc.registerService(new String[] { ManagedService.class.getName(), GraphDatabaseService.class.getName() }, managedNeo, props);
+        bc.registerService(GraphDatabaseService.class.getName(), neo = new EmbeddedGraphDatabase("storage"), null);
     }
 
     /*
@@ -34,7 +28,7 @@ public class Activator implements BundleActivator {
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
     public void stop(final BundleContext bc) throws Exception {
-        managedNeo.shutdown();
+        neo.shutdown();
     }
 
 }
