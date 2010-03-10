@@ -13,6 +13,7 @@ import java.util.*;
 
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.neo.NeoObject;
 import org.neo4j.graphdb.*;
 
 /**

@@ -77,11 +77,9 @@ public class ModelUtil {
 
     public static void assertModelEqual(final Resource orig, final Resource changed) {
         try {
-            // we assume the very same metamodel, no matter where it was loaded from
-            final Map<String, Object> options = new HashMap<String, Object>();
-            options.put(MatchOptions.OPTION_DISTINCT_METAMODELS, true);
 
-            final MatchModel match = MatchService.doResourceMatch(orig, changed, options);
+
+            final MatchModel match = MatchService.doResourceMatch(orig, changed, getMatchOptions());
             final DiffModel diff = DiffService.doDiff(match, false);
 
             final List<DiffElement> differences = new ArrayList<DiffElement>(stripOrderChanges(diff.getOwnedElements()));
@@ -153,7 +151,7 @@ public class ModelUtil {
      * @throws InterruptedException
      */
     public static Epatch createEpatch(final EObject origModel, final EObject changedModel) throws InterruptedException{
-        final MatchModel match = MatchService.doMatch(origModel, changedModel, null);
+        final MatchModel match = MatchService.doMatch(origModel, changedModel, getMatchOptions());
         final DiffModel diff = DiffService.doDiff(match, false);
         return DiffEpatchService.createEpatch(match, diff, "testpatch");
     }
@@ -186,6 +184,16 @@ public class ModelUtil {
             file = file.substring("file:/".length());
         }
         return file;
+    }
+
+    /**
+     * @return
+     */
+    private static Map<String, Object> getMatchOptions() {
+        // we assume the very same metamodel, no matter where it was loaded from
+        final Map<String, Object> options = new HashMap<String, Object>();
+        options.put(MatchOptions.OPTION_DISTINCT_METAMODELS, true);
+        return options;
     }
 
     /**
@@ -277,7 +285,7 @@ public class ModelUtil {
                 sb.append(line).append("\n");
             }
         } catch (final IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }finally{
             if(br!=null) {
                 try {

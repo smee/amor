@@ -12,24 +12,29 @@ package org.infai.amor.backend.impl;
 import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Iterables.transform;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.compare.epatch.Epatch;
+import org.eclipse.emf.compare.epatch.impl.EpatchPackageImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.PackageNotFoundException;
 import org.eclipse.emf.ecore.xmi.XMLResource;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.*;
-import org.infai.amor.backend.internal.*;
+import org.infai.amor.backend.api.SimpleRepository;
+import org.infai.amor.backend.internal.ModelImpl;
+import org.infai.amor.backend.internal.UriHandler;
+import org.infai.amor.backend.internal.impl.ChangedModelImpl;
 import org.infai.amor.backend.responses.UnresolvedDependencyResponse;
 import org.infai.amor.backend.util.EcoreModelHelper;
 import org.infai.amor.backend.util.ModelFinder;
@@ -119,7 +124,19 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      */
     @Override
     public void checkinPatch(final String epatch, final String relativePath, final long transactionId) throws RuntimeException {
-
+        final CommitTransaction transaction = this.transactionMap.get(transactionId);
+        final ResourceSet rs = createResourceSet();
+        EpatchPackageImpl.init();
+        rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("epatch", new XMIResourceFactoryImpl());
+        final Resource resource = rs.createResource(URI.createURI("patch.epatch"));
+        try {
+            resource.load(new ByteArrayInputStream(epatch.getBytes()), getLoadOptions());
+            final Response response = repo.checkin(new ChangedModelImpl((Epatch) resource.getContents().get(0), relativePath), transaction);
+            // TODO what to do with it?
+        } catch (final IOException e) {
+            logger.log(Level.SEVERE, "Could not read epatch.", e);
+            throw new RuntimeException(e);
+        }
     }
 
     /*
@@ -196,24 +213,6 @@ public class SimpleRepositoryImpl implements SimpleRepository {
     }
 
     /**
-     * Create a map of epackage namespace uris to epackages.
-     * 
-     * @param contents
-     * @return
-     */
-    private Map<String, Object> createPackageNamespaceMap(final EList<? extends EObject> contents) {
-        final Map<String, Object> res = Maps.newHashMap();
-        for (final EObject eo : contents) {
-            if (eo instanceof EPackage) {
-                final EPackage epckg = (EPackage) eo;
-                res.put(epckg.getNsURI(), epckg);
-                res.putAll(createPackageNamespaceMap(epckg.getESubpackages()));
-            }
-        }
-        return res;
-    }
-
-    /**
      * @return
      */
     private ResourceSet createResourceSet() {
@@ -226,6 +225,21 @@ public class SimpleRepositoryImpl implements SimpleRepository {
             }
         });
         return rs;
+    }
+
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.SimpleRepository#delete(long, java.lang.String)
+     */
+    @Override
+    public void delete(final long transactionId, final String relativePath) {
+        final CommitTransaction transaction = this.transactionMap.get(transactionId);
+        try {
+            final Response response = repo.deleteModel(new Path(relativePath), transaction);
+            // TODO inform caller about success/failure.
+        } catch (final IOException e) {
+            logger.log(Level.SEVERE, "Could not delete model at path=" + relativePath, e);
+        }
+
     }
 
     /**
@@ -241,15 +255,33 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         return missingDeps;
     }
 
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.SimpleRepository#getActiveContents(java.lang.String)
+     */
+    @Override
+    public List<String> getActiveContents(final String uri) {
+        final List<String> res = Lists.newArrayList();
+        try {
+            for (final URI u : repo.getActiveContents(URI.createURI(uri))) {
+                res.add(u.toString());
+            }
+        } catch (final MalformedURIException e) {
+            logger.severe(String.format("Uri '%s' is not valid for contents of a AMOR repository.", uri));
+        }
+        return res;
+    }
+
     /*
      * (non-Javadoc)
      * 
      * @see org.infai.amor.backend.SimpleRepository#getBranches()
      */
     @Override
-    public String[] getBranches(final String uri) {
+    public String[] getBranches() {
         try {
-            return toArray(transform(repo.getBranches(URI.createURI(uri)), getBranchName()), String.class);
+            return toArray(transform(repo.getBranches(uh.getDefaultUri()),
+                    getBranchName()),
+                    String.class);
         } catch (final MalformedURIException e) {
             e.printStackTrace();
             return new String[0];
@@ -296,6 +328,40 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         return ImmutableMap.of(XMLResource.OPTION_EXTENDED_META_DATA, true);
     }
 
+    /* (non-Javadoc)
+     * @see org.infai.amor.backend.SimpleRepository#getTouchedModelPaths(java.lang.String, long, int)
+     */
+    @Override
+    public List<String> getTouchedModelPaths(final String branchname, final long revisionId, final int changeType) {
+        Revision.ChangeType ct = null;
+        switch (changeType) {
+        case SimpleRepository.ADDED:
+            ct=Revision.ChangeType.ADDED;
+            break;
+        case SimpleRepository.CHANGED:
+            ct=Revision.ChangeType.CHANGED;
+            break;
+        case SimpleRepository.DELETED:
+            ct=Revision.ChangeType.DELETED;
+            break;
+        default:
+            break;
+        }
+        Revision revision = null;
+        try {
+            revision = repo.getRevision(uh.createUriFor(null, revisionId));
+        } catch (final MalformedURIException e) {
+            logger.severe(String.format("Used invalid uri for accessing model contents on branch '%s', revisionId '%d',changeType '%s' ", branchname, revisionId, ct));
+        }
+        final List<String> res = Lists.newArrayList();
+        if (ct != null && revision != null) {
+            for(final ModelLocation mloc:revision.getModelReferences(ct)){
+                res.add(mloc.getRelativePath());
+            }
+        }
+        return res;
+    }
+
     /**
      * @param rs
      * @param missingPackageUri
@@ -314,11 +380,11 @@ public class SimpleRepositoryImpl implements SimpleRepository {
              * the supertype is a proxy :(
              * 
              * TODO think about return type of repository.checkout(...)!
-             */ 
+             */
             final ResourceSet otherResourceSet = checkout.getContent().get(0).eResource().getResourceSet();
             rs.getResources().addAll(otherResourceSet.getResources());
             for (final Resource res : rs.getResources()) {
-                rs.getPackageRegistry().putAll(createPackageNamespaceMap(res.getContents()));
+                rs.getPackageRegistry().putAll(EcoreModelHelper.createPackageNamespaceMap(res.getContents()));
             }
         }
 

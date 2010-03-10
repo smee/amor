@@ -8,13 +8,16 @@ Bundle-Activator: org.infai.amor.backend.impl.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: ch.ethz.iks.r_osgi;version="1.0.0",
+ javax.transaction;version="1.1.0",
  org.eclipse.core.runtime,
  org.eclipse.emf.common.util,
  org.eclipse.emf.compare.epatch,
+ org.eclipse.emf.compare.epatch.impl,
  org.eclipse.emf.ecore,
  org.eclipse.emf.ecore.util,
  org.eclipse.emf.ecore.xml.type.internal,
  org.infai.amor.backend,
+ org.infai.amor.backend.api,
  org.infai.amor.backend.exception,
  org.infai.amor.backend.internal,
  org.infai.amor.backend.messages,
@@ -22,6 +25,7 @@ Import-Package: ch.ethz.iks.r_osgi;version="1.0.0",
  org.infai.amor.backend.storage,
  org.neo4j.graphdb,
  org.neo4j.kernel,
+ org.neo4j.kernel.impl.transaction,
  org.osgi.framework;version="1.5.0",
  org.osgi.util.tracker;version="1.4.2"
 Bundle-ClassPath: .,
@@ -41,6 +45,7 @@ Export-Package: com.google.common.annotations;version="1.0.0",
  org.apache.commons.lang.text,
  org.apache.commons.lang.time,
  org.infai.amor.backend.internal,
+ org.infai.amor.backend.neo,
  org.infai.amor.backend.util
 Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.5.0",
  org.eclipse.emf.ecore.xmi;bundle-version="2.5.0"

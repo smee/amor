@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
@@ -24,12 +25,13 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 
 /**
  * Collection of {@link Predicate}s, {@link Function}s and misc. functions for querying emf models.
@@ -39,6 +41,24 @@ import com.google.common.collect.Sets;
  */
 public class EcoreModelHelper {
     private static String ecoreUri = URI.createURI(EcorePackage.eNS_URI).toString();
+
+    /**
+     * Create a map of epackage namespace uris to epackages.
+     * 
+     * @param contents
+     * @return
+     */
+    public static Map<String, Object> createPackageNamespaceMap(final EList<? extends EObject> contents) {
+        final Map<String, Object> res = Maps.newHashMap();
+        for (final EObject eo : contents) {
+            if (eo instanceof EPackage) {
+                final EPackage epckg = (EPackage) eo;
+                res.put(epckg.getNsURI(), epckg);
+                res.putAll(createPackageNamespaceMap(epckg.getESubpackages()));
+            }
+        }
+        return res;
+    }
 
     /**
      * @param resourceUri
@@ -217,7 +237,6 @@ public class EcoreModelHelper {
             }
         };
     }
-
     /**
      * @param relativePath
      * @param content
@@ -228,14 +247,16 @@ public class EcoreModelHelper {
         final ResourceSet rs = new ResourceSetImpl();
         rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
         rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-    
+        rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
+
         final Resource res = rs.createResource(URI.createURI(relativePath));
         res.getContents().addAll(contents);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    
-        res.save(baos, null);
+
+        res.save(baos, ImmutableMap.of(XMLResource.OPTION_ENCODING, "UTF-8"));
         return baos.toString();
     }
+
     /**
      * @param ecoreUri2
      * @return

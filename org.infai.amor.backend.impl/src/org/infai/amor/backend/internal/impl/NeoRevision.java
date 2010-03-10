@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 import org.infai.amor.backend.InternalRevision;
 import org.infai.amor.backend.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.neo.NeoModelLocation;
+import org.infai.amor.backend.neo.NeoObject;
 import org.neo4j.graphdb.*;
 
 import com.google.common.collect.Iterables;

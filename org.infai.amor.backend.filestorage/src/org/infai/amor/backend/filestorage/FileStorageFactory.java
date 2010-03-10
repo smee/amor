@@ -20,7 +20,7 @@ import org.infai.amor.backend.storage.Storage;
  * 
  */
 public class FileStorageFactory extends AbstractStorageFactory {
-    private String storageDir = ".";
+    private String storageDir = "storage";
 
     /**
      * @param branchname

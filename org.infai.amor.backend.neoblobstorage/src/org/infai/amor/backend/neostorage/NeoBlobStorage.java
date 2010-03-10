@@ -15,15 +15,23 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.compare.epatch.*;
+import org.eclipse.emf.compare.epatch.applier.ApplyStrategy;
+import org.eclipse.emf.compare.epatch.applier.CopyingEpatchApplier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.exception.TransactionException;
-import org.infai.amor.backend.internal.*;
-import org.infai.amor.backend.internal.impl.NeoModelLocation;
-import org.infai.amor.backend.internal.impl.NeoObjectFactory;
+import org.infai.amor.backend.internal.ModelImpl;
+import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.neo.NeoModelLocation;
+import org.infai.amor.backend.neo.NeoObjectFactory;
 import org.infai.amor.backend.storage.Storage;
 import org.neo4j.graphdb.Node;
 
@@ -48,10 +56,65 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         }
     }
 
+    /**
+     * @param startRev
+     * @param relativePath
+     * @return
+     */
+    private static Revision findMostRecentRevision(final Revision startRev, final String relativePath) {
+        Revision rev = startRev;
+        while (rev != null) {
+            for (final ModelLocation loc : rev.getModelReferences(ChangeType.ADDED, ChangeType.CHANGED, ChangeType.DELETED)) {
+                if (relativePath.equals(loc.getRelativePath())) {
+                    if(loc.getChangeType()==ChangeType.DELETED) {
+                        return null;
+                    } else {
+                        return rev;
+                    }
+                }
+            }
+            rev = rev.getPreviousRevision();
+        }
+        return null;
+    }
+
     public NeoBlobStorage(final NeoProvider np) {
         super(np);
     }
 
+    /**
+     * @param origModel
+     * @param patch
+     * @return
+     */
+    private EList<EObject> applyEPatch(final Model origModel, final Epatch patch) {
+        // build resourceset that contains everything the epatch references
+        final ResourceSet inputRS = new ResourceSetImpl();
+        // copy all known epackages
+        final ResourceSet origRS = origModel.getContent().get(0).eResource().getResourceSet();
+
+        // add resources that get referenced by this patch
+        for (final ModelImport modelimport : patch.getModelImports()) {
+            String name = modelimport.getName();
+            if (modelimport instanceof EPackageImport) {
+                name = ((EPackageImport) modelimport).getNsURI();
+            }
+            final Resource importedResource = origRS.getResource(URI.createURI(name), false);
+            if (importedResource != null) {
+                inputRS.getResources().add(importedResource);
+            }
+        }
+        // use name of the left model uri of the patch
+        final Resource resource = inputRS.createResource(URI.createURI(patch.getResources().get(0).getLeftUri()));
+        resource.getContents().addAll(origModel.getContent());
+        // create mapping of NamedResources to resources, because the builtin functionality of CopyingEpatchApplier is buggy :(
+        final Map<NamedResource, Resource> resourceMap = Maps.newHashMap();
+        resourceMap.put(patch.getResources().get(0), resource);
+        // apply epatch
+        final CopyingEpatchApplier epatchApplier = new CopyingEpatchApplier(ApplyStrategy.LEFT_TO_RIGHT, patch, resourceMap, inputRS);
+        epatchApplier.apply();
+        return epatchApplier.getOutputResourceSet().getResources().get(0).getContents();
+    }
     /*
      * (non-Javadoc)
      * 
@@ -60,9 +123,18 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      */
     @Override
     public void checkin(final ChangedModel model, final URI externalUri, final Revision revision) throws IOException {
-        throw new UnsupportedOperationException("not implemented");
-    }
+        // find most recent revision for the model this patch should be applied to
+        final Revision origRevision = findMostRecentRevision(revision, model.getPath().toString());
+        if (origRevision == null) {
+            throw new IOException("There is no stored model at the path " + model.getPath());
+        }
+        // checkout last version of this model
+        final Model origModel = this.checkout(model.getPath(), origRevision);
+        final EList<EObject> newModelContents = applyEPatch(origModel, model.getDiffModel());
 
+        // use #checkin(...) for persisting the changed model
+        checkin(new ModelImpl(newModelContents, model.getPath()), externalUri, revision);
+    }
     /*
      * (non-Javadoc)
      * 

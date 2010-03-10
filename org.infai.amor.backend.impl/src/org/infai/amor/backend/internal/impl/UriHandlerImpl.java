@@ -86,7 +86,6 @@ public class UriHandlerImpl implements UriHandler {
     public URI createUriFor(final Branch branch) {
         return URI.createHierarchicalURI("amor", hostName, null, new String[] { repoName, branch.getName() }, null, null);
     }
-
     /*
      * (non-Javadoc)
      * 
@@ -176,6 +175,10 @@ public class UriHandlerImpl implements UriHandler {
         assertValidUri(uri, 3, "This uri doesn't contain a revision number");
 
         return Long.parseLong(uri.segment(2));
+    }
+
+    public URI getDefaultUri(){
+        return URI.createHierarchicalURI("amor", hostName, null, new String[] { repoName}, null, null);
     }
 
     /*

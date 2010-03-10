@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="testpatch">
+  <resources name="res0" leftUri="simplefilesystem_v2.filesystem" rightUri="simplefilesystem_v3.filesystem"/>
+  <objects leftRes="//@resources.0" leftFrag="//@drives.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="contents">
+      <rightValues refObject="//@objects.2" index="1"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@drives.0/@contents.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="contents">
+      <leftValues refObject="//@objects.2" index="1"/>
+    </assignments>
+  </objects>
+  <objects name="newFile.txt" leftRes="//@resources.0" leftFrag="//@drives.0/@contents.0/@contents.1" rightRes="//@resources.0" rightFrag="//@drives.0/@contents.1"/>
+</epatch:Epatch>

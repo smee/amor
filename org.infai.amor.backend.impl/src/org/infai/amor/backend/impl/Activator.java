@@ -5,12 +5,14 @@ import java.util.Hashtable;
 
 import org.eclipse.core.runtime.Plugin;
 import org.infai.amor.backend.*;
+import org.infai.amor.backend.api.SimpleRepository;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.internal.impl.*;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -87,6 +89,8 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
 
     private StorageFactory storageFactory;
 
+    private NeoTransactionAwareSimpleRepository simplerepo;
+
     /**
      * Returns the shared instance
      * 
@@ -113,6 +117,11 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         // System.out.println("Got new service of type " + service.getClass().getSimpleName());
         if (service instanceof GraphDatabaseService) {
             this.neoService = (GraphDatabaseService) service;
+            if (neoService instanceof EmbeddedGraphDatabase) {
+                this.simplerepo.setTransactionManager(((EmbeddedGraphDatabase) neoService).getConfig().getTxModule().getTxManager());
+            } else {
+                throw new AssertionError("GraphDatabaseService must be of type EmbeddedGraphDatabase.");
+            }
         } else if (service instanceof StorageFactory) {
             this.setStorageFactory((StorageFactory) service);
         }
@@ -174,12 +183,6 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         plugin = this;
         this.context = context;
 
-        // let's ask for neoservice implementations
-        final ServiceTracker st = new ServiceTracker(context, GraphDatabaseService.class.getName(), this);
-        st.open();
-        final ServiceTracker stSF = new ServiceTracker(context, StorageFactory.class.getName(), this);
-        stSF.open();
-        this.storageFactory = (StorageFactory)stSF.getService();
         // instantiate our repository
         // TODO make settings configurable
         final UriHandlerImpl uriHandler = new UriHandlerImpl("localhost", "repo");
@@ -188,12 +191,18 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         final DelegatingStorageFactory sf = new DelegatingStorageFactory();
         trman.addTransactionListener(sf);
         final Repository repo = new RepositoryImpl(sf, branchFactory, uriHandler, trman);
-
+        simplerepo = new NeoTransactionAwareSimpleRepository(new SimpleRepositoryImpl(repo, uriHandler), null);
         // register repository service
         final Dictionary properties = new Hashtable();
         properties.put(RemoteOSGiService.R_OSGi_REGISTRATION, Boolean.TRUE);
 
-        context.registerService(Repository.class.getName(), repo, properties);
+        context.registerService(SimpleRepository.class.getName(), simplerepo, properties);
+
+        final ServiceTracker st = new ServiceTracker(context, GraphDatabaseService.class.getName(), this);
+        st.open();
+        final ServiceTracker stSF = new ServiceTracker(context, StorageFactory.class.getName(), this);
+        stSF.open();
+
     }
 
     /*

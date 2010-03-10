@@ -28,8 +28,7 @@ import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
- * @author sdienst
- *
+ * @author sdienst TODO enhance integration tests with concurrent transactions
  */
 public class TransactionSuspendResumeTests extends AbstractNeo4JTest {
 

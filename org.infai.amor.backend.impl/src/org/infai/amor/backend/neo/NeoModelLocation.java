@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.internal.impl;
+package org.infai.amor.backend.neo;
 
 import java.util.*;
 

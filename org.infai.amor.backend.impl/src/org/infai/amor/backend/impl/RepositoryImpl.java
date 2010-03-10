@@ -138,7 +138,7 @@ public class RepositoryImpl implements Repository {
      * @param uri
      * @throws MalformedURIException
      */
-    private Iterable<URI> constructActiveRepositoryContents(Revision rev, final URI uri)
+    private Collection<URI> constructActiveRepositoryContents(Revision rev, final URI uri)
     throws MalformedURIException {
         final Map<IPath, Pair<Long, URI>> activeModels = Maps.newHashMap();
         final Map<IPath, Pair<Long, URI>> removedModels = Maps.newHashMap();
@@ -173,7 +173,7 @@ public class RepositoryImpl implements Repository {
 
             rev = rev.getPreviousRevision();
         }
-        final Collection<URI> result = Lists.newArrayList();
+        final Collection<URI> result = Sets.newHashSet();
         for (final Pair<Long, URI> pair : activeModels.values()) {
             if (uriHandler.isPrefixIgnoringRevision(uri, pair.second)) {
                 result.add(uriHandler.trimToNextSegmentKeepingRevision(uri.segmentCount() + 1, pair.second));
@@ -261,23 +261,18 @@ public class RepositoryImpl implements Repository {
             } catch (final MalformedURIException e) {
                 hasRevision = false;
             }
+            final Collection<URI> result = Lists.newLinkedList();
             if (!hasBranch) {
                 // find all branchnames, convert them into uris
-                return Iterables.transform(branchFactory.getBranches(), new Function<Branch, URI>() {
-                    @Override
-                    public URI apply(final Branch branch) {
-                        return uriHandler.createUriFor(branch);
-                    }
-                });
+                for (final Branch branch : branchFactory.getBranches()) {
+                    result.add(uriHandler.createUriFor(branch));
+                }
             } else if (!hasRevision) {
                 // find all revisions of the branch, convert them into uris
                 final Branch branch = branchFactory.getBranch(branchname);
-                return Iterables.transform(branch.getRevisions(), new Function<Revision, URI>() {
-                    @Override
-                    public URI apply(final Revision r) {
-                        return uriHandler.createUriFor(branch, r.getRevisionId());
-                    }
-                });
+                for (final Revision r : branch.getRevisions()) {
+                    result.add(uriHandler.createUriFor(branch, r.getRevisionId()));
+                }
             } else {
                 // find all alive models, convert them into uris
                 final Branch branch = branchFactory.getBranch(branchname);
@@ -285,10 +280,11 @@ public class RepositoryImpl implements Repository {
                 if (rev == null) {
                     throw new MalformedURIException("Unknown revision: " + uri);
                 } else {
-                    return constructActiveRepositoryContents(rev,uri);
+                    result.addAll(constructActiveRepositoryContents(rev, uri));
                 }
 
             }
+            return result;
         } finally {
             transactionManager.closeReadTransaction();
         }

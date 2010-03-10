@@ -17,7 +17,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.infai.amor.backend.internal.impl.NeoObjectFactory;
+import org.infai.amor.backend.neo.NeoObjectFactory;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.Traverser.Order;
 

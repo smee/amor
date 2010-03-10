@@ -46,7 +46,6 @@ public interface UriHandler {
      * @return
      */
     URI createUriFor(Branch branch, long revisionId);
-
     /**
      * @param branch
      * @param revisionId
@@ -83,6 +82,8 @@ public interface UriHandler {
      * @return
      */
     long extractRevision(URI uri) throws MalformedURIException;
+
+    URI getDefaultUri();
 
     /**
      * @param prefixUri

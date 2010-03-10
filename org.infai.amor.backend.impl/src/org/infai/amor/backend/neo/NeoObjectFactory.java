@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2007 Intershop Communications AG
  */
-package org.infai.amor.backend.internal.impl;
+package org.infai.amor.backend.neo;
 
 import org.infai.amor.backend.internal.NeoProvider;
 import org.neo4j.graphdb.Direction;
