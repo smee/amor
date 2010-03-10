@@ -9,23 +9,13 @@
  *******************************************************************************/
 package org.infai.amor.backend.client;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.*;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.infai.amor.backend.*;
-import org.infai.amor.backend.Revision.ChangeType;
-import org.infai.amor.backend.responses.CommitSuccessResponse;
+import org.infai.amor.backend.api.SimpleRepository;
 
 /**
  * @author sdienst
@@ -33,19 +23,43 @@ import org.infai.amor.backend.responses.CommitSuccessResponse;
  */
 public class AmorCommands implements CommandProvider {
 
-    private CommitTransaction transaction;
+    private long txId = -1;
     URI currentUri = getRepoUri();
+    String branchname = null;
     private File crntDir;
-    private ResourceSetImpl rs;
+
+    private static String readModel(final File file) {
+        final StringBuilder sb = new StringBuilder();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(file));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+        } catch (final IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (final IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return sb.toString();
+    }
 
     public AmorCommands() throws IOException {
         crntDir = new File(".").getCanonicalFile();
     }
-    public void _aborttransaction(final CommandInterpreter ci){
-        if(transaction!=null){
-            getRepo().rollbackTransaction(transaction);
-            transaction = null;
-            rs = null;
+
+    public void _aborttransaction(final CommandInterpreter ci) throws Exception {
+        if (txId <= 0) {
+            getRepo().rollbackTransaction(txId);
+            txId = -1;
+            this.branchname = null;
             ci.println("Transaction aborted.");
         } else {
             ci.println("No running transaction found.");
@@ -59,31 +73,33 @@ public class AmorCommands implements CommandProvider {
             ci.println("Please specify an existing model file!");
             return;
         }
+        assert txId > 0;
+        final List<String> missing = getRepo().checkin(readModel(modelfile), path, txId);
+        ci.println(missing);
+    }
 
-        final Resource resource = rs.getResource(URI.createFileURI(modelfile.getAbsolutePath()), true);
-        resource.load(null);
-        registerPackages(resource);
+    public void _addpatch(final CommandInterpreter ci) throws IOException {
+        final String path = ci.nextArgument();
+        final File modelfile = new File(crntDir, path);
+        if (!modelfile.exists()) {
+            ci.println("Please specify an existing model file!");
+            return;
+        }
+        final String patchPath = ci.nextArgument();
+        if (patchPath == null) {
+            ci.println("Please specify the path to a serialized epatch!");
+            return;
+        }
 
-        final Model m = new Model() {
-
-            @Override
-            public List<EObject> getContent() {
-                return resource.getContents();
-            }
-
-            @Override
-            public IPath getPersistencePath() {
-                return new Path(path);
-            }
-        };
-        assert transaction != null;
-        final Response checkin = getRepo().checkin(m, transaction);
-        ci.println(checkin.getMessage().getContent());
+        assert txId > 0;
+        getRepo().checkinPatch(readModel(new File(crntDir, patchPath)), path, txId);
+        ci.println("Success.");
     }
 
     public void _amorhelp(final CommandInterpreter ci){
         ci.println(getHelp());
     }
+
     public void _cd(final CommandInterpreter ci){
         final String arg = ci.nextArgument();
         if (arg == null) {
@@ -95,32 +111,42 @@ public class AmorCommands implements CommandProvider {
         }
     }
 
-    public void _checkout(final CommandInterpreter ci) throws MalformedURIException, IOException{
-        final String uriString = ci.nextArgument();
-        if(uriString==null){
-            ci.println("Please specify a complete amor uri as parameter for checkout.");
+    public void _checkout(final CommandInterpreter ci) throws IOException {
+        final String filename = ci.nextArgument();
+        if (filename == null) {
+            ci.println("Please specify a valid filename as parameter for checkout.");
             return;
         }
-        final URI uri = URI.createURI(uriString);
-        final Model model = getRepo().checkout(uri);
-        // recreate folder structure
-        final String[] pathSegments = model.getPersistencePath().segments();
-        String dir = "";
-        for(int i = 0;i< pathSegments.length - 1;i++) {
-            dir += pathSegments[i] + "/";
+        String branchToUse = branchname;
+        if (branchToUse == null) {
+            if (currentUri.segmentCount() > 1) {
+                branchToUse = currentUri.segment(1);
+            } else {
+                ci.println("There is no current branch, please select one via \"cd\".");
+                return;
+            }
         }
-        new File(crntDir.getAbsolutePath(), dir).mkdirs();
+        long revisionId = -1;
+        if (currentUri.segmentCount() > 2) {
+            revisionId = new Long(currentUri.segment(2));
+        } else {
+            ci.println("There is no current revision, please select one via \"cd\".");
+            return;
+        }
+        final String modelContents = getRepo().checkout(branchToUse, revisionId, filename);
+        // recreate folder structure
+
+        final File file = new File(crntDir.getAbsolutePath(), filename);
+        file.getParentFile().mkdirs();
         // store the model locally
-        final ResourceSet rs = new ResourceSetImpl();
-        final String modelFile = dir + pathSegments[pathSegments.length - 1];
-        final Resource resource = rs.createResource(URI.createURI(modelFile));
-        resource.getContents().addAll(model.getContent());
-        resource.save(null);
-        ci.println("Saved model to " + new File(crntDir, modelFile));
+        final BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+        bw.write(modelContents);
+        bw.close();
+        ci.println("Saved model to " + file.getAbsolutePath());
     }
 
-    public void _committransaction(final CommandInterpreter ci) {
-        if (transaction == null) {
+    public void _committransaction(final CommandInterpreter ci) throws Exception {
+        if (txId <= 0) {
             ci.println("There is no running transaction, can't commit...");
         } else {
             final String commitmessage = ci.nextArgument();
@@ -128,18 +154,11 @@ public class AmorCommands implements CommandProvider {
             if (commitmessage == null || username == null) {
                 ci.println("Please provide a commitmessage and a username!");
             } else {
-                transaction.setCommitMessage(commitmessage);
-                transaction.setUser(username);
+                final long revisionId = getRepo().commitTransaction(txId, username, commitmessage);
 
-                final Response response = getRepo().commitTransaction(transaction);
-
-                if (!(response instanceof CommitSuccessResponse)) {
-                    ci.println("Error on commit: " + response.getMessage().getContent());
-                } else {
-                    ci.println("Successfully commited " + response.getURI());
-                    transaction = null;
-                    rs = null;
-                }
+                ci.println("Successfully commited revision " + revisionId);
+                txId = -1;
+                this.branchname = null;
             }
         }
 
@@ -148,13 +167,13 @@ public class AmorCommands implements CommandProvider {
     public void _delete(final CommandInterpreter ci) throws IOException {
         final String path = ci.nextArgument();
 
-        final Response response = getRepo().deleteModel(new Path(path), this.transaction);
-        ci.println(response.getMessage().getContent());
+        getRepo().delete(txId, path);
+        ci.println("Successfully deleted " + path + ". Hopefully...");
     }
 
-    public void _getbranches(final CommandInterpreter ci) throws MalformedURIException {
-        for (final Branch branch : getRepo().getBranches(getRepoUri())) {
-            ci.println(branch.getName());
+    public void _getbranches(final CommandInterpreter ci) {
+        for (final String branchname : getRepo().getBranches()) {
+            ci.println(branchname);
         }
     }
 
@@ -166,13 +185,14 @@ public class AmorCommands implements CommandProvider {
         } else if (arg.trim().equals("..")) {
             newDir = new File(crntDir.getParent());
         } else {
-            newDir = new File(crntDir, arg);
+            newDir = new File(crntDir, arg).getCanonicalFile();
         }
         if (!newDir.isDirectory()) {
             ci.println(newDir+" is no valid directory!");
         } else {
             crntDir = newDir;
         }
+        System.out.println("Currently: " + crntDir);
     }
 
     public void _lls(final CommandInterpreter ci){
@@ -191,22 +211,22 @@ public class AmorCommands implements CommandProvider {
         ci.println(crntDir.getAbsolutePath());
     }
 
-    public void _ls(final CommandInterpreter ci) throws MalformedURIException {
+    public void _ls(final CommandInterpreter ci) {
         final String flag = ci.nextArgument();
         if (flag != null && flag.trim().equals("-l")) {
             // assume we are staring at a revision, let's show the details!
-            final Revision revision = getRepo().getRevision(currentUri);
-            ci.println(dumpTouchedModels(revision, Revision.ChangeType.ADDED));
-            ci.println(dumpTouchedModels(revision, Revision.ChangeType.CHANGED));
-            ci.println(dumpTouchedModels(revision, Revision.ChangeType.DELETED));
+            // final Revision revision = getRepo().getRevision(currentUri);
+            // ci.println(dumpTouchedModels(revision, Revision.ChangeType.ADDED));
+            // ci.println(dumpTouchedModels(revision, Revision.ChangeType.CHANGED));
+            // ci.println(dumpTouchedModels(revision, Revision.ChangeType.DELETED));
         } else {
-            for (final URI uri : getRepo().getActiveContents(currentUri)) {
-                ci.println(uri);
+            for (final String uri : getRepo().getActiveContents(currentUri.toString())) {
+                ci.println(uri.substring(uri.lastIndexOf('/')));
             }
         }
     }
 
-    public void _newbranch(final CommandInterpreter ci) throws MalformedURIException {
+    public void _newbranch(final CommandInterpreter ci) throws Exception {
         final String branchname = ci.nextArgument();
         final String revId = ci.nextArgument();
         if (branchname == null) {
@@ -220,17 +240,11 @@ public class AmorCommands implements CommandProvider {
             } catch (final NumberFormatException e) {
                 ci.println("please specify a valid revisionId!");
                 return;
-
             }
         }
-        final Branch branch = getRepo().createBranch(null, branchname);
         // TODO use revision to branch from there
-        // if (revisionId == null) {
-        // branch = getRepo().createBranch(null, branchname);
-        // } else {
-        // final Revision revision = getRepo().getRevision(getRepoUri().appendSegments(new String[] { branchname, revId }));
-        // branch = getRepo().createBranch(revision, branchname);
-        // }
+        getRepo().createBranch(branchname, null, -1);
+
         ci.println("Successfully created branch '" + branchname + "'");
     }
 
@@ -238,31 +252,18 @@ public class AmorCommands implements CommandProvider {
         ci.println(currentUri);
     }
 
-    public void _starttransaction(final CommandInterpreter ci) throws MalformedURIException {
-        if (transaction != null) {
-            ci.println(String.format("Already in transaction on branch '%s'", transaction.getBranch().getName()));
+    public void _starttransaction(final CommandInterpreter ci) {
+        if (txId >= 0) {
+            ci.println("Already in transaction!");
             return;
         }
         final String branchname = ci.nextArgument();
         if (branchname == null) {
             ci.println("Please specify the name of the branch this transaction should operate on!");
         } else {
-            transaction = getRepo().startCommitTransaction(getRepo().getBranch(getRepoUri().appendSegment(branchname)));
-            this.rs = new ResourceSetImpl();
+            txId = getRepo().startTransaction(branchname);
+            this.branchname = branchname;
         }
-    }
-    /**
-     * @param revision
-     * @param added
-     * @return
-     */
-    private String dumpTouchedModels(final Revision revision, final ChangeType ct) {
-        final StringBuilder sb = new StringBuilder(ct.name().toUpperCase());
-        sb.append(":\n");
-        for (final ModelLocation loc : revision.getModelReferences(ct)) {
-            sb.append(loc.getExternalUri()).append("\n");
-        }
-        return sb.toString();
     }
     /*
      * (non-Javadoc)
@@ -278,10 +279,12 @@ public class AmorCommands implements CommandProvider {
             {"newbranch <branchname> <revisionid>","create a new branch starting from a revision"},
             {"getbranches","print names of all known branches"},
             {"add <relative path to model>","add a modelfile"},
+            { "addpatch <relative path to model> <relative path to epatch>", "add a changed model" },
             { "delete <relative path to model>", "delete a persisted model" },
             {"committransaction <username> <message>","commit all actions done during the current transaction"},
             {"aborttransaction","rollback all actions done during the current transaction"},
-            { "Checkout:" }, { "checkout <complete model uri>", "checkout out the specified model relative to the current directory" },
+            { "Checkout:" },
+            { "checkout <pathelement>", "checkout out the specified model relative to the current directory" },
             {"Navigation:"},
             { "pwd","show the current amor uri we are looking at" },
             { "ls","show the current amor repository contents using the uri show by 'pwd'" },
@@ -304,7 +307,7 @@ public class AmorCommands implements CommandProvider {
     }
 
 
-    private Repository getRepo(){
+    private SimpleRepository getRepo() {
         return Activator.getInstance().getRepository();
     }
 
@@ -314,33 +317,4 @@ public class AmorCommands implements CommandProvider {
     private URI getRepoUri() {
         return URI.createURI("amor://localhost/repo");
     }
-
-    /**
-     * @param s
-     * @return
-     */
-    private boolean isNumber(final String s){
-        for (int i = 0; i < s.length(); i++) {
-            if(!Character.isDigit(s.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Register all metamodel packages we load. This way we can actually open non registered model instances.
-     * 
-     * @param resource
-     */
-    private void registerPackages(final Resource resource) {
-        // register packages
-        for (final EObject eObject : resource.getContents()) {
-            if (eObject instanceof EPackage && !((EPackage) eObject).getNsURI().equals(EcorePackage.eNS_URI)) {
-                rs.getPackageRegistry().put(((EPackage) eObject).getNsURI(), eObject);
-            }
-        }
-
-    }
-
 }
