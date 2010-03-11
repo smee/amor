@@ -11,6 +11,7 @@ package org.infai.amor.backend.internal.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.logging.Logger;
 
 import javax.swing.event.EventListenerList;
 
@@ -29,6 +30,7 @@ import org.neo4j.graphdb.*;
  * 
  */
 public class TransactionManagerImpl extends NeoObjectFactory implements TransactionManager {
+    private static Logger logger = Logger.getLogger(TransactionManagerImpl.class.getName());
     ThreadLocal<Transaction> readTransaction = new ThreadLocal<Transaction>();
     /**
      * 
@@ -120,7 +122,7 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
      * 
      * @return
      */
-    private long createNextRevisionId() {
+    private synchronized long createNextRevisionId() {
         final Transaction tx = getNeo().beginTx();
         try {
             final Node node = getFactoryNode(DynamicRelationshipType.withName("lastRevision"));
@@ -128,12 +130,9 @@ public class TransactionManagerImpl extends NeoObjectFactory implements Transact
                 node.setProperty(REVISIONCOUNTER_PROPERTY, 0L);
             }
             Long lastRevision = (Long) node.getProperty(REVISIONCOUNTER_PROPERTY);
-            if (lastRevision == null) {
-                lastRevision = 1L;
-            } else {
-                lastRevision += 1;
-            }
+            lastRevision += 1;
             node.setProperty(REVISIONCOUNTER_PROPERTY, lastRevision);
+            logger.finer("next revision id: " + lastRevision);
             return lastRevision;
         }finally{
             tx.success();

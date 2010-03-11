@@ -26,6 +26,7 @@ import org.infai.amor.backend.util.*;
 import org.infai.amor.backend.util.ModelFinder.ModelMatcher;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.*;
 
 /**
@@ -458,6 +459,7 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public void rollbackTransaction(final CommitTransaction tr) {
+        Preconditions.checkNotNull(tr);
         transactionManager.rollback(tr);
     }
 
@@ -468,6 +470,7 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public CommitTransaction startCommitTransaction(final Branch branch) {
+        Preconditions.checkNotNull(branch, "Please specify a branch for this transaction.");
         final CommitTransaction tr = transactionManager.startCommitTransaction(branch);
         return tr;
     }

@@ -26,27 +26,33 @@ public class Activator implements BundleActivator {
      * @throws RemoteOSGiException
      */
     private void fetchRemoteRepositoryService(final BundleContext context) throws BundleException {
-        // get the RemoteOSGiService
-        final ServiceReference sref = context.getServiceReference(RemoteOSGiService.class.getName());
-        if (sref == null) {
-            throw new BundleException("No R-OSGi found");
-        }
-        remote = (RemoteOSGiService) context.getService(sref);
+        final Runnable fetchRemoteRepo = new Runnable() {
+            @Override
+            public void run() {
+                // get the RemoteOSGiService
+                final ServiceReference sref = context.getServiceReference(RemoteOSGiService.class.getName());
+                if (sref != null) {
+                    remote = (RemoteOSGiService) context.getService(sref);
 
-        // connect
-        final URI remoteUri = new URI("r-osgi://localhost:8788");
-        try {
-            remote.connect(remoteUri);
-            final RemoteServiceReference[] remoteServiceReferences = remote.getRemoteServiceReferences(remoteUri, SimpleRepository.class.getName(), null);
-            if (remoteServiceReferences != null) {
-                this.repository = (SimpleRepository) remote.getRemoteService(remoteServiceReferences[0]);
+                    // connect
+                    final URI remoteUri = new URI("r-osgi://localhost:8788");
+                    try {
+                        remote.connect(remoteUri);
+                        final RemoteServiceReference[] remoteServiceReferences = remote.getRemoteServiceReferences(remoteUri, SimpleRepository.class.getName(), null);
+                        if (remoteServiceReferences != null) {
+                            setRepository((SimpleRepository) remote.getRemoteService(remoteServiceReferences[0]));
+                        }
+                    } catch (final RemoteOSGiException e) {
+                        System.err.println("Warning: Could not access remote AMOR repository!");
+                    } catch (final IOException e) {
+                        System.err.println("Warning: Could not access remote AMOR repository!");
+                    }
+                }
+
             }
-        } catch (final RemoteOSGiException e) {
-            System.err.println("Warning: Could not access remote AMOR repository!");
-        } catch (final IOException e) {
-            System.err.println("Warning: Could not access remote AMOR repository!");
-        }
-
+        };
+        // fetch reference to remote repository service in the background
+        new Thread(fetchRemoteRepo).start();
     }
     /**
      * @return the repository
@@ -55,6 +61,9 @@ public class Activator implements BundleActivator {
         return repository;
     }
 
+    public void setRepository(final SimpleRepository repo) {
+        this.repository = repo;
+    }
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -87,6 +96,7 @@ public class Activator implements BundleActivator {
     public void stop(final BundleContext context) throws Exception {
         instance = null;
         repository = null;
+        remote = null;
     }
 
 }

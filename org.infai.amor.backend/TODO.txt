@@ -1,7 +1,6 @@
 SimpleRepository:
 - return info about external uri?
 - error handling
-- checkin epatches
 
 Storages:
 - non blob storage!
@@ -20,3 +19,6 @@ EPatch:
 
 GraphDB:
 - use http://github.com/tinkerpop/blueprints as graphdb abstraction instead of neo4j. resolves license issues
+
+Remote access:
+- use ECF directly with configurable urls

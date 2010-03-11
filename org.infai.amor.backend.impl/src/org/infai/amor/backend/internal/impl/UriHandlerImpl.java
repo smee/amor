@@ -200,10 +200,7 @@ public class UriHandlerImpl implements UriHandler {
         Preconditions.checkState(prefixUri.segmentCount() >= 3, "No revision id in uri '%s'", prefixUri);
         Preconditions.checkState(fullUri.segmentCount() >= 3, "No revision id in uri '%s'", fullUri);
 
-        for (int i = 0; i < prefixUri.segmentCount(); i++) {
-            if (i == 2) {
-                continue;
-            }
+        for (int i = 3; i < prefixUri.segmentCount(); i++) {
             if (!prefixUri.segment(i).equals(fullUri.segment(i))) {
                 return false;
             }

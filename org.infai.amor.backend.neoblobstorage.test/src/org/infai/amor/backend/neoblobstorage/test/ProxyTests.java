@@ -25,10 +25,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil.ExternalCrossReferencer;
 import org.eclipse.emf.ecore.util.EcoreUtil.ProxyCrossReferencer;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.infai.amor.backend.util.EcoreModelHelper;
 import org.infai.amor.test.ModelUtil;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Function;
@@ -87,17 +85,15 @@ public class ProxyTests {
     }
 
     @Test
-    @Ignore(value = "GMF is pretty f***ed up...")
+    // @Ignore(value = "GMF is pretty f***ed up...")
     public void shouldFindProxiedElementsInM1() throws Exception {
         // given
         // an available gmf notation package
-        NotationPackage.eINSTANCE.eClass();
         Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("oepc", new XMIResourceFactoryImpl());
 
         ResourceSetImpl rs = new ResourceSetImpl();
-        // final EObject notationPackage = ModelUtil.readInputModel("testmodels/bflow/notation_1.02.ecore", rs);
+        final EObject notationPackage = ModelUtil.readInputModel("testmodels/bflow/notation_1.02.ecore", rs);
         final EObject oepcPackage = ModelUtil.readInputModel("testmodels/bflow/oepc.ecore", rs);
-        final List<EObject> oepclist = ModelUtil.readInputModels("testmodels/bflow/GewAnm.oepc", rs);
 
         // change renamed features, stupid gmf!
         // TODO introduce configurable element name changes in the backend
@@ -107,19 +103,26 @@ public class ProxyTests {
          * relativeBendpoints do not exist at all in notation.ecore.... (NotationPackage uses custom serialization code for
          * bendpoints, not generated...)
          */
-        for (final EObject root : oepclist) {
-            for (final Iterator<EObject> it = root.eAllContents(); it.hasNext();) {
-                final EObject eo = it.next();
-                if (eo.getClass().getName().contains("RelativeBend")) {
-                    System.out.println(eo);
+        final EObject root = notationPackage;
+        for (final Iterator<EObject> it = root.eAllContents(); it.hasNext();) {
+            final EObject eo = it.next();
+
+            if (eo instanceof EClass) {
+                final EClass clazz = (EClass) eo;
+                if (clazz.getEPackage().getNsURI().startsWith("http://www.eclipse.org/gmf/runtime/")) {
+
+                    for (final EReference ref : clazz.getEAllReferences()) {
+                        if (ref.getName().equals("persistedChildren")) {
+                            // && clazz.getName().equals("Node")
+                            ref.setName("children");
+                        } else if (ref.getName().equals("persistedEdges")) {
+                            ref.setName("edges");
+                        }
+                    }
                 }
-                /*
-                 * if (eo.eClass().getEPackage().getNsURI().startsWith("http://www.eclipse.org/gmf/runtime/1.0") &&
-                 * eo.eClass().getName().equals("Node")) { for (final EReference ref : eo.eClass().getEAllReferences()) { if
-                 * (ref.getName().equals("children")) { ref.setName("persistedChildren"); } else if
-                 * (ref.getName().equals("edges")) { ref.setName("persistedEdges"); } } }
-                 */            }
+            }
         }
+        final List<EObject> oepclist = ModelUtil.readInputModels("testmodels/bflow/GewAnm.oepc", rs);
         // when
         final List<String> xmls = ModelUtil.storeViaXml(oepclist.get(0));
         // remove gmf package

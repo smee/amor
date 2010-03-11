@@ -205,7 +205,8 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         } else {
             try {
                 final Revision rev = repo.getRevision(uh.createUriFor(repo.getBranch(uh.createUriFor(oldbranchname)), startRevisionId));
-                repo.createBranch(rev, newBranchname);
+                final Branch newbranch = repo.createBranch(rev, newBranchname);
+                // TODO return anything?
             } catch (final MalformedURIException e) {
                 e.printStackTrace();
             }

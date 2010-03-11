@@ -10,7 +10,7 @@
 package org.infai.amor.backend.client;
 
 import java.io.*;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -56,7 +56,7 @@ public class AmorCommands implements CommandProvider {
     }
 
     public void _aborttransaction(final CommandInterpreter ci) throws Exception {
-        if (txId <= 0) {
+        if (txId > 0) {
             getRepo().rollbackTransaction(txId);
             txId = -1;
             this.branchname = null;
@@ -75,7 +75,12 @@ public class AmorCommands implements CommandProvider {
         }
         assert txId > 0;
         final List<String> missing = getRepo().checkin(readModel(modelfile), path, txId);
-        ci.println(missing);
+        if(!missing.isEmpty()){
+            ci.print("Missing dependencies: ");
+            ci.println(missing);
+        }else{
+            ci.println("OK.");
+        }
     }
 
     public void _addpatch(final CommandInterpreter ci) throws IOException {
@@ -156,7 +161,7 @@ public class AmorCommands implements CommandProvider {
             } else {
                 final long revisionId = getRepo().commitTransaction(txId, username, commitmessage);
 
-                ci.println("Successfully commited revision " + revisionId);
+                ci.println("Successfully commited revision " + revisionId + " on branch " + branchname);
                 txId = -1;
                 this.branchname = null;
             }
@@ -212,38 +217,51 @@ public class AmorCommands implements CommandProvider {
     }
 
     public void _ls(final CommandInterpreter ci) {
-        final String flag = ci.nextArgument();
-        if (flag != null && flag.trim().equals("-l")) {
-            // assume we are staring at a revision, let's show the details!
-            // final Revision revision = getRepo().getRevision(currentUri);
-            // ci.println(dumpTouchedModels(revision, Revision.ChangeType.ADDED));
-            // ci.println(dumpTouchedModels(revision, Revision.ChangeType.CHANGED));
-            // ci.println(dumpTouchedModels(revision, Revision.ChangeType.DELETED));
-        } else {
-            for (final String uri : getRepo().getActiveContents(currentUri.toString())) {
-                ci.println(uri.substring(uri.lastIndexOf('/')));
+        URI uri = currentUri;
+        String parameter = ci.nextArgument();
+        if (parameter != null) {
+            parameter = parameter.trim();
+            if (parameter.equals("-l")) {
+                // assume we are staring at a revision, let's show the details!
+                // final Revision revision = getRepo().getRevision(currentUri);
+                // ci.println(dumpTouchedModels(revision, Revision.ChangeType.ADDED));
+                // ci.println(dumpTouchedModels(revision, Revision.ChangeType.CHANGED));
+                // ci.println(dumpTouchedModels(revision, Revision.ChangeType.DELETED));
+                return;
             }
+            if (parameter.equals("..")) {
+                uri=uri.trimSegments(1);
+            }
+            uri=uri.appendSegment(parameter);
+        }
+        final Set<String> strings = new TreeSet<String>();
+        for (final String contenturi : getRepo().getActiveContents(uri.toString())) {
+            strings.add(contenturi.substring(contenturi.lastIndexOf('/') + 1));
+        }
+        for (final String s : strings) {
+            ci.println(s);
         }
     }
 
     public void _newbranch(final CommandInterpreter ci) throws Exception {
         final String branchname = ci.nextArgument();
-        final String revId = ci.nextArgument();
         if (branchname == null) {
             ci.println("please specify a valid branchname!");
             return;
         }
-        Long revisionId = null;
-        if (revId != null) {
-            try {
-                revisionId = new Long(revId);
-            } catch (final NumberFormatException e) {
+        final String oldbranchname = ci.nextArgument();
+        long revisionId = -1;
+        try {
+            revisionId = Long.parseLong(ci.nextArgument());
+        } catch (final NumberFormatException e) {
+            if (!e.getMessage().equals("null")) {
                 ci.println("please specify a valid revisionId!");
                 return;
             }
         }
-        // TODO use revision to branch from there
-        getRepo().createBranch(branchname, null, -1);
+        final SimpleRepository repo = getRepo();
+        assert repo != null;
+        repo.createBranch(branchname, oldbranchname, revisionId);
 
         ci.println("Successfully created branch '" + branchname + "'");
     }
@@ -274,21 +292,25 @@ public class AmorCommands implements CommandProvider {
     public String getHelp() {
         final String[][] commands = new String[][]{
             {"---AMOR Repository Commands---"},
+
             { "Checkin:" },
             {"starttransaction <branchname>", "needed before invoking any other amor command!"},
-            {"newbranch <branchname> <revisionid>","create a new branch starting from a revision"},
+            {"newbranch <branchname> <parent branchname> <revisionid>","create a new branch starting from a revision"},
             {"getbranches","print names of all known branches"},
             {"add <relative path to model>","add a modelfile"},
-            { "addpatch <relative path to model> <relative path to epatch>", "add a changed model" },
+            {"addpatch <relative path to model> <relative path to epatch>", "add a changed model" },
             { "delete <relative path to model>", "delete a persisted model" },
             {"committransaction <username> <message>","commit all actions done during the current transaction"},
             {"aborttransaction","rollback all actions done during the current transaction"},
+
             { "Checkout:" },
             { "checkout <pathelement>", "checkout out the specified model relative to the current directory" },
+
             {"Navigation:"},
             { "pwd","show the current amor uri we are looking at" },
             { "ls","show the current amor repository contents using the uri show by 'pwd'" },
             { "cd <string>","append a string to the current amor uri, use '..' to remove the last uri segment, call without parameter to change uri back to the default" },
+
             { "Lokale Navigation (zum Finden von lokalen Modellen)" },
             { "lpwd","show the local file path we are in" },
             { "lls","show the contents of the local path" },
@@ -308,7 +330,11 @@ public class AmorCommands implements CommandProvider {
 
 
     private SimpleRepository getRepo() {
-        return Activator.getInstance().getRepository();
+        final SimpleRepository repo = Activator.getInstance().getRepository();
+        if (repo == null) {
+            System.err.println("No repository service found!");
+        }
+        return repo;
     }
 
     /**
