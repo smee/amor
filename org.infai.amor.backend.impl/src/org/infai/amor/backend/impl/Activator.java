@@ -8,6 +8,7 @@ import org.infai.amor.backend.*;
 import org.infai.amor.backend.api.SimpleRepository;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.internal.TransactionManager;
 import org.infai.amor.backend.internal.impl.*;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;
@@ -187,7 +188,7 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         // TODO make settings configurable
         final UriHandlerImpl uriHandler = new UriHandlerImpl("localhost", "repo");
         final NeoBranchFactory branchFactory = new NeoBranchFactory(this);
-        final TransactionManagerImpl trman = new TransactionManagerImpl(uriHandler, this, branchFactory);
+        final TransactionManager trman = new TransactionManagerImpl(uriHandler, this, branchFactory);
         final DelegatingStorageFactory sf = new DelegatingStorageFactory();
         trman.addTransactionListener(sf);
         final Repository repo = new RepositoryImpl(sf, branchFactory, uriHandler, trman);

@@ -72,6 +72,9 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      */
     @Override
     public List<String> checkin(final String ecoreXmi, final String relativePath, final long transactionId) {
+        Preconditions.checkNotNull(ecoreXmi, "Missing serialized model!");
+        Preconditions.checkNotNull(relativePath, "Missing relative path for this model file!");
+
         final ResourceSet rs = createResourceSet();
         final URI fileUri = URI.createURI(relativePath);
         if (!fileUri.isRelative()) {
@@ -81,7 +84,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
 
         final Resource resource = rs.createResource(fileUri);
 
-        final CommitTransaction transaction = this.transactionMap.get(transactionId);
+        final CommitTransaction transaction = checkTransaction(transactionId);
         while (!(resource.isLoaded() && resource.getErrors().isEmpty())) {
             try {
                 resource.load(new ByteArrayInputStream(ecoreXmi.getBytes()), getLoadOptions());
@@ -124,7 +127,10 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      */
     @Override
     public void checkinPatch(final String epatch, final String relativePath, final long transactionId) throws RuntimeException {
-        final CommitTransaction transaction = this.transactionMap.get(transactionId);
+        Preconditions.checkNotNull(epatch, "Missing serialized epatch!");
+        Preconditions.checkNotNull(relativePath, "Missing relative path for this model file!");
+        final CommitTransaction transaction = checkTransaction(transactionId);
+
         final ResourceSet rs = createResourceSet();
         EpatchPackageImpl.init();
         rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("epatch", new XMIResourceFactoryImpl());
@@ -146,7 +152,8 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      */
     @Override
     public String checkout(final String branch, final long revisionId, final String relativePath) throws IOException {
-        Preconditions.checkNotNull(branch);
+        Preconditions.checkNotNull(branch, "Missing branch name!");
+        Preconditions.checkNotNull(relativePath, "Missing relative model path!");
 
         try {
             final URI uriForRevision = uh.createUriFor(repo.getBranch(uh.createUriFor(branch)), revisionId);
@@ -200,6 +207,8 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      */
     @Override
     public void createBranch(final String newBranchname, final String oldbranchname, final long startRevisionId) {
+        Preconditions.checkNotNull(newBranchname, "Missing new branch name!");
+
         if (oldbranchname == null || startRevisionId < 0) {
             repo.createBranch(null, newBranchname);
         } else {
@@ -233,7 +242,9 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      */
     @Override
     public void delete(final long transactionId, final String relativePath) {
-        final CommitTransaction transaction = this.transactionMap.get(transactionId);
+        Preconditions.checkNotNull(relativePath, "Missing relative model path!");
+
+        final CommitTransaction transaction = checkTransaction(transactionId);
         try {
             final Response response = repo.deleteModel(new Path(relativePath), transaction);
             // TODO inform caller about success/failure.
@@ -261,6 +272,8 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      */
     @Override
     public List<String> getActiveContents(final String uri) {
+        Preconditions.checkNotNull(uri, "Missing uri to check contents of!");
+
         final List<String> res = Lists.newArrayList();
         try {
             for (final URI u : repo.getActiveContents(URI.createURI(uri))) {
@@ -334,6 +347,10 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      */
     @Override
     public List<String> getTouchedModelPaths(final String branchname, final long revisionId, final int changeType) {
+        Preconditions.checkNotNull(branchname, "Missing branchname!");
+        Preconditions.checkArgument(revisionId >= 0, "No such revision!");
+        Preconditions.checkArgument(changeType == ADDED || changeType == CHANGED || changeType == DELETED, "Unknown change type!");
+
         Revision.ChangeType ct = null;
         switch (changeType) {
         case SimpleRepository.ADDED:
@@ -350,7 +367,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         }
         Revision revision = null;
         try {
-            revision = repo.getRevision(uh.createUriFor(null, revisionId));
+            revision = repo.getRevision(uh.createUriFor(repo.getBranch(uh.createUriFor(branchname)), revisionId));
         } catch (final MalformedURIException e) {
             logger.severe(String.format("Used invalid uri for accessing model contents on branch '%s', revisionId '%d',changeType '%s' ", branchname, revisionId, ct));
         }
@@ -411,6 +428,8 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      */
     @Override
     public long startTransaction(final String branchname) {
+        Preconditions.checkNotNull(branchname, "Missing branchname!");
+
         try {
             final CommitTransaction tr = repo.startCommitTransaction(repo.getBranch(uh.createUriFor(branchname)));
             final long revisionId = tr.getRevision().getRevisionId();
