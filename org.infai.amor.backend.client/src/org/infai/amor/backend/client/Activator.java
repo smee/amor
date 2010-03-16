@@ -65,6 +65,8 @@ public class Activator implements BundleActivator {
                     remote = (RemoteOSGiService) context.getService(sref);
 
                     connect(URI.create(currentUrl));
+                } else {
+                    System.err.println("Could not find RemoteOSGiService!");
                 }
 
             }
@@ -97,6 +99,7 @@ public class Activator implements BundleActivator {
              */
             @Override
             public Object addingService(final ServiceReference reference) {
+                System.out.println("Found new instance of simplerepo!");
                 repository = (SimpleRepository) super.addingService(reference);
                 return repository;
             }
