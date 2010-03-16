@@ -112,7 +112,12 @@ public class AmorCommands implements CommandProvider {
         } else if (arg.trim().equals("..")) {
             currentUri = currentUri.trimSegments(1);
         } else {
-            currentUri = currentUri.appendSegments(arg.split("/"));
+            final URI uri = currentUri.appendSegments(arg.split("/"));
+            if (!getActiveContents(uri).isEmpty()) {
+                currentUri = uri;
+            } else {
+                ci.println("No such element (Hint: Try 'ls').");
+            }
         }
     }
 
@@ -169,6 +174,22 @@ public class AmorCommands implements CommandProvider {
 
     }
 
+    public void _connect(final CommandInterpreter ci) {
+        String hostname = ci.nextArgument();
+        if (hostname == null) {
+            ci.println("Please specify a valid hostname!");
+        }
+        int port = 9278;
+        if (hostname.contains(":")) {
+            final int idx = hostname.indexOf(':');
+            port = Integer.parseInt(hostname.substring(idx + 1));
+            hostname = hostname.substring(0, idx);
+        }
+
+        final boolean success = Activator.getInstance().useRemoteRepositoryAt(hostname, port);
+        ci.println(success ? "Success." : "Could not connect to remote host!");
+    }
+
     public void _delete(final CommandInterpreter ci) throws IOException {
         final String path = ci.nextArgument();
 
@@ -223,10 +244,9 @@ public class AmorCommands implements CommandProvider {
             parameter = parameter.trim();
             if (parameter.equals("-l")) {
                 // assume we are staring at a revision, let's show the details!
-                // final Revision revision = getRepo().getRevision(currentUri);
-                // ci.println(dumpTouchedModels(revision, Revision.ChangeType.ADDED));
-                // ci.println(dumpTouchedModels(revision, Revision.ChangeType.CHANGED));
-                // ci.println(dumpTouchedModels(revision, Revision.ChangeType.DELETED));
+                ci.println(getTouchedModels(SimpleRepository.ADDED));
+                ci.println(getTouchedModels(SimpleRepository.CHANGED));
+                ci.println(getTouchedModels(SimpleRepository.DELETED));
                 return;
             }
             if (parameter.equals("..")) {
@@ -234,10 +254,7 @@ public class AmorCommands implements CommandProvider {
             }
             uri=uri.appendSegment(parameter);
         }
-        final Set<String> strings = new TreeSet<String>();
-        for (final String contenturi : getRepo().getActiveContents(uri.toString())) {
-            strings.add(contenturi.substring(contenturi.lastIndexOf('/') + 1));
-        }
+        final Set<String> strings = getActiveContents(uri);
         for (final String s : strings) {
             ci.println(s);
         }
@@ -269,7 +286,6 @@ public class AmorCommands implements CommandProvider {
     public void _pwd(final CommandInterpreter ci) {
         ci.println(currentUri);
     }
-
     public void _starttransaction(final CommandInterpreter ci) {
         if (txId >= 0) {
             ci.println("Already in transaction!");
@@ -283,6 +299,19 @@ public class AmorCommands implements CommandProvider {
             this.branchname = branchname;
         }
     }
+
+    /**
+     * @param uri
+     * @return
+     */
+    private Set<String> getActiveContents(final URI uri) {
+        final Set<String> strings = new TreeSet<String>();
+        for (final String contenturi : getRepo().getActiveContents(uri.toString())) {
+            strings.add(contenturi.substring(contenturi.lastIndexOf('/') + 1));
+        }
+        return strings;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -315,7 +344,12 @@ public class AmorCommands implements CommandProvider {
             { "lpwd","show the local file path we are in" },
             { "lls","show the contents of the local path" },
             { "lcd <string>","change the local directory" },
-            { "Misc:" }, { "amorhelp", "show these help messages" },
+
+            { "Misc:" },
+            { "amorhelp", "show these help messages" },
+
+            { "Remoteanbindung" },
+            { "connect <hostname[:port]>", "change to another remote amor repository" },
             { "" } };
         final StringBuilder sb = new StringBuilder();
         for (final String[] command : commands) {
@@ -327,8 +361,6 @@ public class AmorCommands implements CommandProvider {
         }
         return sb.toString();
     }
-
-
     private SimpleRepository getRepo() {
         final SimpleRepository repo = Activator.getInstance().getRepository();
         if (repo == null) {
@@ -337,10 +369,28 @@ public class AmorCommands implements CommandProvider {
         return repo;
     }
 
+
     /**
      * @return
      */
     private URI getRepoUri() {
         return URI.createURI("amor://localhost/repo");
+    }
+
+    /**
+     * @param deleted
+     * @return
+     */
+    private String getTouchedModels(final int changetype) {
+        final StringBuilder sb = new StringBuilder();
+        String branch = branchname;
+        if (currentUri.segmentCount() >= 2) {
+            branch = currentUri.segment(1);
+        }
+
+        for (final String s : getRepo().getTouchedModelPaths(branch, Integer.parseInt(currentUri.segment(2)), changetype)) {
+            sb.append(s).append("\n");
+        }
+        return sb.toString();
     }
 }
