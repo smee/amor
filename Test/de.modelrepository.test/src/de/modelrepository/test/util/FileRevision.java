@@ -2,26 +2,26 @@ package de.modelrepository.test.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
+import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.Tree;
 import org.eclipse.jgit.lib.TreeEntry;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevSort;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.treewalk.filter.AndTreeFilter;
-import org.eclipse.jgit.treewalk.filter.PathFilterGroup;
-import org.eclipse.jgit.treewalk.filter.TreeFilter;
 import org.eclipse.jgit.util.RawCharSequence;
 
 public class FileRevision implements Comparable<FileRevision>{
 	private ObjectId objectId;
-	private ArrayList<String> branches;
+	private List<String> branches;
 	private RevCommit commit;
 	private Repository repo;
 	private String path;
@@ -38,11 +38,6 @@ public class FileRevision implements Comparable<FileRevision>{
 		this.path = path;
 		this.commit = commit;
 		this.repo = repo;
-		try {
-			this.branches = searchBranches();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -90,7 +85,10 @@ public class FileRevision implements Comparable<FileRevision>{
 	 * @return true if the commit is a fork.
 	 */
 	public boolean isFork() {
-		return children.size()>1;
+		if(children != null) {
+			return children.size()>1;
+		}
+		return false;
 	}
 
 	/**
@@ -107,27 +105,6 @@ public class FileRevision implements Comparable<FileRevision>{
 	@Override
 	public int compareTo(FileRevision rev) {
 		return getCommitTime().compareTo(rev.getCommitTime());
-	}
-	
-	/*
-	 * helper method for searching all branches which contain the commit.
-	 */
-	private ArrayList<String> searchBranches() throws IOException {
-		ArrayList<String> branches = new ArrayList<String>();
-		
-		for (Ref ref : repo.getAllRefs().values()) {
-			RevWalk walk = new RevWalk(repo);
-			walk.sort(RevSort.COMMIT_TIME_DESC, true);
-			walk.sort(RevSort.BOUNDARY, true);
-			walk.setTreeFilter(AndTreeFilter.create(PathFilterGroup.createFromStrings(Collections.singleton(path)), TreeFilter.ANY_DIFF));
-			walk.markStart(walk.parseCommit(ref.getObjectId()));
-			for (RevCommit revCommit : walk) {
-				if(commit.getId().getName().equals(revCommit.getId().getName()))
-					branches.add(ref.getName());
-			}
-		}
-		
-		return branches;
 	}
 	
 	/**
@@ -156,5 +133,9 @@ public class FileRevision implements Comparable<FileRevision>{
 	 */
 	public String getSourceFileRelativePath() {
 		return path;
+	}
+	
+	public void setBranches(List<String> b) {
+		branches = b;
 	}
 }

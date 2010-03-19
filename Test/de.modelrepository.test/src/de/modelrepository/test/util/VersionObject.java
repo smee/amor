@@ -79,14 +79,19 @@ public class VersionObject {
 	 */
 	private EObject parseContent(FileRevision rev) throws IOException {
 		EObject o = null;
+		System.out.println("checking out");
 		GitUtility.checkoutRevision(rev.getRepository(), rev.getRevCommit()
 				.getName());
+		System.out.println("parsing");
 		JavaToEMFParser parser = new JavaToEMFParser();
 		File f = new File(rev.getRepository().getWorkDir(), rev
 				.getSourceFileRelativePath());
 
 		rs = parser.parseJavaFile(f, null);
-		o = rs.getResources().get(0).getContents().get(0);
+		if(rs.getResources().size() > 0 && rs.getResources().get(0).getContents().size() > 0) {
+			o = rs.getResources().get(0).getContents().get(0);
+		}
+		System.out.println("done");
 		return o;
 	}
 
@@ -97,7 +102,7 @@ public class VersionObject {
 	private void createPatches(List<VersionObject> parents)
 			throws InterruptedException {
 		parentsAndPatches = new Hashtable<VersionObject, Epatch>();
-		if (parents != null) {
+		if (parents != null && content != null) {
 			for (VersionObject p : parents) {
 				EObject parent = p.getContent();
 				ModelComparator comparator = new ModelComparator();

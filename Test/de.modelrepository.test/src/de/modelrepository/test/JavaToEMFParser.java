@@ -2,6 +2,7 @@ package de.modelrepository.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -22,12 +23,10 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
 import org.emftext.language.java.JavaClasspath;
 import org.emftext.language.java.JavaPackage;
 import org.emftext.language.java.resource.JavaSourceOrClassFileResource;
 import org.emftext.language.java.resource.JavaSourceOrClassFileResourceFactoryImpl;
-import org.emftext.language.java.resource.java.JavaResource;
 import org.emftext.language.java.resource.java.analysis.helper.JavaPostProcessor;
 import org.emftext.language.primitive_types.Primitive_typesPackage;
 import org.emftext.runtime.IOptions;
@@ -234,7 +233,12 @@ public class JavaToEMFParser {
 	 * Method loads a file given by the URI.
 	 */
 	private void loadResource(URI uri) {
-		rs.getResource(uri, true);
+		System.out.println("JavaToEMFParser: " + uri);
+		try {
+			rs.getResource(uri, true);
+		}catch (Exception e) {
+			System.err.println("The file with URI: " + uri + " was not found in this repository revision.");
+		}
 	}
 	
 	//TODO String laden

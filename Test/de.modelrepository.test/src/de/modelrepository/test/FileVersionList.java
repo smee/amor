@@ -33,6 +33,7 @@ public class FileVersionList implements Iterable<VersionObject> {
 		}
 	}
 
+	//FIXME Optimierung nötig!!!
 	private void createVersions() throws IOException {
 		List<FileRevision> revs = fh.getAllFileRevisions();
 		for (int i = revs.size() - 1; i >= 0; i--) {
@@ -52,8 +53,7 @@ public class FileVersionList implements Iterable<VersionObject> {
 					}
 				}
 			}
-			VersionObject vo = new VersionObject(rev, parentVersions,
-					siblingVersions);
+			VersionObject vo = new VersionObject(rev, parentVersions, siblingVersions);
 			versions.add(vo);
 		}
 	}
@@ -62,5 +62,4 @@ public class FileVersionList implements Iterable<VersionObject> {
 	public Iterator<VersionObject> iterator() {
 		return versions.iterator();
 	}
-
 }

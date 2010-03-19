@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 
+import org.eclipse.jgit.errors.IncorrectObjectTypeException;
+import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
@@ -29,6 +32,7 @@ public class GitFileHistory {
 	private String currentBranch;
 	private ArrayList<ObjectId> ids = new ArrayList<ObjectId>();
 	private ArrayList<ParallelBranches> parallelBranches = new ArrayList<ParallelBranches>();
+	private Hashtable<String, List<String>> branchCache = new Hashtable<String, List<String>>();
 	
 	
 	/**
@@ -42,6 +46,7 @@ public class GitFileHistory {
 		fileRelativePath = FileUtility.getRelativePath(originalFile.getAbsoluteFile(), repo.getWorkDir()).replace(File.separator, "/");
 		walk = buildWalk();
 		fileRevisions = buildRevisions();
+		buildBranchCache();
 		parallelBranches = buildParallelBranches();
 		this.repo.close();
 	}
@@ -90,6 +95,32 @@ public class GitFileHistory {
 		//finally sort the list
 		Collections.sort(fileRevisions);
 		return result;
+	}
+	
+	private void buildBranchCache() throws MissingObjectException, IncorrectObjectTypeException, IOException {
+		for (Ref ref : repo.getAllRefs().values()) {
+			RevWalk walk = new RevWalk(repo);
+			walk.sort(RevSort.COMMIT_TIME_DESC, true);
+			walk.sort(RevSort.BOUNDARY, true);
+			walk.setTreeFilter(AndTreeFilter.create(PathFilterGroup.createFromStrings(Collections.singleton(fileRelativePath)), TreeFilter.ANY_DIFF));
+			walk.markStart(walk.parseCommit(ref.getObjectId()));
+			for (RevCommit revCommit : walk) {
+				List<String> branches;
+				if(branchCache.containsKey(revCommit.getId().getName())) {
+					branches = branchCache.get(revCommit.getId().getName());
+				}else {
+					branches = new ArrayList<String>();
+				}
+				branches.add(ref.getName());
+				branchCache.put(revCommit.getId().getName(), branches);
+			}
+		}
+		
+		for(FileRevision rev : fileRevisions) {
+			rev.setBranches(branchCache.get(rev.getObjectId().getName()));
+			List<RevCommit> children = GitUtility.getDirectChildren(rev.getRevCommit(), fileRevisions);
+			rev.setChildren(children);
+		}
 	}
 
 	/*
