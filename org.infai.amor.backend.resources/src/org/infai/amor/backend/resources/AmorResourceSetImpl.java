@@ -1,4 +1,4 @@
-package org.amor.infai.backend.resources;
+package org.infai.amor.backend.resources;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;

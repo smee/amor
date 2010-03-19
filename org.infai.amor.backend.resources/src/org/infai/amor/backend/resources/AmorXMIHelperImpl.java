@@ -1,4 +1,4 @@
-package org.amor.infai.backend.resources;
+package org.infai.amor.backend.resources;
 
 import java.util.ArrayList;
 import java.util.List;

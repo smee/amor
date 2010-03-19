@@ -1,4 +1,4 @@
-package org.amor.infai.backend.resources;
+package org.infai.amor.backend.resources;
 
 import org.eclipse.emf.ecore.xmi.XMLHelper;
 import org.eclipse.emf.ecore.xmi.impl.XMILoadImpl;
