@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.infai.amor.backend.api.RemoteAmor;
 import org.infai.amor.backend.api.SimpleRepository;
 
 /**
@@ -22,11 +23,12 @@ import org.infai.amor.backend.api.SimpleRepository;
  *
  */
 public class AmorCommands implements CommandProvider {
-
     private long txId = -1;
     URI currentUri = getRepoUri();
     String branchname = null;
     private File crntDir;
+    private RemoteAmor remoteamor;
+    private SimpleRepository repo;
 
     private static String readModel(final File file) {
         final StringBuilder sb = new StringBuilder();
@@ -54,7 +56,6 @@ public class AmorCommands implements CommandProvider {
     public AmorCommands() throws IOException {
         crntDir = new File(".").getCanonicalFile();
     }
-
     public void _aborttransaction(final CommandInterpreter ci) throws Exception {
         if (txId > 0) {
             getRepo().rollbackTransaction(txId);
@@ -82,7 +83,6 @@ public class AmorCommands implements CommandProvider {
             ci.println("OK.");
         }
     }
-
     public void _addpatch(final CommandInterpreter ci) throws IOException {
         final String path = ci.nextArgument();
         final File modelfile = new File(crntDir, path);
@@ -116,7 +116,7 @@ public class AmorCommands implements CommandProvider {
             if (!getActiveContents(uri).isEmpty()) {
                 currentUri = uri;
             } else {
-                ci.println("No such element (Hint: Try 'ls').");
+                ci.println("No such element (Hint: Try 'dir').");
             }
         }
     }
@@ -174,7 +174,7 @@ public class AmorCommands implements CommandProvider {
 
     }
 
-    public void _connect(final CommandInterpreter ci) {
+    public void _connect(final CommandInterpreter ci) throws IOException {
         String hostname = ci.nextArgument();
         if (hostname == null) {
             ci.println("Please specify a valid hostname!");
@@ -186,8 +186,8 @@ public class AmorCommands implements CommandProvider {
             hostname = hostname.substring(0, idx);
         }
 
-        final boolean success = Activator.getInstance().useRemoteRepositoryAt(hostname, port);
-        ci.println(success ? "Success." : "Could not connect to remote host!");
+        this.repo = remoteamor.getRepository(hostname, port);
+        ci.println(repo!=null ? "Success." : "Could not connect to remote host!");
     }
 
     public void _delete(final CommandInterpreter ci) throws IOException {
@@ -195,6 +195,29 @@ public class AmorCommands implements CommandProvider {
 
         getRepo().delete(txId, path);
         ci.println("Successfully deleted " + path + ". Hopefully...");
+    }
+
+    public void _dir(final CommandInterpreter ci) {
+        URI uri = currentUri;
+        String parameter = ci.nextArgument();
+        if (parameter != null) {
+            parameter = parameter.trim();
+            if (parameter.equals("-l")) {
+                // assume we are staring at a revision, let's show the details!
+                ci.println(getTouchedModels(SimpleRepository.ADDED));
+                ci.println(getTouchedModels(SimpleRepository.CHANGED));
+                ci.println(getTouchedModels(SimpleRepository.DELETED));
+                return;
+            }
+            if (parameter.equals("..")) {
+                uri=uri.trimSegments(1);
+            }
+            uri=uri.appendSegment(parameter);
+        }
+        final Set<String> strings = getActiveContents(uri);
+        for (final String s : strings) {
+            ci.println(s);
+        }
     }
 
     public void _getbranches(final CommandInterpreter ci) {
@@ -218,7 +241,7 @@ public class AmorCommands implements CommandProvider {
         } else {
             crntDir = newDir;
         }
-        System.out.println("Currently: " + crntDir);
+        ci.println("Currently: " + crntDir);
     }
 
     public void _lls(final CommandInterpreter ci){
@@ -235,29 +258,6 @@ public class AmorCommands implements CommandProvider {
 
     public void _lpwd(final CommandInterpreter ci){
         ci.println(crntDir.getAbsolutePath());
-    }
-
-    public void _ls(final CommandInterpreter ci) {
-        URI uri = currentUri;
-        String parameter = ci.nextArgument();
-        if (parameter != null) {
-            parameter = parameter.trim();
-            if (parameter.equals("-l")) {
-                // assume we are staring at a revision, let's show the details!
-                ci.println(getTouchedModels(SimpleRepository.ADDED));
-                ci.println(getTouchedModels(SimpleRepository.CHANGED));
-                ci.println(getTouchedModels(SimpleRepository.DELETED));
-                return;
-            }
-            if (parameter.equals("..")) {
-                uri=uri.trimSegments(1);
-            }
-            uri=uri.appendSegment(parameter);
-        }
-        final Set<String> strings = getActiveContents(uri);
-        for (final String s : strings) {
-            ci.println(s);
-        }
     }
 
     public void _newbranch(final CommandInterpreter ci) throws Exception {
@@ -286,6 +286,7 @@ public class AmorCommands implements CommandProvider {
     public void _pwd(final CommandInterpreter ci) {
         ci.println(currentUri);
     }
+
     public void _starttransaction(final CommandInterpreter ci) {
         if (txId >= 0) {
             ci.println("Already in transaction!");
@@ -337,7 +338,7 @@ public class AmorCommands implements CommandProvider {
 
             {"Navigation:"},
             { "pwd","show the current amor uri we are looking at" },
-            { "ls","show the current amor repository contents using the uri show by 'pwd'" },
+            { "dir","show the current amor repository contents using the uri show by 'pwd'" },
             { "cd <string>","append a string to the current amor uri, use '..' to remove the last uri segment, call without parameter to change uri back to the default" },
 
             { "Lokale Navigation (zum Finden von lokalen Modellen)" },
@@ -361,15 +362,14 @@ public class AmorCommands implements CommandProvider {
         }
         return sb.toString();
     }
+
     private SimpleRepository getRepo() {
-        final SimpleRepository repo = Activator.getInstance().getRepository();
+        final SimpleRepository repo = this.repo;
         if (repo == null) {
-            System.err.println("No repository service found!");
+            System.err.println("No repository service found! Please connect via \"connect <hostname> <port>\".");
         }
         return repo;
     }
-
-
     /**
      * @return
      */
@@ -392,5 +392,40 @@ public class AmorCommands implements CommandProvider {
             sb.append(s).append("\n");
         }
         return sb.toString();
+    }
+
+    /**
+     * @param ra
+     */
+    public void setRemoteAmor(final RemoteAmor ra){
+        this.remoteamor = ra;
+    }
+
+
+    public void shutdown(){
+        this.repo = null;
+        this.remoteamor = null;
+        System.out.println("No remote amor available anymore :(");
+    }
+
+    /**
+     * Called once on activation of this bundle.
+     * 
+     * @throws IOException
+     */
+    public void startup() throws IOException{
+        final String defaulthost = "localhost";
+        final int defaultport = 8788;
+        System.out.format("Trying to connect to remote amor at %s:%d...", defaulthost, defaultport);
+        this.txId = -1;
+        currentUri=getRepoUri();
+        branchname = null;
+        crntDir=new File(".");
+        try {
+            this.repo = remoteamor.getRepository(defaulthost, defaultport);
+            System.out.println("Success!");
+        } catch (final IOException ioe) {
+            System.err.format("Could not find amor repository at %s:%d!", defaulthost, defaultport);
+        }
     }
 }
