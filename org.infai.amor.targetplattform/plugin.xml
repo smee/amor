@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-
    <extension
          id="AMORBackend"
          point="org.eclipse.core.runtime.products">
@@ -9,12 +8,16 @@
             application="org.eclipse.ui.ide.workbench"
             name="AMOR remote backend">
          <property
+               name="appName"
+               value="AMOR remote backend">
+         </property>
+         <property
                name="aboutText"
                value="This is a development snapshot of the AMOR backend server.">
          </property>
          <property
-               name="appName"
-               value="AMOR remote backend">
+               name="windowImages"
+               value="icons/amorlogo 16x16.PNG,icons/amorlogo 32x32.PNG,icons/amorlogo 48x48.PNG,icons/amorlogo 64x64.PNG,icons/amorlogo 128x128.PNG">
          </property>
       </product>
    </extension>
