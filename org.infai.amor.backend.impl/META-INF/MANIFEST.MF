@@ -8,6 +8,7 @@ Bundle-Activator: org.infai.amor.backend.impl.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: ch.ethz.iks.r_osgi;version="1.0.0",
+ javax.swing.event,
  javax.transaction;version="1.1.0",
  org.eclipse.core.runtime,
  org.eclipse.emf.common.util,

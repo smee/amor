@@ -12,8 +12,10 @@ package org.infai.amor.backend.api;
 import java.io.IOException;
 
 /**
+ * Factory for remote instances of {@link SimpleRepository}.
+ * 
  * @author sdienst
- *
+ * 
  */
 public interface RemoteAmor {
 

@@ -3,6 +3,6 @@
 
 <target name="AMOR Dependencies">
 <locations>
-<location path="${project_loc}/plugins" type="Directory"/>
+<location path="${project_loc}" type="Directory"/>
 </locations>
 </target>
