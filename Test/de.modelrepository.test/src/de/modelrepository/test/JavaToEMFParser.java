@@ -233,7 +233,6 @@ public class JavaToEMFParser {
 	 * Method loads a file given by the URI.
 	 */
 	private void loadResource(URI uri) {
-		System.out.println("JavaToEMFParser: " + uri);
 		try {
 			rs.getResource(uri, true);
 		}catch (Exception e) {

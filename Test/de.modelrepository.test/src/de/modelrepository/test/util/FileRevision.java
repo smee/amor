@@ -1,17 +1,11 @@
 package de.modelrepository.test.util;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
-import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.Tree;
 import org.eclipse.jgit.lib.TreeEntry;
@@ -132,6 +126,12 @@ public class FileRevision implements Comparable<FileRevision>{
 	 * @return the relative path of the source file which was used to create the Revision.
 	 */
 	public String getSourceFileRelativePath() {
+		if(! new File(repo.getWorkDir(), path).exists()) {
+			File newFile = FileUtility.searchForFile(repo.getWorkDir(), new File(path));
+			if(newFile != null) {
+				path = FileUtility.getRelativePath(newFile, repo.getWorkDir());
+			}else path = "";
+		}
 		return path;
 	}
 	

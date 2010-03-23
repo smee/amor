@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -96,4 +97,34 @@ public class FileUtility {
 		}
 		return true;
 	}
+	
+	public static File searchForFile(File directory, File f) {
+		List<File> files = searchRecoursiveForFiles(directory);
+		for (File file : files) {
+			if(file.getName().equals(f.getName())) {
+				return file;
+			}
+		}
+		return null;
+	}
+	
+	private static List<File> searchRecoursiveForFiles(File dir) {
+		List<File> fileList = new LinkedList<File>();
+		if(dir.isFile()) {
+			fileList.add(dir);
+		}else {
+			File[] entries = dir.listFiles();
+			for (File file : entries) {
+				fileList.addAll(searchRecoursiveForFiles(file));
+			}
+		}
+		return fileList;
+	}
+//	
+//	public static void main(String[] args) {
+//		File workdir = new File("D:/git/commons-lang/");
+//		File f = new File("src/java/org/apache/commons/lang/exception/Nestable.java");
+//		File newFile = searchForFile(workdir, f);
+//		System.out.println(newFile);
+//	}
 }

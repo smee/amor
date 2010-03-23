@@ -79,19 +79,15 @@ public class VersionObject {
 	 */
 	private EObject parseContent(FileRevision rev) throws IOException {
 		EObject o = null;
-		System.out.println("checking out");
-		GitUtility.checkoutRevision(rev.getRepository(), rev.getRevCommit()
-				.getName());
-		System.out.println("parsing");
+		GitUtility.checkoutRevision(rev.getRepository(), rev.getRevCommit().getName());
 		JavaToEMFParser parser = new JavaToEMFParser();
-		File f = new File(rev.getRepository().getWorkDir(), rev
-				.getSourceFileRelativePath());
-
-		rs = parser.parseJavaFile(f, null);
-		if(rs.getResources().size() > 0 && rs.getResources().get(0).getContents().size() > 0) {
-			o = rs.getResources().get(0).getContents().get(0);
+		if(rev.getSourceFileRelativePath() != "") {
+			File f = new File(rev.getRepository().getWorkDir(), rev.getSourceFileRelativePath());
+			rs = parser.parseJavaFile(f, null);
+			if(rs.getResources().size() > 0 && rs.getResources().get(0).getContents().size() > 0) {
+				o = rs.getResources().get(0).getContents().get(0);
+			}
 		}
-		System.out.println("done");
 		return o;
 	}
 
@@ -102,14 +98,18 @@ public class VersionObject {
 	private void createPatches(List<VersionObject> parents)
 			throws InterruptedException {
 		parentsAndPatches = new Hashtable<VersionObject, Epatch>();
+		System.out.println("creating epatches");
 		if (parents != null && content != null) {
 			for (VersionObject p : parents) {
+				System.out.println("EPatch for: " + p);
 				EObject parent = p.getContent();
 				ModelComparator comparator = new ModelComparator();
-				comparator.compare(content, parent);
+				System.out.println(comparator.compare(content, parent));
 				parentsAndPatches.put(p, comparator.getEpatch());
+				System.out.println("patch ready");
 			}
 		}
+		System.out.println("patches done");
 	}
 
 	/*
