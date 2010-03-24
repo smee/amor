@@ -98,18 +98,14 @@ public class VersionObject {
 	private void createPatches(List<VersionObject> parents)
 			throws InterruptedException {
 		parentsAndPatches = new Hashtable<VersionObject, Epatch>();
-		System.out.println("creating epatches");
 		if (parents != null && content != null) {
 			for (VersionObject p : parents) {
-				System.out.println("EPatch for: " + p);
 				EObject parent = p.getContent();
 				ModelComparator comparator = new ModelComparator();
-				System.out.println(comparator.compare(content, parent));
+				comparator.compare(content, parent);
 				parentsAndPatches.put(p, comparator.getEpatch());
-				System.out.println("patch ready");
 			}
 		}
-		System.out.println("patches done");
 	}
 
 	/*
