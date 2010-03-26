@@ -13,20 +13,15 @@ import static org.infai.amor.test.ModelUtil.readInputModel;
 import static org.infai.amor.test.ModelUtil.readInputModels;
 import static org.junit.Assert.assertEquals;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.CommitTransaction;
-import org.infai.amor.backend.Model;
-import org.infai.amor.backend.Response;
+import org.infai.amor.backend.*;
 import org.infai.amor.backend.internal.ModelImpl;
+import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.backend.responses.CommitSuccessResponse;
 import org.infai.amor.test.ModelUtil;
 import org.junit.Ignore;
@@ -52,7 +47,7 @@ public class StoreLinkedModelsTest extends AbstractIntegrationTest {
     @Test
     public void shouldInformAboutLinkedModels() throws Exception {
         // given
-        final ResourceSet rs = new ResourceSetImpl();
+        final ResourceSet rs = new AmorResourceSetImpl();
         final Collection<EObject> javaMetamodel = readInputModels("testmodels/02/java.ecore", rs);
         final EObject javaModelInstance = readInputModel("testmodels/02/Hello.java.xmi", rs);
         // when
@@ -72,7 +67,7 @@ public class StoreLinkedModelsTest extends AbstractIntegrationTest {
     @Test
     public void shouldSaveAndLoadModel() throws Exception {
         // given
-        final ResourceSet rs = new ResourceSetImpl();
+        final ResourceSet rs = new AmorResourceSetImpl();
 
         final Branch branch = repository.createBranch(null, "trunk");
         final CommitTransaction ct = repository.startCommitTransaction(branch);

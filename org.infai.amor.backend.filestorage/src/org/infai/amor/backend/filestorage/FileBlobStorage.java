@@ -25,11 +25,11 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.ModelImpl;
+import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.backend.storage.Storage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -47,7 +47,7 @@ import com.google.common.collect.*;
 public class FileBlobStorage implements Storage {
 
     private final File storageDir;
-    private ResourceSetImpl resourceSet;
+    private ResourceSet resourceSet;
     private Collection<FileModelLocation> addedModelUris;
     /**
      * order them by last modified timestamp
@@ -227,7 +227,7 @@ public class FileBlobStorage implements Storage {
     @Override
     public Model checkout(final IPath path, final Revision revision) throws IOException {
         final long revisionId = revision.getRevisionId();
-        final ResourceSet rs = new ResourceSetImpl();
+        final ResourceSet rs = new AmorResourceSetImpl();
         final URI modelStorageUri = createStorageUriFor(path, revisionId, true);
         // first load the metamodel to prevent exception
         final String m2Uri = getM2Uri(new File(modelStorageUri.toFileString()));
@@ -426,7 +426,7 @@ public class FileBlobStorage implements Storage {
      */
     @Override
     public void startTransaction(final CommitTransaction tr) {
-        resourceSet = new ResourceSetImpl();
+        resourceSet = new AmorResourceSetImpl();
         addedModelUris = Lists.newArrayList();
     }
 

@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.infai.amor.backend.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.neo.NeoModelLocation;
+import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.Traverser.Order;
 
@@ -127,7 +128,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
     private void initMembers() {
         this.cache = new HashMap<Node, EObject>();
         this.classifierCache = new HashMap<String, Node>();
-        this.resourceSet = new ResourceSetImpl();
+        this.resourceSet = new AmorResourceSetImpl();
         resourceSet.getResourceFactoryRegistry().getContentTypeToFactoryMap().put("*", new XMIResourceFactoryImpl());
     }
 

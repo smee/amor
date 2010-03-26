@@ -7,6 +7,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.hamcrest;version="1.1.0",
  org.infai.amor.backend,
+ org.infai.amor.backend.resources,
  org.infai.amor.backend.storage,
  org.infai.amor.test,
  org.junit;version="4.5.0",

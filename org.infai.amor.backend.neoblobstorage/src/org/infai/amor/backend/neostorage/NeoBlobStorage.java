@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.exception.TransactionException;
@@ -32,6 +31,7 @@ import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.neo.NeoModelLocation;
 import org.infai.amor.backend.neo.NeoObjectFactory;
+import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.backend.storage.Storage;
 import org.neo4j.graphdb.Node;
 
@@ -89,7 +89,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      */
     private EList<EObject> applyEPatch(final Model origModel, final Epatch patch) {
         // build resourceset that contains everything the epatch references
-        final ResourceSet inputRS = new ResourceSetImpl();
+        final ResourceSet inputRS = new AmorResourceSetImpl();
         // copy all known epackages
         final ResourceSet origRS = origModel.getContent().get(0).eResource().getResourceSet();
 

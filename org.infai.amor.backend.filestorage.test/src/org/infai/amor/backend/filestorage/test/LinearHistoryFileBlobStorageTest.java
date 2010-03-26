@@ -17,11 +17,11 @@ import java.util.Date;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.filestorage.FileBlobStorage;
 import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.internal.impl.ChangedModelImpl;
+import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.test.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -115,7 +115,7 @@ public class LinearHistoryFileBlobStorageTest extends AbstractNeo4JPerformanceTe
     @Test
     public void shouldPersistLinearHistoryOfAModel() throws Exception {
         // given
-        final ResourceSet rs = new ResourceSetImpl();
+        final ResourceSet rs = new AmorResourceSetImpl();
         // checked in metamodel
         final Model mm = new ModelImpl(ModelUtil.readInputModel(models[0], rs), models[0]);
         CommitTransaction tr = TestUtils.createTransaction(BRANCHNAME, 0);

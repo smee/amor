@@ -21,10 +21,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.internal.ModelImpl;
+import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.backend.responses.CommitSuccessResponse;
 import org.infai.amor.backend.responses.UnresolvedDependencyResponse;
 import org.infai.amor.test.ModelUtil;
@@ -59,7 +59,7 @@ public class IntegrationTests extends AbstractIntegrationTest {
     @Test
     public void shouldAlertOnUnknownDependencies() throws Exception {
         // given
-        final ResourceSet rs = new ResourceSetImpl();
+        final ResourceSet rs = new AmorResourceSetImpl();
         readInputModels("testmodels/02/primitive_types.ecore",rs);
         readInputModels("testmodels/02/java.ecore",rs);
         // a model with external dependencies

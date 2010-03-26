@@ -19,12 +19,12 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.internal.impl.ChangedModelImpl;
 import org.infai.amor.backend.internal.impl.NeoRevision;
+import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.test.ModelUtil;
 import org.infai.amor.test.TestUtils;
 import org.jmock.Expectations;
@@ -145,7 +145,7 @@ public class BlobStorageTest {
 
     @Test
     public void shouldNotFindDifferences() throws IOException{
-        final ResourceSet rs = new ResourceSetImpl();
+        final ResourceSet rs = new AmorResourceSetImpl();
         ModelUtil.readInputModel("testmodels/filesystem.ecore", rs);
         final EObject sfs1 = ModelUtil.readInputModel("testmodels/encoding/sfs_ascii.filesystem", rs);
         final EObject sfs2 = ModelUtil.readInputModel("testmodels/encoding/sfs_utf8.filesystem", rs);
@@ -182,7 +182,7 @@ public class BlobStorageTest {
     @Test
     public void shouldStoreChangedModels() throws Exception {
         // given
-        final ResourceSet rs = new ResourceSetImpl();
+        final ResourceSet rs = new AmorResourceSetImpl();
         // checked in metamodel
         final Model mm = new ModelImpl(ModelUtil.readInputModel("testmodels/filesystem.ecore", rs), "testmodels/filesystem.ecore");
         CommitTransaction tr = createTransaction(BRANCHNAME, 1);
