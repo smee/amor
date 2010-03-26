@@ -23,11 +23,11 @@ import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.infai.amor.backend.resources.AmorResourceSetImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -244,7 +244,7 @@ public class EcoreModelHelper {
      * @throws IOException
      */
     public static String serializeModel(final List<? extends EObject> contents, final String relativePath) throws IOException {
-        final ResourceSet rs = new ResourceSetImpl();
+        final ResourceSet rs = new AmorResourceSetImpl();
         rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
         rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
         rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());

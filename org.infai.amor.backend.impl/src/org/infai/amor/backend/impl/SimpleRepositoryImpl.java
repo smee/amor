@@ -25,7 +25,6 @@ import org.eclipse.emf.compare.epatch.impl.EpatchPackageImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.PackageNotFoundException;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
@@ -35,6 +34,7 @@ import org.infai.amor.backend.api.SimpleRepository;
 import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.internal.UriHandler;
 import org.infai.amor.backend.internal.impl.ChangedModelImpl;
+import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.backend.responses.UnresolvedDependencyResponse;
 import org.infai.amor.backend.util.EcoreModelHelper;
 import org.infai.amor.backend.util.ModelFinder;
@@ -226,7 +226,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      * @return
      */
     private ResourceSet createResourceSet() {
-        final ResourceSet rs = new ResourceSetImpl();
+        final ResourceSet rs = new AmorResourceSetImpl();
         rs.getResourceFactoryRegistry().getProtocolToFactoryMap().put("amor", new ResourceFactoryImpl() {
             @Override
             public Resource createResource(final URI uri) {

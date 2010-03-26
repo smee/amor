@@ -1,11 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Resources
-Bundle-SymbolicName: org.infai.amor.backend.resources;singleton:=true
+Bundle-SymbolicName: org.infai.amor.backend.resources
 Bundle-Version: 1.0.0.qualifier
-Require-Bundle: org.eclipse.emf.ecore.xmi;bundle-version="2.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.emf.common.util,
+ org.eclipse.emf.ecore.resource,
+ org.eclipse.emf.ecore.xmi
 Export-Package: org.infai.amor.backend.resources
-
-

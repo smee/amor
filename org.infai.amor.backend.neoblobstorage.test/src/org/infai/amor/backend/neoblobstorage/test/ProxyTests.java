@@ -24,7 +24,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil.ExternalCrossReferencer;
 import org.eclipse.emf.ecore.util.EcoreUtil.ProxyCrossReferencer;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.infai.amor.backend.resources.AmorResourceFactoryImpl;
+import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.backend.util.EcoreModelHelper;
 import org.infai.amor.test.ModelUtil;
 import org.junit.Test;
@@ -89,9 +90,9 @@ public class ProxyTests {
     public void shouldFindProxiedElementsInM1() throws Exception {
         // given
         // an available gmf notation package
-        Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("oepc", new XMIResourceFactoryImpl());
+        Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("oepc", new AmorResourceFactoryImpl());
 
-        ResourceSetImpl rs = new ResourceSetImpl();
+        ResourceSetImpl rs = new AmorResourceSetImpl();
         final EObject notationPackage = ModelUtil.readInputModel("testmodels/bflow/notation_1.02.ecore", rs);
         final EObject oepcPackage = ModelUtil.readInputModel("testmodels/bflow/oepc.ecore", rs);
 
@@ -103,30 +104,12 @@ public class ProxyTests {
          * relativeBendpoints do not exist at all in notation.ecore.... (NotationPackage uses custom serialization code for
          * bendpoints, not generated...)
          */
-        final EObject root = notationPackage;
-        for (final Iterator<EObject> it = root.eAllContents(); it.hasNext();) {
-            final EObject eo = it.next();
 
-            if (eo instanceof EClass) {
-                final EClass clazz = (EClass) eo;
-                if (clazz.getEPackage().getNsURI().startsWith("http://www.eclipse.org/gmf/runtime/")) {
-
-                    for (final EReference ref : clazz.getEAllReferences()) {
-                        if (ref.getName().equals("persistedChildren")) {
-                            // && clazz.getName().equals("Node")
-                            ref.setName("children");
-                        } else if (ref.getName().equals("persistedEdges")) {
-                            ref.setName("edges");
-                        }
-                    }
-                }
-            }
-        }
         final List<EObject> oepclist = ModelUtil.readInputModels("testmodels/bflow/GewAnm.oepc", rs);
         // when
-        final List<String> xmls = ModelUtil.storeViaXml(oepclist.get(0));
+        final List<String> xmls = ModelUtil.storeViaXml(oepclist.toArray(new EObject[oepclist.size()]));
         // remove gmf package
-        rs = new ResourceSetImpl();
+        rs = new AmorResourceSetImpl();
         // final EObject notationPackage = ModelUtil.readInputModel("testmodels/bflow/notation_1.02.ecore", rs);
         ModelUtil.readInputModel("testmodels/bflow/oepc.ecore", rs);
 

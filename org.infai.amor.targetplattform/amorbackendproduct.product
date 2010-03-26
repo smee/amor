@@ -36,7 +36,6 @@
    <vm>
    </vm>
 
-
    <plugins>
       <plugin id="ch.ethz.iks.r_osgi.remote"/>
       <plugin id="javax.transaction" fragment="true"/>
@@ -65,6 +64,7 @@
       <plugin id="org.infai.amor.backend.impl"/>
       <plugin id="org.infai.amor.backend.neo"/>
       <plugin id="org.infai.amor.backend.neoblobstorage"/>
+      <plugin id="org.infai.amor.backend.resources"/>
       <plugin id="org.objectweb.asm"/>
    </plugins>
 
@@ -78,6 +78,7 @@
       <plugin id="org.infai.amor.backend.impl" autoStart="true" startLevel="4" />
       <plugin id="org.infai.amor.backend.neo" autoStart="true" startLevel="0" />
       <plugin id="org.infai.amor.backend.neoblobstorage" autoStart="true" startLevel="0" />
+      <plugin id="org.infai.amor.backend.resources" autoStart="true" startLevel="0" />
    </configurations>
 
 </product>

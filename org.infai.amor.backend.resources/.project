@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.amor.infai.backend.resources</name>
+	<name>org.infai.amor.backend.resources</name>
 	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>org.objectteams.otdt.builder.OTJBuilder</name>
+			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -24,6 +24,5 @@
 	<natures>
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>org.objectteams.otdt.OTJavaNature</nature>
 	</natures>
 </projectDescription>

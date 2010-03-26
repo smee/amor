@@ -7,10 +7,10 @@ Bundle-ActivatorXX: org.infai.amor.backend.neoblobstorage.test.Activator
 Bundle-Vendor: InfAI e.V.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.infai.amor.backend.api,
+ org.infai.amor.backend.resources,
  org.infai.amor.backend.util,
  org.infai.amor.test,
- org.junit;version="4.5.0",
- org.osgi.framework;version="1.3.0"
+ org.junit;version="4.5.0"
 Bundle-ActivationPolicy: lazy
 Fragment-Host: org.infai.amor.backend.neoblobstorage
 Export-Package: org.infai.amor.backend.neoblobstorage.test
