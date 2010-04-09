@@ -94,25 +94,6 @@ public class NeoRestorer extends AbstractNeoPersistence {
         }
     }
 
-    /**
-     * Find the topmost package node for the package specified by <code>nsUri</code>.
-     * 
-     * @param nsUri
-     * @return
-     */
-    private EPackage findTopLevelPackage(final String nsUri) {
-        final Node ePackageNode = determineEcoreClassifierNode(EcorePackage.Literals.EPACKAGE.getName());
-        for (final Node pkgNode : ePackageNode.traverse(Order.BREADTH_FIRST, StopEvaluator.DEPTH_ONE, ReturnableEvaluator.ALL_BUT_START_NODE, EcoreRelationshipType.INSTANCE, Direction.OUTGOING)) {
-            if (nsUri.equals(pkgNode.getProperty(NS_URI))) {
-                Node container = pkgNode;
-                while (container.hasRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING)) {
-                    container = container.getSingleRelationship(EcoreRelationshipType.CONTAINS, Direction.INCOMING).getStartNode();
-                }
-                return (EPackage) load(getString(container, NS_URI));
-            }
-        }
-        return null;
-    }
 
     private Iterable<Node> getOrderedNodes(final Node node, final RelationshipType relType, final Direction direction) {
         return new OrderedNodeIterable(node, relType, direction);
@@ -160,26 +141,6 @@ public class NeoRestorer extends AbstractNeoPersistence {
     }
 
     /**
-     * Load a model.
-     * 
-     * @param nsUri
-     * @return
-     */
-    private EObject load(final String nsUri) {
-        logger.fine("loading model " + nsUri);
-
-        // initMembers();
-
-        final Node modelNode = getModelNode(nsUri);
-        if (null == modelNode) {
-            return findTopLevelPackage(nsUri);
-        } else {
-            return loadModel(modelNode);
-        }
-
-    }
-
-    /**
      * @param modelNode
      * @return
      */
@@ -207,7 +168,6 @@ public class NeoRestorer extends AbstractNeoPersistence {
             }
         }
         final EObject restored = restore(modelNode);
-        // FIXME use the relative path for this resource instead
         return restored;
     }
 

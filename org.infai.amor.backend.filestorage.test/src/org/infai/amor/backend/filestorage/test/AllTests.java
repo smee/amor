@@ -23,7 +23,8 @@ import org.junit.runners.Suite.SuiteClasses;
     IntegrationTests.class, 
     LinearHistoryFileBlobStorageTest.class,
     BlobStorageTest.class,
-    StoreLinkedModelsTest.class})
+    StoreLinkedModelsTest.class,
+    FileBlobStorageTest.class})
 public class AllTests {
 
 }

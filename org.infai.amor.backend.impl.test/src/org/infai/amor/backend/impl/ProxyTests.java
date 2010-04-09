@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.neoblobstorage.test;
+package org.infai.amor.backend.impl;
 
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterators.*;

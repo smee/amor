@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Fragment-Host: org.infai.amor.backend.impl;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.infai.amor.backend.internal,
- org.infai.amor.backend.responses,
  org.infai.amor.test,
  org.junit;version="4.5.0",
  org.neo4j.graphdb

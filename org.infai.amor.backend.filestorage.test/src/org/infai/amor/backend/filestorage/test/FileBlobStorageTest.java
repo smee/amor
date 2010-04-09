@@ -7,23 +7,28 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.neoblobstorage.test;
+package org.infai.amor.backend.filestorage.test;
 
+import java.io.File;
+import java.io.IOException;
+
+import junit.framework.Assert;
+
+import org.infai.amor.backend.filestorage.FileStorageFactory;
 import org.infai.amor.backend.impl.AbstractStorageIntegrationTest;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.infai.amor.backend.neostorage.NeoBlobStorageFactory;
 import org.infai.amor.backend.storage.StorageFactory;
 
 /**
  * @author sdienst
  *
  */
-public class NeoBlobStorageTest extends AbstractStorageIntegrationTest {
+public class FileBlobStorageTest extends AbstractStorageIntegrationTest {
 
     /**
      * @param m
      */
-    public NeoBlobStorageTest(final String... m) {
+    public FileBlobStorageTest(final String... m) {
         super(m);
     }
 
@@ -32,7 +37,21 @@ public class NeoBlobStorageTest extends AbstractStorageIntegrationTest {
      */
     @Override
     protected StorageFactory getStorageFactory(final NeoProvider np) {
-        return new NeoBlobStorageFactory(np);
+        File tempFile;
+        try {
+            tempFile = File.createTempFile("integration", "test");
+            tempFile.delete();
+            tempFile.mkdirs();
+
+            final FileStorageFactory sf = new FileStorageFactory();
+            sf.setStorageDir(tempFile.getAbsolutePath());
+
+            return sf;
+        } catch (final IOException e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+        return null;
     }
 
 }

@@ -42,7 +42,6 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
         // find toplevel container
         final Node fromContainer = findToplevelContainer(from);
 
-        // TODO find node for proxies
 
         // find toplevel typecontainer
         Node toContainer = findToplevelContainer(to);
@@ -50,6 +49,8 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
         if (!fromContainer.equals(toContainer)) {
             if(toContainer.hasProperty("proxyUri")){
                 final String proxyUri = (String) toContainer.getProperty("proxyUri");
+                // find node for proxies
+                // TODO create versioned node that references most recent model according to the checkout revision
                 final Node tempNode = findEPackage(proxyUri.substring(0, proxyUri.indexOf('#')));
                 if (tempNode != null) {
                     toContainer = tempNode;

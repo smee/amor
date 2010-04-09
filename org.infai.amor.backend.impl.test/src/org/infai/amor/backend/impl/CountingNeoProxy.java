@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.neoblobstorage.test;
+package org.infai.amor.backend.impl;
 
 import java.io.Serializable;
 import java.util.Map;
