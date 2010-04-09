@@ -21,13 +21,13 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.impl.RepositoryImpl;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.internal.impl.*;
 import org.infai.amor.backend.neostorage.NeoBlobStorageFactory;
+import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.backend.util.EcoreModelHelper;
 import org.infai.amor.test.AbstractNeo4JPerformanceTest;
 import org.infai.amor.test.ModelUtil;
@@ -114,7 +114,7 @@ public class NeoBlobStorageTest extends AbstractNeo4JPerformanceTest {
     public void shouldSaveModelIntoNeo() throws Exception {
         split(String.format("Before loading %d models ", modelLocations.length, Arrays.asList(modelLocations)));
         // given
-        final ResourceSet rs = new ResourceSetImpl();
+        final ResourceSet rs = new AmorResourceSetImpl();
         final Map<String, List<EObject>> models = Maps.newLinkedHashMap();
         models.put("testmodels/Ecore.ecore", readInputModels("testmodels/Ecore.ecore", rs, false));
         for (final String location : modelLocations) {

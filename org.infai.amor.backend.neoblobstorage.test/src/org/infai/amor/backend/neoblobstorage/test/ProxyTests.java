@@ -20,11 +20,10 @@ import java.util.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil.ExternalCrossReferencer;
 import org.eclipse.emf.ecore.util.EcoreUtil.ProxyCrossReferencer;
-import org.infai.amor.backend.resources.AmorResourceFactoryImpl;
 import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.backend.util.EcoreModelHelper;
 import org.infai.amor.test.ModelUtil;
@@ -88,28 +87,16 @@ public class ProxyTests {
     @Test
     // @Ignore(value = "GMF is pretty f***ed up...")
     public void shouldFindProxiedElementsInM1() throws Exception {
-        // given
-        // an available gmf notation package
-        Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("oepc", new AmorResourceFactoryImpl());
+        final ResourceSet rs = new AmorResourceSetImpl();
 
-        ResourceSetImpl rs = new AmorResourceSetImpl();
         final EObject notationPackage = ModelUtil.readInputModel("testmodels/bflow/notation_1.02.ecore", rs);
         final EObject oepcPackage = ModelUtil.readInputModel("testmodels/bflow/oepc.ecore", rs);
-
-        // change renamed features, stupid gmf!
-        // TODO introduce configurable element name changes in the backend
-        /*
-         * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=159226
-         * children is persistedChildren edges is persistedEdges
-         * relativeBendpoints do not exist at all in notation.ecore.... (NotationPackage uses custom serialization code for
-         * bendpoints, not generated...)
-         */
 
         final List<EObject> oepclist = ModelUtil.readInputModels("testmodels/bflow/GewAnm.oepc", rs);
         // when
         final List<String> xmls = ModelUtil.storeViaXml(oepclist.toArray(new EObject[oepclist.size()]));
         // remove gmf package
-        rs = new AmorResourceSetImpl();
+        // rs = new AmorResourceSetImpl();
         // final EObject notationPackage = ModelUtil.readInputModel("testmodels/bflow/notation_1.02.ecore", rs);
         ModelUtil.readInputModel("testmodels/bflow/oepc.ecore", rs);
 

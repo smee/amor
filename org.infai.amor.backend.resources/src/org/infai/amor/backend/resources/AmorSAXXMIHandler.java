@@ -22,7 +22,12 @@ public class AmorSAXXMIHandler extends SAXXMIHandler {
 		renameGMFReferences(object, feature, value);
 		super.setFeatureValue(object, feature, value, position);
 	}
-
+    /**
+     * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=159226
+     * children is persistedChildren edges is persistedEdges
+     * relativeBendpoints do not exist at all in notation.ecore.... (NotationPackage uses custom serialization code for
+     * bendpoints, not generated...)
+     */
 	protected void renameGMFReferences(EObject object,
 			EStructuralFeature feature, Object value) {
 		if (AmorResourceImpl.hasGMFPackage(object) && value instanceof EReference) {
