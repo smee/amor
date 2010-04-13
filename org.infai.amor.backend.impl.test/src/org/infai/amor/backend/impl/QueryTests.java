@@ -114,12 +114,11 @@ public class QueryTests {
     }
 
     @Test
-    @Ignore(value = "unclear, tests mocked stuff only?")
     public void shouldReturnAllBranches() throws Exception {
         // given
 
         // when
-        final Iterable<URI> uris = repo.getContents(URI.createURI("amor://localhost/repo/"));
+        final Iterable<URI> uris = repo.getActiveContents(URI.createURI("amor://localhost/repo/"));
         // then
         assertEquals(2, Iterables.size(uris));
     }
@@ -142,7 +141,7 @@ public class QueryTests {
         // given
 
         // when
-        final Iterable<URI> uris = repo.getContents(URI.createURI("amor://localhost/repo/branch1/1/path1"));
+        final Iterable<URI> uris = repo.getActiveContents(URI.createURI("amor://localhost/repo/branch1/1/path1"));
         // then
         assertEquals(1, Iterables.size(uris));
         assertEquals(URI.createURI("amor://localhost/repo/branch1/1/path1/model1"), Iterables.get(uris, 0));
@@ -183,7 +182,7 @@ public class QueryTests {
         // given
 
         // when
-        final Iterable<URI> uris = repo.getContents(URI.createURI("amor://localhost/repo/branch1"));
+        final Iterable<URI> uris = repo.getActiveContents(URI.createURI("amor://localhost/repo/branch1"));
         // then
         assertEquals(3, Iterables.size(uris));
         assertEquals(URI.createURI("amor://localhost/repo/branch1/1"), Iterables.get(uris, 0));
@@ -193,26 +192,14 @@ public class QueryTests {
 
     @Test
     @Ignore(value = "unclear, tests mocked stuff only?")
-    public void shouldReturnNoPathsForRevision2Path1() throws Exception {
-        // given
-
-        // when
-        final Iterable<URI> uris = repo.getContents(URI.createURI("amor://localhost/repo/branch1/2/path1"));
-        // then
-        assertEquals(1, Iterables.size(uris));
-        assertEquals(URI.createURI("amor://localhost/repo/branch1/2/path1/model2"), Iterables.get(uris, 0));
-    }
-
-    @Test
-    @Ignore(value = "unclear, tests mocked stuff only?")
     public void shouldReturnPathsForRevision2() throws Exception {
         // given
 
         // when
-        final Iterable<URI> uris = repo.getContents(URI.createURI("amor://localhost/repo/branch1/2"));
+        final Iterable<URI> uris = repo.getActiveContents(URI.createURI("amor://localhost/repo/branch1/2"));
         // then
         assertEquals(1, Iterables.size(uris));
-        assertEquals(URI.createURI("amor://localhost/repo/branch1/2/path1"), Iterables.get(uris, 0));
+        assertTrue(Iterables.contains(uris, URI.createURI("amor://localhost/repo/branch1/2/path1")));
     }
 
     @After

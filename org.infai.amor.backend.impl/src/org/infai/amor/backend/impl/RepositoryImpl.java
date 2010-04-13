@@ -25,7 +25,6 @@ import org.infai.amor.backend.storage.StorageFactory;
 import org.infai.amor.backend.util.*;
 import org.infai.amor.backend.util.ModelFinder.ModelMatcher;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.*;
 
@@ -80,8 +79,6 @@ public class RepositoryImpl implements Repository {
      */
     @Override
     public Response checkin(final Model model, final CommitTransaction tr) {
-        // FIXME needs to be to make sure, else we are not within the same neo4j transaction... see
-        // http://www.mail-archive.com/user@lists.neo4j.org/msg01381.html
         try {
             // what is the externally referenceable uri of this model, if it would get persisted?
             final URI modeluri = uriHandler.createModelUri(tr, model.getPersistencePath());
@@ -113,10 +110,10 @@ public class RepositoryImpl implements Repository {
     public Model checkout(final URI uri) throws IOException {
         transactionManager.startReadTransaction();
         try {
-            final Storage storage = getStorage(uri);
-            final Branch branch = branchFactory.getBranch(uriHandler.extractBranchName(uri));
-            final long revisionId = uriHandler.extractRevision(uri);
-            final Revision revision = branch.getRevision(revisionId);
+            Storage storage = getStorage(uri);
+            Branch branch = branchFactory.getBranch(uriHandler.extractBranchName(uri));
+            long revisionId = uriHandler.extractRevision(uri);
+            Revision revision = branch.getRevision(revisionId);
 
             return storage.checkout(uriHandler.extractModelPathFrom(uri), revision);
         } finally {
@@ -130,7 +127,7 @@ public class RepositoryImpl implements Repository {
      * @see org.infai.amor.backend.Repository#commitTransaction(org.infai.amor.backend.Transaction)
      */
     @Override
-    public Response commitTransaction(final CommitTransaction tr) {
+    public Response commitTransaction(CommitTransaction tr) {
         return transactionManager.commit(tr);
     }
 
@@ -189,7 +186,7 @@ public class RepositoryImpl implements Repository {
      * @see org.infai.amor.backend.Repository#createBranch(org.infai.amor.backend.Branch)
      */
     @Override
-    public Branch createBranch(final Revision parent, final String name) {
+    public Branch createBranch(Revision parent, String name) {
         return branchFactory.createBranch(parent, name);
     }
 
@@ -327,70 +324,6 @@ public class RepositoryImpl implements Repository {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.infai.amor.backend.Repository#getContents(org.eclipse.emf.common.util.URI)
-     */
-    @Deprecated
-    @Override
-    public Iterable<URI> getContents(final URI uri) throws MalformedURIException {
-        String branchname = null;
-        long revisionId = -1;
-        boolean hasBranch = true, hasRevision = true;
-        // what does this uri point to?
-        try {
-            // has it a branch?
-            branchname = uriHandler.extractBranchName(uri);
-        } catch (final MalformedURIException e) {
-            hasBranch = false;
-        }
-        try {
-            // has it a revision?
-            revisionId = uriHandler.extractRevision(uri);
-        } catch (final MalformedURIException e) {
-            hasRevision = false;
-        }
-        if (!hasBranch) {
-            // find all branchnames, convert them into uris
-            return Iterables.transform(branchFactory.getBranches(), new Function<Branch, URI>() {
-                @Override
-                public URI apply(final Branch branch) {
-                    return uriHandler.createUriFor(branch);
-                }
-            });
-        } else if (!hasRevision) {
-            // find all revisions of the branch, convert them into uris
-            final Branch branch = branchFactory.getBranch(branchname);
-            return Iterables.transform(branch.getRevisions(), new Function<Revision, URI>() {
-                @Override
-                public URI apply(final Revision r) {
-                    return uriHandler.createUriFor(branch, r.getRevisionId());
-                }
-            });
-        } else {
-            // find all alive models, convert them into uris
-            final Collection<URI> result = Lists.newArrayList();
-            final Branch branch = branchFactory.getBranch(branchname);
-            final Revision rev = branch.getRevision(revisionId);
-            if (rev == null) {
-                throw new MalformedURIException("Unknown revision: " + uri);
-            } else {
-                // TODO also show changed (and deleted?) models
-                final Iterable<ModelLocation> knownModels = Iterables.concat(
-                        rev.getModelReferences(ChangeType.ADDED));
-                for (final ModelLocation modelLoc : knownModels) {
-                    final URI modelUri = modelLoc.getExternalUri();
-                    if (uriHandler.isPrefix(uri, modelUri)) {
-                        result.add(uriHandler.trimToNextSegment(uri, modelUri));
-                    }
-                }
-                return result;
-
-            }
-
-        }
-    }
 
     /*
      * (non-Javadoc)

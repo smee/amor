@@ -96,11 +96,33 @@ public interface Repository {
      */
     Response deleteModel(IPath modelPath,CommitTransaction tr) throws IOException;
 
+
     /**
-     * Similar to {@link #getContents(URI)}, but if called with an uri resembling a revision or a subpath under a revision, it
-     * will return all according subpaths of models, that are stored within this repository at the respective point in time.
+     * 
+     * List all contents of the hierarchie level described by <code>uri</code>. The results depends on the level of items
+     * represented by the uri:
+     * <ul>
+     * <li>repo - all branches</li>
+     * <li>branch - all revisions</li>
+     * <li>revision - toplevel path of all known models currently active during this revision</li>
+     * <li>else - current path of all known models currently active during this revision</li>
+     * </ul>
+     * If called with an uri resembling a revision or a subpath under a revision, it will return all according subpaths of models,
+     * that are stored within this repository at the respective point in time.
      * <p>
-     * Example:<br>
+     * Example: Assume we have stored a model during revision 1 with the relative path <code>foo1/foo2/model1</code> as well as a
+     * model during revision 2 with the relative path <code>foo1/bar2/model2</code>. Then this method would do (the common part of
+     * the results uris were skipped):
+     * <p>
+     * <code>
+     * getContents(new URI("amor://host/repo")) => {"branch1",...}<br>
+     * getContents(new URI("amor://host/repo/branch1")) => {"1","2"}<br>
+     * getContents(new URI("amor://host/repo/branch1/1")) => {"foo1"}<br>
+     * getContents(new URI("amor://host/repo/branch1/2")) => {"foo1"}<br>
+     * getContents(new URI("amor://host/repo/branch1/2/foo1")) => {"bar2"}<br>
+     * getContents(new URI("amor://host/repo/branch1/2/foo1/bar2")) => {"model2"}<br>
+     * </code>
+     * <p>
      * getContents(new URI("amor://host/repo/branch1/2/foo1")) => {"foo1","bar2"}<br>
      * 
      * @param uri
@@ -126,37 +148,6 @@ public interface Repository {
      * @throws MalformedURIException
      */
     Iterable<Branch> getBranches(URI uri) throws MalformedURIException;
-
-    /**
-     * List all contents of the hierarchie level described by <code>uri</code>. The results depends on the level of items
-     * represented by the uri:
-     * <ul>
-     * <li>repo - all branches</li>
-     * <li>branch - all revisions</li>
-     * <li>revision - toplevel path of all known models currently active during this revision</li>
-     * <li>else - current path of all known models currently active during this revision</li>
-     * </ul>
-     * <p>
-     * Example: Assume we have stored a model during revision 1 with the relative path <code>foo1/foo2/model1</code> as well as a
-     * model during revision 2 with the relative path <code>foo1/bar2/model2</code>. Then this method would do (the common part of
-     * the results uris were skipped):
-     * <p>
-     * <code>
-     * getContents(new URI("amor://host/repo")) => {"branch1",...}<br>
-     * getContents(new URI("amor://host/repo/branch1")) => {"1","2"}<br>
-     * getContents(new URI("amor://host/repo/branch1/1")) => {"foo1"}<br>
-     * getContents(new URI("amor://host/repo/branch1/2")) => {"foo1"}<br>
-     * getContents(new URI("amor://host/repo/branch1/2/foo1")) => {"bar2"}<br>
-     * getContents(new URI("amor://host/repo/branch1/2/foo1/bar2")) => {"model2"}<br>
-     * </code>
-     * 
-     * @deprecated unneeded, see {@link Revision#getModelReferences(org.infai.amor.backend.Revision.ChangeType)}
-     * @param uri
-     * @return
-     * @throws MalformedURIException
-     */
-    @Deprecated
-    Iterable<URI> getContents(URI uri) throws MalformedURIException;
 
     /**
      * This method returns {@link URI}s to all models the model addressed by <code>uri</code> references to.
@@ -200,4 +191,6 @@ public interface Repository {
      * @throws IOException
      */
     EObject view(URI uri) throws MalformedURIException, IOException;
+
+    // void merge(Branch from, Branch into);
 }
