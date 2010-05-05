@@ -24,7 +24,6 @@ import org.eclipse.emf.compare.epatch.Epatch;
 import org.eclipse.emf.compare.epatch.impl.EpatchPackageImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.PackageNotFoundException;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
@@ -227,13 +226,13 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      */
     private ResourceSet createResourceSet() {
         final ResourceSet rs = new AmorResourceSetImpl();
-        rs.getResourceFactoryRegistry().getProtocolToFactoryMap().put("amor", new ResourceFactoryImpl() {
-            @Override
-            public Resource createResource(final URI uri) {
-                // TODO return resource that reads from our storage
-                return super.createResource(uri);
-            }
-        });
+        // rs.getResourceFactoryRegistry().getProtocolToFactoryMap().put("amor", new ResourceFactoryImpl() {
+        // @Override
+        // public Resource createResource(final URI uri) {
+        // // TODO return resource that reads from our storage
+        // return super.createResource(uri);
+        // }
+        // });
         return rs;
     }
 
