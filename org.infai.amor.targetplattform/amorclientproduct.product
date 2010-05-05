@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="AMOR Commandline Client" uid="org.infai.amor.client.product" id="org.infai.amor.targetplattform.cliclient" application="org.eclipse.ui.ide.workbench" version="1.0.0" useFeatures="false" includeLaunchers="true">
+
+   <aboutInfo>
+      <text>
+         This is a development snapshot of the AMOR backend server.
+      </text>
+   </aboutInfo>
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <programArgs>-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console</programArgs>
+      <vmArgs>-Declipse.ignoreApp=true -Dosgi.noShutdown=true -ea  -Dosgi.noShutdown=true -Xmx1000M</vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+   </launcherArgs>
+
+   <windowImages i16="/org.infai.amor.targetplattform/icons/amorlogo 16x16.PNG" i32="/org.infai.amor.targetplattform/icons/amorlogo 32x32.PNG" i48="/org.infai.amor.targetplattform/icons/amorlogo 48x48.PNG" i64="/org.infai.amor.targetplattform/icons/amorlogo 64x64.PNG" i128="/org.infai.amor.targetplattform/icons/amorlogo 128x128.PNG"/>
+
+
+   <launcher name="amorclient">
+      <solaris/>
+      <win useIco="false">
+         <bmp
+            winSmallHigh="/org.infai.amor.targetplattform/icons/amorlogo 16x16.bmp"
+            winSmallLow="/org.infai.amor.targetplattform/icons/amorlogo 16x16_8bit.bmp"
+            winMediumHigh="/org.infai.amor.targetplattform/icons/amorlogo 32x32.bmp"
+            winMediumLow="/org.infai.amor.targetplattform/icons/amorlogo 32x32_8bit.bmp"
+            winLargeHigh="/org.infai.amor.targetplattform/icons/amorlogo 48x48.bmp"
+            winLargeLow="/org.infai.amor.targetplattform/icons/amorlogo 48x48_8bit.bmp"/>
+      </win>
+   </launcher>
+
+
+   <vm>
+   </vm>
+
+
+   <plugins>
+      <plugin id="ch.ethz.iks.r_osgi.remote"/>
+      <plugin id="javax.transaction" fragment="true"/>
+      <plugin id="org.eclipse.core.contenttype"/>
+      <plugin id="org.eclipse.core.jobs"/>
+      <plugin id="org.eclipse.core.runtime"/>
+      <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
+      <plugin id="org.eclipse.emf.common"/>
+      <plugin id="org.eclipse.equinox.app"/>
+      <plugin id="org.eclipse.equinox.common"/>
+      <plugin id="org.eclipse.equinox.ds"/>
+      <plugin id="org.eclipse.equinox.preferences"/>
+      <plugin id="org.eclipse.equinox.registry"/>
+      <plugin id="org.eclipse.equinox.util"/>
+      <plugin id="org.eclipse.osgi"/>
+      <plugin id="org.eclipse.osgi.services"/>
+      <plugin id="org.eclipse.persistence.jpa.equinox.weaving" fragment="true"/>
+      <plugin id="org.infai.amor.backend.api"/>
+      <plugin id="org.infai.amor.backend.client"/>
+      <plugin id="org.objectweb.asm"/>
+   </plugins>
+
+   <configurations>
+      <plugin id="ch.ethz.iks.r_osgi.remote" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="1" />
+      <plugin id="org.infai.amor.backend.api" autoStart="true" startLevel="4" />
+      <plugin id="org.infai.amor.backend.client" autoStart="true" startLevel="4" />
+   </configurations>
+
+</product>

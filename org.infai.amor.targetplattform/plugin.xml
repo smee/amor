@@ -21,5 +21,25 @@
          </property>
       </product>
    </extension>
+   <extension
+         id="cliclient"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.ui.ide.workbench"
+            name="AMOR Commandline Client">
+         <property
+               name="windowImages"
+               value="icons/amorlogo 16x16.PNG,icons/amorlogo 32x32.PNG,icons/amorlogo 48x48.PNG,icons/amorlogo 64x64.PNG,icons/amorlogo 128x128.PNG">
+         </property>
+         <property
+               name="aboutText"
+               value="This is a development snapshot of the AMOR backend server.">
+         </property>
+         <property
+               name="appName"
+               value="AMOR Commandline Client">
+         </property>
+      </product>
+   </extension>
 
 </plugin>
