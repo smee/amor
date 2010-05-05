@@ -4,7 +4,7 @@ and type 'amorhelp' to list all available commands.
 
 Example:
 # change to our test models directory
-lcd ../org.infai.backend.tests/bin
+lcd ../../../org.infai.backend.tests/bin
 lls
 newbranch trunk
 starttransaction trunk
