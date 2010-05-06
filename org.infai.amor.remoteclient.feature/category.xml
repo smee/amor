@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.infai.amor.remoteclient.feature_1.0.0.qualifier.jar" id="org.infai.amor.remoteclient.feature" version="1.0.0.qualifier">
+      <category name="org.infai.amor"/>
+   </feature>
+   <category-def name="org.infai.amor" label="AMOR">
+      <description>
+         Advanced MOdel Repository
+      </description>
+   </category-def>
+</site>
