@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
+import org.infai.amor.backend.api.RevisionInfo;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.responses.*;
 import org.infai.amor.backend.storage.Storage;
@@ -190,6 +191,20 @@ public class RepositoryImpl implements Repository {
         return branchFactory.createBranch(parent, name);
     }
 
+    /**
+     * @param revision
+     * @return
+     */
+    private RevisionInfo createRevisionInfo(Revision rev) {
+        return new RevisionInfo(
+                rev.getUser(),
+                rev.getCommitMessage(),
+                rev.getCommitTimestamp().getTime(),
+                getPaths(rev.getModelReferences(Revision.ChangeType.ADDED)),
+                getPaths(rev.getModelReferences(Revision.ChangeType.CHANGED)),
+                getPaths(rev.getModelReferences(Revision.ChangeType.DELETED)));
+    }
+
     /* (non-Javadoc)
      * @see org.infai.amor.backend.Repository#deleteModel(org.eclipse.core.runtime.IPath, org.infai.amor.backend.CommitTransaction)
      */
@@ -307,6 +322,7 @@ public class RepositoryImpl implements Repository {
         }
     }
 
+
     /*
      * (non-Javadoc)
      * 
@@ -324,7 +340,6 @@ public class RepositoryImpl implements Repository {
         }
     }
 
-
     /*
      * (non-Javadoc)
      * 
@@ -333,6 +348,18 @@ public class RepositoryImpl implements Repository {
     @Override
     public Iterable<URI> getDependencies(final URI uri) throws MalformedURIException {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * @param modelReferences
+     * @return
+     */
+    private Collection<String> getPaths(Collection<ModelLocation> refs) {
+        Collection<String> paths=new ArrayList<String>(refs.size());
+        for(ModelLocation ref:refs) {
+            paths.add(ref.getRelativePath());
+        }
+        return paths;
     }
 
     /*
@@ -351,6 +378,26 @@ public class RepositoryImpl implements Repository {
         } finally {
             transactionManager.closeReadTransaction();
         }
+    }
+
+    /**
+     * FIXME Internal call, needed because every call to any api object needs to be wrapped in neo transactions right now.
+     * 
+     * @param uri
+     * @return
+     * @throws MalformedURIException
+     */
+    public RevisionInfo getRevisionInfo(final URI uri) throws MalformedURIException {
+        transactionManager.startReadTransaction();
+        try {
+
+            final Branch branch = branchFactory.getBranch(uriHandler.extractBranchName(uri));
+
+            return createRevisionInfo(branch.getRevision(uriHandler.extractRevision(uri)));
+        } finally {
+            transactionManager.closeReadTransaction();
+        }
+
     }
 
     /**

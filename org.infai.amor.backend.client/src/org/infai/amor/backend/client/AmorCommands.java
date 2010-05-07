@@ -10,13 +10,13 @@
 package org.infai.amor.backend.client;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.infai.amor.backend.api.RemoteAmor;
-import org.infai.amor.backend.api.SimpleRepository;
+import org.infai.amor.backend.api.*;
 
 /**
  * @author sdienst
@@ -106,17 +106,22 @@ public class AmorCommands implements CommandProvider {
     }
 
     public void _cd(final CommandInterpreter ci){
-        final String arg = ci.nextArgument();
-        if (arg == null) {
+        String argument = ci.nextArgument();
+        if (argument == null) {
             currentUri = getRepoUri();
-        } else if (arg.trim().equals("..")) {
-            currentUri = currentUri.trimSegments(1);
         } else {
-            final URI uri = currentUri.appendSegments(arg.split("/"));
-            if (!getActiveContents(uri).isEmpty()) {
-                currentUri = uri;
-            } else {
-                ci.println("No such element (Hint: Try 'dir').");
+            for (String arg : argument.split("/")) {
+                if (arg.trim().equals("..")) {
+                    currentUri = currentUri.trimSegments(1);
+                } else {
+                    final URI uri = currentUri.appendSegment(arg);
+                    if (!getActiveContents(uri).isEmpty()) {
+                        currentUri = uri;
+                    } else {
+                        ci.println("No such element (Hint: Try 'dir').");
+                        break;
+                    }
+                }
             }
         }
     }
@@ -204,9 +209,7 @@ public class AmorCommands implements CommandProvider {
             parameter = parameter.trim();
             if (parameter.equals("-l")) {
                 // assume we are staring at a revision, let's show the details!
-                ci.println(getTouchedModels(SimpleRepository.ADDED));
-                ci.println(getTouchedModels(SimpleRepository.CHANGED));
-                ci.println(getTouchedModels(SimpleRepository.DELETED));
+                ci.println(getTouchedModels());
                 return;
             }
             if (parameter.equals("..")) {
@@ -381,16 +384,27 @@ public class AmorCommands implements CommandProvider {
      * @param deleted
      * @return
      */
-    private String getTouchedModels(final int changetype) {
+    private String getTouchedModels() {
         final StringBuilder sb = new StringBuilder();
         String branch = branchname;
         if (currentUri.segmentCount() >= 2) {
             branch = currentUri.segment(1);
         }
 
-        for (final String s : getRepo().getTouchedModelPaths(branch, Integer.parseInt(currentUri.segment(2)), changetype)) {
-            sb.append(s).append("\n");
-        }
+        RevisionInfo revInfo = getRepo().getRevisionInfo(branch, Long.parseLong(currentUri.segment(2)));
+        sb.append("User    : ").append(revInfo.getUsername());
+        sb.append("\n");
+        sb.append("Message : ").append(revInfo.getMessage());
+        sb.append("\n");
+        sb.append("Time    : ").append(SimpleDateFormat.getDateInstance(SimpleDateFormat.LONG).format(new Date(revInfo.getTimestamp())));
+        sb.append("\n");
+        sb.append("Added   : ").append(revInfo.getAddedModels());
+        sb.append("\n");
+        sb.append("Changed : ").append(revInfo.getChangedModels());
+        sb.append("\n");
+        sb.append("Removed : ").append(revInfo.getRemovedModels());
+        sb.append("\n");
+
         return sb.toString();
     }
 

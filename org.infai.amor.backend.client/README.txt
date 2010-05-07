@@ -21,6 +21,11 @@ add testmodels/filesystem.ecore
 add testmodels/simplefilesystem.xmi
 committransaction "added simple filesystem model+instance" "max mustermann"
 
+#show detailed revision infos
+cd trunk/1
+dir -l
+cd ../..
+
 # checkin a patch for an checked in model
 starttransaction subbranch
 addpatch testmodels/simplefilesystem.xmi testmodels/fs/v1-v2.epatch

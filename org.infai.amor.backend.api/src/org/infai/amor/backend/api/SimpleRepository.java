@@ -20,9 +20,6 @@ import java.util.List;
  * 
  */
 public interface SimpleRepository {
-    final int ADDED = 0;
-    final int CHANGED = 1;
-    final int DELETED = 2;
 
     /**
      * Checkin a new (meta-)model that is not known to this repository instance yet. <br/>
@@ -109,15 +106,11 @@ public interface SimpleRepository {
     String[] getBranches();
 
     /**
-     * Get relative paths of models that were touched in the given revision.
-     * 
      * @param branchname
      * @param revisionId
-     * @param changeType
-     *            type of change, could be {@link #ADDED}, {@link #CHANGED} or {@link #DELETED}
-     * @return list of relative paths
+     * @return
      */
-    List<String> getTouchedModelPaths(String branchname,long revisionId,int changeType);
+    RevisionInfo getRevisionInfo(String branchname, long revisionId);
 
     /**
      * Abort checkin transactions, removes all changes applied since {@link #startTransaction(String)}.

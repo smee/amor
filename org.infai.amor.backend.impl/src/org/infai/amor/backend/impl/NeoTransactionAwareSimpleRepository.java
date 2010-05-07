@@ -15,6 +15,7 @@ import java.util.Map;
 
 import javax.transaction.*;
 
+import org.infai.amor.backend.api.RevisionInfo;
 import org.infai.amor.backend.api.SimpleRepository;
 
 import com.google.common.base.Preconditions;
@@ -116,11 +117,11 @@ public class NeoTransactionAwareSimpleRepository implements SimpleRepository {
     }
 
     /* (non-Javadoc)
-     * @see org.infai.amor.backend.SimpleRepository#getTouchedModelPaths(java.lang.String, long, int)
+     * @see org.infai.amor.backend.api.SimpleRepository#getRevisionInfo(java.lang.String, long)
      */
     @Override
-    public List<String> getTouchedModelPaths(final String branchname, final long revisionId, final int changeType) {
-        return wrappedInstance.getTouchedModelPaths(branchname, revisionId, changeType);
+    public RevisionInfo getRevisionInfo(String branchname, long revisionId) {
+        return wrappedInstance.getRevisionInfo(branchname, revisionId);
     }
 
     /**

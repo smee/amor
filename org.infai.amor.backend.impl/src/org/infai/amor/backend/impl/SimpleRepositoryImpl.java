@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.*;
+import org.infai.amor.backend.api.RevisionInfo;
 import org.infai.amor.backend.api.SimpleRepository;
 import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.internal.UriHandler;
@@ -342,41 +343,19 @@ public class SimpleRepositoryImpl implements SimpleRepository {
     }
 
     /* (non-Javadoc)
-     * @see org.infai.amor.backend.SimpleRepository#getTouchedModelPaths(java.lang.String, long, int)
+     * @see org.infai.amor.backend.api.SimpleRepository#getRevisionInfo(java.lang.String, long)
      */
     @Override
-    public List<String> getTouchedModelPaths(final String branchname, final long revisionId, final int changeType) {
+    public RevisionInfo getRevisionInfo(String branchname, long revisionId) {
         Preconditions.checkNotNull(branchname, "Missing branchname!");
         Preconditions.checkArgument(revisionId >= 0, "No such revision!");
-        Preconditions.checkArgument(changeType == ADDED || changeType == CHANGED || changeType == DELETED, "Unknown change type!");
-
-        Revision.ChangeType ct = null;
-        switch (changeType) {
-        case SimpleRepository.ADDED:
-            ct=Revision.ChangeType.ADDED;
-            break;
-        case SimpleRepository.CHANGED:
-            ct=Revision.ChangeType.CHANGED;
-            break;
-        case SimpleRepository.DELETED:
-            ct=Revision.ChangeType.DELETED;
-            break;
-        default:
-            break;
-        }
-        Revision revision = null;
         try {
-            revision = repo.getRevision(uh.createUriFor(repo.getBranch(uh.createUriFor(branchname)), revisionId));
+            // XXX ugly hack
+            return ((RepositoryImpl) repo).getRevisionInfo(uh.createUriFor(repo.getBranch(uh.createUriFor(branchname)), revisionId));
         } catch (final MalformedURIException e) {
-            logger.severe(String.format("Used invalid uri for accessing model contents on branch '%s', revisionId '%d',changeType '%s' ", branchname, revisionId, ct));
+            logger.severe(String.format("Used invalid uri for accessing model contents on branch '%s', revisionId '%d'", branchname, revisionId));
+            return null;
         }
-        final List<String> res = Lists.newArrayList();
-        if (ct != null && revision != null) {
-            for(final ModelLocation mloc:revision.getModelReferences(ct)){
-                res.add(mloc.getRelativePath());
-            }
-        }
-        return res;
     }
 
     /**
