@@ -8,7 +8,6 @@ lcd ../../../org.infai.backend.tests/bin
 lls
 newbranch trunk
 starttransaction trunk
-add testmodels/Ecore.ecore
 add testmodels/multi/A.ecore
 # we get informed about a missing model dependency
 add testmodels/multi/B.ecore

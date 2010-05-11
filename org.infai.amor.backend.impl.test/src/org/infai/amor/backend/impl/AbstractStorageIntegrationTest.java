@@ -23,7 +23,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
-import org.infai.amor.backend.impl.RepositoryImpl;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.internal.impl.*;
 import org.infai.amor.backend.resources.AmorResourceSetImpl;
@@ -132,7 +131,6 @@ public abstract class AbstractStorageIntegrationTest extends AbstractNeo4JPerfor
         // given
         final ResourceSet rs = new AmorResourceSetImpl();
         final Map<String, List<EObject>> models = Maps.newLinkedHashMap();
-        models.put("testmodels/Ecore.ecore", readInputModels("testmodels/Ecore.ecore", rs, false));
         for (final String location : modelLocations) {
             final List<EObject> currentModelContents = readInputModels(location, rs, false);
             for (final EObject eo : currentModelContents) {

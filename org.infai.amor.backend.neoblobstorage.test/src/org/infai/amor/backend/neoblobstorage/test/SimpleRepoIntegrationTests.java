@@ -52,15 +52,6 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         repo.checkin(file, path, trId);
     }
 
-    private void checkinEcoreM3() throws Exception {
-        // given
-        final String ecore = ModelUtil.readModel("testmodels/Ecore.ecore");
-        // when
-        final List<String> missing = repo.checkin(ecore, "testmodel/Ecore.ecore", trId);
-        // then
-        assertTrue(missing.isEmpty());
-    }
-
     // @Override
     // protected boolean isRollbackAfterTest() {
     // return false;
@@ -86,7 +77,6 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
 
         repo.createBranch(BRANCHNAME, null, -1);
         trId = repo.startTransaction(BRANCHNAME);
-        checkinEcoreM3();
     }
     @Test
     public void shouldAskForDependency() throws Exception {

@@ -9,10 +9,18 @@
  *******************************************************************************/
 package org.infai.amor.backend.neostorage;
 
+import java.util.Map;
+
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.internal.AbstractStorageFactory;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.storage.Storage;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Transaction;
+
+import com.google.common.collect.Maps;
 
 /**
  * @author sdienst
@@ -27,8 +35,32 @@ public class NeoBlobStorageFactory extends AbstractStorageFactory {
     public NeoBlobStorageFactory(final NeoProvider np) {
         super();
         this.neoprovider = np;
+        assertEcoreIdStored();
     }
 
+    /**
+     * 
+     */
+    private void assertEcoreIdStored() {
+        Transaction tx = neoprovider.getNeo().beginTx();
+        try {
+
+            NeoMappingDispatcher disp1 = new NeoMappingDispatcher(neoprovider);
+            final Node ecoreMetamodel = disp1.getModelNode(EcorePackage.eNS_URI);
+            if (null == ecoreMetamodel) {
+                // checkin ecore M3 model
+                Map<EObject, Node> map = Maps.newHashMap();
+                disp1.setRegistry(map);
+                disp1.store(EcorePackage.eINSTANCE.eResource());
+                NeoMetadataDispatcher disp2 = new NeoMetadataDispatcher(neoprovider);
+                disp2.setRegistry(map);
+                disp2.store(EcorePackage.eINSTANCE.eResource());
+            }
+            tx.success();
+        } finally {
+            tx.finish();
+        }
+    }
     /*
      * (non-Javadoc)
      * 

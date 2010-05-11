@@ -22,7 +22,7 @@ Import-Package: org.apache.commons.lang;version="2.3.0",
  org.eclipse.emf.ecore.resource,
  org.eclipse.emf.ecore.xmi.impl,
  org.infai.amor.backend,
- org.junit;version="4.5.0",
+ org.junit;version="4.0.0",
  org.neo4j.graphdb
 Export-Package: org.infai.amor.test,
  org.jmock
