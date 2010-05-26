@@ -33,6 +33,7 @@ public interface SimpleRepository {
      * @param ecorexmi
      *            xmi representation of the ecore metamodell to checkin
      * @param relativePath
+     *            relative path of the model
      * @return
      */
     List<String> checkin(String ecoreXmi, String relativePath, long transactionId);
@@ -48,7 +49,7 @@ public interface SimpleRepository {
      * @param transactionId
      *            current transaction
      * @throws RuntimeException
-     *             placeholder, TODO
+     *             placeholder, TODO define exception handling/return values for error states
      */
     void checkinPatch(String epatch, String relativePath, long transactionId) throws RuntimeException;
 
@@ -60,6 +61,7 @@ public interface SimpleRepository {
      * @param relativePath
      * @return serialized xmi representation of the model
      * @throws IOException
+     *             TODO define exception handling/return values for error states
      */
     String checkout(String branch, long revisionId, String relativePath) throws IOException;
 
@@ -69,7 +71,7 @@ public interface SimpleRepository {
      * @param transactionId
      * @return revision id
      * @throws TODO
-     *             which exceptions?
+     *             define exception handling/return values for error states
      */
     long commitTransaction(long transactionId, String username, String commitMessage) throws Exception;
 
@@ -83,29 +85,38 @@ public interface SimpleRepository {
      * @param startRevisionId
      *            -1 or a valid revisionid that resembles the {@link Branch#getHeadRevision()} of the new branch
      * @throws TODO
-     *             which exceptions exactly?
+     *             define exception handling/return values for error states
      */
     void createBranch(String newbranchname, String oldbranchname, long startRevisionId) throws Exception;
 
     /**
+     * Delete a persisted model.
+     * 
      * @param transactionId
      * @param relativePath
+     *            relative path of the model
      */
     void delete(long transactionId, String relativePath);
+
     /**
-     * @see Repository#getActiveContents(org.eclipse.emf.common.util.URI)
+     * @see Repository#getActiveContents(org.eclipse.emf.common.util.URI) URI format is
+     *      amor://hostname/repo/branchname/revisionId/relative/path/modelname or a substring of it.
      * @param uri
      * @return
      */
     List<String> getActiveContents(String uri);
 
     /**
+     * Get the names of all known branches of this repository.
+     * 
      * @see Repository#getBranches(org.eclipse.emf.common.util.URI)
      * @return
      */
     String[] getBranches();
 
     /**
+     * Retrieve some informations about a specific revision.
+     * 
      * @param branchname
      * @param revisionId
      * @return
@@ -121,11 +132,13 @@ public interface SimpleRepository {
     void rollbackTransaction(long transactionId) throws Exception;
 
     /**
-     * Start new write transaction.
+     * Start new write transaction. Returns a id that referes to this transaction. Use this for calls to
+     * {@link #checkin(String, String, long)}, {@link #checkinPatch(String, String, long)},
+     * {@link #commitTransaction(long, String, String)} and {@link #rollbackTransaction(long)}
      * 
      * @see Repository#startCommitTransaction(Branch)
      * @param branchname
-     * @return
+     * @return transaction id
      */
     long startTransaction(String branchname);
 }
