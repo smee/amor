@@ -27,9 +27,9 @@ import org.emftext.language.java.JavaClasspath;
 import org.emftext.language.java.JavaPackage;
 import org.emftext.language.java.resource.JavaSourceOrClassFileResource;
 import org.emftext.language.java.resource.JavaSourceOrClassFileResourceFactoryImpl;
-import org.emftext.language.java.resource.java.analysis.helper.JavaPostProcessor;
 import org.emftext.language.primitive_types.Primitive_typesPackage;
-import org.emftext.runtime.IOptions;
+import org.emftext.language.java.resource.java.IJavaOptions;
+import org.emftext.language.java.resource.util.JavaPostProcessor;
 
 public class JavaToEMFParser {
 	//the ResourceSet which loads the java-resources.
@@ -40,7 +40,7 @@ public class JavaToEMFParser {
 		EPackage.Registry.INSTANCE.put("http://www.emftext.org/java", JavaPackage.eINSTANCE);
 		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("java", new JavaSourceOrClassFileResourceFactoryImpl());
 		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
-		rs.getLoadOptions().put(IOptions.RESOURCE_POSTPROCESSOR_PROVIDER, new JavaPostProcessor());
+		rs.getLoadOptions().put(IJavaOptions.RESOURCE_POSTPROCESSOR_PROVIDER, new JavaPostProcessor());
 	}
 	
 	/**
