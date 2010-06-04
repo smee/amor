@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="somepackage"
+    nsURI="uri:epatchMoveBug" nsPrefix="sp">
+  <eClassifiers xsi:type="ecore:EClass" name="SimpleElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attr" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractElementContainer" abstract="true"
+      interface="true" eSuperTypes="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SingleElementContainer" instanceTypeName="singleElement"
+      eSuperTypes="#//AbstractElementContainer">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="element" eType="#//SimpleElement"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MultipleElementContainer" instanceTypeName="multipleElements"
+      eSuperTypes="#//AbstractElementContainer">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
+        eType="#//SimpleElement" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Parent">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//AbstractElementContainer" containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>
