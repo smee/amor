@@ -25,7 +25,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.infai.amor.test.ModelUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -71,7 +70,7 @@ public class EMFCompareBug {
 
         ModelComparator comparator = new ModelComparator();
         DiffModel diffModel = comparator.compare(resources.get(0).getContents().get(0), resources.get(1).getContents().get(0));
-        ModelUtil.describeDiff(diffModel.getOwnedElements(), 0);
+        // ModelUtil.describeDiff(diffModel.getOwnedElements(), 0);
         // then this should succeed without throwing an exception
         Epatch epatch = comparator.getEpatch();
     }
