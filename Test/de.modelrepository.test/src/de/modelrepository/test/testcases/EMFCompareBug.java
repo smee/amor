@@ -9,6 +9,9 @@
  *******************************************************************************/
 package de.modelrepository.test.testcases;
 
+import java.io.File;
+import java.util.*;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.compare.diff.metamodel.DiffModel;
 import org.eclipse.emf.compare.diff.service.DiffService;
@@ -22,7 +25,12 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.infai.amor.test.ModelUtil;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import de.modelrepository.test.JavaToEMFParser;
+import de.modelrepository.test.ModelComparator;
 
 /**
  * @author sdienst
@@ -30,46 +38,46 @@ import org.junit.Test;
  */
 public class EMFCompareBug {
 
-    // /**
-    // * @param rs
-    // * @return
-    // */
-    // private List<Resource> extractParsedClasses(ResourceSet rs) {
-    // List<Resource> result = new ArrayList<Resource>();
-    // for(Resource res:rs.getResources()) {
-    // if("file".equals(res.getURI().scheme())) {
-    // result.add(res);
-    // }
-    // }
-    // return result;
-    // }
-    //
-    // @Test
-    // @Ignore
-    // public void shouldSerializeModels() throws Exception {
-    // // given
-    // JavaToEMFParser parser = new JavaToEMFParser();
-    // // when
-    // parser.parseAndSerializeAllJavaFiles(new File("res/in/emfcomparebug"), new Vector<File>(), new
-    // File("res/out/emfcomparebug"));
-    // }
-    // @Test
-    // @Ignore
-    // public void shouldBeAbleToCreateEpatch() throws Exception {
-    // // given
-    // JavaToEMFParser parser = new JavaToEMFParser();
-    // // when
-    // ResourceSet rs = parser.parseAllJavaFiles(new File("res/in/emfcomparebug"), new Vector<File>());
-    // List<Resource> resources = extractParsedClasses(rs);
-    //
-    // ModelComparator comparator = new ModelComparator();
-    // DiffModel diffModel = comparator.compare(resources.get(0).getContents().get(0), resources.get(1).getContents().get(0));
-    // ModelUtil.describeDiff(diffModel.getOwnedElements(), 0);
-    // // then this should succeed without throwing an exception
-    // Epatch epatch = comparator.getEpatch();
-    // }
+    /**
+     * @param rs
+     * @return
+     */
+    private List<Resource> extractParsedClasses(ResourceSet rs) {
+        List<Resource> result = new ArrayList<Resource>();
+        for (Resource res : rs.getResources()) {
+            if ("file".equals(res.getURI().scheme())) {
+                result.add(res);
+            }
+        }
+        return result;
+    }
 
     @Test
+    @Ignore
+    public void shouldSerializeModels() throws Exception {
+        // given
+        JavaToEMFParser parser = new JavaToEMFParser();
+        // when
+        parser.parseAndSerializeAllJavaFiles(new File("res/in/emfcomparebug"), new Vector<File>(), new File("res/out/emfcomparebug"));
+    }
+
+    @Test
+    public void shouldBeAbleToCreateEpatch() throws Exception {
+        // given
+        JavaToEMFParser parser = new JavaToEMFParser();
+        // when
+        ResourceSet rs = parser.parseAllJavaFiles(new File("res/in/emfcomparebug"), new Vector<File>());
+        List<Resource> resources = extractParsedClasses(rs);
+
+        ModelComparator comparator = new ModelComparator();
+        DiffModel diffModel = comparator.compare(resources.get(0).getContents().get(0), resources.get(1).getContents().get(0));
+        ModelUtil.describeDiff(diffModel.getOwnedElements(), 0);
+        // then this should succeed without throwing an exception
+        Epatch epatch = comparator.getEpatch();
+    }
+
+    @Test
+    @Ignore
     public void shouldCreateEpatchForMovedElement() throws Exception {
         // given
         ResourceSet rs = new ResourceSetImpl();
