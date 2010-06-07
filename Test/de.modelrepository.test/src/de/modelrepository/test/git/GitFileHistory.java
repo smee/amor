@@ -54,7 +54,7 @@ public class GitFileHistory {
 	/**
 	 * @return an ArrayList that contains all Revisions for this file ordered by their commit time (ascending).
 	 */
-	public ArrayList<FileRevision> getAllFileRevisions() throws IOException {
+	public ArrayList<FileRevision> getAllFileRevisions() {
 		return fileRevisions;
 	}
 	

@@ -44,23 +44,21 @@ public class VersionObject {
      *            are the siblings of this commit (which have the same parent)
      */
     public VersionObject(FileRevision rev, List<VersionObject> parents,
-            List<VersionObject> siblingsForFork) {
+            List<String> siblingBranches) {
         this.rev = rev;
         commitTime = rev.getCommitTime();
         author = rev.getRevCommit().getAuthorIdent();
         committer = rev.getRevCommit().getCommitterIdent();
-        branch = resolveBranch(rev, parents, siblingsForFork);
-        try {
-            content = parseContent(rev);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        branch = resolveBranch(rev.getBranches(), parents, siblingBranches);
+        content = parseContent(rev);
+
         try {
             createPatches(parents);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
+
 
     /**
      * @param f
@@ -122,6 +120,13 @@ public class VersionObject {
     }
 
     /**
+     * @return commit message
+     */
+    public String getCommitMessage() {
+        return rev.getRevCommit().getFullMessage();
+    }
+
+    /**
      * @return the commitTime of this version.
      */
     public Date getCommitTime() {
@@ -164,7 +169,7 @@ public class VersionObject {
      * file. This method works directly on the repository directory and checks
      * out the needed versions of the dependent classes.
      */
-    private EObject parseContent(FileRevision rev) throws IOException {
+    private EObject parseContent(FileRevision rev){
         log.fine("checking out revision "+rev.getRevCommit().getId());
 
         EObject o = null;
@@ -172,7 +177,7 @@ public class VersionObject {
         JavaToEMFParser parser = new JavaToEMFParser();
         if(rev.getSourceFileRelativePath() != "") {
             File f = new File(rev.getRepository().getWorkDir(), rev.getSourceFileRelativePath());
-            copy(f, new File("d:/temp/amorrevs"), rev.getSourceFileRelativePath() + "-" + rev.getRevCommit().getCommitTime());
+            copy(f, new File("foo/amorrevs"), rev.getSourceFileRelativePath() + "-" + rev.getRevCommit().getCommitTime());
             rs = parser.parseJavaFile(f, null);
             if(rs.getResources().size() > 0 && rs.getResources().get(0).getContents().size() > 0) {
                 o = rs.getResources().get(0).getContents().get(0);
@@ -185,27 +190,24 @@ public class VersionObject {
      * This method tries to resolve a branch for this version of the file so
      * that the original commit tree can be restored.
      */
-    private String resolveBranch(FileRevision rev, List<VersionObject> parents,
-            List<VersionObject> siblings) {
-        List<String> branches = rev.getBranches();
-        if (branches.size() == 1) {
-            return branches.get(0);
+    private String resolveBranch(List<String> revBranches, List<VersionObject> parents,
+            List<String> siblingBranches) {
+        if (revBranches.size() == 1) {
+            return revBranches.get(0);
         }
         if (parents.size() == 0) {
-            return branches.get(0);
+            return revBranches.get(0);
         } else if (parents.size() == 1) {
             FileRevision parent = parents.get(0).getRev();
             if (parent.isFork()) {
-                if (siblings.size() == 0) {
+                if (siblingBranches.size() == 0) {
                     return parents.get(0).getBranch();
                 } else {
-                    for (String branch : branches) {
+                    for (String branch : revBranches) {
                         boolean used = false;
-                        for (Iterator i = siblings.iterator(); i.hasNext();) {
-                            VersionObject sibling = (VersionObject) i.next();
-                            if (branch.equals(sibling.getBranch())
-                                    && branch.endsWith(sibling.getBranch())
-                                    && sibling.getBranch().endsWith(branch)) {
+                        for (Iterator i = siblingBranches.iterator(); i.hasNext();) {
+                            String siblingBranch = (String) i.next();
+                            if (branch.equals(siblingBranch) && branch.endsWith(siblingBranch) && siblingBranch.endsWith(branch)) {
                                 used = true;
                             }
                         }

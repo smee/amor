@@ -1,9 +1,6 @@
 package de.modelrepository.test;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.jgit.revwalk.RevCommit;
 
@@ -16,50 +13,75 @@ import de.modelrepository.test.util.VersionObject;
  * Using this list the user can restore the commit tree for checking it into another repository.
  */
 public class FileVersionList implements Iterable<VersionObject> {
-	private GitFileHistory fh;
-	private List<VersionObject> versions;
-	
-	/**
-	 * Creates a new List for the given FileHistory.
-	 * @param fh the history of a java source file.
-	 */
-	public FileVersionList(GitFileHistory fh) {
-		this.fh = fh;
-		this.versions = new LinkedList<VersionObject>();
-		try {
-			createVersions();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    private GitFileHistory fh;
+    List<FileRevision> revs;
+    /**
+     * Creates a new List for the given FileHistory.
+     * @param fh the history of a java source file.
+     */
+    public FileVersionList(GitFileHistory fh) {
+        this.fh = fh;
+        this.revs = fh.getAllFileRevisions();
+    }
 
-	//FIXME Optimierung nötig!!!
-	private void createVersions() throws IOException {
-		List<FileRevision> revs = fh.getAllFileRevisions();
-		for (int i = revs.size() - 1; i >= 0; i--) {
-			FileRevision rev = revs.get(i);
-			List<VersionObject> parentVersions = new LinkedList<VersionObject>();
-			List<VersionObject> siblingVersions = new LinkedList<VersionObject>();
-			RevCommit[] parents = rev.getRevCommit().getParents();
-			for (RevCommit parent : parents) {
-				for (VersionObject o : versions) {
-					if (o.getRev().getRevCommit().equals(parent)) {
-						parentVersions.add(o);
-					}
-					RevCommit[] p = o.getRev().getRevCommit().getParents();
-					for (RevCommit x : p) {
-						if (x.equals(parent) && !(o.getRev().equals(rev)))
-							siblingVersions.add(o);
-					}
-				}
-			}
-			VersionObject vo = new VersionObject(rev, parentVersions, siblingVersions);
-			versions.add(vo);
-		}
-	}
+    @Override
+    public Iterator<VersionObject> iterator() {
+        return new Iterator<VersionObject>() {
+            int idx = revs.size();
+            Map<String, VersionObject> commitCache = new HashMap<String, VersionObject>();
 
-	@Override
-	public Iterator<VersionObject> iterator() {
-		return versions.iterator();
-	}
+            @Override
+            public VersionObject next() {
+                FileRevision rev = revs.get(--idx);
+
+                RevCommit crntCommit = rev.getRevCommit();
+
+                List<VersionObject> parentVersions = new LinkedList<VersionObject>();
+                RevCommit[] parents = rev.getRevCommit().getParents();
+                for (RevCommit parent : parents) {
+                    VersionObject vo = commitCache.get(parent.name());
+                    assert vo != null : "parent commit should have been present by now!";
+                    parentVersions.add(vo);
+                }
+                VersionObject vo = new VersionObject(rev, parentVersions, findSiblingBranches(crntCommit.name(), getParentIds(parentVersions)));
+                commitCache.put(crntCommit.name(), vo);
+                return vo;
+            }
+
+            private List<String> findSiblingBranches(String commitId, Set<String> parentIds) {
+                Set<String> branches = new HashSet<String>();
+                for (FileRevision rev : revs) {
+                    if (!commitId.equals(rev.getRevCommit().name())) {
+                        for(RevCommit potentialCommonParent: rev.getRevCommit().getParents()) {
+                            if(parentIds.contains(potentialCommonParent.name())){
+                                branches.addAll(rev.getBranches());
+                            }
+                        }
+                    }
+                }
+                return new ArrayList<String>(branches);
+            }
+
+            @Override
+            public boolean hasNext() {
+                return idx > 0;
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("not supported");
+            }
+            /**
+             * @param versions
+             * @return
+             */
+            private Set<String> getParentIds(List<VersionObject> versions) {
+                Set<String> ids = new HashSet<String>(versions.size());
+                for (VersionObject vo : versions) {
+                    ids.add(vo.getRev().getRevCommit().name());
+                }
+                return ids;
+            }
+        };
+    }
 }
