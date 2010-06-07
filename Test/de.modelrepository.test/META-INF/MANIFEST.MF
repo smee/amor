@@ -17,7 +17,10 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.5.0",
  org.eclipse.emf.compare.diff;bundle-version="1.0.0",
  org.junit4;bundle-version="4.5.0",
  org.eclipse.emf.compare.epatch;bundle-version="1.0.1",
- org.eclipse.jgit;bundle-version="0.6.0"
+ org.eclipse.jgit;bundle-version="0.6.0",
+ org.emftext.commons.antlr3_1_1;bundle-version="3.1.1"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.infai.amor.test
+Import-Package: org.eclipse.jdt.core,
+ org.eclipse.jface.text.rules,
+ org.infai.amor.test
