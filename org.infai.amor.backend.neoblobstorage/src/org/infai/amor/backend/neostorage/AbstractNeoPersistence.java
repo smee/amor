@@ -113,6 +113,7 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
         }
     }
 
+
     /**
      * @param neo
      */
@@ -252,6 +253,23 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
     }
 
     /**
+     * @param relationships
+     * @param nsUri
+     * @param nsURI2
+     * @return
+     */
+    private Node findNode(Iterable<Relationship> relationships, String nodeProperty, String value) {
+        for(Relationship rel: relationships){
+            Node node = rel.getEndNode();
+            String propertyValue = getString(node,nodeProperty);
+            if(propertyValue.equals(value)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Searches the neo4j node corresponding to the given {@link EPackage}.
      * <p>
      * 
@@ -281,13 +299,16 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
         final Iterable<Relationship> rels = getFactoryNode(EcoreRelationshipType.RESOURCES).getRelationships(Direction.OUTGOING);
         for (final Relationship rel : rels) {
             final Node model = rel.getEndNode();
-            if (model.getProperty(NS_URI).equals(nsURI)) {
+            String noteNsUri = getString(model,NS_URI);
+            if (noteNsUri.equals(nsURI)) {
                 return model;
+            }else if(noteNsUri.length()>0 && nsURI.startsWith(noteNsUri)){
+                // subpackage
+                return findNode(model.getRelationships(EcoreRelationshipType.CONTAINS, Direction.OUTGOING),NS_URI,nsURI);
             }
         }
         return null;
     }
-
     /**
      * Find neo4j node within the cache.
      * 
@@ -298,32 +319,34 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
     protected Node getNodeFor(final EObject element) {
         // System.out.println(element.hashCode() + ": " + EcoreUtil.getURI(element));
         final Node node = nodeCache.get(element);
+        if (node != null){
+            return node;
+        }else
+            if (element.eIsProxy()) {
+                // TODO find node by traversing known models
+                // create a proxy node
+                final Node proxyNode = createNode();
+                set(proxyNode, NAME, "ProxyNode");
+                // make proxy uri relative to current resource's uri
+                final String relativeProxyUri = deresolve(element);
+                // final String relativeProxyUri = ((InternalEObject) element).eProxyURI().toString();
+                set(proxyNode, "proxyUri", relativeProxyUri);
+                final Node classNode = findClassifierNode(element.eClass());
+                classNode.createRelationshipTo(proxyNode, EcoreRelationshipType.INSTANCE);
 
-        if (node == null && element.eIsProxy()) {
-            // TODO find node by traversing known models
-            // create a proxy node
-            final Node proxyNode = createNode();
-            set(proxyNode, NAME, "ProxyNode");
-            // make proxy uri relative to current resource's uri
-            final String relativeProxyUri = deresolve(element);
-            // final String relativeProxyUri = ((InternalEObject) element).eProxyURI().toString();
-            set(proxyNode, "proxyUri", relativeProxyUri);
-            final Node classNode = findClassifierNode(element.eClass());
-            classNode.createRelationshipTo(proxyNode, EcoreRelationshipType.INSTANCE);
+                logger.finest("storing proxy to " + relativeProxyUri);
 
-            logger.finest("storing proxy to " + relativeProxyUri);
-
-            cache(element, proxyNode);
-            return proxyNode;
-        }
-        if (node == null && element instanceof DynamicEObjectImpl) {
-
-            // DynamicEObjects might get created several times, sadly they do not overwrite hashCode() and equals(...) so we need
-            // to
-            // do so manually :(
-            return nodeCache.get(element.eClass());
-        }
-        return node;
+                cache(element, proxyNode);
+                return proxyNode;
+            }else  if (element instanceof DynamicEObjectImpl) {
+                // DynamicEObjects might get created several times, sadly they do not overwrite hashCode() and equals(...) so we need
+                // to
+                // do so manually :(
+                return nodeCache.get(element.eClass());
+            } else {
+            // throw new IllegalStateException("Could not find neo4j node for " + element);
+                return null;
+            }
     }
 
     /**

@@ -88,7 +88,13 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
         set(node, NAME, element.getName());
         set(node, ABSTRACT, element.isAbstract());
         set(node, INTERFACE, element.isInterface());
-        set(node, INSTANCE_TYPE_NAME, element.getInstanceTypeName());
+        if (!element.isAbstract()) {
+            // if an element is abstract, then the instance name is not null iff
+            // there is generated code. This crashes when trying to restore
+            // an instance dynamically (without generated classes, using informations
+            // from the metamodel only)
+            set(node, INSTANCE_TYPE_NAME, element.getInstanceTypeName());
+        }
         set(node, DEFAULT_VALUE, element.getDefaultValue());
 
         addContains(element.getEPackage(), node);
@@ -195,11 +201,11 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
             modelNode.createRelationshipTo(objectNode, EcoreRelationshipType.CONTAINS);
             // bind dummy container node to its meta model
             EPackage topLevelPackage = element.eClass().getEPackage();
-            while (null != topLevelPackage.getESuperPackage()) {
-                topLevelPackage = topLevelPackage.getESuperPackage();
-            }
-            final Node metaPackageNode = getModelNode(topLevelPackage.getNsURI());
-            metaPackageNode.createRelationshipTo(modelNode, EcoreRelationshipType.INSTANCE_MODEL);
+            /*
+             * while (null != topLevelPackage.getESuperPackage()) { topLevelPackage = topLevelPackage.getESuperPackage(); }
+             */            final Node metaPackageNode = getModelNode(topLevelPackage.getNsURI());
+             assert metaPackageNode != null : "There is no metamodel stored with namespace uri " + topLevelPackage.getNsURI();
+             metaPackageNode.createRelationshipTo(modelNode, EcoreRelationshipType.INSTANCE_MODEL);
         }
         // TODO why not cache(element, modelNode)?
         cache(element, objectNode);

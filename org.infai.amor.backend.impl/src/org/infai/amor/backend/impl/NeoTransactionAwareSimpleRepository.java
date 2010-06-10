@@ -10,8 +10,9 @@
 package org.infai.amor.backend.impl;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.transaction.*;
 
@@ -20,6 +21,7 @@ import org.infai.amor.backend.api.SimpleRepository;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Neo4J associates running transactions with the current thread. We need to make sure this transaction gets disassociated from
@@ -30,15 +32,55 @@ import com.google.common.collect.Maps;
  * 
  */
 public class NeoTransactionAwareSimpleRepository implements SimpleRepository {
-
+    private static final Logger logger = Logger.getLogger(NeoTransactionAwareSimpleRepository.class.getName());
+    /**
+     * Transactions time out after xxx msec.
+     */
+    private static final long TX_TIMEOUT = 20 * 1000;
+    private static final long TIMER_INTERVALL = 5 * 1000;
     private final SimpleRepository wrappedInstance;
     private TransactionManager txmanager;
     final Map<Long, Transaction> txmap;
+    final Map<Long, Long> txtimers;
+    final Timer cleanupTimer;
 
     public NeoTransactionAwareSimpleRepository(final SimpleRepository wrappedInstance, final TransactionManager txm) {
         this.wrappedInstance = wrappedInstance;
         this.txmanager = txm;
         txmap = Maps.newHashMap();
+        txtimers = Maps.newHashMap();
+        cleanupTimer = new Timer(true);
+        // kill stalled transactions (no action for > 20sec.)
+        cleanupTimer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                Set<Long> toRemove = Sets.newHashSet();
+
+                for (Long txId : txtimers.keySet()) {
+                    long stallTime = System.currentTimeMillis() - txtimers.get(txId);
+                    if (stallTime > TX_TIMEOUT) {
+                        Transaction stalledTransaction = txmap.remove(txId);
+                        try {
+                            toRemove.add(txId);
+                            assert txmanager != null;
+                            txmanager.resume(stalledTransaction);
+                            txmanager.rollback();
+                        } catch (IllegalStateException e) {
+                            logger.log(Level.WARNING, "Error on rolling back stalled transaction!", e);
+                        } catch (SystemException e) {
+                            logger.log(Level.WARNING, "Error on rolling back stalled transaction!", e);
+                        } catch (InvalidTransactionException e) {
+                            logger.log(Level.WARNING, "Error on rolling back stalled transaction!", e);
+                        }
+                    }
+                }
+                // remove timestamps
+                for (Long txId : toRemove) {
+                    txtimers.remove(txId);
+                }
+            }
+        }, 0, TIMER_INTERVALL);
     }
 
     /* (non-Javadoc)
@@ -50,7 +92,7 @@ public class NeoTransactionAwareSimpleRepository implements SimpleRepository {
         try {
             return wrappedInstance.checkin(ecoreXmi, relativePath, transactionId);
         } finally {
-            suspend();
+            suspend(transactionId);
         }
     }
     /* (non-Javadoc)
@@ -62,7 +104,7 @@ public class NeoTransactionAwareSimpleRepository implements SimpleRepository {
         try{
             wrappedInstance.checkinPatch(epatch, relativePath, transactionId);
         }finally{
-            suspend();
+            suspend(transactionId);
         }
     }
 
@@ -80,7 +122,11 @@ public class NeoTransactionAwareSimpleRepository implements SimpleRepository {
     @Override
     public long commitTransaction(final long transactionId, final String username, final String commitMessage) throws Exception {
         resume(transactionId);
-        return wrappedInstance.commitTransaction(transactionId, username, commitMessage);
+        try {
+            return wrappedInstance.commitTransaction(transactionId, username, commitMessage);
+        } finally {
+            txtimers.remove(transactionId);
+        }
     }
     /* (non-Javadoc)
      * @see org.infai.amor.backend.SimpleRepository#createBranch(java.lang.String, java.lang.String, long)
@@ -97,7 +143,7 @@ public class NeoTransactionAwareSimpleRepository implements SimpleRepository {
     public void delete(final long transactionId, final String relativePath) {
         resume(transactionId);
         wrappedInstance.delete(transactionId, relativePath);
-        suspend();
+        suspend(transactionId);
     }
 
     /* (non-Javadoc)
@@ -128,6 +174,7 @@ public class NeoTransactionAwareSimpleRepository implements SimpleRepository {
      * Reattach the neo4j transaction to the current thread
      */
     private Transaction resume(final long transactionId) {
+        txtimers.remove(transactionId);
         final Transaction tx = txmap.get(transactionId);
         Preconditions.checkNotNull(tx, "There is no transaction with id=" + transactionId);
         try {
@@ -136,10 +183,13 @@ public class NeoTransactionAwareSimpleRepository implements SimpleRepository {
             }
             return tx;
         } catch (final InvalidTransactionException e) {
-            throw new RuntimeException(e);
+            logger.log(Level.WARNING, "No such transaction!", e);
+            throw new RuntimeException("No such transaction id!", e);
         } catch (final IllegalStateException e) {
+            logger.log(Level.WARNING, "Invalid state for transaction!", e);
             throw new RuntimeException("Internal error!", e);
         } catch (final SystemException e) {
+            logger.log(Level.WARNING, "Systemexception!?", e);
             throw new RuntimeException("Internal error!", e);
         }
     }
@@ -150,8 +200,11 @@ public class NeoTransactionAwareSimpleRepository implements SimpleRepository {
     @Override
     public void rollbackTransaction(final long transactionId) throws Exception {
         resume(transactionId);
-        wrappedInstance.rollbackTransaction(transactionId);
-
+        try {
+            wrappedInstance.rollbackTransaction(transactionId);
+        } finally {
+            txtimers.remove(transactionId);
+        }
     }
 
     /**
@@ -159,6 +212,7 @@ public class NeoTransactionAwareSimpleRepository implements SimpleRepository {
      */
     public void setTransactionManager(final TransactionManager tm){
         this.txmanager = tm;
+        logger.finer("Got a TransactionManager reference! " + tm);
     }
 
     /* (non-Javadoc)
@@ -174,14 +228,15 @@ public class NeoTransactionAwareSimpleRepository implements SimpleRepository {
                 throw new RuntimeException(e);
             }
         }
-        suspend();
+        suspend(transactionId);
         return transactionId;
     }
 
     /**
      * 
      */
-    private void suspend() {
+    private void suspend(long txId) {
+        txtimers.put(txId, System.currentTimeMillis());
         if (txmanager != null) {
             try {
                 txmanager.suspend();

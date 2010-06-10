@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.internal.impl;
+package org.infai.amor.backend.internal;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
