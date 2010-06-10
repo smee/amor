@@ -192,7 +192,8 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         final DelegatingStorageFactory sf = new DelegatingStorageFactory();
         trman.addTransactionListener(sf);
         final Repository repo = new RepositoryImpl(sf, branchFactory, uriHandler, trman);
-        simplerepo = new NeoTransactionAwareSimpleRepository(new SimpleRepositoryImpl(repo, uriHandler), null);
+        // XXX FIXME trman should not be needed, handle read transaction within domain objects!
+        simplerepo = new NeoTransactionAwareSimpleRepository(new SimpleRepositoryImpl(repo, uriHandler, trman), null);
         // register repository service
         final Dictionary properties = new Hashtable();
         properties.put(RemoteOSGiService.R_OSGi_REGISTRATION, Boolean.TRUE);

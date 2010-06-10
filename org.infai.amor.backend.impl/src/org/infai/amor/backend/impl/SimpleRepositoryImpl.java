@@ -31,9 +31,7 @@ import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIExcepti
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.api.RevisionInfo;
 import org.infai.amor.backend.api.SimpleRepository;
-import org.infai.amor.backend.internal.ModelImpl;
-import org.infai.amor.backend.internal.UriHandler;
-import org.infai.amor.backend.internal.impl.ChangedModelImpl;
+import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.backend.responses.UnresolvedDependencyResponse;
 import org.infai.amor.backend.util.EcoreModelHelper;
@@ -44,6 +42,10 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.*;
 
+/**
+ * @author sdienst
+ * 
+ */
 /**
  * @author sdienst
  * 
@@ -59,10 +61,20 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      * TODO neo4j transactions are bound to a specific thread, need to cope with!
      */
     final Map<Long, CommitTransaction> transactionMap = Maps.newHashMap();
+    /**
+     * XXX dirty hack: read transaction should be handled within api objects (neobranch etc.)
+     */
+    private TransactionManager tm;
 
     public SimpleRepositoryImpl(final Repository r, final UriHandler uh) {
         this.repo = r;
         this.uh = uh;
+    }
+
+    public SimpleRepositoryImpl(final Repository r, final UriHandler uh, TransactionManager tm) {
+        this.repo = r;
+        this.uh = uh;
+        this.tm = tm;
     }
 
     /*
@@ -293,12 +305,21 @@ public class SimpleRepositoryImpl implements SimpleRepository {
     @Override
     public String[] getBranches() {
         try {
-            return toArray(transform(repo.getBranches(uh.getDefaultUri()),
+            Iterable<Branch> branches = repo.getBranches(uh.getDefaultUri());
+
+            if (tm != null) {
+                tm.startReadTransaction();
+            }
+            return toArray(transform(branches,
                     getBranchName()),
                     String.class);
         } catch (final MalformedURIException e) {
             e.printStackTrace();
             return new String[0];
+        } finally {
+            if (tm != null) {
+                tm.closeReadTransaction();
+            }
         }
     }
 
