@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<videothek:Videothek xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:videothek="https://139.18.2.174/svn/bisprak_grp3/trunk/de.unileipzig.bis.bisprak3.videothek/model/videothek.ecore">
+  <Angestellte Name="Klaus Müller" MitarbeiterID="1"/>
+  <Angestellte Name="Peter Strom" MitarbeiterID="2"/>
+  <Kunden Name="Angelika Baumgarten" Anschrift="Neue Strasse 4" KundenID="1"/>
+  <Kunden Name="Holger Grünspan" Anschrift="Industriestrasse 23" KundenID="2"/>
+  <Leihobjekte xsi:type="videothek:DVD" Name="Miss Marple und der Stein der Weisen" LeihobjektID="1" Genre="Krimi"/>
+  <Leihobjekte xsi:type="videothek:DVD" Name="Winnetou und das Halbblut Appanachie" LeihobjektID="2" Genre="Komödie"/>
+  <Leihobjekte xsi:type="videothek:Videospiel" Name="Moorhuhn vs. Hugo" LeihobjektID="3"/>
+  <Leihobjekte xsi:type="videothek:Videospiel" Name="Resident Good" LeihobjektID="4" Plattform="Playstation"/>
+  <Leihobjekte xsi:type="videothek:Videospiel" Name="Donkey Pong" LeihobjektID="5" Plattform="Wii"/>
+  <Ausleihe Kunde="//@Kunden.0" Mitarbeiter="//@Angestellte.0" Leihobjekt="//@Leihobjekte.0" AusleihID="1" Ausleihdatum="2010-05-06T00:00:00.000+0200" Rückgabedatum="2010-05-11T00:00:00.000+0200"/>
+  <Ausleihe Kunde="//@Kunden.1" Mitarbeiter="//@Angestellte.1" Leihobjekt="//@Leihobjekte.2" AusleihID="2" Ausleihdatum="2010-04-27T00:00:00.000+0200" Rückgabedatum="2010-05-03T00:00:00.000+0200" Leihstatus="zurück"/>
+</videothek:Videothek>

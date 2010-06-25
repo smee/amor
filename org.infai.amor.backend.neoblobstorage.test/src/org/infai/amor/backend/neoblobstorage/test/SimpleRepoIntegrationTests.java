@@ -100,6 +100,17 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         assertEquals("http://mymodels.org/packageB", missing.get(0));
     }
     @Test
+    public void shouldCheckinBigDecimalDatatypes() throws Exception {
+        // given
+        final String ecore = ModelUtil.readModel("testmodels/video/videothek.ecore");
+        // when
+        final List<String> missing = repo.checkin(ecore, "testmodel/video/videothek.ecore", trId);
+        repo.checkin(ModelUtil.readModel("testmodels/video/Beispiel.videothek"), "Beispiel.videothek", trId);
+        final long revId = repo.commitTransaction(trId, "testuser", "added videothek example");
+        // then
+        assertTrue(missing.isEmpty());
+    }
+    @Test
     public void shouldCheckinComplexModel() throws Exception {
         // given
         checkin("testmodels/02/primitive_types.ecore");
@@ -109,6 +120,7 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         // then
         assertFalse(missing.isEmpty());
     }
+
     @Test
     public void shouldCheckinDependencies() throws Exception {
         // given

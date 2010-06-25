@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="videothek"
+    nsURI="https://139.18.2.174/svn/bisprak_grp3/trunk/de.unileipzig.bis.bisprak3.videothek/model/videothek.ecore"
+    nsPrefix="videothek">
+  <eClassifiers xsi:type="ecore:EClass" name="Videothek">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Angestellte" upperBound="-1"
+        eType="#//Angestellter" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Kunden" upperBound="-1"
+        eType="#//Kunde" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Leihobjekte" upperBound="-1"
+        eType="#//Leihobjekt" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Ausleihe" upperBound="-1"
+        eType="#//Ausleihe" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Angestellter">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="MitarbeiterID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Kunde">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Anschrift" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="KundenID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Leihobjekt">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="LeihobjektID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DVD" eSuperTypes="#//Leihobjekt">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Genre" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Videospiel" eSuperTypes="#//Leihobjekt">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Plattform" eType="#//Platform"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Ausleihe">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Kunde" eType="#//Kunde"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Mitarbeiter" eType="#//Angestellter"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="Leihobjekt" eType="#//Leihobjekt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="AusleihID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Ausleihdatum" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Rückgabedatum" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Leihstatus" eType="#//Leihstatus"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Leihstatus">
+    <eLiterals name="verliehen"/>
+    <eLiterals name="zurück" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Platform">
+    <eLiterals name="PC"/>
+    <eLiterals name="Playstation" value="1"/>
+    <eLiterals name="XBox" value="2"/>
+    <eLiterals name="Wii" value="3"/>
+  </eClassifiers>
+</ecore:EPackage>
