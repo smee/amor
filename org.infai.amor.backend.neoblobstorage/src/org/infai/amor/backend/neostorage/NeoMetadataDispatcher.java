@@ -322,6 +322,7 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
                     }
                 } else {
                     final Node featureNode = createNodeWithRelationship(eObjectNode, EcoreRelationshipType.CONTAINS, true);
+                    // FIXME breaks for attributeValue.getClass.equals(BigDecimal.class)
                     featureNode.setProperty(VALUE, attributeValue);
 
                     // set meta relationship
