@@ -150,23 +150,25 @@ public class IntegrationTests extends AbstractIntegrationTest {
         ct.setUser("mustermann");
         // add a model
         repository.checkin(new ModelImpl(input, "testmodels/base.ecore"), ct);
+        repository.checkin(new ModelImpl(input, "testmodels/base2.ecore"), ct);
         final CommitSuccessResponse commitResponse = (CommitSuccessResponse) repository.commitTransaction(ct);
         // then the revision should know about this model
         final Revision revision = repository.getRevision(commitResponse.getURI());
-        assertEquals(1, revision.getModelReferences(ChangeType.ADDED).size());
+        assertEquals(2, revision.getModelReferences(ChangeType.ADDED).size());
         // also the current repository contents should not be empty
         final Iterable<URI> intermediaryContents = repository.getActiveContents(commitResponse.getURI());
+        // there is a path testmodels
         assertEquals(1, Iterables.size(intermediaryContents));
-        // now delete the model
+        // now delete the model base.ecore
         final CommitTransaction ct2 = repository.startCommitTransaction(branch);
         ct2.setCommitMessage("delete model");
         ct2.setUser("mustermann");
         repository.deleteModel(new Path("testmodels/base.ecore"), ct2);
         final CommitSuccessResponse commitResponse2 = (CommitSuccessResponse) repository.commitTransaction(ct2);
 
-        final Iterable<URI> activeContents = repository.getActiveContents(commitResponse2.getURI());
-        // no models should be visible at revision 3
-        assertTrue(Iterables.isEmpty(activeContents));
-
+        final Iterable<URI> activeContents = repository.getActiveContents(commitResponse2.getURI().appendSegment("testmodels"));
+        // at least testmodel/base2.ecore should be visible at revision 3
+        assertEquals(1, Iterables.size(activeContents));
+        assertTrue(activeContents.iterator().next().toString().endsWith("base2.ecore"));
     }
 }
