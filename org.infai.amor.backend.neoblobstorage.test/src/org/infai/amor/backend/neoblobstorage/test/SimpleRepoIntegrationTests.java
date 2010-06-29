@@ -143,19 +143,22 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         // and an instance model
         final String initialModel = ModelUtil.readModel("testmodels/fs/simplefilesystem_v1.filesystem");
         repo.checkin(initialModel, "simplefilesystem.xmi", trId);
-        repo.commitTransaction(trId, "user", "added inital filesystem model");
-
+        long revId1 = repo.commitTransaction(trId, "user", "added inital filesystem model");
+        // active contents should contain the instance model
+        assertTrue(repo.getActiveContents("amor://localhost/repo/" + BRANCHNAME + "/" + revId1).contains("amor://localhost/repo/main/1/simplefilesystem.xmi"));
         // when
         // checking in an epatch
         trId = repo.startTransaction(BRANCHNAME);
         repo.checkinPatch(ModelUtil.readModel("testmodels/fs/v1-v2.epatch"), "simplefilesystem.xmi", trId);
-        final long revId = repo.commitTransaction(trId, "user", "added changed model");
+        final long revId2 = repo.commitTransaction(trId, "user", "added changed model");
+        // make sure the active contents contain revision id 2 for the updated model
+        assertTrue(repo.getActiveContents("amor://localhost/repo/" + BRANCHNAME + "/" + revId2).contains("amor://localhost/repo/main/2/simplefilesystem.xmi"));
+
         // and checking out the most recent version of the instance model
-        final String checkout = repo.checkout(BRANCHNAME, revId, "simplefilesystem.xmi");
+        final String checkout = repo.checkout(BRANCHNAME, revId2, "simplefilesystem.xmi");
         // then
         assertEqualsIgnoringWhitespace(ModelUtil.readModel("testmodels/fs/simplefilesystem_v2.filesystem"), checkout);
     }
-
     @Test
     public void shouldCheckinSimpleM2() throws Exception {
         // given
