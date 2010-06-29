@@ -208,13 +208,17 @@ public class AmorCommands implements CommandProvider {
         if (parameter != null) {
             parameter = parameter.trim();
             if (parameter.equals("-l")) {
-                // assume we are staring at a revision, let's show the details!
-                ci.println(getTouchedModels());
-                return;
-            }
-            if (parameter.equals("..")) {
-                uri=uri.trimSegments(1);
-            }
+                if (currentUri.segmentCount() < 3) {
+                    ci.println("Please choose an existing revision via \"cd\".");
+                } else {
+                    // assume we are staring at a revision, let's show the details!
+                    ci.println(getTouchedModels());
+                    return;
+                }
+            } else
+                if (parameter.equals("..")) {
+                    uri=uri.trimSegments(1);
+                }
             uri=uri.appendSegment(parameter);
         }
         final Set<String> strings = getActiveContents(uri);
@@ -342,6 +346,7 @@ public class AmorCommands implements CommandProvider {
             {"Navigation:"},
             { "pwd","show the current amor uri we are looking at" },
             { "dir","show the current amor repository contents using the uri show by 'pwd'" },
+            { "dir -l","show details for the current revision (as specified via \"cd branch/revision\")" },
             { "cd <string>","append a string to the current amor uri, use '..' to remove the last uri segment, call without parameter to change uri back to the default" },
 
             { "Lokale Navigation (zum Finden von lokalen Modellen)" },
