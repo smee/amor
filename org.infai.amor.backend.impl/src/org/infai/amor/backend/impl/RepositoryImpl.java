@@ -113,7 +113,7 @@ public class RepositoryImpl implements Repository {
         try {
             Storage storage = getStorage(uri);
             Branch branch = branchFactory.getBranch(uriHandler.extractBranchName(uri));
-            long revisionId = uriHandler.extractRevision(uri);
+            long revisionId = getRevisionId(uri);
             Revision revision = branch.getRevision(revisionId);
 
             return storage.checkout(uriHandler.extractModelPathFrom(uri), revision);
@@ -212,8 +212,29 @@ public class RepositoryImpl implements Repository {
     public Response deleteModel(final IPath modelPath, final CommitTransaction tr) throws IOException {
         try {
             final URI modeluri = uriHandler.createModelUri(tr, modelPath);
-            storageFactory.getStorage(tr).delete(modelPath, modeluri, tr.getRevision());
-            return new DeleteSuccessResponse("Model deleted successfully", uriHandler.createModelUri(tr, modelPath));
+            // test, if model really exists
+            ModelLocation modelLocation = ModelFinder.findActiveModel(tr.getRevision(), new ModelMatcher() {
+                String toDeletePath=modelPath.toString();
+                boolean wasDeleted=false;
+                @Override
+                public boolean matches(ModelLocation loc) {
+                    if (!wasDeleted && loc.getExternalUri().toString().endsWith(toDeletePath)) {
+                        if(loc.getChangeType()==ChangeType.DELETED){
+                            wasDeleted=true;
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            });
+            if (modelLocation == null) {
+                return new DeleteErrorResponse("No such persisted model! Please delete only existing models.", uriHandler.createModelUri(tr, modelPath));
+            } else {
+                storageFactory.getStorage(tr).delete(modelPath, modeluri, tr.getRevision());
+                return new DeleteSuccessResponse("Model deleted successfully", uriHandler.createModelUri(tr, modelPath));
+            }
         } catch (final IOException ioe) {
             ioe.printStackTrace();
             return new DeleteErrorResponse(ioe.getMessage(), uriHandler.createModelUri(tr, modelPath));
@@ -270,7 +291,7 @@ public class RepositoryImpl implements Repository {
             }
             try {
                 // has it a revision?
-                revisionId = uriHandler.extractRevision(uri);
+                revisionId = getRevisionId(uri);
             } catch (final MalformedURIException e) {
                 hasRevision = false;
             }
@@ -374,9 +395,24 @@ public class RepositoryImpl implements Repository {
 
             final Branch branch = branchFactory.getBranch(uriHandler.extractBranchName(uri));
 
-            return branch.getRevision(uriHandler.extractRevision(uri));
+            return branch.getRevision(getRevisionId(uri));
         } finally {
             transactionManager.closeReadTransaction();
+        }
+    }
+
+    /**
+     * Returns the revision id content of the uri. This id should be numeric. Also HEAD is valid, it references the most recent
+     * revision of a branch.
+     * 
+     * @param uri
+     * @return
+     */
+    private long getRevisionId(URI uri) throws MalformedURIException{
+        if(uri.segmentCount()>2 && uri.segment(2).toUpperCase().equals("HEAD")){
+            return branchFactory.getBranch(uriHandler.extractBranchName(uri)).getHeadRevision().getRevisionId();
+        } else {
+            return uriHandler.extractRevision(uri);
         }
     }
 
@@ -393,7 +429,7 @@ public class RepositoryImpl implements Repository {
 
             final Branch branch = branchFactory.getBranch(uriHandler.extractBranchName(uri));
 
-            return createRevisionInfo(branch.getRevision(uriHandler.extractRevision(uri)));
+            return createRevisionInfo(branch.getRevision(getRevisionId(uri)));
         } finally {
             transactionManager.closeReadTransaction();
         }
@@ -466,7 +502,7 @@ public class RepositoryImpl implements Repository {
         try {
 
             final Storage storage = getStorage(uri);
-            final Revision revision = branchFactory.getBranch(uriHandler.extractBranchName(uri)).getRevision(uriHandler.extractRevision(uri));
+            final Revision revision = branchFactory.getBranch(uriHandler.extractBranchName(uri)).getRevision(getRevisionId(uri));
             return storage.view(uriHandler.extractModelPathFrom(uri), revision);
         } finally {
             transactionManager.closeReadTransaction();
