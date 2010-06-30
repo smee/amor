@@ -86,6 +86,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
     public List<String> checkin(final String ecoreXmi, final String relativePath, final long transactionId) {
         Preconditions.checkNotNull(ecoreXmi, "Missing serialized model!");
         Preconditions.checkNotNull(relativePath, "Missing relative path for this model file!");
+        Preconditions.checkArgument(relativePath.length() > 0, "Missing relative path for this model file!");
 
         final ResourceSet rs = createResourceSet();
         final URI fileUri = URI.createURI(relativePath);
@@ -141,6 +142,8 @@ public class SimpleRepositoryImpl implements SimpleRepository {
     public void checkinPatch(final String epatch, final String relativePath, final long transactionId) throws RuntimeException {
         Preconditions.checkNotNull(epatch, "Missing serialized epatch!");
         Preconditions.checkNotNull(relativePath, "Missing relative path for this model file!");
+        Preconditions.checkArgument(relativePath.length() > 0, "Missing relative path for this model file!");
+
         final CommitTransaction transaction = checkTransaction(transactionId);
 
         final ResourceSet rs = createResourceSet();
