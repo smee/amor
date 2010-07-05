@@ -124,6 +124,9 @@ public class SimpleRepositoryImpl implements SimpleRepository {
                 } else {
                     throw new RuntimeException(e);
                 }
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, "Could not load model", e);
+                throw new RuntimeException("Internal error in the backend. Could not load model!");
             }
 
         }
@@ -363,7 +366,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
      * @return
      */
     private Map<?, ?> getLoadOptions() {
-        return ImmutableMap.of(XMLResource.OPTION_EXTENDED_META_DATA, true);
+        return ImmutableMap.of(XMLResource.OPTION_EXTENDED_META_DATA, true, XMLResource.OPTION_ENCODING, "UTF-8");
     }
 
     /* (non-Javadoc)
