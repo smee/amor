@@ -74,10 +74,10 @@
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
       <plugin id="org.infai.amor.backend" autoStart="true" startLevel="0" />
-      <plugin id="org.infai.amor.backend.api" autoStart="true" startLevel="0" />
+      <plugin id="org.infai.amor.backend.api" autoStart="true" startLevel="1" />
       <plugin id="org.infai.amor.backend.impl" autoStart="true" startLevel="4" />
-      <plugin id="org.infai.amor.backend.neo" autoStart="true" startLevel="0" />
-      <plugin id="org.infai.amor.backend.neoblobstorage" autoStart="true" startLevel="0" />
+      <plugin id="org.infai.amor.backend.neo" autoStart="true" startLevel="3" />
+      <plugin id="org.infai.amor.backend.neoblobstorage" autoStart="true" startLevel="4" />
       <plugin id="org.infai.amor.backend.resources" autoStart="true" startLevel="0" />
    </configurations>
 

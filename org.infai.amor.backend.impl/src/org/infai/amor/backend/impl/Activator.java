@@ -194,17 +194,17 @@ public class Activator extends Plugin implements ServiceTrackerCustomizer, NeoPr
         final Repository repo = new RepositoryImpl(sf, branchFactory, uriHandler, trman);
         // XXX FIXME trman should not be needed, handle read transaction within domain objects!
         simplerepo = new NeoTransactionAwareSimpleRepository(new SimpleRepositoryImpl(repo, uriHandler, trman), null);
-        // register repository service
-        final Dictionary properties = new Hashtable();
-        properties.put(RemoteOSGiService.R_OSGi_REGISTRATION, Boolean.TRUE);
-
-        context.registerService(SimpleRepository.class.getName(), simplerepo, properties);
-
-        final ServiceTracker st = new ServiceTracker(context, GraphDatabaseService.class.getName(), this);
-        st.open();
         final ServiceTracker stSF = new ServiceTracker(context, StorageFactory.class.getName(), this);
         stSF.open();
 
+
+        final ServiceTracker st = new ServiceTracker(context, GraphDatabaseService.class.getName(), this);
+        st.open();
+
+        // register repository service
+        final Dictionary properties = new Hashtable();
+        properties.put(RemoteOSGiService.R_OSGi_REGISTRATION, Boolean.TRUE);
+        context.registerService(SimpleRepository.class.getName(), simplerepo, properties);
     }
 
     /*
