@@ -133,8 +133,9 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         final EList<EObject> newModelContents = applyEPatch(origModel, model.getDiffModel());
 
         // use #checkin(...) for persisting the changed model
-        checkin(new ModelImpl(newModelContents, model.getPath()), externalUri, revision);
+        checkin(new ModelImpl(newModelContents, model.getPath()), externalUri, revision,true);
     }
+
     /*
      * (non-Javadoc)
      * 
@@ -142,6 +143,20 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      */
     @Override
     public void checkin(final Model model, final URI externalUri, final Revision revision) throws IOException {
+        checkin(model, externalUri, revision, false);
+    }
+
+    /**
+     * @see org.infai.amor.backend.storage.Storage#checkin(org.infai.amor.backend.Model, org.eclipse.emf.common.util.URI, long)
+     * @param model
+     * @param externalUri
+     * @param revision
+     * @param changedModel
+     *            should this model be tagged as CHANGED or ADDED in the revisioninfo?
+     * @throws IOException
+     */
+    private void checkin(final Model model, final URI externalUri, final Revision revision, boolean changedModel) throws IOException {
+
         final Collection<String> ePackageUris = getEPackageUrisFrom(model.getContent());
         // store all eobjects/epackages
         logger.finer("----------1-Storing contents----------");
@@ -160,10 +175,12 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         }
         modelLocation.setExternalUri(externalUri);
         modelLocation.setRelativePath(createModelSpecificPath(model.getPersistencePath()));
-        modelLocation.setChangetype(ChangeType.ADDED);
+        modelLocation.setChangetype(changedModel?ChangeType.CHANGED:ChangeType.ADDED);
         // remember new model node
         ((InternalRevision) revision).touchedModel(modelLocation);
+
     }
+
     /*
      * (non-Javadoc)
      * 
@@ -176,6 +193,9 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         final InternalRevision neoRev = (InternalRevision) revision;
         final NeoModelLocation modelLocation = (NeoModelLocation) neoRev.getModelLocation(createModelSpecificPath(path));
 
+        if (modelLocation == null) {
+            throw new IOException("No such model at revision " + revision.getRevisionId());
+        }
         final NeoRestorer restorer = new NeoRestorer(getNeoProvider());
         return new ModelImpl(restorer.load(modelLocation), path);
     }
