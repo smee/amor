@@ -236,8 +236,10 @@ public class UriHandlerImpl implements UriHandler {
     public URI trimToNextSegmentKeepingRevision(final int segmentIdx, final URI fullUri) {
         Preconditions.checkState(segmentIdx >= 3, "We need at least 3 uri segments to have a revision number!");
 
-        final String[] segments = new String[segmentIdx];
-        System.arraycopy(fullUri.segments(), 0, segments, 0, segmentIdx);
+        int len = Math.min(segmentIdx, fullUri.segmentCount());
+
+        final String[] segments = new String[len];
+        System.arraycopy(fullUri.segments(), 0, segments, 0, len);
         return URI.createHierarchicalURI(fullUri.scheme(), fullUri.authority(), fullUri.device(), segments, fullUri.query(), fullUri.fragment());
 
     }
