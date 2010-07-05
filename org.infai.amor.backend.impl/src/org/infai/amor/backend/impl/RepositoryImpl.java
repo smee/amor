@@ -166,7 +166,7 @@ public class RepositoryImpl implements Repository {
                 } else {
                     // will get deleted in a later revision, not active at this
                     // rev
-                    activeModels.remove(path);
+                    // activeModels.remove(path);
                 }
             }
 
