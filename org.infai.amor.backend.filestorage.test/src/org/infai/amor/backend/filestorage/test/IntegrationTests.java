@@ -142,7 +142,7 @@ public class IntegrationTests extends AbstractIntegrationTest {
         // given
         final EObject input = readInputModel("testmodels/base.ecore");
 
-        final Branch branch = repository.createBranch(null, "trunk");
+        final Branch branch = repository.createBranch(null, "repocontentsbranch");
         // when
         // start new checkin transaction
         final CommitTransaction ct = repository.startCommitTransaction(branch);
@@ -170,5 +170,9 @@ public class IntegrationTests extends AbstractIntegrationTest {
         // at least testmodel/base2.ecore should be visible at revision 3
         assertEquals(1, Iterables.size(activeContents));
         assertTrue(activeContents.iterator().next().toString().endsWith("base2.ecore"));
+
+        Iterable<URI> contentsOfHEAD = repository.getActiveContents(URI.createURI("amor://localhost/repo/repocontentsbranch/HEAD/testmodels"));
+        assertEquals(1, Iterables.size(contentsOfHEAD));
+
     }
 }
