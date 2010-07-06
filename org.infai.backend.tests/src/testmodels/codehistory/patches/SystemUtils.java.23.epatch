@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.22.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author Gary Gregory&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.22 2003/08/22 03:06:36 ggregory Exp $&#xA; */"/>
+      <rightValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author &lt;a href=&quot;mailto:ggregory@seagullsw.com&quot;>Gary Gregory&lt;/a>&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.21 2003/08/21 15:52:54 ggregory Exp $&#xA; */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.34/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Gets the Java version as a &lt;code>float&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example return values:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>1.2f&lt;/code> for JDK 1.2&#xA;     *  &lt;li>&lt;code>1.31f&lt;/code> for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     *&#xA;     * &lt;p>The field will return zero if {@link #JAVA_VERSION} is &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */" index="4"/>
+      <rightValues value="/**&#xA;     * &lt;p>Gets the Java version as a &lt;code>float&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example return values:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>1.2f&lt;/code> for JDK 1.2&#xA;     *  &lt;li>&lt;code>1.31f&lt;/code> for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     *&#xA;     * &lt;p>The field will return zero if {@link #JAVA_VERSION} is &lt;code>null&lt;/code>.&lt;/p>&#xA;     */" index="4"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.35/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Gets the Java version as an &lt;code>int&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example return values:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>120&lt;/code> for JDK 1.2&#xA;     *  &lt;li>&lt;code>131&lt;/code> for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     *&#xA;     * &lt;p>The field will return zero if {@link #JAVA_VERSION} is &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Gets the Java version as an &lt;code>int&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example return values:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>120&lt;/code> for JDK 1.2&#xA;     *  &lt;li>&lt;code>131&lt;/code> for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     *&#xA;     * &lt;p>The field will return zero if {@link #JAVA_VERSION} is &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+</epatch:Epatch>

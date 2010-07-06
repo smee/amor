@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <modelImports xsi:type="epatch:EPackageImport" name="members" nsURI="http://www.emftext.org/java/members"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="types" nsURI="http://www.emftext.org/java/types"/>
+  <modelImports xsi:type="epatch:ResourceImport" name="java_io_File_java" uri="pathmap:/javaclass/java.io.File.java"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="modifiers" nsURI="http://www.emftext.org/java/modifiers"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="statements" nsURI="http://www.emftext.org/java/statements"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="instantiations" nsURI="http://www.emftext.org/java/instantiations"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="references" nsURI="http://www.emftext.org/java/references"/>
+  <modelImports xsi:type="epatch:ResourceImport" name="java_lang_System_java" uri="pathmap:/javaclass/java.lang.System.java"/>
+  <modelImports xsi:type="epatch:ResourceImport" name="java_lang_String_java" uri="pathmap:/javaclass/java.lang.String.java"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="imports" nsURI="http://www.emftext.org/java/imports"/>
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.27.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="/">
+    <assignments xsi:type="epatch:ListAssignment" feature="imports">
+      <leftValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.9" impFrag="//ClassifierImport">
+          <assignments xsi:type="epatch:SingleAssignment" feature="classifier">
+            <leftValue import="//@modelImports.2" impFrag="//@classifiers.0"/>
+          </assignments>
+          <assignments xsi:type="epatch:ListAssignment" feature="namespaces">
+            <leftValues value="java"/>
+            <leftValues value="io"/>
+          </assignments>
+        </newObject>
+      </leftValues>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="members">
+      <leftValues index="76">
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//ClassMethod">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Public">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="/**&#xA;     * &lt;p>Gets the user home directory.&lt;/p>&#xA;     * &#xA;     * @return a directory&#xA;     * @exception  SecurityException  if a security manager exists and its  &#xA;     *             &lt;code>checkPropertyAccess&lt;/code> method doesn't allow&#xA;     *              access to the specified system property.&#xA;     * @see System#getProperty(String)&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Static"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="getUserHome"/>
+          </assignments>
+          <assignments xsi:type="epatch:ListAssignment" feature="statements">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Return">
+                <assignments xsi:type="epatch:SingleAssignment" feature="returnValue">
+                  <leftValue>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.5" impFrag="//NewConstructorCall">
+                      <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                        <leftValues>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//IdentifierReference">
+                            <assignments xsi:type="epatch:SingleAssignment" feature="next">
+                              <leftValue>
+                                <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//MethodCall">
+                                  <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                                    <leftValues>
+                                      <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//IdentifierReference">
+                                        <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                          <leftValue refObject="//@objects.1/@assignments.0/@leftValues.7/@newObject"/>
+                                        </assignments>
+                                      </newObject>
+                                    </leftValues>
+                                  </assignments>
+                                  <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                    <leftValue import="//@modelImports.7" impFrag="//@classifiers.0/@members.27"/>
+                                  </assignments>
+                                </newObject>
+                              </leftValue>
+                            </assignments>
+                            <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                              <leftValue import="//@modelImports.7" impFrag="//@classifiers.0"/>
+                            </assignments>
+                          </newObject>
+                        </leftValues>
+                      </assignments>
+                      <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+                        <leftValue>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//NamespaceClassifierReference">
+                            <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                              <leftValues>
+                                <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//ClassifierReference">
+                                  <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                    <leftValue import="//@modelImports.2" impFrag="//@classifiers.0"/>
+                                  </assignments>
+                                </newObject>
+                              </leftValues>
+                            </assignments>
+                          </newObject>
+                        </leftValue>
+                      </assignments>
+                    </newObject>
+                  </leftValue>
+                </assignments>
+              </newObject>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.2" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <leftValues index="75">
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//ClassMethod">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Public">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="/**&#xA;     * &lt;p>Gets the user directory.&lt;/p>&#xA;     * &#xA;     * @return a directory&#xA;     * @exception  SecurityException  if a security manager exists and its  &#xA;     *             &lt;code>checkPropertyAccess&lt;/code> method doesn't allow&#xA;     *              access to the specified system property.&#xA;     * @see System#getProperty(String)&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Static"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="getUserDir"/>
+          </assignments>
+          <assignments xsi:type="epatch:ListAssignment" feature="statements">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Return">
+                <assignments xsi:type="epatch:SingleAssignment" feature="returnValue">
+                  <leftValue>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.5" impFrag="//NewConstructorCall">
+                      <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                        <leftValues>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//IdentifierReference">
+                            <assignments xsi:type="epatch:SingleAssignment" feature="next">
+                              <leftValue>
+                                <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//MethodCall">
+                                  <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                                    <leftValues>
+                                      <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//IdentifierReference">
+                                        <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                          <leftValue refObject="//@objects.1/@assignments.0/@leftValues.6/@newObject"/>
+                                        </assignments>
+                                      </newObject>
+                                    </leftValues>
+                                  </assignments>
+                                  <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                    <leftValue import="//@modelImports.7" impFrag="//@classifiers.0/@members.27"/>
+                                  </assignments>
+                                </newObject>
+                              </leftValue>
+                            </assignments>
+                            <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                              <leftValue import="//@modelImports.7" impFrag="//@classifiers.0"/>
+                            </assignments>
+                          </newObject>
+                        </leftValues>
+                      </assignments>
+                      <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+                        <leftValue>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//NamespaceClassifierReference">
+                            <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                              <leftValues>
+                                <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//ClassifierReference">
+                                  <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                    <leftValue import="//@modelImports.2" impFrag="//@classifiers.0"/>
+                                  </assignments>
+                                </newObject>
+                              </leftValues>
+                            </assignments>
+                          </newObject>
+                        </leftValue>
+                      </assignments>
+                    </newObject>
+                  </leftValue>
+                </assignments>
+              </newObject>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.2" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <leftValues index="74">
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//ClassMethod">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Public">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="/**&#xA;     * &lt;p>Gets the Java IO temporary directory.&lt;/p>&#xA;     * &#xA;     * @return a directory&#xA;     * @exception  SecurityException  if a security manager exists and its  &#xA;     *             &lt;code>checkPropertyAccess&lt;/code> method doesn't allow&#xA;     *              access to the specified system property.&#xA;     * @see System#getProperty(String)&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Static"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="getJavaIoTmpDir"/>
+          </assignments>
+          <assignments xsi:type="epatch:ListAssignment" feature="statements">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Return">
+                <assignments xsi:type="epatch:SingleAssignment" feature="returnValue">
+                  <leftValue>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.5" impFrag="//NewConstructorCall">
+                      <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                        <leftValues>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//IdentifierReference">
+                            <assignments xsi:type="epatch:SingleAssignment" feature="next">
+                              <leftValue>
+                                <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//MethodCall">
+                                  <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                                    <leftValues>
+                                      <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//IdentifierReference">
+                                        <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                          <leftValue refObject="//@objects.1/@assignments.0/@leftValues.5/@newObject"/>
+                                        </assignments>
+                                      </newObject>
+                                    </leftValues>
+                                  </assignments>
+                                  <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                    <leftValue import="//@modelImports.7" impFrag="//@classifiers.0/@members.27"/>
+                                  </assignments>
+                                </newObject>
+                              </leftValue>
+                            </assignments>
+                            <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                              <leftValue import="//@modelImports.7" impFrag="//@classifiers.0"/>
+                            </assignments>
+                          </newObject>
+                        </leftValues>
+                      </assignments>
+                      <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+                        <leftValue>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//NamespaceClassifierReference">
+                            <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                              <leftValues>
+                                <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//ClassifierReference">
+                                  <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                    <leftValue import="//@modelImports.2" impFrag="//@classifiers.0"/>
+                                  </assignments>
+                                </newObject>
+                              </leftValues>
+                            </assignments>
+                          </newObject>
+                        </leftValue>
+                      </assignments>
+                    </newObject>
+                  </leftValue>
+                </assignments>
+              </newObject>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.2" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <leftValues index="73">
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//ClassMethod">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Public">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="/**&#xA;     * &lt;p>Gets the Java home directory.&lt;/p>&#xA;     * &#xA;     * @return a directory&#xA;     * @exception  SecurityException  if a security manager exists and its  &#xA;     *             &lt;code>checkPropertyAccess&lt;/code> method doesn't allow&#xA;     *              access to the specified system property.&#xA;     * @see System#getProperty(String)&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Static"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="getJavaHome"/>
+          </assignments>
+          <assignments xsi:type="epatch:ListAssignment" feature="statements">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Return">
+                <assignments xsi:type="epatch:SingleAssignment" feature="returnValue">
+                  <leftValue>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.5" impFrag="//NewConstructorCall">
+                      <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                        <leftValues>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//IdentifierReference">
+                            <assignments xsi:type="epatch:SingleAssignment" feature="next">
+                              <leftValue>
+                                <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//MethodCall">
+                                  <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                                    <leftValues>
+                                      <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//IdentifierReference">
+                                        <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                          <leftValue refObject="//@objects.1/@assignments.0/@leftValues.4/@newObject"/>
+                                        </assignments>
+                                      </newObject>
+                                    </leftValues>
+                                  </assignments>
+                                  <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                    <leftValue import="//@modelImports.7" impFrag="//@classifiers.0/@members.27"/>
+                                  </assignments>
+                                </newObject>
+                              </leftValue>
+                            </assignments>
+                            <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                              <leftValue import="//@modelImports.7" impFrag="//@classifiers.0"/>
+                            </assignments>
+                          </newObject>
+                        </leftValues>
+                      </assignments>
+                      <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+                        <leftValue>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//NamespaceClassifierReference">
+                            <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                              <leftValues>
+                                <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//ClassifierReference">
+                                  <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                    <leftValue import="//@modelImports.2" impFrag="//@classifiers.0"/>
+                                  </assignments>
+                                </newObject>
+                              </leftValues>
+                            </assignments>
+                          </newObject>
+                        </leftValue>
+                      </assignments>
+                    </newObject>
+                  </leftValue>
+                </assignments>
+              </newObject>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.2" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <leftValues index="3">
+        <newObject xsi:type="epatch:ObjectNew" name="JAVA_HOME_KEY" import="//@modelImports.0" impFrag="//Field">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Public">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="/**&#xA;     * The System property key for the Java home directory.&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Static"/>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Final"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="initialValue">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//StringReference">
+                <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                  <leftValue value="java.home"/>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="JAVA_HOME_KEY"/>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.8" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <leftValues index="2">
+        <newObject xsi:type="epatch:ObjectNew" name="JAVA_IO_TMPDIR_KEY" import="//@modelImports.0" impFrag="//Field">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Public">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="/**&#xA;     * The System property key for the Java IO tenmporary directory.&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Static"/>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Final"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="initialValue">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//StringReference">
+                <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                  <leftValue value="java.io.tmpdir"/>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="JAVA_IO_TMPDIR_KEY"/>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.8" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <leftValues index="1">
+        <newObject xsi:type="epatch:ObjectNew" name="USER_DIR_KEY" import="//@modelImports.0" impFrag="//Field">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Public">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="/**&#xA;     * The System property key for the user directory.&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Static"/>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Final"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="initialValue">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//StringReference">
+                <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                  <leftValue value="user.dir"/>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="USER_DIR_KEY"/>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.8" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <leftValues>
+        <newObject xsi:type="epatch:ObjectNew" name="USER_HOME_KEY" import="//@modelImports.0" impFrag="//Field">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Public">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="// System property constants"/>
+                  <leftValues value="//-----------------------------------------------------------------------"/>
+                  <leftValues value="// These MUST be declared first. Other constants depend on this."/>
+                  <leftValues value="/**&#xA;     * The System property key for the user home directory.&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Static"/>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//Final"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="initialValue">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//StringReference">
+                <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                  <leftValue value="user.home"/>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="USER_HOME_KEY"/>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.8" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author Gary Gregory&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @author Rafal Krupinski&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.27 2003/12/31 22:00:31 ggregory Exp $&#xA; */"/>
+      <rightValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author Gary Gregory&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @author Rafal Krupinski&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.26 2003/10/23 21:48:28 ggregory Exp $&#xA; */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.11/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.7/@initialValue">
+    <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+      <leftValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//IdentifierReference">
+          <assignments xsi:type="epatch:SingleAssignment" feature="target">
+            <leftValue refObject="//@objects.1/@assignments.0/@leftValues.4/@newObject"/>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <rightValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//StringReference">
+          <assignments xsi:type="epatch:SingleAssignment" feature="value">
+            <leftValue value="java.home"/>
+          </assignments>
+        </newObject>
+      </rightValues>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.12/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.8/@initialValue">
+    <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+      <leftValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//IdentifierReference">
+          <assignments xsi:type="epatch:SingleAssignment" feature="target">
+            <leftValue refObject="//@objects.1/@assignments.0/@leftValues.5/@newObject"/>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <rightValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//StringReference">
+          <assignments xsi:type="epatch:SingleAssignment" feature="value">
+            <leftValue value="java.io.tmpdir"/>
+          </assignments>
+        </newObject>
+      </rightValues>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.35/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.31/@initialValue">
+    <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+      <leftValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//IdentifierReference">
+          <assignments xsi:type="epatch:SingleAssignment" feature="target">
+            <leftValue refObject="//@objects.1/@assignments.0/@leftValues.6/@newObject"/>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <rightValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//StringReference">
+          <assignments xsi:type="epatch:SingleAssignment" feature="value">
+            <leftValue value="user.dir"/>
+          </assignments>
+        </newObject>
+      </rightValues>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.36/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.32/@initialValue">
+    <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+      <leftValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//IdentifierReference">
+          <assignments xsi:type="epatch:SingleAssignment" feature="target">
+            <leftValue refObject="//@objects.1/@assignments.0/@leftValues.7/@newObject"/>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <rightValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.6" impFrag="//StringReference">
+          <assignments xsi:type="epatch:SingleAssignment" feature="value">
+            <leftValue value="user.home"/>
+          </assignments>
+        </newObject>
+      </rightValues>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.4/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <rightValues value="// System property constants"/>
+      <rightValues value="//-----------------------------------------------------------------------" index="1"/>
+      <rightValues value="// These MUST be declared first. Other constants depend on this." index="2"/>
+    </assignments>
+  </objects>
+</epatch:Epatch>

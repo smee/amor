@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF8"?>
+<oepc:Event xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oepc="org.bflow.toolbox.oepc" name="Gewerbe-Anmeldung ist unbearbeitet">
+  <out xsi:type="oepc:ControlFlowEdge" href="sample_ext.xmi#//@connections.0"/>
+</oepc:Event>

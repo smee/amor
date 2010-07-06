@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.21.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author &lt;a href=&quot;mailto:ggregory@seagullsw.com&quot;>Gary Gregory&lt;/a>&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.21 2003/08/21 15:52:54 ggregory Exp $&#xA; */"/>
+      <rightValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author &lt;a href=&quot;mailto:ggregory@seagullsw.com&quot;>Gary Gregory&lt;/a>&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.20 2003/08/18 02:22:23 bayard Exp $&#xA; */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>file.encoding&lt;/code> System Property.&lt;/p>&#xA;     * &lt;p>File encoding, such as &lt;code>Cp1252&lt;/code>.&lt;/p>&#xA;     * &#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.2.&#xA;     */" index="3"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>file.encoding&lt;/code> System Property.&lt;/p>&#xA;     * &lt;p>File encoding, such as &lt;code>Cp1252&lt;/code>.&lt;/p>&#xA;     * &#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java version 1.2.&#xA;     */" index="3"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.1/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>file.separator&lt;/code> System Property.&#xA;     * File separator (&lt;code>&amp;quot;/&amp;quot;&lt;/code> on UNIX).&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1.&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>file.separator&lt;/code> System Property.&#xA;     * File separator (&lt;code>&amp;quot;/&amp;quot;&lt;/code> on UNIX).&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java version 1.1.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.10/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.runtime.version&lt;/code> System Property. Java Runtime Environment&#xA;     * version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.3&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.runtime.version&lt;/code> System Property. Java Runtime Environment&#xA;     * version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.3&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.17/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.info&lt;/code> System Property. Java Virtual Machine implementation&#xA;     * info.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.info&lt;/code> System Property. Java Virtual Machine implementation&#xA;     * info.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.2/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.class.path&lt;/code> System Property. Java class path.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1.&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.class.path&lt;/code> System Property. Java class path.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java version 1.1.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.29/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>user.country&lt;/code> or &lt;code>user.region&lt;/code> System Property.&#xA;     * User's country code, such as &lt;code>GB&lt;/code>. First in JDK version 1.2 as&#xA;     * &lt;code>user.region&lt;/code>. Renamed to &lt;code>user.country&lt;/code> in 1.4&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>user.country&lt;/code> or &lt;code>user.region&lt;/code> System Property.&#xA;     * User's country code, such as &lt;code>GB&lt;/code>. First in JDK version 1.2 as&#xA;     * &lt;code>user.region&lt;/code>. Renamed to &lt;code>user.country&lt;/code> in 1.4&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.3/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.class.version&lt;/code> System Property.&#xA;     * Java class format version number.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1.&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.class.version&lt;/code> System Property.&#xA;     * Java class format version number.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java version 1.1.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.32/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>user.language&lt;/code> System Property. User's language code,&#xA;     * such as 'en'.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>user.language&lt;/code> System Property. User's language code,&#xA;     * such as 'en'.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.4/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.compiler&lt;/code> System Property. Name of JIT compiler to use.&#xA;     * First in JDK version 1.2. Not used in Sun JDKs after 1.2.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2. Not used in Sun versions after 1.2.&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.compiler&lt;/code> System Property. Name of JIT compiler to use.&#xA;     * First in JDK version 1.2. Not used in Sun JDKs after 1.2.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java version 1.2. Not used in Sun versions after 1.2.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.41/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is AIX.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */" index="7"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is AIX.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */" index="7"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.42/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is HP-UX.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is HP-UX.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.43/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Irix.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Irix.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.44/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Linux.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Linux.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.45/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Mac.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Mac.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.46/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Mac.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Mac.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.47/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is OS/2.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is OS/2.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.48/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Solaris.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Solaris.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.49/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is SunOS.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is SunOS.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.50/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.51/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows 2000.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows 2000.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.52/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows 95.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows 95.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.53/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows 98.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */" index="1"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows 98.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */" index="1"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.54/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows ME.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */" index="1"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows ME.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */" index="1"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.55/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows NT.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */" index="1"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows NT.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */" index="1"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.56/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows XP.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */" index="1"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows XP.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */" index="1"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.66/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is the Java version at least the requested version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example input:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>120&lt;/code> to test for JDK 1.2 or greater&#xA;     *  &lt;li>&lt;code>131&lt;/code> to test for JDK 1.3.1 or greater&#xA;     * &lt;/ul>&#xA;     * &#xA;     * @param requiredVersion  the required version, for example 131&#xA;     * @return &lt;code>true&lt;/code> if the actual version is equal or greater&#xA;     *  than the required version&#xA;     * @since 2.0&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is the Java version at least the requested version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example input:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>120&lt;/code> to test for JDK 1.2 or greater&#xA;     *  &lt;li>&lt;code>131&lt;/code> to test for JDK 1.3.1 or greater&#xA;     * &lt;/ul>&#xA;     * &#xA;     * @param requiredVersion  the required version, for example 131&#xA;     * @return &lt;code>true&lt;/code> if the actual version is equal or greater&#xA;     *  than the required version&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.9/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.runtime.name&lt;/code> System Property. Java Runtime Environment&#xA;     * name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.3&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.runtime.name&lt;/code> System Property. Java Runtime Environment&#xA;     * name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.3&#xA;     */"/>
+    </assignments>
+  </objects>
+</epatch:Epatch>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF8"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="testpatch">
+  <resources name="res0" leftUri="sample.xmi" rightUri="sample_v2.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@elements.2/@methods.2">
+    <assignments xsi:type="epatch:SingleAssignment" feature="name">
+      <leftValue value="Senden"/>
+      <rightValue value="SendenAn"/>
+    </assignments>
+  </objects>
+</epatch:Epatch>

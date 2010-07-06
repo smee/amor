@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <modelImports xsi:type="epatch:EPackageImport" name="statements" nsURI="http://www.emftext.org/java/statements"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="instantiations" nsURI="http://www.emftext.org/java/instantiations"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="literals" nsURI="http://www.emftext.org/java/literals"/>
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.43.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.72">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <rightValues value="// no init."/>
+    </assignments>
+    <assignments xsi:type="epatch:ListAssignment" feature="statements">
+      <leftValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//ExpressionStatement">
+          <assignments xsi:type="epatch:SingleAssignment" feature="expression">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//ExplicitConstructorCall">
+                <assignments xsi:type="epatch:SingleAssignment" feature="callTarget">
+                  <leftValue>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//Super"/>
+                  </leftValue>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+    </assignments>
+  </objects>
+</epatch:Epatch>

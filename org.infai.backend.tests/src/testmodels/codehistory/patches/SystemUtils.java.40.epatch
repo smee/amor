@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.39.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author Gary Gregory&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @author Rafal Krupinski&#xA; * @author Jason Gritman&#xA; * @since 1.0&#xA; * @version $Id$&#xA; */"/>
+      <rightValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author Gary Gregory&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @author Rafal Krupinski&#xA; * @author Jason Gritman&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.38 2004/11/12 00:48:41 scolebourne Exp $&#xA; */"/>
+    </assignments>
+  </objects>
+</epatch:Epatch>

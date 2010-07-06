@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF8"?>
+<oepc:OEPC xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oepc="org.bflow.toolbox.oepc">
+  <elements xsi:type="oepc:Event" name="Gewerbe-Anmeldung ist unbearbeitet" out="//@connections.0"/>
+  <elements xsi:type="oepc:OrganisationUnit" name="Betriebs-inhaber" out="//@connections.2"/>
+  <elements xsi:type="oepc:BusinessObject" name="Gewerbe-Anmeldung" in="//@connections.0 //@connections.1 //@connections.2" out="//@connections.5">
+    <attributes name="Person"/>
+    <attributes name="Anschrift"/>
+    <attributes name="Betriebsstätte"/>
+    <attributes name="Gewerbe"/>
+    <attributes name="Tätigkeit"/>
+    <attributes name="Niederlassungsart"/>
+    <methods name="Ausfüllen"/>
+    <methods name="Anlagebeifügen"/>
+    <methods name="SendenAn"/>
+    <methods name="Speichern"/>
+  </elements>
+  <elements xsi:type="oepc:ITSystem" name="IT-Systeme (Formularserver, Webserver)" out="//@connections.1"/>
+  <elements xsi:type="oepc:Event" name="Gewerbe-Anmeldung ist eingegangen" in="//@connections.5" out="//@connections.6"/>
+  <elements xsi:type="oepc:BusinessObject" name="Gewerbe-Anmeldung" in="//@connections.3 //@connections.6" out="//@connections.4 //@connections.7">
+    <attributes name="Betriebsstätte"/>
+    <attributes name="Tätigkeit"/>
+    <methods name="VorprüfungÖrtlichkeit"/>
+    <methods name="VorprüfungAnzeigepflicht"/>
+    <methods name="PrüfungRechtmäßigkeit"/>
+  </elements>
+  <elements xsi:type="oepc:Event" name="Gewerbe-Anmeldung ist positiv vorgeprüft  " in="//@connections.9" out="//@connections.14"/>
+  <elements xsi:type="oepc:Event" name="Gewerbe-Anmeldung ist negativ vorgeprüft    " in="//@connections.8" out="//@connections.10"/>
+  <elements xsi:type="oepc:OrganisationUnit" name="Ordnungsamt    Gewerbean-gelegenheiten" out="//@connections.3"/>
+  <elements xsi:type="oepc:BusinessObject" name="Gewerbe-Anmeldung" in="//@connections.14 //@connections.18 //@connections.19" out="//@connections.15">
+    <attributes name="Person"/>
+    <attributes name="Anschrift"/>
+    <attributes name="Gewerbe"/>
+    <attributes name="Tätigkeit"/>
+    <attributes name="Niederlassungsart"/>
+    <methods name="Identitätsprüfung"/>
+    <methods name="Meldeprüfung"/>
+    <methods name="PrüfungRechtsformFirmenname"/>
+    <methods name="AnlagenErmittlungRechtsform"/>
+    <methods name="PrüfungZulässigkeitTätigkeit"/>
+    <methods name="DefinitionNiederlassungsart"/>
+  </elements>
+  <elements xsi:type="oepc:OrganisationUnit" name="Ordnungsamt    Gewerbean-gelegenheiten" out="//@connections.19"/>
+  <elements xsi:type="oepc:OrganisationUnit" name="Ordnungsamt   Gewerbean-gelegenheiten" out="//@connections.12"/>
+  <elements xsi:type="oepc:ITSystem" name="IT-Systeme (Groupware, Fachverfahren) " in="//@connections.4"/>
+  <elements xsi:type="oepc:ITSystem" name="IT-Systeme (Fachverfahren) " out="//@connections.18"/>
+  <elements xsi:type="oepc:ITSystem" name="IT-Systeme (Groupware, Fachverfahren)  " out="//@connections.13"/>
+  <elements xsi:type="oepc:BusinessObject" name="Gewerbe-Anmeldung" in="//@connections.10 //@connections.12 //@connections.13" out="//@connections.11">
+    <attributes name="Person"/>
+    <attributes name="Anschrift"/>
+    <attributes name="Betriebsstätte"/>
+    <attributes name="Tätigkeit"/>
+    <methods name="SendenMitteilung"/>
+    <methods name="Archivieren"/>
+  </elements>
+  <elements xsi:type="oepc:Event" name="Gewerbe-Anmeldung ist abgeschlossen" in="//@connections.11"/>
+  <elements xsi:type="oepc:Event" name="Gewerbe-Anmeldung ist abgeschlossen" in="//@connections.17"/>
+  <elements xsi:type="oepc:Event" name="Gewerbe-Anmeldung ist hauptgeprüft" in="//@connections.15" out="//@connections.16"/>
+  <elements xsi:type="oepc:OrganisationUnit" name="Ordnungsamt   Gewerbean-gelegenheiten" out="//@connections.20"/>
+  <elements xsi:type="oepc:ITSystem" name="IT-Systeme (Fachverfahren, Edifact-Schnittstelle, Massendruckverfahren, Groupware, Textverarbeitung)" out="//@connections.21"/>
+  <elements xsi:type="oepc:BusinessObject" name="Gewerbe-Anmeldung" in="//@connections.16 //@connections.20 //@connections.21" out="//@connections.17">
+    <attributes name="Person"/>
+    <attributes name="Anschrift"/>
+    <attributes name="Betriebsstätte"/>
+    <attributes name="Gewerbe"/>
+    <attributes name="Tätigkeit"/>
+    <attributes name="Niederlassungsart"/>
+    <attributes name="EmpfängerGewerbeAnzeige"/>
+    <methods name="ErmittlungZustFinanzamt"/>
+    <methods name="ErmittlungBranchenziffer"/>
+    <methods name="ErmittlungGewAnzeigeEmpfänger"/>
+    <methods name="BestätigungGewAnmeldung"/>
+    <methods name="SendenGewAnzeigeEmpfänger"/>
+    <methods name="ZahlprozessEinleiten"/>
+    <methods name="Archivieren"/>
+  </elements>
+  <elements xsi:type="oepc:XORConnector" in="//@connections.7" out="//@connections.8 //@connections.9"/>
+  <connections xsi:type="oepc:ControlFlowEdge" from="//@elements.0" to="//@elements.2"/>
+  <connections xsi:type="oepc:InformationEdge" from="//@elements.3" to="//@elements.2"/>
+  <connections xsi:type="oepc:InformationEdge" from="//@elements.1" to="//@elements.2"/>
+  <connections xsi:type="oepc:InformationEdge" from="//@elements.8" to="//@elements.5"/>
+  <connections xsi:type="oepc:InformationEdge" from="//@elements.5" to="//@elements.12"/>
+  <connections xsi:type="oepc:ControlFlowEdge" from="//@elements.2" to="//@elements.4"/>
+  <connections xsi:type="oepc:ControlFlowEdge" from="//@elements.4" to="//@elements.5"/>
+  <connections xsi:type="oepc:ControlFlowEdge" from="//@elements.5" to="//@elements.22"/>
+  <connections xsi:type="oepc:ControlFlowEdge" from="//@elements.22" to="//@elements.7"/>
+  <connections xsi:type="oepc:ControlFlowEdge" from="//@elements.22" to="//@elements.6"/>
+  <connections xsi:type="oepc:ControlFlowEdge" from="//@elements.7" to="//@elements.15"/>
+  <connections xsi:type="oepc:ControlFlowEdge" from="//@elements.15" to="//@elements.16"/>
+  <connections xsi:type="oepc:InformationEdge" from="//@elements.11" to="//@elements.15"/>
+  <connections xsi:type="oepc:InformationEdge" from="//@elements.14" to="//@elements.15"/>
+  <connections xsi:type="oepc:ControlFlowEdge" from="//@elements.6" to="//@elements.9"/>
+  <connections xsi:type="oepc:ControlFlowEdge" from="//@elements.9" to="//@elements.18"/>
+  <connections xsi:type="oepc:ControlFlowEdge" from="//@elements.18" to="//@elements.21"/>
+  <connections xsi:type="oepc:ControlFlowEdge" from="//@elements.21" to="//@elements.17"/>
+  <connections xsi:type="oepc:InformationEdge" from="//@elements.13" to="//@elements.9"/>
+  <connections xsi:type="oepc:InformationEdge" from="//@elements.10" to="//@elements.9"/>
+  <connections xsi:type="oepc:InformationEdge" from="//@elements.19" to="//@elements.21"/>
+  <connections xsi:type="oepc:InformationEdge" from="//@elements.20" to="//@elements.21"/>
+</oepc:OEPC>

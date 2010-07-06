@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.26.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author Gary Gregory&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @author Rafal Krupinski&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.26 2003/10/23 21:48:28 ggregory Exp $&#xA; */"/>
+      <rightValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author Gary Gregory&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @author Rafal Krupinski&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.25 2003/10/23 03:55:34 ggregory Exp $&#xA; */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.51/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is a POSIX compilant system,&#xA;     * as in any of AIX, HP-UX, Irix, Linux, MacOSX, Solaris or SUN OS.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is POSIX compilant system,&#xA;     * ie. any of AIX, HP-UX, Irix, Linux, MacOSX, Solaris or SUN OS.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.1&#xA;     */"/>
+    </assignments>
+  </objects>
+</epatch:Epatch>

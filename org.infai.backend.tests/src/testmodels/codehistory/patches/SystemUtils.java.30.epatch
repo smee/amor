@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <modelImports xsi:type="epatch:EPackageImport" name="modifiers" nsURI="http://www.emftext.org/java/modifiers"/>
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.29.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author Gary Gregory&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @author Rafal Krupinski&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.29 2004/01/15 21:20:12 scolebourne Exp $&#xA; */"/>
+      <rightValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author Gary Gregory&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @author Rafal Krupinski&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.28 2004/01/15 21:17:33 scolebourne Exp $&#xA; */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+      <leftValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//Private">
+          <assignments xsi:type="epatch:ListAssignment" feature="comments">
+            <leftValues value="// System property constants"/>
+            <leftValues value="//-----------------------------------------------------------------------"/>
+            <leftValues value="// These MUST be declared first. Other constants depend on this."/>
+            <leftValues value="/**&#xA;     * The System property key for the user home directory.&#xA;     */"/>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <rightValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//Public">
+          <assignments xsi:type="epatch:ListAssignment" feature="comments">
+            <leftValues value="// System property constants"/>
+            <leftValues value="//-----------------------------------------------------------------------"/>
+            <leftValues value="// These MUST be declared first. Other constants depend on this."/>
+            <leftValues value="/**&#xA;     * The System property key for the user home directory.&#xA;     */"/>
+          </assignments>
+        </newObject>
+      </rightValues>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.1">
+    <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+      <leftValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//Private">
+          <assignments xsi:type="epatch:ListAssignment" feature="comments">
+            <leftValues value="/**&#xA;     * The System property key for the user directory.&#xA;     */"/>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <rightValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//Public">
+          <assignments xsi:type="epatch:ListAssignment" feature="comments">
+            <leftValues value="/**&#xA;     * The System property key for the user directory.&#xA;     */"/>
+          </assignments>
+        </newObject>
+      </rightValues>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.2">
+    <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+      <leftValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//Private">
+          <assignments xsi:type="epatch:ListAssignment" feature="comments">
+            <leftValues value="/**&#xA;     * The System property key for the Java IO temporary directory.&#xA;     */"/>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <rightValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//Public">
+          <assignments xsi:type="epatch:ListAssignment" feature="comments">
+            <leftValues value="/**&#xA;     * The System property key for the Java IO tenmporary directory.&#xA;     */"/>
+          </assignments>
+        </newObject>
+      </rightValues>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.3">
+    <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+      <leftValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//Private">
+          <assignments xsi:type="epatch:ListAssignment" feature="comments">
+            <leftValues value="/**&#xA;     * The System property key for the Java home directory.&#xA;     */"/>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <rightValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//Public">
+          <assignments xsi:type="epatch:ListAssignment" feature="comments">
+            <leftValues value="/**&#xA;     * The System property key for the Java home directory.&#xA;     */"/>
+          </assignments>
+        </newObject>
+      </rightValues>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.73/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Gets the Java home directory as a &lt;code>File&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @return a directory&#xA;     * @throws  SecurityException  if a security manager exists and its  &#xA;     *             &lt;code>checkPropertyAccess&lt;/code> method doesn't allow&#xA;     *              access to the specified system property.&#xA;     * @see System#getProperty(String)&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Gets the Java home directory.&lt;/p>&#xA;     * &#xA;     * @return a directory&#xA;     * @throws  SecurityException  if a security manager exists and its  &#xA;     *             &lt;code>checkPropertyAccess&lt;/code> method doesn't allow&#xA;     *              access to the specified system property.&#xA;     * @see System#getProperty(String)&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.74/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Gets the Java IO temporary directory as a &lt;code>File&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @return a directory&#xA;     * @throws  SecurityException  if a security manager exists and its  &#xA;     *             &lt;code>checkPropertyAccess&lt;/code> method doesn't allow&#xA;     *              access to the specified system property.&#xA;     * @see System#getProperty(String)&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Gets the Java IO temporary directory.&lt;/p>&#xA;     * &#xA;     * @return a directory&#xA;     * @throws  SecurityException  if a security manager exists and its  &#xA;     *             &lt;code>checkPropertyAccess&lt;/code> method doesn't allow&#xA;     *              access to the specified system property.&#xA;     * @see System#getProperty(String)&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.75/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Gets the user directory as a &lt;code>File&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @return a directory&#xA;     * @throws  SecurityException  if a security manager exists and its  &#xA;     *             &lt;code>checkPropertyAccess&lt;/code> method doesn't allow&#xA;     *              access to the specified system property.&#xA;     * @see System#getProperty(String)&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Gets the user directory.&lt;/p>&#xA;     * &#xA;     * @return a directory&#xA;     * @throws  SecurityException  if a security manager exists and its  &#xA;     *             &lt;code>checkPropertyAccess&lt;/code> method doesn't allow&#xA;     *              access to the specified system property.&#xA;     * @see System#getProperty(String)&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.76/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Gets the user home directory as a &lt;code>File&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @return a directory&#xA;     * @throws  SecurityException  if a security manager exists and its  &#xA;     *             &lt;code>checkPropertyAccess&lt;/code> method doesn't allow&#xA;     *              access to the specified system property.&#xA;     * @see System#getProperty(String)&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Gets the user home directory.&lt;/p>&#xA;     * &#xA;     * @return a directory&#xA;     * @throws  SecurityException  if a security manager exists and its  &#xA;     *             &lt;code>checkPropertyAccess&lt;/code> method doesn't allow&#xA;     *              access to the specified system property.&#xA;     * @see System#getProperty(String)&#xA;     */"/>
+    </assignments>
+  </objects>
+</epatch:Epatch>

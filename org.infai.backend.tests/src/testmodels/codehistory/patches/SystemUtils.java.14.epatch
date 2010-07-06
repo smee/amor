@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.13.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA; * &lt;p>Common &lt;code>System&lt;/code> class helpers.&lt;/p>&#xA; * &#xA; * &lt;p>If a particular system property cannot be read due to security&#xA; * restrictions, the field will return &lt;code>null&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author &lt;a href=&quot;mailto:ggregory@seagullsw.com&quot;>Gary Gregory&lt;/a>&#xA; * @author Michael Becke&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.13 2003/05/30 01:12:26 ggregory Exp $&#xA; */"/>
+      <rightValues value="/**&#xA; * &lt;p>Common &lt;code>System&lt;/code> class helpers.&lt;/p>&#xA; * &#xA; * &lt;p>If a particular system property cannot be read due to security&#xA; * restrictions, the field will return &lt;code>null&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author &lt;a href=&quot;mailto:ggregory@seagullsw.com&quot;>Gary Gregory&lt;/a>&#xA; * @author Michael Becke&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.12 2003/05/24 14:34:14 scolebourne Exp $&#xA; */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.1/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>file.encoding&lt;/code> System Property.&#xA;     * &lt;p>File encoding, such as &lt;code>Cp1252&lt;/code>.&lt;/p>&#xA;     * &#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&lt;/p>&#xA;     * &#xA;     * @since Java version 1.2.&#xA;     */" index="1"/>
+      <rightValues value="/**&#xA;     * The &lt;code>file.encoding&lt;/code> System Property.&#xA;     * File encoding, such as Cp1252.&#xA;     * First in JDK version 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */" index="1"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.10/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.runtime.name&lt;/code> System Property.&#xA;     * Java Runtime Environment name.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.3&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.runtime.name&lt;/code> System Property.&#xA;     * Java Runtime Environment name.&#xA;     * First in JDK version 1.3.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.11/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.runtime.version&lt;/code> System Property.&#xA;     * Java Runtime Environment version.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.3&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.runtime.version&lt;/code> System Property.&#xA;     * Java Runtime Environment version.&#xA;     * First in JDK version 1.3.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.12/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.specification.name&lt;/code> System Property.&#xA;     * Java Runtime Environment specification name.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.specification.name&lt;/code> System Property.&#xA;     * Java Runtime Environment specification name.&#xA;     * First in JDK version 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.13/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.specification.vendor&lt;/code> System Property.&#xA;     * Java Runtime Environment specification vendor.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.specification.vendor&lt;/code> System Property.&#xA;     * Java Runtime Environment specification vendor.&#xA;     * First in JDK version 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.14/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.specification.version&lt;/code> System Property.&#xA;     * Java Runtime Environment specification version.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.3&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.specification.version&lt;/code> System Property.&#xA;     * Java Runtime Environment specification version.&#xA;     * First in JDK version 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.15/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.vendor&lt;/code> System Property.&#xA;     * Java vendor-specific string.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.vendor&lt;/code> System Property.&#xA;     * Java vendor-specific string.&#xA;     * First in JDK version 1.1.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.16/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.vendor.url&lt;/code> System Property.&#xA;     * Java vendor URL.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;      * &#xA;     * @since Java 1.1&#xA;    */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.vendor.url&lt;/code> System Property.&#xA;     * Java vendor URL.&#xA;     * First in JDK version 1.1. &#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.17/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.version&lt;/code> System Property.&#xA;     * Java version number.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.version&lt;/code> System Property.&#xA;     * Java version number.&#xA;     * First in JDK version 1.1. &#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.18/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.vm.info&lt;/code> System Property.&#xA;     * Java Virtual Machine implementation info.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.vm.info&lt;/code> System Property.&#xA;     * Java Virtual Machine implementation info.&#xA;     * First in JDK version 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.19/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.vm.name&lt;/code> System Property.&#xA;     * Java Virtual Machine implementation name.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.vm.name&lt;/code> System Property.&#xA;     * Java Virtual Machine implementation name.&#xA;     * First in JDK version 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.2/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>file.separator&lt;/code> System Property.&#xA;     * File separator (&quot;/&quot; on UNIX).&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java version 1.1.&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>file.separator&lt;/code> System Property.&#xA;     * File separator (&quot;/&quot; on UNIX).&#xA;     * First in JDK version 1.1.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.20/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.vm.specification.name&lt;/code> System Property.&#xA;     * Java Virtual Machine specification name.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.vm.specification.name&lt;/code> System Property.&#xA;     * Java Virtual Machine specification name.&#xA;     * First in JDK version 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.21/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.vm.specification.vendor&lt;/code> System Property.&#xA;     * Java Virtual Machine specification vendor.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.vm.specification.vendor&lt;/code> System Property.&#xA;     * Java Virtual Machine specification vendor.&#xA;     * First in JDK version 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.22/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.vm.specification.version&lt;/code> System Property.&#xA;     * Java Virtual Machine specification version.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.vm.specification.version&lt;/code> System Property.&#xA;     * Java Virtual Machine specification version.&#xA;     * First in JDK version 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.23/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.vm.vendor&lt;/code> System Property.&#xA;     * Java Virtual Machine implementation vendor.&#xA;      * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.vm.vendor&lt;/code> System Property.&#xA;     * Java Virtual Machine implementation vendor.&#xA;     * First in JDK version 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.24/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.vm.version&lt;/code> System Property.&#xA;     * Java Virtual Machine implementation version.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.vm.version&lt;/code> System Property.&#xA;     * Java Virtual Machine implementation version.&#xA;     * First in JDK version 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.25/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>line.separator&lt;/code> System Property.&#xA;     * Line separator (&quot;\n&quot; on UNIX).&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>line.separator&lt;/code> System Property.&#xA;     * Line separator (&quot;\n&quot; on UNIX).&#xA;     * First in JDK version 1.1. &#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.26/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>os.arch&lt;/code> System Property.&#xA;     * Operating system architecture.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>os.arch&lt;/code> System Property.&#xA;     * Operating system architecture.&#xA;     * First in JDK version 1.1. &#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.27/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>os.name&lt;/code> System Property.&#xA;     * Operating system name.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>os.name&lt;/code> System Property.&#xA;     * Operating system name.&#xA;     * First in JDK version 1.1. &#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.28/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>os.version&lt;/code> System Property.&#xA;     * Operating system version.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>os.version&lt;/code> System Property.&#xA;     * Operating system version.&#xA;     * First in JDK version 1.1. &#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.29/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>path.separator&lt;/code> System Property.&#xA;     * Path separator (&quot;:&quot; on UNIX).&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>path.separator&lt;/code> System Property.&#xA;     * Path separator (&quot;:&quot; on UNIX).&#xA;     * First in JDK version 1.1. &#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.3/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.class.path&lt;/code> System Property.&#xA;     * Java class path.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java version 1.1.&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.class.path&lt;/code> System Property.&#xA;     * Java class path.&#xA;     * First in JDK version 1.1.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.30/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>user.dir&lt;/code> System Property.&#xA;     * User's current working directory.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>user.dir&lt;/code> System Property.&#xA;     * User's current working directory.&#xA;     * First in JDK version 1.1. &#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.31/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>user.home&lt;/code> System Property.&#xA;     * User's home directory.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>user.home&lt;/code> System Property.&#xA;     * User's home directory.&#xA;     * First in JDK version 1.1. &#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.32/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>user.language&lt;/code> System Property.&#xA;     * User's language code, such as 'en'.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>user.language&lt;/code> System Property.&#xA;     * User's language code, such as 'en'.&#xA;     * First in JDK version 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.33/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>user.country&lt;/code> or &lt;code>user.region&lt;/code> System Property.&#xA;     * User's country code, such as &lt;code>GB&lt;/code>.&#xA;     * First in JDK version 1.2 as &lt;code>user.region&lt;/code>.&#xA;     * Renamed to &lt;code>user.country&lt;/code> in 1.4&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>user.country&lt;/code> or &lt;code>user.region&lt;/code> System Property.&#xA;     * User's country code, such as 'GB'.&#xA;     * First in JDK version 1.2 as &lt;code>user.region&lt;/code>.&#xA;     * Renamed to &lt;code>user.country&lt;/code> in 1.4&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.34/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>user.name&lt;/code> System Property.&#xA;     * User's account name.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>user.name&lt;/code> System Property.&#xA;     * User's account name.&#xA;     * First in JDK version 1.1. &#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.4/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.class.version&lt;/code> System Property.&#xA;     * Java class format version number.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java version 1.1.&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.class.version&lt;/code> System Property.&#xA;     * Java class format version number.&#xA;     * First in JDK version 1.1.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.5/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.compiler&lt;/code> System Property.&#xA;     * Name of JIT compiler to use.&#xA;     * First in JDK version 1.2. Not used in Sun JDKs after 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java version 1.2. Not used in Sun versions after 1.2.&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.compiler&lt;/code> System Property.&#xA;     * Name of JIT compiler to use.&#xA;     * First in JDK version 1.2. Not used in Sun JDKs after 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.6/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.ext.dirs&lt;/code> System Property.&#xA;     * Path of extension directory or directories.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.3&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.ext.dirs&lt;/code> System Property.&#xA;     * Path of extension directory or directories.&#xA;     * First in JDK version 1.3.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.64/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Get the Java version number as a &lt;code>float&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;P>Example output:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>1.2f&lt;/code> for JDK 1.2&#xA;     *  &lt;li>&lt;code>1.31f&lt;/code> for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     * &#xA;     * @deprecated Use {@link #JAVA_VERSION_FLOAT} instead.&#xA;     *             Will be removed in Commons Lang 3.0.&#xA;     * @return the version, for example 1.31f for JDK 1.3.1&#xA;     */" index="1"/>
+      <rightValues value="/**&#xA;     * &lt;p>Get the Java version number as a &lt;code>float&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;P>Example output:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>1.2f&lt;/code> for JDK 1.2&#xA;     *  &lt;li>&lt;code>1.31f&lt;/code> for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     * &#xA;     * @deprecated Use JAVA_VERSION_FLOAT instead.&#xA;     *             Will be removed in Commons Lang 3.0.&#xA;     * @return the version, for example 1.31f for JDK 1.3.1&#xA;     */" index="1"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.7/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.home&lt;/code> System Property.&#xA;     * Java installation directory.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.home&lt;/code> System Property.&#xA;     * Java installation directory.&#xA;     * First in JDK version 1.1.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.8/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.io.tmpdir&lt;/code> System Property.&#xA;     * Default temp file path.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.io.tmpdir&lt;/code> System Property.&#xA;     * Default temp file path.&#xA;     * First in JDK version 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.9/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * The &lt;code>java.library.path&lt;/code> System Property.&#xA;     * List of paths to search when loading libraries.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * The &lt;code>java.library.path&lt;/code> System Property.&#xA;     * List of paths to search when loading libraries.&#xA;     * First in JDK version 1.2.&#xA;     * &lt;p>&#xA;     * Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or property not specified.&#xA;     */"/>
+    </assignments>
+  </objects>
+</epatch:Epatch>

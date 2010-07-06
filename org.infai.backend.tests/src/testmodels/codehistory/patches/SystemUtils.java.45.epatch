@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <modelImports xsi:type="epatch:EPackageImport" name="expressions" nsURI="http://www.emftext.org/java/expressions"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="operators" nsURI="http://www.emftext.org/java/operators"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="references" nsURI="http://www.emftext.org/java/references"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="literals" nsURI="http://www.emftext.org/java/literals"/>
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.44.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.41">
+    <assignments xsi:type="epatch:SingleAssignment" feature="initialValue">
+      <leftValue>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//ConditionalExpression">
+          <assignments xsi:type="epatch:SingleAssignment" feature="child">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//EqualityExpression">
+                <assignments xsi:type="epatch:ListAssignment" feature="children">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//MethodCall">
+                      <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                        <leftValues>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//StringReference">
+                            <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                              <leftValue value="user.country"/>
+                            </assignments>
+                          </newObject>
+                        </leftValues>
+                      </assignments>
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue refObject="//@objects.1"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//NullLiteral"/>
+                  </leftValues>
+                </assignments>
+                <assignments xsi:type="epatch:ListAssignment" feature="equalityOperators">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//Equal"/>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="expressionElse">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//MethodCall">
+                <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//StringReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                        <leftValue value="user.country"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+                <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                  <leftValue refObject="//@objects.1"/>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="expressionIf">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//MethodCall">
+                <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//StringReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                        <leftValue value="user.region"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+                <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                  <leftValue refObject="//@objects.1"/>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValue>
+      <rightValue>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//NestedExpression">
+          <assignments xsi:type="epatch:SingleAssignment" feature="expression">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//ConditionalExpression">
+                <assignments xsi:type="epatch:SingleAssignment" feature="child">
+                  <leftValue>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//EqualityExpression">
+                      <assignments xsi:type="epatch:ListAssignment" feature="children">
+                        <leftValues>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//MethodCall">
+                            <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                              <leftValues>
+                                <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//StringReference">
+                                  <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                                    <leftValue value="user.country"/>
+                                  </assignments>
+                                </newObject>
+                              </leftValues>
+                            </assignments>
+                            <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                              <leftValue refObject="//@objects.1"/>
+                            </assignments>
+                          </newObject>
+                        </leftValues>
+                        <leftValues>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.3" impFrag="//NullLiteral"/>
+                        </leftValues>
+                      </assignments>
+                      <assignments xsi:type="epatch:ListAssignment" feature="equalityOperators">
+                        <leftValues>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//Equal"/>
+                        </leftValues>
+                      </assignments>
+                    </newObject>
+                  </leftValue>
+                </assignments>
+                <assignments xsi:type="epatch:SingleAssignment" feature="expressionElse">
+                  <leftValue>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//MethodCall">
+                      <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                        <leftValues>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//StringReference">
+                            <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                              <leftValue value="user.country"/>
+                            </assignments>
+                          </newObject>
+                        </leftValues>
+                      </assignments>
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue refObject="//@objects.1"/>
+                      </assignments>
+                    </newObject>
+                  </leftValue>
+                </assignments>
+                <assignments xsi:type="epatch:SingleAssignment" feature="expressionIf">
+                  <leftValue>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//MethodCall">
+                      <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                        <leftValues>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//StringReference">
+                            <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                              <leftValue value="user.region"/>
+                            </assignments>
+                          </newObject>
+                        </leftValues>
+                      </assignments>
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue refObject="//@objects.1"/>
+                      </assignments>
+                    </newObject>
+                  </leftValue>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </rightValue>
+    </assignments>
+  </objects>
+  <objects name="getSystemProperty" leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.80"/>
+</epatch:Epatch>

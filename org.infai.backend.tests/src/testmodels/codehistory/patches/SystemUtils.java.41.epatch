@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <modelImports xsi:type="epatch:EPackageImport" name="expressions" nsURI="http://www.emftext.org/java/expressions"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="references" nsURI="http://www.emftext.org/java/references"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="operators" nsURI="http://www.emftext.org/java/operators"/>
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.40.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.81/@statements.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="returnValue">
+      <leftValue>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//RelationExpression">
+          <assignments xsi:type="epatch:ListAssignment" feature="children">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                  <leftValue refObject="//@objects.4"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                  <leftValue refObject="//@objects.3"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:ListAssignment" feature="relationOperators">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//GreaterThanOrEqual"/>
+            </leftValues>
+          </assignments>
+        </newObject>
+      </leftValue>
+      <rightValue>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//NestedExpression">
+          <assignments xsi:type="epatch:SingleAssignment" feature="expression">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//RelationExpression">
+                <assignments xsi:type="epatch:ListAssignment" feature="children">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue refObject="//@objects.4"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue refObject="//@objects.3"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+                <assignments xsi:type="epatch:ListAssignment" feature="relationOperators">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//GreaterThanOrEqual"/>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </rightValue>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.82/@statements.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="returnValue">
+      <leftValue>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//RelationExpression">
+          <assignments xsi:type="epatch:ListAssignment" feature="children">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                  <leftValue refObject="//@objects.5"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                  <leftValue refObject="//@objects.2"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:ListAssignment" feature="relationOperators">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//GreaterThanOrEqual"/>
+            </leftValues>
+          </assignments>
+        </newObject>
+      </leftValue>
+      <rightValue>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//NestedExpression">
+          <assignments xsi:type="epatch:SingleAssignment" feature="expression">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//RelationExpression">
+                <assignments xsi:type="epatch:ListAssignment" feature="children">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue refObject="//@objects.5"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue refObject="//@objects.2"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+                <assignments xsi:type="epatch:ListAssignment" feature="relationOperators">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//GreaterThanOrEqual"/>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </rightValue>
+    </assignments>
+  </objects>
+  <objects name="isJavaVersionAtLeastrequiredVersion0" leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.82/@parameters.0"/>
+  <objects name="isJavaVersionAtLeastrequiredVersion1" leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.81/@parameters.0"/>
+  <objects name="JAVA_VERSION_FLOAT" leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.48"/>
+  <objects name="JAVA_VERSION_INT" leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.49"/>
+</epatch:Epatch>

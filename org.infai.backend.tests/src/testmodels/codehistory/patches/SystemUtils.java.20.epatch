@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.19.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="members"/>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author &lt;a href=&quot;mailto:ggregory@seagullsw.com&quot;>Gary Gregory&lt;/a>&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.19 2003/07/21 22:57:50 scolebourne Exp $&#xA; */"/>
+      <rightValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author &lt;a href=&quot;mailto:ggregory@seagullsw.com&quot;>Gary Gregory&lt;/a>&#xA; * @author Michael Becke&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.18 2003/07/18 16:48:25 ggregory Exp $&#xA; */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="// These MUST be declared first. Other constants depend on this." index="2"/>
+      <leftValues value="// System property constants"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.34/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.38/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="// values being set up" index="3"/>
+      <leftValues value="// These MUST be declared after those above as they depend on the" index="2"/>
+      <leftValues value="// Java version"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.36/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.2/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="// values being set up" index="3"/>
+      <leftValues value="// These MUST be declared after those above as they depend on the" index="2"/>
+      <leftValues value="// Java version checks"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.41" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.7">
+    <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers"/>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.41/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.16/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is AIX.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */" index="7"/>
+      <leftValues value="// values being set up" index="3"/>
+      <leftValues value="// These MUST be declared after those above as they depend on the" index="2"/>
+      <leftValues value="// Operating system checks"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */" index="4"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.41/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.7/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.47"/>
+      <rightValue refObject="//@objects.48"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.42/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.8/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.47"/>
+      <rightValue refObject="//@objects.48"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.43/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.9/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.47"/>
+      <rightValue refObject="//@objects.48"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.44/@initialValue/@children.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.10/@initialValue/@children.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.47"/>
+      <rightValue refObject="//@objects.48"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.44/@initialValue/@children.1" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.10/@initialValue/@children.1">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.47"/>
+      <rightValue refObject="//@objects.48"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.45/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.11/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <rightValues value="// Windows XP returns 'Windows 2000' just for fun..."/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.45/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.11/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.47"/>
+      <rightValue refObject="//@objects.48"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.46/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.12/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.47"/>
+      <rightValue refObject="//@objects.48"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.47/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.13/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.47"/>
+      <rightValue refObject="//@objects.48"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.48/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.14/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.47"/>
+      <rightValue refObject="//@objects.48"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.49/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.15/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.47"/>
+      <rightValue refObject="//@objects.48"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.50" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.16">
+    <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers"/>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.50/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.7/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is AIX.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.50/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.16/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.47"/>
+      <rightValue refObject="//@objects.48"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.51/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.17/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.48"/>
+      <rightValue refObject="//@objects.47"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.52/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.18/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.48"/>
+      <rightValue refObject="//@objects.47"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.53/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.19/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.48"/>
+      <rightValue refObject="//@objects.47"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.54/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.20/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.48"/>
+      <rightValue refObject="//@objects.47"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.55/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.21/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.47"/>
+      <rightValue refObject="//@objects.48"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.56/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.22/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.48"/>
+      <rightValue refObject="//@objects.47"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.57/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.66/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="//-----------------------------------------------------------------------    " index="1"/>
+      <leftValues value="// Windows XP returns 'Windows 2000' just for fun..."/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.58/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.57/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Gets the Java version number as a &lt;code>float&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example return values:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>1.2f&lt;/code> for JDK 1.2&#xA;     *  &lt;li>&lt;code>1.31f&lt;/code> for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     * &#xA;     * @return the version, for example 1.31f for JDK 1.3.1&#xA;     * @deprecated Use {@link #JAVA_VERSION_FLOAT} instead.&#xA;     *             Method will be removed in Commons Lang 3.0.&#xA;     */" index="1"/>
+      <rightValues value="/**&#xA;     * &lt;p>Gets the Java version number as a &lt;code>float&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example return values:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>1.2f&lt;/code> for JDK 1.2&#xA;     *  &lt;li>&lt;code>1.31f&lt;/code> for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     * &#xA;     * @deprecated Use {@link #JAVA_VERSION_FLOAT} instead.&#xA;     *             Method will be removed in Commons Lang 3.0.&#xA;     * @return the version, for example 1.31f for JDK 1.3.1&#xA;     */" index="1"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.62/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Decides if the operating system matches.&lt;/p>&#xA;     * &#xA;     * @param osNamePrefix  the prefix for the os name&#xA;     * @return true if matches, or false if not or can't determine&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Decides if the operating system matches.&lt;/p>&#xA;     * &#xA;     * @param osNamePrefix  the prefix for the os name&#xA;     * @param osVersionPrefix  the prefix for the version&#xA;     * @return true if matches, or false if not or can't determine&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.62/@statements.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="condition"/>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.62/@statements.1">
+    <assignments xsi:type="epatch:ListAssignment" feature="returnValue"/>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.62/@statements.1/@returnValue/@next/@arguments.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.61/@statements.1/@returnValue/@next/@arguments.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.43"/>
+      <rightValue refObject="//@objects.44"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.63/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.61/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Decides if the operating system matches.&lt;/p>&#xA;     * &#xA;     * @param osNamePrefix  the prefix for the os name&#xA;     * @param osVersionPrefix  the prefix for the version&#xA;     * @return true if matches, or false if not or can't determine&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Decides if the operating system matches.&lt;/p>&#xA;     * &#xA;     * @param osNamePrefix  the prefix for the os name&#xA;     * @return true if matches, or false if not or can't determine&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.63/@statements.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.61/@statements.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="condition"/>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.63/@statements.1" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.61/@statements.1">
+    <assignments xsi:type="epatch:ListAssignment" feature="returnValue"/>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.63/@statements.1/@returnValue/@children.0/@next/@arguments.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.62/@statements.1/@returnValue/@children.0/@next/@arguments.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.44"/>
+      <rightValue refObject="//@objects.43"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.65/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is the Java version at least the requested version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example input:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>1.2f&lt;/code> to test for JDK 1.2&#xA;     *  &lt;li>&lt;code>1.31f&lt;/code> to test for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     * &#xA;     * @param requiredVersion  the required version, for example 1.31f&#xA;     * @return &lt;code>true&lt;/code> if the actual version is equal or greater&#xA;     *  than the required version&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is the Java version at least the requested version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example input:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>120&lt;/code> to test for JDK 1.2 or greater&#xA;     *  &lt;li>&lt;code>131&lt;/code> to test for JDK 1.3.1 or greater&#xA;     * &lt;/ul>&#xA;     * &#xA;     * @param requiredVersion  the required version, for example 131&#xA;     * @return &lt;code>true&lt;/code> if the actual version is equal or greater&#xA;     *  than the required version&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.65/@parameters.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="typeReference"/>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.65/@statements.0/@returnValue/@expression/@children.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.45"/>
+      <rightValue refObject="//@objects.46"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.66/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.64/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is the Java version at least the requested version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example input:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>120&lt;/code> to test for JDK 1.2 or greater&#xA;     *  &lt;li>&lt;code>131&lt;/code> to test for JDK 1.3.1 or greater&#xA;     * &lt;/ul>&#xA;     * &#xA;     * @param requiredVersion  the required version, for example 131&#xA;     * @return &lt;code>true&lt;/code> if the actual version is equal or greater&#xA;     *  than the required version&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is the Java version at least the requested version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example input:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>1.2f&lt;/code> to test for JDK 1.2&#xA;     *  &lt;li>&lt;code>1.31f&lt;/code> to test for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     * &#xA;     * @param requiredVersion  the required version, for example 1.31f&#xA;     * @return &lt;code>true&lt;/code> if the actual version is equal or greater&#xA;     *  than the required version&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.66/@parameters.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.64/@parameters.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="typeReference"/>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.66/@statements.0/@returnValue/@expression/@children.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.64/@statements.0/@returnValue/@expression/@children.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.46"/>
+      <rightValue refObject="//@objects.45"/>
+    </assignments>
+  </objects>
+  <objects name="getOSMatchesosNamePrefix0" leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.62/@parameters.0"/>
+  <objects name="getOSMatchesosNamePrefix1" leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.63/@parameters.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.61/@parameters.0"/>
+  <objects name="JAVA_VERSION_FLOAT" leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.34" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.38"/>
+  <objects name="JAVA_VERSION_INT" leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.35" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.39"/>
+  <objects name="SystemUtilsgetOSMatches0" leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.62"/>
+  <objects name="SystemUtilsgetOSMatches1" leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.63" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.61">
+    <assignments xsi:type="epatch:ListAssignment" feature="parameters"/>
+  </objects>
+</epatch:Epatch>

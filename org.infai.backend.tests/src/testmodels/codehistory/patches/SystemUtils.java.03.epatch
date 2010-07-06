@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.2.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA; * &lt;p>Common &lt;code>System&lt;/code> class helpers.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author &lt;a href=&quot;mailto:scolebourne@apache.org&quot;>Stephen Colebourne&lt;/a>&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @version $Id: SystemUtils.java,v 1.4 2002/11/16 10:41:03 scolebourne Exp $&#xA; */" index="1"/>
+      <rightValues value="/**&#xA; * Common &lt;code>System&lt;/code> class helpers.&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author &lt;a href=&quot;mailto:scolebourne@apache.org&quot;>Stephen Colebourne&lt;/a>&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @version $Id: SystemUtils.java,v 1.3 2002/10/29 19:47:02 bayard Exp $&#xA; */" index="1"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;P>SystemUtils instances should NOT be constructed in standard&#xA;     * programming. Instead, the class should be used as&#xA;     * &lt;code>SystemUtils.FILE_SEPARATOR&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;p>This constructor is public to permit tools that require a JavaBean&#xA;     * instance to operate.&lt;/p>&#xA;     */"/>
+      <rightValues value="/**&#xA;     * SystemUtils instances should NOT be constructed in standard programming.&#xA;     * Instead, the class should be used as &lt;code>SystemUtils.FILE_SEPARATOR&lt;/code>.&#xA;     * This constructor is public to permit tools that require a JavaBean instance&#xA;     * to operate.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.34/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Get the Java version number as a &lt;code>float&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;P>Example output:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>1.2f&lt;/code> for JDK 1.2&#xA;     *  &lt;li>&lt;code>1.31f&lt;/code> for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     * &#xA;     * @return the version, for example 1.31f for JDK 1.3.1&#xA;     */" index="98"/>
+      <rightValues value="/**&#xA;     * Get the Java version number as a float.&#xA;     * Example output:&lt;br>&#xA;     * 1.2f  for JDK 1.2&lt;br>&#xA;     * 1.31f  for JDK 1.3.1&lt;br>&#xA;     * &#xA;     * @return the version, for example 1.31f for JDK 1.3.1&#xA;     */" index="98"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.35/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is the Java version at the the requested version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example input:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>1.2f&lt;/code> for JDK 1.2&#xA;     *  &lt;li>&lt;code>1.31f&lt;/code> for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     * &#xA;     * @param requiredVersion  the required version, for example 1.31f&#xA;     * @return &lt;code>true&lt;/code> if the actual version is equal or greater&#xA;     *  than the required version&#xA;     */"/>
+      <rightValues value="/**&#xA;     * Is the Java version at the the requested version.&#xA;     * Example input:&lt;br>&#xA;     * 1.2f  for JDK 1.2&lt;br>&#xA;     * 1.31f  for JDK 1.3.1&lt;br>&#xA;     * &#xA;     * @param requiredVersion  the required version, for example 1.31f&#xA;     * @return true if the actual version is equal or greater than the required version&#xA;     */"/>
+    </assignments>
+  </objects>
+</epatch:Epatch>

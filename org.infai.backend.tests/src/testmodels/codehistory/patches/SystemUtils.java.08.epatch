@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.7.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA; * &lt;p>Common &lt;code>System&lt;/code> class helpers.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.7 2002/12/23 00:32:24 scolebourne Exp $&#xA; */"/>
+      <rightValues value="/**&#xA; * &lt;p>Common &lt;code>System&lt;/code> class helpers.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author &lt;a href=&quot;mailto:scolebourne@apache.org&quot;>Stephen Colebourne&lt;/a>&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @version $Id: SystemUtils.java,v 1.6 2002/12/08 16:18:39 scolebourne Exp $&#xA; */"/>
+    </assignments>
+  </objects>
+</epatch:Epatch>

@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <modelImports xsi:type="epatch:EPackageImport" name="members" nsURI="http://www.emftext.org/java/members"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="references" nsURI="http://www.emftext.org/java/references"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="types" nsURI="http://www.emftext.org/java/types"/>
+  <modelImports xsi:type="epatch:ResourceImport" name="java_lang_String_java" uri="pathmap:/javaclass/java.lang.String.java"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="modifiers" nsURI="http://www.emftext.org/java/modifiers"/>
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.31.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="members">
+      <leftValues index="44">
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//Field">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Public">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="/**&#xA;     * &lt;p>The &lt;code>user.timezone&lt;/code> System Property. &#xA;     * For example: &lt;code>&quot;America/Los_Angeles&quot;&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since 2.1&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Static"/>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Final"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="initialValue">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//MethodCall">
+                <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//StringReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                        <leftValue value="user.timezone"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+                <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                  <leftValue refObject="//@objects.38"/>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="USER_TIMEZONE"/>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.3" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <leftValues index="23">
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//Field">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Public">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.util.prefs.PreferencesFactory&lt;/code> System Property. A class name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since 2.1&#xA;     * @since Java 1.4&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Static"/>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Final"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="initialValue">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//MethodCall">
+                <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//StringReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                        <leftValue value="java.util.prefs.PreferencesFactory"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+                <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                  <leftValue refObject="//@objects.38"/>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="JAVA_UTIL_PREFS_PREFERENCES_FACTORY"/>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.3" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <leftValues index="9">
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//Field">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Public">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.awt.printerjob&lt;/code> System Property.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since 2.1&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Static"/>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Final"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="initialValue">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//MethodCall">
+                <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//StringReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                        <leftValue value="java.awt.printerjob"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+                <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                  <leftValue refObject="//@objects.38"/>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="JAVA_AWT_PRINTERJOB"/>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.3" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <leftValues index="8">
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//Field">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Public">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.awt.graphicsenv&lt;/code> System Property.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since 2.1&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Static"/>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Final"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="initialValue">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//MethodCall">
+                <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//StringReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                        <leftValue value="java.awt.graphicsenv"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+                <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                  <leftValue refObject="//@objects.38"/>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="JAVA_AWT_GRAPHICSENV"/>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.3" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <leftValues index="7">
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.0" impFrag="//Field">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Public">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.awt.fonts&lt;/code> System Property.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since 2.1&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Static"/>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Final"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="initialValue">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//MethodCall">
+                <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//StringReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                        <leftValue value="java.awt.fonts"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+                <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                  <leftValue refObject="//@objects.38"/>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="JAVA_AWT_FONTS"/>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.3" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author Gary Gregory&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @author Rafal Krupinski&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.31 2004/02/14 00:23:50 ggregory Exp $&#xA; */"/>
+      <rightValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author Gary Gregory&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @author Rafal Krupinski&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.30 2004/02/12 01:58:33 ggregory Exp $&#xA; */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.10/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.7/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.class.path&lt;/code> System Property. Java class path.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.class.path&lt;/code> System Property. Java class path.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.11/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.8/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.class.version&lt;/code> System Property.&#xA;     * Java class format version number.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.class.version&lt;/code> System Property.&#xA;     * Java class format version number.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.12/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.9/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.compiler&lt;/code> System Property. Name of JIT compiler to use.&#xA;     * First in JDK version 1.2. Not used in Sun JDKs after 1.2.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.2. Not used in Sun versions after 1.2.&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.compiler&lt;/code> System Property. Name of JIT compiler to use.&#xA;     * First in JDK version 1.2. Not used in Sun JDKs after 1.2.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2. Not used in Sun versions after 1.2.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.13/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.10/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.endorsed.dirs&lt;/code> System Property. Path of endorsed directory&#xA;     * or directories.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.4&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.endorsed.dirs&lt;/code> System Property. Path of endorsed directory&#xA;     * or directories.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.4&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.14/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.11/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.ext.dirs&lt;/code> System Property. Path of extension directory&#xA;     * or directories.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.3&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.ext.dirs&lt;/code> System Property. Path of extension directory&#xA;     * or directories.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.3&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.15/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.12/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.home&lt;/code> System Property. Java installation directory.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.home&lt;/code> System Property. Java installation directory.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.16/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.13/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.io.tmpdir&lt;/code> System Property. Default temp file path.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.io.tmpdir&lt;/code> System Property. Default temp file path.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.17/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.14/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.library.path&lt;/code> System Property. List of paths to search&#xA;     * when loading libraries.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.library.path&lt;/code> System Property. List of paths to search&#xA;     * when loading libraries.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.18/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.15/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.runtime.name&lt;/code> System Property. Java Runtime Environment&#xA;     * name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.3&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.runtime.name&lt;/code> System Property. Java Runtime Environment&#xA;     * name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.3&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.19/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.16/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.runtime.version&lt;/code> System Property. Java Runtime Environment&#xA;     * version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.3&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.runtime.version&lt;/code> System Property. Java Runtime Environment&#xA;     * version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.3&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.20/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.17/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.specification.name&lt;/code> System Property. Java Runtime Environment&#xA;     * specification name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.specification.name&lt;/code> System Property. Java Runtime Environment&#xA;     * specification name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.21/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.18/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.specification.vendor&lt;/code> System Property. Java Runtime Environment&#xA;     * specification vendor.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.specification.vendor&lt;/code> System Property. Java Runtime Environment&#xA;     * specification vendor.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.22/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.19/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.specification.version&lt;/code> System Property. Java Runtime Environment&#xA;     * specification version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.3&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.specification.version&lt;/code> System Property. Java Runtime Environment&#xA;     * specification version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.3&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.24/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.20/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.vendor&lt;/code> System Property. Java vendor-specific string.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.vendor&lt;/code> System Property. Java vendor-specific string.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.25/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.21/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.vendor.url&lt;/code> System Property. Java vendor URL.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;    */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.vendor.url&lt;/code> System Property. Java vendor URL.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;      * &#xA;     * @since Java 1.1&#xA;    */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.26/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.22/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.version&lt;/code> System Property. Java version number.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.version&lt;/code> System Property. Java version number.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.27/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.23/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.info&lt;/code> System Property. Java Virtual Machine implementation&#xA;     * info.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.info&lt;/code> System Property. Java Virtual Machine implementation&#xA;     * info.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.28/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.24/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.name&lt;/code> System Property. Java Virtual Machine implementation&#xA;     * name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.name&lt;/code> System Property. Java Virtual Machine implementation&#xA;     * name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.29/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.25/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.specification.name&lt;/code> System Property. Java Virtual Machine&#xA;     * specification name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.specification.name&lt;/code> System Property. Java Virtual Machine&#xA;     * specification name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.30/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.26/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.specification.vendor&lt;/code> System Property. Java Virtual&#xA;     * Machine specification vendor.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.specification.vendor&lt;/code> System Property. Java Virtual&#xA;     * Machine specification vendor.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.31/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.27/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.specification.version&lt;/code> System Property. Java Virtual Machine&#xA;     * specification version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.specification.version&lt;/code> System Property. Java Virtual Machine&#xA;     * specification version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.32/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.28/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.vendor&lt;/code> System Property. Java Virtual Machine implementation&#xA;     * vendor.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.vendor&lt;/code> System Property. Java Virtual Machine implementation&#xA;     * vendor.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.33/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.29/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.version&lt;/code> System Property. Java Virtual Machine&#xA;     * implementation version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>java.vm.version&lt;/code> System Property. Java Virtual Machine&#xA;     * implementation version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.34/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.30/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>line.separator&lt;/code> System Property. Line separator&#xA;     * (&lt;code>&amp;quot;\n&lt;&amp;quot;&lt;/code> on UNIX).&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>line.separator&lt;/code> System Property. Line separator&#xA;     * (&lt;code>&amp;quot;\n&lt;&amp;quot;&lt;/code> on UNIX).&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.35/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.31/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>os.arch&lt;/code> System Property. Operating system architecture.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>os.arch&lt;/code> System Property. Operating system architecture.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.36/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.32/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>os.name&lt;/code> System Property. Operating system name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>os.name&lt;/code> System Property. Operating system name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.37/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.33/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>os.version&lt;/code> System Property. Operating system version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>os.version&lt;/code> System Property. Operating system version.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.38/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.34/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>path.separator&lt;/code> System Property. Path separator&#xA;     * (&lt;code>&amp;quot;:&amp;quot;&lt;/code> on UNIX).&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>path.separator&lt;/code> System Property. Path separator&#xA;     * (&lt;code>&amp;quot;:&amp;quot;&lt;/code> on UNIX).&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.39/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.35/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>user.country&lt;/code> or &lt;code>user.region&lt;/code> System Property.&#xA;     * User's country code, such as &lt;code>GB&lt;/code>. First in JDK version 1.2 as&#xA;     * &lt;code>user.region&lt;/code>. Renamed to &lt;code>user.country&lt;/code> in 1.4&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>user.country&lt;/code> or &lt;code>user.region&lt;/code> System Property.&#xA;     * User's country code, such as &lt;code>GB&lt;/code>. First in JDK version 1.2 as&#xA;     * &lt;code>user.region&lt;/code>. Renamed to &lt;code>user.country&lt;/code> in 1.4&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.4/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>awt.toolkit&lt;/code> System Property.&lt;/p>&#xA;     * &lt;p>Holds a class name, on Windows XP this is &lt;code>sun.awt.windows.WToolkit&lt;/code>.&lt;/p>&#xA;     * &lt;p>&lt;b>On platforms without a GUI, this value is &lt;code>null&lt;/code>.&lt;/b>&lt;/p>&#xA;     * &#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since 2.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>awt.toolkit&lt;/code> System Property.&lt;/p>&#xA;     * &lt;p>Holds a class name, on Windows XP this is &lt;code>sun.awt.windows.WToolkit&lt;/code>.&lt;/p>&#xA;     * &lt;p>&lt;b>On platforms without a GUI, this value is &lt;code>null&lt;/code>.&lt;/b>&lt;/p>&#xA;     * &#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since 2.1&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.40/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.36/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>user.dir&lt;/code> System Property. User's current working&#xA;     * directory.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>user.dir&lt;/code> System Property. User's current working&#xA;     * directory.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.41/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.37/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>user.home&lt;/code> System Property. User's home directory.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>user.home&lt;/code> System Property. User's home directory.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.42/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.38/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>user.language&lt;/code> System Property. User's language code,&#xA;     * such as &lt;code>&quot;en&quot;&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>user.language&lt;/code> System Property. User's language code,&#xA;     * such as 'en'.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.2&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.43/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.39/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>user.name&lt;/code> System Property. User's account name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>user.name&lt;/code> System Property. User's account name.&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.5/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>file.encoding&lt;/code> System Property.&lt;/p>&#xA;     * &lt;p>File encoding, such as &lt;code>Cp1252&lt;/code>.&lt;/p>&#xA;     * &#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.2&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>file.encoding&lt;/code> System Property.&lt;/p>&#xA;     * &lt;p>File encoding, such as &lt;code>Cp1252&lt;/code>.&lt;/p>&#xA;     * &#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     * @since Java 1.2.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.6/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>The &lt;code>file.separator&lt;/code> System Property.&#xA;     * File separator (&lt;code>&amp;quot;/&amp;quot;&lt;/code> on UNIX).&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * &lt;p>&#xA;     * This value is initialized when the class is loaded. If {@link System#setProperty(String,String)}&#xA;     * or {@link System#setProperties(java.util.Properties)} is called after this class is loaded, the value&#xA;     * will be out of sync with that System property.&#xA;     * &lt;/p>&#xA;     * &#xA;     * @since Java 1.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>The &lt;code>file.separator&lt;/code> System Property.&#xA;     * File separator (&lt;code>&amp;quot;/&amp;quot;&lt;/code> on UNIX).&lt;/p>&#xA;     *&#xA;     * &lt;p>Defaults to &lt;code>null&lt;/code> if the runtime does not have&#xA;     * security access to read this property or the property does not exist.&lt;/p>&#xA;     * &#xA;     * @since Java 1.1.&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects name="getSystemProperty" leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.76" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.71"/>
+</epatch:Epatch>

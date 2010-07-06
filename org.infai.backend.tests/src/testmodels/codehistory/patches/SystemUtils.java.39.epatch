@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="ASCII"?>
+<epatch:Epatch xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:epatch="http://www.eclipse.org/emf/compare/epatch/0.1" name="patch">
+  <modelImports xsi:type="epatch:EPackageImport" name="members" nsURI="http://www.emftext.org/java/members"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="references" nsURI="http://www.emftext.org/java/references"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="types" nsURI="http://www.emftext.org/java/types"/>
+  <modelImports xsi:type="epatch:ResourceImport" name="java_lang_String_java" uri="pathmap:/javaclass/java.lang.String.java"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="modifiers" nsURI="http://www.emftext.org/java/modifiers"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="statements" nsURI="http://www.emftext.org/java/statements"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="variables" nsURI="http://www.emftext.org/java/variables"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="literals" nsURI="http://www.emftext.org/java/literals"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="expressions" nsURI="http://www.emftext.org/java/expressions"/>
+  <modelImports xsi:type="epatch:EPackageImport" name="operators" nsURI="http://www.emftext.org/java/operators"/>
+  <resources name="res0" leftUri="SystemUtils.java" rightUri="SystemUtils.java.38.xmi"/>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="members">
+      <leftValues index="76">
+        <newObject xsi:type="epatch:ObjectNew" name="getJavaVersionTrimmed" import="//@modelImports.0" impFrag="//ClassMethod">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Private">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="/**&#xA;     * Trims the text of the java version to start with numbers.&#xA;     * &#xA;     * @return the trimmed java version&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Static"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="getJavaVersionTrimmed"/>
+          </assignments>
+          <assignments xsi:type="epatch:ListAssignment" feature="statements">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.5" impFrag="//Condition">
+                <assignments xsi:type="epatch:SingleAssignment" feature="condition">
+                  <leftValue>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.8" impFrag="//EqualityExpression">
+                      <assignments xsi:type="epatch:ListAssignment" feature="children">
+                        <leftValues>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                            <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                              <leftValue refObject="//@objects.36"/>
+                            </assignments>
+                          </newObject>
+                        </leftValues>
+                        <leftValues>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.7" impFrag="//NullLiteral"/>
+                        </leftValues>
+                      </assignments>
+                      <assignments xsi:type="epatch:ListAssignment" feature="equalityOperators">
+                        <leftValues>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.9" impFrag="//NotEqual"/>
+                        </leftValues>
+                      </assignments>
+                    </newObject>
+                  </leftValue>
+                </assignments>
+                <assignments xsi:type="epatch:SingleAssignment" feature="statement">
+                  <leftValue>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.5" impFrag="//Block">
+                      <assignments xsi:type="epatch:ListAssignment" feature="statements">
+                        <leftValues>
+                          <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.5" impFrag="//ForLoop">
+                            <assignments xsi:type="epatch:SingleAssignment" feature="condition">
+                              <leftValue>
+                                <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.8" impFrag="//RelationExpression">
+                                  <assignments xsi:type="epatch:ListAssignment" feature="children">
+                                    <leftValues>
+                                      <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                                        <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                          <leftValue refObject="//@objects.0/@assignments.0/@leftValues.0/@newObject/@assignments.2/@leftValues.0/@newObject/@assignments.1/@leftValue/@newObject/@assignments.0/@leftValues.0/@newObject/@assignments.1/@leftValue/@newObject"/>
+                                        </assignments>
+                                      </newObject>
+                                    </leftValues>
+                                    <leftValues>
+                                      <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                                        <assignments xsi:type="epatch:SingleAssignment" feature="next">
+                                          <leftValue>
+                                            <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//MethodCall">
+                                              <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                                <leftValue import="//@modelImports.3" impFrag="//@classifiers.0/@members.24"/>
+                                              </assignments>
+                                            </newObject>
+                                          </leftValue>
+                                        </assignments>
+                                        <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                          <leftValue refObject="//@objects.36"/>
+                                        </assignments>
+                                      </newObject>
+                                    </leftValues>
+                                  </assignments>
+                                  <assignments xsi:type="epatch:ListAssignment" feature="relationOperators">
+                                    <leftValues>
+                                      <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.9" impFrag="//LessThan"/>
+                                    </leftValues>
+                                  </assignments>
+                                </newObject>
+                              </leftValue>
+                            </assignments>
+                            <assignments xsi:type="epatch:SingleAssignment" feature="init">
+                              <leftValue>
+                                <newObject xsi:type="epatch:ObjectNew" name="i" import="//@modelImports.6" impFrag="//LocalVariable">
+                                  <assignments xsi:type="epatch:SingleAssignment" feature="initialValue">
+                                    <leftValue>
+                                      <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.7" impFrag="//DecimalIntegerLiteral">
+                                        <assignments xsi:type="epatch:SingleAssignment" feature="decimalValue">
+                                          <leftValue value="0"/>
+                                        </assignments>
+                                      </newObject>
+                                    </leftValue>
+                                  </assignments>
+                                  <assignments xsi:type="epatch:SingleAssignment" feature="name">
+                                    <leftValue value="i"/>
+                                  </assignments>
+                                  <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+                                    <leftValue>
+                                      <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//Int"/>
+                                    </leftValue>
+                                  </assignments>
+                                </newObject>
+                              </leftValue>
+                            </assignments>
+                            <assignments xsi:type="epatch:SingleAssignment" feature="statement">
+                              <leftValue>
+                                <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.5" impFrag="//Block">
+                                  <assignments xsi:type="epatch:ListAssignment" feature="statements">
+                                    <leftValues>
+                                      <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.5" impFrag="//LocalVariableStatement">
+                                        <assignments xsi:type="epatch:SingleAssignment" feature="variable">
+                                          <leftValue>
+                                            <newObject xsi:type="epatch:ObjectNew" name="ch" import="//@modelImports.6" impFrag="//LocalVariable">
+                                              <assignments xsi:type="epatch:SingleAssignment" feature="initialValue">
+                                                <leftValue>
+                                                  <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                                                    <assignments xsi:type="epatch:SingleAssignment" feature="next">
+                                                      <leftValue>
+                                                        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//MethodCall">
+                                                          <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                                                            <leftValues>
+                                                              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                                                                <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                                                  <leftValue refObject="//@objects.0/@assignments.0/@leftValues.0/@newObject/@assignments.2/@leftValues.0/@newObject/@assignments.1/@leftValue/@newObject/@assignments.0/@leftValues.0/@newObject/@assignments.1/@leftValue/@newObject"/>
+                                                                </assignments>
+                                                              </newObject>
+                                                            </leftValues>
+                                                          </assignments>
+                                                          <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                                            <leftValue import="//@modelImports.3" impFrag="//@classifiers.0/@members.26"/>
+                                                          </assignments>
+                                                        </newObject>
+                                                      </leftValue>
+                                                    </assignments>
+                                                    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                                      <leftValue refObject="//@objects.36"/>
+                                                    </assignments>
+                                                  </newObject>
+                                                </leftValue>
+                                              </assignments>
+                                              <assignments xsi:type="epatch:SingleAssignment" feature="name">
+                                                <leftValue value="ch"/>
+                                              </assignments>
+                                              <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+                                                <leftValue>
+                                                  <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//Char"/>
+                                                </leftValue>
+                                              </assignments>
+                                            </newObject>
+                                          </leftValue>
+                                        </assignments>
+                                      </newObject>
+                                    </leftValues>
+                                    <leftValues>
+                                      <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.5" impFrag="//Condition">
+                                        <assignments xsi:type="epatch:SingleAssignment" feature="condition">
+                                          <leftValue>
+                                            <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.8" impFrag="//ConditionalAndExpression">
+                                              <assignments xsi:type="epatch:ListAssignment" feature="children">
+                                                <leftValues>
+                                                  <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.8" impFrag="//RelationExpression">
+                                                    <assignments xsi:type="epatch:ListAssignment" feature="children">
+                                                      <leftValues>
+                                                        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                                                          <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                                            <leftValue refObject="//@objects.0/@assignments.0/@leftValues.0/@newObject/@assignments.2/@leftValues.0/@newObject/@assignments.1/@leftValue/@newObject/@assignments.0/@leftValues.0/@newObject/@assignments.2/@leftValue/@newObject/@assignments.0/@leftValues.0/@newObject/@assignments.0/@leftValue/@newObject"/>
+                                                          </assignments>
+                                                        </newObject>
+                                                      </leftValues>
+                                                      <leftValues>
+                                                        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.7" impFrag="//CharacterLiteral">
+                                                          <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                                                            <leftValue value="48"/>
+                                                          </assignments>
+                                                        </newObject>
+                                                      </leftValues>
+                                                    </assignments>
+                                                    <assignments xsi:type="epatch:ListAssignment" feature="relationOperators">
+                                                      <leftValues>
+                                                        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.9" impFrag="//GreaterThanOrEqual"/>
+                                                      </leftValues>
+                                                    </assignments>
+                                                  </newObject>
+                                                </leftValues>
+                                                <leftValues>
+                                                  <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.8" impFrag="//RelationExpression">
+                                                    <assignments xsi:type="epatch:ListAssignment" feature="children">
+                                                      <leftValues>
+                                                        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                                                          <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                                            <leftValue refObject="//@objects.0/@assignments.0/@leftValues.0/@newObject/@assignments.2/@leftValues.0/@newObject/@assignments.1/@leftValue/@newObject/@assignments.0/@leftValues.0/@newObject/@assignments.2/@leftValue/@newObject/@assignments.0/@leftValues.0/@newObject/@assignments.0/@leftValue/@newObject"/>
+                                                          </assignments>
+                                                        </newObject>
+                                                      </leftValues>
+                                                      <leftValues>
+                                                        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.7" impFrag="//CharacterLiteral">
+                                                          <assignments xsi:type="epatch:SingleAssignment" feature="value">
+                                                            <leftValue value="57"/>
+                                                          </assignments>
+                                                        </newObject>
+                                                      </leftValues>
+                                                    </assignments>
+                                                    <assignments xsi:type="epatch:ListAssignment" feature="relationOperators">
+                                                      <leftValues>
+                                                        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.9" impFrag="//LessThanOrEqual"/>
+                                                      </leftValues>
+                                                    </assignments>
+                                                  </newObject>
+                                                </leftValues>
+                                              </assignments>
+                                            </newObject>
+                                          </leftValue>
+                                        </assignments>
+                                        <assignments xsi:type="epatch:SingleAssignment" feature="statement">
+                                          <leftValue>
+                                            <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.5" impFrag="//Block">
+                                              <assignments xsi:type="epatch:ListAssignment" feature="statements">
+                                                <leftValues>
+                                                  <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.5" impFrag="//Return">
+                                                    <assignments xsi:type="epatch:SingleAssignment" feature="returnValue">
+                                                      <leftValue>
+                                                        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                                                          <assignments xsi:type="epatch:SingleAssignment" feature="next">
+                                                            <leftValue>
+                                                              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//MethodCall">
+                                                                <assignments xsi:type="epatch:ListAssignment" feature="arguments">
+                                                                  <leftValues>
+                                                                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                                                                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                                                        <leftValue refObject="//@objects.0/@assignments.0/@leftValues.0/@newObject/@assignments.2/@leftValues.0/@newObject/@assignments.1/@leftValue/@newObject/@assignments.0/@leftValues.0/@newObject/@assignments.1/@leftValue/@newObject"/>
+                                                                      </assignments>
+                                                                    </newObject>
+                                                                  </leftValues>
+                                                                </assignments>
+                                                                <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                                                  <leftValue import="//@modelImports.3" impFrag="//@classifiers.0/@members.59"/>
+                                                                </assignments>
+                                                              </newObject>
+                                                            </leftValue>
+                                                          </assignments>
+                                                          <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                                            <leftValue refObject="//@objects.36"/>
+                                                          </assignments>
+                                                        </newObject>
+                                                      </leftValue>
+                                                    </assignments>
+                                                  </newObject>
+                                                </leftValues>
+                                              </assignments>
+                                            </newObject>
+                                          </leftValue>
+                                        </assignments>
+                                      </newObject>
+                                    </leftValues>
+                                  </assignments>
+                                </newObject>
+                              </leftValue>
+                            </assignments>
+                            <assignments xsi:type="epatch:ListAssignment" feature="updates">
+                              <leftValues>
+                                <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.8" impFrag="//SuffixUnaryModificationExpression">
+                                  <assignments xsi:type="epatch:SingleAssignment" feature="child">
+                                    <leftValue>
+                                      <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//IdentifierReference">
+                                        <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                                          <leftValue refObject="//@objects.0/@assignments.0/@leftValues.0/@newObject/@assignments.2/@leftValues.0/@newObject/@assignments.1/@leftValue/@newObject/@assignments.0/@leftValues.0/@newObject/@assignments.1/@leftValue/@newObject"/>
+                                        </assignments>
+                                      </newObject>
+                                    </leftValue>
+                                  </assignments>
+                                  <assignments xsi:type="epatch:SingleAssignment" feature="operator">
+                                    <leftValue>
+                                      <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.9" impFrag="//PlusPlus"/>
+                                    </leftValue>
+                                  </assignments>
+                                </newObject>
+                              </leftValues>
+                            </assignments>
+                          </newObject>
+                        </leftValues>
+                      </assignments>
+                    </newObject>
+                  </leftValue>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.5" impFrag="//Return">
+                <assignments xsi:type="epatch:SingleAssignment" feature="returnValue">
+                  <leftValue>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.7" impFrag="//NullLiteral"/>
+                  </leftValue>
+                </assignments>
+              </newObject>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.3" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <leftValues index="47">
+        <newObject xsi:type="epatch:ObjectNew" name="JAVA_VERSION_TRIMMED" import="//@modelImports.0" impFrag="//Field">
+          <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Public">
+                <assignments xsi:type="epatch:ListAssignment" feature="comments">
+                  <leftValues value="// Java version"/>
+                  <leftValues value="//-----------------------------------------------------------------------"/>
+                  <leftValues value="// This MUST be declared after those above as it depends on the"/>
+                  <leftValues value="// values being set up"/>
+                  <leftValues value="/**&#xA;     * &lt;p>Gets the Java version as a &lt;code>String&lt;/code> trimming leading letters.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>null&lt;/code> if {@link #JAVA_VERSION} is &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.1&#xA;     */"/>
+                </assignments>
+              </newObject>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Static"/>
+            </leftValues>
+            <leftValues>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Final"/>
+            </leftValues>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="initialValue">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.1" impFrag="//MethodCall">
+                <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                  <leftValue refObject="//@objects.0/@assignments.0/@leftValues.0/@newObject"/>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="name">
+            <leftValue value="JAVA_VERSION_TRIMMED"/>
+          </assignments>
+          <assignments xsi:type="epatch:SingleAssignment" feature="typeReference">
+            <leftValue>
+              <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//NamespaceClassifierReference">
+                <assignments xsi:type="epatch:ListAssignment" feature="classifierReferences">
+                  <leftValues>
+                    <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.2" impFrag="//ClassifierReference">
+                      <assignments xsi:type="epatch:SingleAssignment" feature="target">
+                        <leftValue import="//@modelImports.3" impFrag="//@classifiers.0"/>
+                      </assignments>
+                    </newObject>
+                  </leftValues>
+                </assignments>
+              </newObject>
+            </leftValue>
+          </assignments>
+        </newObject>
+      </leftValues>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author Gary Gregory&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @author Rafal Krupinski&#xA; * @author Jason Gritman&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.38 2004/11/12 00:48:41 scolebourne Exp $&#xA; */"/>
+      <rightValues value="/**&#xA; * &lt;p>Helpers for &lt;code>java.lang.System&lt;/code>.&lt;/p>&#xA; * &#xA; * &lt;p>If a system property cannot be read due to security restrictions, &#xA; * the corresponding field in this class will be set to &lt;code>null&lt;/code>&#xA; * and a message will be written to &lt;code>System.err&lt;/code>.&lt;/p>&#xA; *&#xA; * @author Based on code from Avalon Excalibur&#xA; * @author Based on code from Lucene&#xA; * @author Stephen Colebourne&#xA; * @author &lt;a href=&quot;mailto:sdowney@panix.com&quot;>Steve Downey&lt;/a>&#xA; * @author Gary Gregory&#xA; * @author Michael Becke&#xA; * @author Tetsuya Kaneuchi&#xA; * @author Rafal Krupinski&#xA; * @since 1.0&#xA; * @version $Id: SystemUtils.java,v 1.37 2004/11/06 01:27:59 ggregory Exp $&#xA; */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.48/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.47/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="// value being set up" index="3"/>
+      <leftValues value="// These MUST be declared after the trim above as they depend on the" index="2"/>
+      <leftValues value="// Java version values"/>
+      <rightValues value="// Java version"/>
+      <rightValues value="// These MUST be declared after those above as they depend on the" index="2"/>
+      <rightValues value="// values being set up" index="3"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.50">
+    <assignments xsi:type="epatch:SingleAssignment" feature="name">
+      <leftValue value="IS_JAVA_1_1"/>
+      <rightValue value="IS_JAVA_1_2"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.50/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Java version 1.1 (also 1.1.x versions).&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if {@link #JAVA_VERSION} is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */" index="4"/>
+      <leftValues value="// values being set up" index="3"/>
+      <leftValues value="// These MUST be declared after those above as they depend on the" index="2"/>
+      <leftValues value="//-----------------------------------------------------------------------" index="1"/>
+      <leftValues value="// Java version checks"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Java version 1.2 (also 1.2.x versions).&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if {@link #JAVA_VERSION} is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.50/@initialValue/@arguments.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="value">
+      <leftValue value="1.1"/>
+      <rightValue value="1.2"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.51">
+    <assignments xsi:type="epatch:SingleAssignment" feature="name">
+      <leftValue value="IS_JAVA_1_2"/>
+      <rightValue value="IS_JAVA_1_3"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.51/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Java version 1.2 (also 1.2.x versions).&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if {@link #JAVA_VERSION} is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Java version 1.3 (also 1.3.x versions).&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if {@link #JAVA_VERSION} is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.51/@initialValue/@arguments.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="value">
+      <leftValue value="1.2"/>
+      <rightValue value="1.3"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.52">
+    <assignments xsi:type="epatch:SingleAssignment" feature="name">
+      <leftValue value="IS_JAVA_1_3"/>
+      <rightValue value="IS_JAVA_1_4"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.52/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Java version 1.3 (also 1.3.x versions).&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if {@link #JAVA_VERSION} is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Java version 1.4 (also 1.4.x versions).&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if {@link #JAVA_VERSION} is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.52/@initialValue/@arguments.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="value">
+      <leftValue value="1.3"/>
+      <rightValue value="1.4"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.53">
+    <assignments xsi:type="epatch:SingleAssignment" feature="name">
+      <leftValue value="IS_JAVA_1_4"/>
+      <rightValue value="IS_JAVA_1_5"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.53/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Java version 1.4 (also 1.4.x versions).&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if {@link #JAVA_VERSION} is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Java version 1.5 (also 1.5.x versions).&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if {@link #JAVA_VERSION} is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.53/@initialValue/@arguments.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="value">
+      <leftValue value="1.4"/>
+      <rightValue value="1.5"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.54" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.49">
+    <assignments xsi:type="epatch:ListAssignment" feature="annotationsAndModifiers">
+      <leftValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Public">
+          <assignments xsi:type="epatch:ListAssignment" feature="comments">
+            <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Java version 1.5 (also 1.5.x versions).&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if {@link #JAVA_VERSION} is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+          </assignments>
+        </newObject>
+      </leftValues>
+      <rightValues>
+        <newObject xsi:type="epatch:ObjectNew" import="//@modelImports.4" impFrag="//Public">
+          <assignments xsi:type="epatch:ListAssignment" feature="comments">
+            <leftValues value="// Java version checks"/>
+            <leftValues value="//-----------------------------------------------------------------------"/>
+            <leftValues value="// These MUST be declared after those above as they depend on the"/>
+            <leftValues value="// values being set up"/>
+            <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Java version 1.1 (also 1.1.x versions).&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if {@link #JAVA_VERSION} is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     */"/>
+          </assignments>
+        </newObject>
+      </rightValues>
+    </assignments>
+    <assignments xsi:type="epatch:SingleAssignment" feature="name">
+      <leftValue value="IS_JAVA_1_5"/>
+      <rightValue value="IS_JAVA_1_1"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.54/@initialValue/@arguments.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.49/@initialValue/@arguments.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="value">
+      <leftValue value="1.5"/>
+      <rightValue value="1.1"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.67">
+    <assignments xsi:type="epatch:SingleAssignment" feature="name">
+      <leftValue value="IS_OS_WINDOWS_95"/>
+      <rightValue value="IS_OS_WINDOWS_98"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.67/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows 95.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */"/>
+      <rightValues value="// JDK 1.2 running on Windows98 returns 'Windows 95', hence the above"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows 98.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */" index="1"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.67/@initialValue/@arguments.1">
+    <assignments xsi:type="epatch:SingleAssignment" feature="value">
+      <leftValue value="4.0"/>
+      <rightValue value="4.1"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.68" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.66">
+    <assignments xsi:type="epatch:SingleAssignment" feature="name">
+      <leftValue value="IS_OS_WINDOWS_98"/>
+      <rightValue value="IS_OS_WINDOWS_95"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.68/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.66/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows 98.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */" index="1"/>
+      <leftValues value="// JDK 1.2 running on Windows98 returns 'Windows 95', hence the above"/>
+      <rightValues value="/**&#xA;     * &lt;p>Is &lt;code>true&lt;/code> if this is Windows 95.&lt;/p>&#xA;     *&#xA;     * &lt;p>The field will return &lt;code>false&lt;/code> if &lt;code>OS_NAME&lt;/code> is&#xA;     * &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @since 2.0&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.68/@initialValue/@arguments.1" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.66/@initialValue/@arguments.1">
+    <assignments xsi:type="epatch:SingleAssignment" feature="value">
+      <leftValue value="4.1"/>
+      <rightValue value="4.0"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.74/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.73/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Gets the Java version number as a &lt;code>float&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example return values:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>1.2f&lt;/code> for JDK 1.2&#xA;     *  &lt;li>&lt;code>1.31f&lt;/code> for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     * &#xA;     * &lt;p>Patch releases are not reported.&#xA;     * Zero is returned if {@link #JAVA_VERSION_TRIMMED} is &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @return the version, for example 1.31f for JDK 1.3.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Gets the Java version number as a &lt;code>float&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example return values:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>1.2f&lt;/code> for JDK 1.2&#xA;     *  &lt;li>&lt;code>1.31f&lt;/code> for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     * &#xA;     * &lt;p>Patch releases are not reported.&#xA;     * Zero is returned if {@link #JAVA_VERSION} is &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @return the version, for example 1.31f for JDK 1.3.1&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.74/@statements.0/@condition/@children.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.73/@statements.0/@condition/@children.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.0/@assignments.0/@leftValues.1/@newObject"/>
+      <rightValue refObject="//@objects.36"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.74/@statements.1/@variable/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.73/@statements.1/@variable/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.0/@assignments.0/@leftValues.1/@newObject"/>
+      <rightValue refObject="//@objects.36"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.74/@statements.2/@condition/@children.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.73/@statements.2/@condition/@children.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.0/@assignments.0/@leftValues.1/@newObject"/>
+      <rightValue refObject="//@objects.36"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.74/@statements.2/@statement/@statements.0/@expression/@value/@children.1" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.73/@statements.2/@statement/@statements.0/@expression/@value/@children.1">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.0/@assignments.0/@leftValues.1/@newObject"/>
+      <rightValue refObject="//@objects.36"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.75/@annotationsAndModifiers.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.74/@annotationsAndModifiers.0">
+    <assignments xsi:type="epatch:ListAssignment" feature="comments">
+      <leftValues value="/**&#xA;     * &lt;p>Gets the Java version number as an &lt;code>int&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example return values:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>120&lt;/code> for JDK 1.2&#xA;     *  &lt;li>&lt;code>131&lt;/code> for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     * &#xA;     * &lt;p>Patch releases are not reported.&#xA;     * Zero is returned if {@link #JAVA_VERSION_TRIMMED} is &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @return the version, for example 131 for JDK 1.3.1&#xA;     */"/>
+      <rightValues value="/**&#xA;     * &lt;p>Gets the Java version number as an &lt;code>int&lt;/code>.&lt;/p>&#xA;     *&#xA;     * &lt;p>Example return values:&lt;/p>&#xA;     * &lt;ul>&#xA;     *  &lt;li>&lt;code>120&lt;/code> for JDK 1.2&#xA;     *  &lt;li>&lt;code>131&lt;/code> for JDK 1.3.1&#xA;     * &lt;/ul>&#xA;     * &#xA;     * &lt;p>Patch releases are not reported.&#xA;     * Zero is returned if {@link #JAVA_VERSION} is &lt;code>null&lt;/code>.&lt;/p>&#xA;     * &#xA;     * @return the version, for example 131 for JDK 1.3.1&#xA;     */"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.75/@statements.0/@condition/@children.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.74/@statements.0/@condition/@children.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.0/@assignments.0/@leftValues.1/@newObject"/>
+      <rightValue refObject="//@objects.36"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.75/@statements.1/@variable/@initialValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.74/@statements.1/@variable/@initialValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.0/@assignments.0/@leftValues.1/@newObject"/>
+      <rightValue refObject="//@objects.36"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.75/@statements.2/@expression/@value/@children.1" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.74/@statements.2/@expression/@value/@children.1">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.0/@assignments.0/@leftValues.1/@newObject"/>
+      <rightValue refObject="//@objects.36"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.75/@statements.3/@condition/@children.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.74/@statements.3/@condition/@children.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.0/@assignments.0/@leftValues.1/@newObject"/>
+      <rightValue refObject="//@objects.36"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.75/@statements.3/@statement/@statements.0/@expression/@value/@children.1" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.74/@statements.3/@statement/@statements.0/@expression/@value/@children.1">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.0/@assignments.0/@leftValues.1/@newObject"/>
+      <rightValue refObject="//@objects.36"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.77/@statements.0/@condition/@children.0" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.75/@statements.0/@condition/@children.0">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.0/@assignments.0/@leftValues.1/@newObject"/>
+      <rightValue refObject="//@objects.36"/>
+    </assignments>
+  </objects>
+  <objects leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.77/@statements.1/@returnValue" rightRes="//@resources.0" rightFrag="//@classifiers.0/@members.75/@statements.1/@returnValue">
+    <assignments xsi:type="epatch:SingleAssignment" feature="target">
+      <leftValue refObject="//@objects.0/@assignments.0/@leftValues.1/@newObject"/>
+      <rightValue refObject="//@objects.36"/>
+    </assignments>
+  </objects>
+  <objects name="JAVA_VERSION" leftRes="//@resources.0" leftFrag="//@classifiers.0/@members.28"/>
+</epatch:Epatch>
