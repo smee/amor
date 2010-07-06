@@ -133,14 +133,17 @@ public class ModelUtil {
      */
     public static String createDescriptionOf(final DiffElement de) {
         final DifferenceKind kind = de.getKind();
+        String prefix = de.isConflicting() ? "CONFLICT! " : "";
         if (de instanceof ModelElementChangeLeftTarget) {
-            return kind + ": " + ((ModelElementChangeLeftTarget) de).getLeftElement().toString();
+            return prefix + kind + ": " + ((ModelElementChangeLeftTarget) de).getLeftElement().toString();
         } else if (de instanceof ModelElementChangeRightTarget) {
-            return kind + ": " + ((ModelElementChangeRightTarget) de).getRightElement().toString();
+            return prefix + kind + ": " + ((ModelElementChangeRightTarget) de).getRightElement().toString();
         } else if (de instanceof AttributeChange) {
-            return kind + ": " + ((AttributeChange) de).getLeftElement().toString() + " -> " + ((AttributeChange) de).getRightElement().toString();
+            return prefix + kind + ": " + ((AttributeChange) de).getLeftElement().toString() + " -> " + ((AttributeChange) de).getRightElement().toString();
+        } else if (de instanceof MoveModelElement) {
+            return prefix + kind + ": " + ((MoveModelElement) de).getLeftElement().toString() + " in " + ((MoveModelElement) de).getLeftTarget() + " -> " + ((MoveModelElement) de).getRightElement().toString() + " in " + ((MoveModelElement) de).getRightTarget();
         } else {
-            return kind.toString();
+            return prefix + kind.toString();
         }
     }
 
@@ -308,7 +311,7 @@ public class ModelUtil {
         snapshot.setMatch(match);
         snapshot.setDiff(diff);
         try {
-            ModelUtils.save(snapshot, "foo/result.emfdiff");
+            ModelUtils.save(snapshot, "foo/result.emfdiff.xmi");
         } catch (final IOException e) {
             e.printStackTrace();
         } //$NON-NLS-1$

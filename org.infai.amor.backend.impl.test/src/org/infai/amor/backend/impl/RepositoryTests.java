@@ -85,12 +85,10 @@ public class RepositoryTests {
         storageFactory = context.mock(StorageFactory.class);
         repo = new RepositoryImpl(storageFactory, branchFactory, uriHandler, transactionManager);
     }
-
     @After
     public void tearDown() {
         context.assertIsSatisfied();
     }
-
     @Test
     public void testSavesChangedModelIntoStorage() throws IOException {
         final ChangedModel model = context.mock(ChangedModel.class);

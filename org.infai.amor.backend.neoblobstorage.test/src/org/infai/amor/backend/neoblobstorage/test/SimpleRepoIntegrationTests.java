@@ -57,6 +57,13 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
     // return false;
     // }
 
+    /* (non-Javadoc)
+     * @see org.infai.amor.test.AbstractNeo4JTest#isRollbackAfterTest()
+     */
+    @Override
+    protected boolean isRollbackAfterTest() {
+        return false;
+    }
     @Before
     public void setup() throws Exception {
         final UriHandler uh = new UriHandlerImpl("localhost", "repo");
@@ -110,6 +117,7 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         // then
         assertTrue(missing.isEmpty());
     }
+
     @Test
     public void shouldCheckinComplexModel() throws Exception {
         // given
@@ -133,7 +141,6 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         assertTrue(missing1.isEmpty());
         assertTrue(missing2.isEmpty());
     }
-
     @Test
     public void shouldCheckinPatch() throws Exception {
         // given
@@ -159,6 +166,7 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         // then
         assertEqualsIgnoringWhitespace(ModelUtil.readModel("testmodels/fs/simplefilesystem_v2.filesystem"), checkout);
     }
+
     @Test
     public void shouldCheckinSimpleM2() throws Exception {
         // given
@@ -212,6 +220,23 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         checkin("testmodels/multi/B.ecore");
         checkin("testmodels/multi/A.ecore");
         final String path = "testmodels/multi/b.xmi";
+        final String model = ModelUtil.readModel(path);
+        // when
+        final List<String> missing = repo.checkin(model, path, trId);
+        // then
+        assertTrue(missing.isEmpty());
+    }
+
+    @Test
+    public void shouldStoreInstanceModelInLaterRevision() throws Exception {
+        // given
+        checkin("testmodels/bflow/bflow.ecore");
+        checkin("testmodels/bflow/oepc.ecore");
+
+        repo.commitTransaction(trId, "foo", "bar");
+        this.trId = repo.startTransaction(BRANCHNAME);
+
+        final String path = "testmodels/bflow/sample.xmi";
         final String model = ModelUtil.readModel(path);
         // when
         final List<String> missing = repo.checkin(model, path, trId);

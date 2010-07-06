@@ -13,16 +13,19 @@ import static org.infai.amor.test.TestUtils.createTransaction;
 import static org.junit.Assert.*;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.custommonkey.xmlunit.XMLAssert;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.exception.TransactionException;
+import org.infai.amor.backend.internal.ChangedModelImpl;
 import org.infai.amor.backend.internal.ModelImpl;
-import org.infai.amor.backend.internal.impl.ChangedModelImpl;
 import org.infai.amor.backend.internal.impl.NeoRevision;
 import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.test.ModelUtil;
@@ -30,8 +33,7 @@ import org.infai.amor.test.TestUtils;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.xml.sax.SAXException;
 /**
  * @author sdienst
@@ -87,6 +89,28 @@ public class BlobStorageTest {
         context = new Mockery() {{ setImposteriser(ClassImposteriser.INSTANCE); }};
         rev = context.mock(NeoRevision.class);
         context.checking(new Expectations() {{ allowing(rev); }});
+    }
+
+    @Test
+    @Ignore
+    public void shouldCreateEpatch() throws Exception {
+        // given
+        final ResourceSet rs = new AmorResourceSetImpl();
+        // checked in metamodel
+        ModelUtil.readInputModel("testmodels/bflow/bflow.ecore", rs);
+        ModelUtil.readInputModel("testmodels/bflow/oepc.ecore", rs);
+        EObject inst1 = ModelUtil.readInputModel("testmodels/bflow/sample.xmi", rs);
+        Resource extRes = rs.createResource(URI.createURI("external.xmi"));
+        extRes.getContents().add(inst1.eContents().get(0));
+        final Map<String, String> options = new HashMap<String, String>();
+        options.put("ENCODING", "UTF8");
+        extRes.save(options);
+        inst1.eResource().save(options);
+
+        // EObject inst2 = ModelUtil.readInputModel("testmodels/bflow/sample_v2.xmi", rs);
+        //
+        // List<String> storeViaXml = ModelUtil.storeViaXml(ModelUtil.createEpatch(inst1, inst2), inst1, inst2);
+        // System.out.println(storeViaXml);
     }
 
     @Test
