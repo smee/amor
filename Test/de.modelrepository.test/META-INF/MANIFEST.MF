@@ -22,4 +22,7 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.5.0",
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.jdt.core,
- org.eclipse.jface.text.rules
+ org.eclipse.jface.text.rules,
+ org.infai.amor.test
+Export-Package: de.modelrepository.test,
+ de.modelrepository.test.git

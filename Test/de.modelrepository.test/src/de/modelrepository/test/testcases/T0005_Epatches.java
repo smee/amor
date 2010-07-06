@@ -1,8 +1,7 @@
 package de.modelrepository.test.testcases;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
+import java.io.*;
+import java.util.Properties;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.compare.epatch.Epatch;
@@ -21,8 +20,7 @@ public class T0005_Epatches {
     public void test01() throws IOException {
         Repository repo = new Repository(new File("res/in/T0005/commons-lang/.git"));
         String relativeSourcePath = "src/java/org/apache/commons/lang/SystemUtils.java";
-        File testFile = new File("res/in/T0005/commons-lang/" + relativeSourcePath);
-        GitFileHistory fh = new GitFileHistory(testFile, repo);
+        GitFileHistory fh = new GitFileHistory(relativeSourcePath, repo);
         FileVersionList list = new FileVersionList(fh);
         int counter = 0;
         for (VersionObject vo : list) {
@@ -30,26 +28,45 @@ public class T0005_Epatches {
             System.out.println(vo.getBranch());
             System.out.println(vo.getAuthor().getName());
             System.out.println(vo.getCommitMessage());
-
-            // System.out.println(vo.getContent());
             System.out.println(vo.getPatches().size() + " epatches");
-            counter = dumpEpatches(relativeSourcePath, vo.getPatches().values(), counter);
+            counter = dumpEpatches(relativeSourcePath, vo, counter);
             System.out.println();
         }
     }
 
     /**
      * @param relativeSourcePath
-     * @param values
+     * @param vo
      * @throws IOException
      */
-    private int dumpEpatches(String relativeSourcePath, Collection<Epatch> values, int counter) throws IOException {
+    private int dumpEpatches(String relativeSourcePath, VersionObject vo, int counter) throws IOException {
         ResourceSet rs = new ResourceSetImpl();
-        for (Epatch epatch : values) {
-            Resource resource = rs.createResource(URI.createFileURI(String.format("foo/epatches/%s.%d.xmi", relativeSourcePath, counter++)));
-            resource.getContents().add(epatch);
-            resource.save(null);
+        assert vo.getPatches().size() <= 1;
+
+        for (Epatch epatch : vo.getPatches().values()) {
+            Resource patchResource = rs.createResource(URI.createFileURI(String.format("foo/epatches/%s.%d.xmi", relativeSourcePath, counter)));
+            patchResource.getContents().add(epatch);
+            patchResource.save(null);
+
         }
-        return counter;
+        Resource contentResource = rs.createResource(URI.createFileURI(String.format("foo/models/%s.%d.xmi", relativeSourcePath, counter)));
+        contentResource.getContents().add(vo.getContent());
+        contentResource.save(null);
+
+        Properties commitInfo = new Properties();
+        commitInfo.setProperty("author", vo.getAuthor().toExternalString());
+        commitInfo.setProperty("message", vo.getCommitMessage());
+        commitInfo.setProperty("branch", vo.getBranch());
+        commitInfo.setProperty("timestamp", Long.toString(vo.getCommitTime().getTime()));
+        commitInfo.setProperty("id", vo.getRev().getRevCommit().name());
+        if (vo.getRev().getRevCommit().getParentCount() > 0) {
+            commitInfo.setProperty("parentid", vo.getRev().getRevCommit().getParent(0).name());
+        }
+
+        File commitFile = new File(String.format("foo/commits/%s.%d.properties", relativeSourcePath, counter));
+        commitFile.getParentFile().mkdirs();
+
+        commitInfo.store(new FileOutputStream(commitFile), "commit " + counter);
+        return ++counter;
     }
 }
