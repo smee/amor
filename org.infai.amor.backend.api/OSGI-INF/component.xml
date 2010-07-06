@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.infai.amor.backend.api">
    <implementation class="org.infai.amor.backend.api.impl.RemoteAmorProvider"/>
-   <reference bind="setRemoteService" cardinality="1..1" interface="ch.ethz.iks.r_osgi.RemoteOSGiService" name="RemoteOSGiService" policy="static" unbind="remoteRemoteService"/>
+   <reference bind="setRemoteService" cardinality="1..1" interface="ch.ethz.iks.r_osgi.RemoteOSGiService" name="RemoteOSGiService" policy="static" unbind="removeRemoteService"/>
    <service>
       <provide interface="org.infai.amor.backend.api.RemoteAmor"/>
    </service>
