@@ -152,14 +152,14 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
         repo.checkin(initialModel, "simplefilesystem.xmi", trId);
         long revId1 = repo.commitTransaction(trId, "user", "added inital filesystem model");
         // active contents should contain the instance model
-        assertTrue(repo.getActiveContents("amor://localhost/repo/" + BRANCHNAME + "/" + revId1).contains("amor://localhost/repo/main/1/simplefilesystem.xmi"));
+        assertTrue(repo.getActiveContents("amor://localhost/repo/" + BRANCHNAME + "/" + revId1).contains("amor://localhost/repo/main/5/simplefilesystem.xmi"));
         // when
         // checking in an epatch
         trId = repo.startTransaction(BRANCHNAME);
         repo.checkinPatch(ModelUtil.readModel("testmodels/fs/v1-v2.epatch"), "simplefilesystem.xmi", trId);
         final long revId2 = repo.commitTransaction(trId, "user", "added changed model");
         // make sure the active contents contain revision id 2 for the updated model
-        assertTrue(repo.getActiveContents("amor://localhost/repo/" + BRANCHNAME + "/" + revId2).contains("amor://localhost/repo/main/2/simplefilesystem.xmi"));
+        assertTrue(repo.getActiveContents("amor://localhost/repo/" + BRANCHNAME + "/" + revId2).contains("amor://localhost/repo/main/6/simplefilesystem.xmi"));
 
         // and checking out the most recent version of the instance model
         final String checkout = repo.checkout(BRANCHNAME, revId2, "simplefilesystem.xmi");
