@@ -249,7 +249,7 @@ public class EcoreModelHelper {
         rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
         rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new XMIResourceFactoryImpl());
 
-        final Resource res = rs.createResource(URI.createURI(relativePath));
+        final Resource res = rs.createResource(URI.createURI(""));
         res.getContents().addAll(contents);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
