@@ -50,7 +50,7 @@ public interface Branch {
     Revision getRevision(long revisionNumber);
 
     /**
-     * Get all revisions of this branch, starting at {@link #getOriginRevision()} upto {@link #getHeadRevision()}.
+     * Get all revisions of this branch, starting at {@link #getHeadRevision()} upto {@link #getOriginRevision()}.
      * 
      * @return
      */
