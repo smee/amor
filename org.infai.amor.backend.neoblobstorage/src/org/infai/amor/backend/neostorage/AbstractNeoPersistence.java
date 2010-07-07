@@ -173,10 +173,10 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
      * @return
      */
     private String deresolve(final EObject proxy) {
-        final URI pseudoAbsUri = org.eclipse.emf.common.util.URI.createURI("file://" + currentResourceUri);
+        final URI pseudoAbsUri = org.eclipse.emf.common.util.URI.createURI("file://local/" + currentResourceUri);
         final URI proxyUri = ((InternalEObject) proxy).eProxyURI();
 
-        final String deresolved = proxyUri.resolve(pseudoAbsUri).toString().substring("file://".length());
+        final String deresolved = proxyUri.resolve(pseudoAbsUri).toString().substring("file://local/".length());
 
         return deresolved;
     }
@@ -342,9 +342,9 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
                 // DynamicEObjects might get created several times, sadly they do not overwrite hashCode() and equals(...) so we need
                 // to
                 // do so manually :(
-                return nodeCache.get(element.eClass());
+                return getNodeFor(element.eClass());
             } else {
-            // throw new IllegalStateException("Could not find neo4j node for " + element);
+                // throw new IllegalStateException("Could not find neo4j node for " + element);
                 return null;
             }
     }
