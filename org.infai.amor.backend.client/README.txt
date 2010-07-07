@@ -2,7 +2,7 @@ Command line based client using Equinox OSGi console features.
 Start the client via the "Amor Client".launch eclipse configuration
 and type 'amorhelp' to list all available commands.
 
-Example:
+Examples:
 # change to our test models directory
 lcd ../../../org.infai.backend.tests/bin
 lls
@@ -35,3 +35,25 @@ cd subbranch
 cd 3
 lcd ../../temp
 checkout testmodels/simplefilesystem.xmi
+
+
+######################### OR use this scenario ############################
+lcd ../../../org.infai.backend.tests/bin
+newbranch trunk
+starttransaction trunk
+add testmodels/bflow/bflow.ecore
+add testmodels/bflow/oepc.ecore
+committransaction "added bflow meta model" "max mustermann"
+
+starttransaction trunk
+add testmodels/bflow/sample_ext.xmi
+add testmodels/bflow/external.xmi
+committransaction "added bflow instance model" "max mustermann"
+
+starttransaction trunk
+addpatch testmodels/bflow/sample_ext.xmi testmodels/bflow/sample_v1_v2.epatch
+committransaction "simple change to instance" "max mustermann"
+
+starttransaction trunk
+delete testmodels/bflow/sample_ext.xmi
+committransaction "deleted instance" "max mustermann"
