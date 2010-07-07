@@ -18,7 +18,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.infai.amor.backend.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
@@ -160,9 +159,9 @@ public class NeoRestorer extends AbstractNeoPersistence {
                 }
                 continue;
             }
-            XMIResource resource = (XMIResource) resourceSet.getResource(org.eclipse.emf.common.util.URI.createURI(uri), false);
+            Resource resource = resourceSet.getResource(org.eclipse.emf.common.util.URI.createURI(uri), false);
             if (resource == null) {
-                resource = (XMIResource) resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI(uri));
+                resource = resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI(uri));
                 logger.finer("restoring package " + uri);
                 resource.getContents().add(loadModel(referenced));
             }
@@ -293,7 +292,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
                 aClass.setInstanceTypeName(getString(node, INSTANCE_TYPE_NAME));
             }
 
-            aClass.setAbstract(getBool(node, INTERFACE));
+            aClass.setInterface(getBool(node, INTERFACE));
             aClass.setAbstract(getBool(node, ABSTRACT));
 
             // relationships
