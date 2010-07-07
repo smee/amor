@@ -34,8 +34,7 @@ import org.infai.amor.backend.api.SimpleRepository;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.backend.responses.UnresolvedDependencyResponse;
-import org.infai.amor.backend.util.EcoreModelHelper;
-import org.infai.amor.backend.util.ModelFinder;
+import org.infai.amor.backend.util.*;
 import org.infai.amor.backend.util.ModelFinder.ModelMatcher;
 
 import com.google.common.base.Function;
@@ -122,7 +121,8 @@ public class SimpleRepositoryImpl implements SimpleRepository {
                         return Arrays.asList(missingPackageUri);
                     }
                 } else {
-                    throw new RuntimeException(e);
+                    logger.log(Level.SEVERE, "Could not load model", e);
+                    throw new RuntimeException("Internal error in the backend. Could not load model!");
                 }
             } catch (Exception e) {
                 logger.log(Level.SEVERE, "Could not load model", e);
