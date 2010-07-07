@@ -58,7 +58,6 @@
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
-      <plugin id="org.eclipse.persistence.jpa.equinox.weaving" fragment="true"/>
       <plugin id="org.infai.amor.backend"/>
       <plugin id="org.infai.amor.backend.api"/>
       <plugin id="org.infai.amor.backend.impl"/>
@@ -71,13 +70,21 @@
    <configurations>
       <plugin id="ch.ethz.iks.r_osgi.remote" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.emf.common" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.emf.compare" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.emf.compare.diff" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.emf.compare.epatch" autoStart="true" startLevel="3" />
+      <plugin id="org.eclipse.emf.compare.match" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.emf.ecore" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.emf.ecore.xmi" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.emf.edit" autoStart="false" startLevel="0" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
       <plugin id="org.infai.amor.backend" autoStart="true" startLevel="0" />
       <plugin id="org.infai.amor.backend.api" autoStart="true" startLevel="1" />
       <plugin id="org.infai.amor.backend.impl" autoStart="true" startLevel="4" />
       <plugin id="org.infai.amor.backend.neo" autoStart="true" startLevel="3" />
-      <plugin id="org.infai.amor.backend.neoblobstorage" autoStart="true" startLevel="4" />
+      <plugin id="org.infai.amor.backend.neoblobstorage" autoStart="true" startLevel="3" />
       <plugin id="org.infai.amor.backend.resources" autoStart="true" startLevel="0" />
    </configurations>
 
