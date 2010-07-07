@@ -109,7 +109,9 @@ public class AmorCommands implements CommandProvider {
         String argument = ci.nextArgument();
         if (argument == null) {
             currentUri = getRepoUri();
-        } else {
+            return;
+        }
+        try{
             for (String arg : argument.split("/")) {
                 if (arg.trim().equals("..")) {
                     currentUri = currentUri.trimSegments(1);
@@ -123,6 +125,8 @@ public class AmorCommands implements CommandProvider {
                     }
                 }
             }
+        }finally{
+            ci.execute("pwd");
         }
     }
 
@@ -219,7 +223,7 @@ public class AmorCommands implements CommandProvider {
                 if (parameter.equals("..")) {
                     uri=uri.trimSegments(1);
                 }
-            uri=uri.appendSegment(parameter);
+            uri = uri.appendSegments(parameter.split("/"));
         }
         final Set<String> strings = getActiveContents(uri);
         for (final String s : strings) {
