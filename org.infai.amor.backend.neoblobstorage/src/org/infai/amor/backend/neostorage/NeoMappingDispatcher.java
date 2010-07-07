@@ -227,11 +227,6 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
 
         addContains(element.getEContainingClass(), node);
 
-        final EList<EClassifier> exceptions = element.getEExceptions();
-        for (final EClassifier exception : exceptions) {
-            node.createRelationshipTo(getNodeFor(exception), EcoreRelationshipType.EXCEPTION);
-        }
-
         cache(element, node);
     }
 

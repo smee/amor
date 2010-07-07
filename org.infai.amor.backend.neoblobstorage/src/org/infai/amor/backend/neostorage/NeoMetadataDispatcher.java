@@ -369,6 +369,10 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
      */
     @Override
     public void store(final EOperation element) {
+        final EList<EClassifier> exceptions = element.getEExceptions();
+        for (final EClassifier exception : exceptions) {
+            getNodeFor(element).createRelationshipTo(getNodeFor(exception), EcoreRelationshipType.EXCEPTION);
+        }
         // eOperation -> EOperation
         setMetaElement(element, EOperation.class);
     }
