@@ -22,8 +22,11 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.compare.epatch.Epatch;
 import org.eclipse.emf.compare.epatch.impl.EpatchPackageImpl;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.PackageNotFoundException;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
@@ -397,20 +400,34 @@ public class SimpleRepositoryImpl implements SimpleRepository {
 
         final Model checkout = repo.checkout(externalUriForEPackage);
         if (!checkout.getContent().isEmpty()) {
-            /* XXX move all resources that were restored to our resource set
-             * This is needed because EMF does not throw a PackageNotFoundException
-             * if a supertype of an eclass depends on types in another resource, i.e. if
-             * the supertype is a proxy :(
+            /*
+             * XXX move all resources that were restored to our resource set This is needed because EMF does not throw a
+             * PackageNotFoundException if a supertype of an eclass depends on types in another resource, i.e. if the supertype is
+             * a proxy :(
              * 
              * TODO think about return type of repository.checkout(...)!
              */
             final ResourceSet otherResourceSet = checkout.getContent().get(0).eResource().getResourceSet();
+            if (!resolveAllProxies(otherResourceSet)) {
+                logger.warning("Could not restore model with all dependencies! There are unresolved proxies left.");
+            }
+
             rs.getResources().addAll(otherResourceSet.getResources());
             for (final Resource res : rs.getResources()) {
                 rs.getPackageRegistry().putAll(EcoreModelHelper.createPackageNamespaceMap(res.getContents()));
             }
         }
 
+    }
+
+    /**
+     * @param otherResourceSet
+     * @return true if, after resolving, there are no unresolved proxies
+     */
+    private boolean resolveAllProxies(ResourceSet otherResourceSet) {
+        Map<EObject, Collection<Setting>> map = EcoreUtil.UnresolvedProxyCrossReferencer.find(otherResourceSet);
+        logger.finest("Unresolved proxies of restored metamodel: "+map);
+        return map.isEmpty();
     }
 
     /*
