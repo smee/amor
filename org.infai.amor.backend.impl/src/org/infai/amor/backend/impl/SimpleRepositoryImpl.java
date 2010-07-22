@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.compare.epatch.Epatch;
 import org.eclipse.emf.compare.epatch.impl.EpatchPackageImpl;
@@ -106,6 +107,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
             } catch (final IOException e) {
                 final Throwable cause = e.getCause();
                 if (cause instanceof PackageNotFoundException) {
+                    // rs.getResources().clear();
                     // we are missing at least one other epackage
                     final String missingPackageUri = ((PackageNotFoundException) cause).uri();
                     if (weKnowThisPackage(missingPackageUri, transaction)) {
@@ -258,6 +260,18 @@ public class SimpleRepositoryImpl implements SimpleRepository {
         return rs;
     }
 
+    /**
+     * @param resources
+     * @return
+     */
+    private Map<URI, Resource> createUriResourceMap(EList<Resource> resources) {
+        Map<URI,Resource> map=new HashMap<URI, Resource>();
+        for(Resource res:resources) {
+            map.put(res.getURI(),res);
+        }
+        return map;
+    }
+
     /* (non-Javadoc)
      * @see org.infai.amor.backend.SimpleRepository#delete(long, java.lang.String)
      */
@@ -408,6 +422,7 @@ public class SimpleRepositoryImpl implements SimpleRepository {
              * TODO think about return type of repository.checkout(...)!
              */
             final ResourceSet otherResourceSet = checkout.getContent().get(0).eResource().getResourceSet();
+            ((AmorResourceSetImpl)otherResourceSet).setURIResourceMap(createUriResourceMap(otherResourceSet.getResources()));
             if (!resolveAllProxies(otherResourceSet)) {
                 logger.warning("Could not restore model with all dependencies! There are unresolved proxies left.");
             }

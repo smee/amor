@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.infai.amor.backend.impl.RepositoryImpl;
 import org.infai.amor.backend.resources.AmorResourceSetImpl;
 
 import com.google.common.base.Function;
@@ -277,6 +278,32 @@ public class EcoreModelHelper {
                 return uri.toString().endsWith(string);
             }
         };
+    }
+
+    /**
+     * Normalize uri containing "." or "..".
+     * 
+     * @param uri
+     *            relative uri
+     * @return
+     */
+    public static URI normalizeUri(URI uri) {
+        Stack<String> newSegments=new Stack<String>();
+        for(String segment:uri.segments()){
+            if(".".equals(segment)) {
+                continue;// ignore
+            } else if("..".equals(segment)){
+                if (newSegments.isEmpty()) {
+                    RepositoryImpl.logger.warning("Could not normalize uri \""+uri+"\", no such parent!");
+                    return uri;
+                }else{
+                    newSegments.pop();// go up one layer
+                }
+            } else {
+                newSegments.push(segment);
+            }
+        }
+        return uri.trimSegments(uri.segmentCount()).appendSegments(newSegments.toArray(new String[newSegments.size()]));
     }
 
 }

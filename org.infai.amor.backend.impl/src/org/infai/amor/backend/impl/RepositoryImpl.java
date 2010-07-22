@@ -11,6 +11,7 @@ package org.infai.amor.backend.impl;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
@@ -36,6 +37,7 @@ import com.google.common.collect.*;
  *         TODO do the collaborators need to be informed upon transaction commits?
  */
 public class RepositoryImpl implements Repository {
+    public static Logger logger = Logger.getLogger(RepositoryImpl.class.getName());
 
     private final BranchFactory branchFactory;
     private final TransactionManager transactionManager;
@@ -261,7 +263,7 @@ public class RepositoryImpl implements Repository {
                 assert refuri.isRelative();
                 // if we don't have a copy of this model yet
                 final URI modelUri = URI.createURI(model.getPersistencePath().toString());
-                if (!isKnownModel(modelUri.trimSegments(1).appendSegments(refuri.segments()), transaction)) {
+                if (!isKnownModel(EcoreModelHelper.normalizeUri(modelUri.trimSegments(1).appendSegments(refuri.segments())), transaction)) {
                     // remember it
                     refs.add(refuri);
                 }
