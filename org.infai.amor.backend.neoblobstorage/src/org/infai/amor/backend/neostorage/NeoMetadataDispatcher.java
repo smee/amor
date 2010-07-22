@@ -17,7 +17,7 @@ import org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl;
 import org.infai.amor.backend.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.neo.NeoModelLocation;
-import org.infai.amor.backend.util.ModelFinder;
+import org.infai.amor.backend.util.*;
 import org.infai.amor.backend.util.ModelFinder.ModelMatcher;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.Traverser.Order;
@@ -75,7 +75,7 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
      */
     private Node findEPackage(final String ecoreFilename) {
         // XXX hack assumes relative path separated by /
-        final String relativePath = ecoreFilename;// currentResourceUri.trimSegments(1).appendSegments(ecoreFilename.split("/")).toString();
+        final String relativePath = EcoreModelHelper.normalizeUri(currentResourceUri.trimSegments(1).appendSegments(ecoreFilename.split("/"))).toString();
         final ModelLocation loc = ModelFinder.findActiveModel(currentRevision, new ModelMatcher() {
             @Override
             public boolean matches(final ModelLocation loc) {

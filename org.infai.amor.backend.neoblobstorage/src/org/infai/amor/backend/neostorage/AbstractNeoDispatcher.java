@@ -52,7 +52,7 @@ public abstract class AbstractNeoDispatcher extends AbstractNeoPersistence imple
      */
     @Override
     public void dispatch(final EObject element) {
-        // System.out.println(element.toString());
+        // System.out.println("dispatch " + element.toString());
         if (element instanceof EPackage) {
             store((EPackage) element);
         } else if (element instanceof EClass) {

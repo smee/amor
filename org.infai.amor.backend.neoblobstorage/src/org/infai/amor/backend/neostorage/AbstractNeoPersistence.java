@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
 import org.infai.amor.backend.internal.NeoProvider;
@@ -168,20 +167,6 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
     }
 
     /**
-     * Find the relative path to the file this proxy uri relates to. The path has the same root as {@link #currentResourceUri}.
-     * @param proxy
-     * @return
-     */
-    private String deresolve(final EObject proxy) {
-        final URI pseudoAbsUri = org.eclipse.emf.common.util.URI.createURI("file://local/" + currentResourceUri);
-        final URI proxyUri = ((InternalEObject) proxy).eProxyURI();
-
-        final String deresolved = proxyUri.resolve(pseudoAbsUri).toString().substring("file://local/".length());
-
-        return deresolved;
-    }
-
-    /**
      * Find the node corresponding to the persisted {@link EPackage} with the given namespace uri.
      * 
      * @param elementName
@@ -328,7 +313,8 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
                 final Node proxyNode = createNode();
                 set(proxyNode, NAME, "ProxyNode");
                 // make proxy uri relative to current resource's uri
-                final String relativeProxyUri = deresolve(element);
+                // final String relativeProxyUri = deresolve(element);
+                final String relativeProxyUri = ((InternalEObject) element).eProxyURI().toString();
                 // final String relativeProxyUri = ((InternalEObject) element).eProxyURI().toString();
                 set(proxyNode, "proxyUri", relativeProxyUri);
                 final Node classNode = findClassifierNode(element.eClass());

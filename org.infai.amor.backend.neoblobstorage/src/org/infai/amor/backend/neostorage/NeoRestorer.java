@@ -79,6 +79,18 @@ public class NeoRestorer extends AbstractNeoPersistence {
     }
 
     /**
+     * Find the relative path to the file this proxy uri relates to. The path has the same root as {@link #currentResourceUri}.
+     * @param proxy
+     * @return
+     */
+    protected URI deresolve(final URI proxyUri) {
+        URI pseudoAbsCurrentUri = org.eclipse.emf.common.util.URI.createURI("file://dummy/" + currentResourceUri);
+        URI pseudoAbsProxyUri = org.eclipse.emf.common.util.URI.createURI("file://dummy/" + proxyUri);
+        return pseudoAbsProxyUri.deresolve(pseudoAbsCurrentUri);
+    }
+
+
+    /**
      * @param name
      * @return
      */
@@ -92,7 +104,6 @@ public class NeoRestorer extends AbstractNeoPersistence {
             throw new IllegalArgumentException(e);
         }
     }
-
 
     private Iterable<Node> getOrderedNodes(final Node node, final RelationshipType relType, final Direction direction) {
         return new OrderedNodeIterable(node, relType, direction);
@@ -118,11 +129,13 @@ public class NeoRestorer extends AbstractNeoPersistence {
      * @return
      */
     public List<EObject> load(final NeoModelLocation modelLocation) {
-        initMembers();
+        // initMembers();
         // FIXME when checking out model with reference to another object of a different package,
         // FIXME the reference will point to the eclass instead of the eobject :(
         final List<EObject> result = Lists.newArrayList();
         final Resource resource = resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI(modelLocation.getRelativePath()));
+        // FIXME wtf, we are overwriting currentResourceUri every time a dependency model gets restored?
+        currentResourceUri = resource.getURI();
 
         final Node rootNode = modelLocation.getModelHead();
 
@@ -153,7 +166,10 @@ public class NeoRestorer extends AbstractNeoPersistence {
                 if (getString(referenced, ModelLocation.EXTERNAL_URI) != null) {
                     final NeoModelLocation location = new NeoModelLocation(null, referenced);
                     if (resourceSet.getResource(org.eclipse.emf.common.util.URI.createURI(location.getRelativePath()), false) == null) {
-                        final Resource resource = resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI(location.getRelativePath()));
+                        // final Resource resource =
+                        final Resource resource = resourceSet.createResource(deresolve(org.eclipse.emf.common.util.URI.createURI(location.getRelativePath())));
+                        // final Resource resource =
+                        // resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI(location.getRelativePath()));
                         resource.getContents().addAll(load(location));
                     }
                 }
