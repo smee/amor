@@ -58,7 +58,10 @@ public class AmorCommands implements CommandProvider {
     }
     public void _aborttransaction(final CommandInterpreter ci) throws Exception {
         if (txId > 0) {
-            getRepo().rollbackTransaction(txId);
+            try{
+                getRepo().rollbackTransaction(txId);
+            } catch (NullPointerException e) {
+            }
             txId = -1;
             this.branchname = null;
             ci.println("Transaction aborted.");

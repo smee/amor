@@ -7,17 +7,19 @@
 <stringAttribute key="checked" value="[NONE]"/>
 <booleanAttribute key="clearConfig" value="true"/>
 <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/AMOR Client remote"/>
+<booleanAttribute key="default" value="true"/>
 <booleanAttribute key="default_auto_start" value="true"/>
 <intAttribute key="default_start_level" value="4"/>
 <booleanAttribute key="includeOptional" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xms40m -Xmx512m -Xverify:none -XX:+UseConcMarkSweepGC -Declipse.ignoreApp=true -Dosgi.noShutdown=true -Dch.ethz.iks.r_osgi.port=8787"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xms40m -Xmx512m -Xverify:none -XX:+UseConcMarkSweepGC -Declipse.ignoreApp=true -Dosgi.noShutdown=true -Dequinox.ds.print=true -Dch.ethz.iks.r_osgi.port=8787"/>
 <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:org.infai.amor.backend.client}/runtime/remoteclient"/>
 <stringAttribute key="pde.version" value="3.3"/>
 <booleanAttribute key="show_selected_only" value="true"/>
-<stringAttribute key="target_bundles" value="org.eclipse.core.contenttype@default:default,org.eclipse.equinox.registry@default:default,org.eclipse.osgi@-1:true,org.eclipse.equinox.ds@default:true,org.eclipse.core.jobs@default:default,javax.transaction@default:false,org.eclipse.osgi.services@default:default,org.eclipse.equinox.common@2:true,ch.ethz.iks.r_osgi.remote@2:default,org.eclipse.equinox.util@default:default,org.eclipse.core.runtime@default:true,org.objectweb.asm@default:default,org.eclipse.equinox.preferences@default:default,org.eclipse.emf.common@default:default,org.eclipse.equinox.app@default:default"/>
+<stringAttribute key="target_bundles" value="javax.transaction@default:false,org.eclipse.equinox.util@default:default,org.eclipse.osgi.services@default:default,ch.ethz.iks.r_osgi.remote@2:default,org.objectweb.asm@default:default,org.eclipse.core.jobs@default:default,org.eclipse.osgi@-1:true,org.eclipse.emf.common@default:default,org.eclipse.equinox.preferences@default:default,org.eclipse.core.contenttype@default:default,org.eclipse.equinox.common@2:true,org.eclipse.equinox.registry@default:default,org.eclipse.equinox.app@default:default,org.eclipse.core.runtime@default:true,org.eclipse.equinox.ds@default:true"/>
 <booleanAttribute key="tracing" value="false"/>
+<booleanAttribute key="useCustomFeatures" value="false"/>
 <booleanAttribute key="useDefaultConfigArea" value="true"/>
-<stringAttribute key="workspace_bundles" value="org.infai.amor.backend.client@3:default,org.infai.amor.backend.api@3:default"/>
+<stringAttribute key="workspace_bundles" value="org.infai.amor.backend.api@3:default,org.infai.amor.backend.client@3:default"/>
 </launchConfiguration>
