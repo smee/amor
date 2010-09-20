@@ -21,6 +21,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.internal.*;
@@ -64,11 +65,12 @@ public abstract class AbstractStorageIntegrationTest extends AbstractNeo4JPerfor
         final List<String[]> testdata = Lists.newArrayList();
         testdata.add(new String[] { "testmodels/02/primitive_types.ecore", "testmodels/02/java.ecore", "testmodels/02/Hello.java.xmi" });
         testdata.add(new String[] { "testmodels/bflow/bflow.ecore", "testmodels/bflow/oepc.ecore", "testmodels/bflow/sample.xmi" });
+        testdata.add(new String[] { "testmodels/bflow/bflow.ecore", "testmodels/bflow/oepc.ecore", "testmodels/bflow/sample_ext.xmi", "testmodels/bflow/external.xmi" });
         testdata.add(new String[] { "testmodels/filesystem.ecore", "testmodels/simplefilesystem.xmi" });
         testdata.add(new String[] { "testmodels/filesystem.ecore", "testmodels/fs/simplefilesystem_v1.filesystem" });
         testdata.add(new String[] { "testmodels/multi/B.ecore", "testmodels/multi/A.ecore", "testmodels/multi/a.xmi" });
         // CAUTION: takes some time, huge model!
-        testdata.add(new String[] { "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
+        // testdata.add(new String[] { "testmodels/aris.ecore", "testmodels/model_partial.xmi" });
 
         final Collection<Object[]> params = Lists.newArrayList();
         for(final String[] data: testdata) {
@@ -141,7 +143,7 @@ public abstract class AbstractStorageIntegrationTest extends AbstractNeo4JPerfor
                     // TODO restore from repo or ask for these dependencies
                 }
             }
-            models.put(location, currentModelContents);
+            models.put(location, new ArrayList<EObject>(currentModelContents));
         }
         split("After loading models");
 
@@ -179,11 +181,11 @@ public abstract class AbstractStorageIntegrationTest extends AbstractNeo4JPerfor
         final Model checkedoutmodel = repository.checkout(repoUris.get(repoUris.size() - 1));
         split("Restoring last checked in model");
         assertNotNull(checkedoutmodel.getContent());
-        ModelUtil.storeViaXml(checkedoutmodel.getContent(), checkedoutmodel.getPersistencePath().toString());
+        ModelUtil.storeViaXml((List<EObject>) EcoreUtil.copyAll(checkedoutmodel.getContent()), checkedoutmodel.getPersistencePath().toString());
 
         split("Writing XML");
 
-        // ModelUtil.assertModelEqual(models.get(this.modelLocations[modelLocations.length - 1]).get(0),
-        // checkedoutmodel.getContent().get(0));
+        // TODO comparison of models with references to other models fails, create custom diff engine?
+        ModelUtil.assertModelEqual(models.get(this.modelLocations[modelLocations.length - 1]).get(0), checkedoutmodel.getContent().get(0));
     }
 }

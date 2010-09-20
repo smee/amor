@@ -31,8 +31,7 @@ import org.eclipse.emf.compare.match.service.MatchService;
 import org.eclipse.emf.compare.util.ModelUtils;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.EPackage.Registry;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.*;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMLResource;
@@ -72,7 +71,22 @@ public class ModelUtil {
      * @param content2
      */
     public static void assertModelEqual(final EObject orig, final EObject changed) {
-        assertModelEqual(orig.eResource(), changed.eResource());
+        try {
+
+            final MatchModel match = MatchService.doContentMatch(orig, changed, getMatchOptions());
+            final DiffModel diff = DiffService.doDiff(match, false);
+
+            final List<DiffElement> differences = new ArrayList<DiffElement>(stripOrderChanges(diff.getOwnedElements()));
+
+            saveDiff(diff, match, changed.eResource().getURI().toString().replaceAll("/", "_"));
+            describeDiff(differences, 0);
+            // if there are no differences, there is still an empty change, bug in emfcompare?
+            // TODO ReferenceChangeLeftTarget/ReferenceChangeRightTarget may point to absolute/relative pathes, might be the same
+            // though
+            assertTrue(differences.isEmpty() || differences.get(0).getSubDiffElements().isEmpty());
+        } catch (final InterruptedException e) {
+            fail();
+        }
     }
 
     public static void assertModelEqual(final Resource orig, final Resource changed) {
@@ -84,7 +98,7 @@ public class ModelUtil {
 
             final List<DiffElement> differences = new ArrayList<DiffElement>(stripOrderChanges(diff.getOwnedElements()));
 
-            saveDiff(diff, match);
+            saveDiff(diff, match, changed.getURI().toString().replace('/', '_'));
             describeDiff(differences, 0);
             // if there are no differences, there is still an empty change, bug in emfcompare?
             assertTrue(differences.isEmpty() || differences.get(0).getSubDiffElements().isEmpty());
@@ -304,14 +318,15 @@ public class ModelUtil {
     /**
      * @param diff
      * @param match
+     * @param filename
      */
-    public static void saveDiff(final DiffModel diff, final MatchModel match) {
+    public static void saveDiff(final DiffModel diff, final MatchModel match, String filename) {
         final ComparisonResourceSnapshot snapshot = DiffFactory.eINSTANCE.createComparisonResourceSnapshot();
         snapshot.setDate(Calendar.getInstance().getTime());
         snapshot.setMatch(match);
         snapshot.setDiff(diff);
         try {
-            ModelUtils.save(snapshot, "foo/result.emfdiff.xmi");
+            ModelUtils.save(snapshot, "foo/" + filename + "result.emfdiff.xmi");
         } catch (final IOException e) {
             e.printStackTrace();
         } //$NON-NLS-1$
@@ -367,8 +382,11 @@ public class ModelUtil {
     private static Collection<DiffElement> stripOrderChanges(final EList<DiffElement> ownedElements) {
         final Collection<DiffElement> res = new ArrayList<DiffElement>();
         for(final DiffElement de: ownedElements){
-            if (!(de instanceof ReferenceOrderChange)) {
+            if (!(de instanceof DiffGroup)) {
                 res.addAll(stripOrderChanges(de.getSubDiffElements()));
+            }
+            if (!(de instanceof ReferenceOrderChange)) {
+                res.add(de);
             }
         }
         return res;

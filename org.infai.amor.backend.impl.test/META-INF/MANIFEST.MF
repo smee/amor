@@ -11,6 +11,6 @@ Import-Package: org.eclipse.emf.compare.diff.merge.service,
  org.eclipse.emf.compare.match.service,
  org.infai.amor.backend.internal,
  org.infai.amor.test,
- org.junit;version="4.5.0",
+ org.junit;version="4.3.0",
  org.neo4j.graphdb
 Export-Package: org.infai.amor.backend.impl
