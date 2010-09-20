@@ -27,8 +27,6 @@ import org.neo4j.graphdb.*;
  * 
  */
 public abstract class AbstractNeoDispatcher extends AbstractNeoPersistence implements EMFDispatcher {
-    protected NeoModelLocation currentModelLocation;
-    protected Revision currentRevision;
 
     // TODO use org.eclipse.emf.ecore.util.EcoreSwitch
     /**
@@ -83,6 +81,8 @@ public abstract class AbstractNeoDispatcher extends AbstractNeoPersistence imple
             store(element);
         }
     }
+
+
 
     /**
      * Find the root node, that points to all contents of a {@link Model}.

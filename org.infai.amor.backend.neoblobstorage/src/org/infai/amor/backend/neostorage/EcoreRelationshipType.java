@@ -15,8 +15,6 @@ import org.neo4j.graphdb.RelationshipType;
  * Specifies the types of Ecore specific relationships in neo4j nodespace.
  */
 public enum EcoreRelationshipType implements RelationshipType {
-    /** From reference node to subref node for all models. */
-    RESOURCES,
 
     /** From subref node for all models to a single model. */
     RESOURCE,
@@ -68,5 +66,9 @@ public enum EcoreRelationshipType implements RelationshipType {
     /**
      * References from neomodellocation to its contents
      */
-    MODEL_CONTENT
+    MODEL_CONTENT,
+    /**
+     * Flag node that exists only if the ecore M3 model is stored.
+     */
+    ECORE_PACKAGE_STORED
 }

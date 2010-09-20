@@ -10,6 +10,7 @@
 package org.infai.amor.backend.neostorage;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -23,6 +24,7 @@ import org.infai.amor.backend.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.neo.NeoModelLocation;
 import org.infai.amor.backend.resources.AmorResourceSetImpl;
+import org.infai.amor.backend.util.EcoreModelHelper;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.Traverser.Order;
 
@@ -168,9 +170,10 @@ public class NeoRestorer extends AbstractNeoPersistence {
                     if (resourceSet.getResource(org.eclipse.emf.common.util.URI.createURI(location.getRelativePath()), false) == null) {
                         // final Resource resource =
                         final Resource resource = resourceSet.createResource(deresolve(org.eclipse.emf.common.util.URI.createURI(location.getRelativePath())));
-                        // final Resource resource =
-                        // resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI(location.getRelativePath()));
-                        resource.getContents().addAll(load(location));
+                        List<EObject> loadedEObjects = load(location);
+                        // register all loaded packages
+                        resourceSet.getPackageRegistry().putAll(EcoreModelHelper.createPackageNamespaceMap(loadedEObjects));
+                        resource.getContents().addAll(loadedEObjects);
                     }
                 }
                 continue;
@@ -531,13 +534,20 @@ public class NeoRestorer extends AbstractNeoPersistence {
                     // set attribute and its values
                     final Node metaNode = featureNode.getSingleRelationship(EcoreRelationshipType.INSTANCE, Direction.INCOMING).getStartNode();
                     final EAttribute attribute = restoreEAttribute(metaNode);
+                    Object featureValue = featureNode.getProperty(VALUE);
+
+                    if (getBool(featureNode, ISBIGDECIMAL)) {
+                        // restore bigdecimal
+                        featureValue = new BigDecimal((String) featureValue);
+                    }
                     logger.finest(String.format("  attr '%s' of type '%s'", attribute.getName(), attribute.getEType().getName()));
+
                     if (attribute.isMany()) {
                         @SuppressWarnings("unchecked")
                         final List<Object> attributes = (List<Object>) object.eGet(attribute);
-                        attributes.add(featureNode.getProperty(VALUE));
+                        attributes.add(featureValue);
                     } else {
-                        object.eSet(attribute, featureNode.getProperty(VALUE));
+                        object.eSet(attribute, featureValue);
                     }
                 } else {
                     EcoreRelationshipType relType = null;

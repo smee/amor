@@ -20,6 +20,9 @@ import org.eclipse.emf.common.util.URI;
  */
 public interface ModelLocation {
     static final String RELATIVE_PATH = "relativePath";
+    /**
+     * Uri that references a model version, can be used as parameter for the {@link org.infai.amor.backend.Repository} methods.
+     */
     static final String EXTERNAL_URI = "externalUri";
     static final String NAMESPACE_URIS = "namespaceUris";
 

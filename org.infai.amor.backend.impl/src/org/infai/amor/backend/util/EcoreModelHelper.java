@@ -17,7 +17,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
@@ -49,7 +48,7 @@ public class EcoreModelHelper {
      * @param contents
      * @return
      */
-    public static Map<String, Object> createPackageNamespaceMap(final EList<? extends EObject> contents) {
+    public static Map<String, Object> createPackageNamespaceMap(final List<? extends EObject> contents) {
         final Map<String, Object> res = Maps.newHashMap();
         for (final EObject eo : contents) {
             if (eo instanceof EPackage) {
@@ -218,6 +217,32 @@ public class EcoreModelHelper {
         };
     }
 
+    /**
+     * Normalize uri containing "." or "..".
+     * 
+     * @param uri
+     *            relative uri
+     * @return
+     */
+    public static URI normalizeUri(URI uri) {
+        Stack<String> newSegments=new Stack<String>();
+        for(String segment:uri.segments()){
+            if(".".equals(segment)) {
+                continue;// ignore
+            } else if("..".equals(segment)){
+                if (newSegments.isEmpty()) {
+                    RepositoryImpl.logger.warning("Could not normalize uri \""+uri+"\", no such parent!");
+                    return uri;
+                }else{
+                    newSegments.pop();// go up one layer
+                }
+            } else {
+                newSegments.push(segment);
+            }
+        }
+        return uri.trimSegments(uri.segmentCount()).appendSegments(newSegments.toArray(new String[newSegments.size()]));
+    }
+
     public static Function<URI, URI> prepend(final URI baseUri) {
         return new Function<URI, URI>() {
             @Override
@@ -228,7 +253,6 @@ public class EcoreModelHelper {
 
         };
     }
-
     public static Predicate<EObject> sameResource(final URI uri) {
         return new Predicate<EObject>(){
             @Override
@@ -238,6 +262,7 @@ public class EcoreModelHelper {
             }
         };
     }
+
     /**
      * @param relativePath
      * @param content
@@ -278,32 +303,6 @@ public class EcoreModelHelper {
                 return uri.toString().endsWith(string);
             }
         };
-    }
-
-    /**
-     * Normalize uri containing "." or "..".
-     * 
-     * @param uri
-     *            relative uri
-     * @return
-     */
-    public static URI normalizeUri(URI uri) {
-        Stack<String> newSegments=new Stack<String>();
-        for(String segment:uri.segments()){
-            if(".".equals(segment)) {
-                continue;// ignore
-            } else if("..".equals(segment)){
-                if (newSegments.isEmpty()) {
-                    RepositoryImpl.logger.warning("Could not normalize uri \""+uri+"\", no such parent!");
-                    return uri;
-                }else{
-                    newSegments.pop();// go up one layer
-                }
-            } else {
-                newSegments.push(segment);
-            }
-        }
-        return uri.trimSegments(uri.segmentCount()).appendSegments(newSegments.toArray(new String[newSegments.size()]));
     }
 
 }

@@ -3,9 +3,7 @@ package org.infai.amor.backend.neostorage;
 import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.storage.StorageFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
+import org.osgi.framework.*;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator implements BundleActivator, NeoProvider {
@@ -34,13 +32,12 @@ public class Activator implements BundleActivator, NeoProvider {
             public Object addingService(final ServiceReference reference) {
                 final GraphDatabaseService ns =  (GraphDatabaseService) super.addingService(reference);
                 neo = ns;
+                context.registerService(StorageFactory.class.getName(), new NeoBlobStorageFactory(Activator.this), null);
                 return ns;
             }
         };
         serviceTracker.open();
-        this.neo = (GraphDatabaseService) serviceTracker.getService();
 
-        context.registerService(StorageFactory.class.getName(), new NeoBlobStorageFactory(this), null);
     }
 
     /*

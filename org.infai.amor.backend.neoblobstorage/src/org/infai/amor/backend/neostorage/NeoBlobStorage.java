@@ -89,6 +89,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      */
     private EList<EObject> applyEPatch(final Model origModel, final Epatch patch) {
         // build resourceset that contains everything the epatch references
+        // TODO add metamodel to package registry
         final ResourceSet inputRS = new AmorResourceSetImpl();
         // copy all known epackages
         final ResourceSet origRS = origModel.getContent().get(0).eResource().getResourceSet();
@@ -104,6 +105,9 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
                 inputRS.getResources().add(importedResource);
             }
         }
+        // copy all known epackages
+        inputRS.getPackageRegistry().putAll(inputRS.getPackageRegistry());
+
         // use name of the left model uri of the patch
         final Resource resource = inputRS.createResource(URI.createURI(patch.getResources().get(0).getLeftUri()));
         resource.getContents().addAll(origModel.getContent());
@@ -208,6 +212,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
     @Override
     public void commit(final CommitTransaction tr) throws TransactionException {
         cache = null;
+        // TODO resolve all proxies...
     }
 
     /* (non-Javadoc)
@@ -215,7 +220,6 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      */
     @Override
     public void delete(final IPath modelPath, final URI externalUri, final Revision revision) throws IOException {
-        // TODO test!
         // remember deleted model node
         ((InternalRevision) revision).touchedModel(new NeoModelLocation(getNeoProvider(), getNeo().createNode(), modelPath.toString(), externalUri, ChangeType.DELETED));
     }

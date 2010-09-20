@@ -9,14 +9,19 @@
  *******************************************************************************/
 package org.infai.amor.backend.neostorage;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
+import org.infai.amor.backend.ModelLocation;
+import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.neo.NeoModelLocation;
 import org.infai.amor.backend.neo.NeoObjectFactory;
+import org.infai.amor.backend.util.*;
+import org.infai.amor.backend.util.ModelFinder.ModelMatcher;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.Traverser.Order;
 
@@ -33,6 +38,9 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
     Map<String, Node> classifierCache;
     protected org.eclipse.emf.common.util.URI currentResourceUri = null;
 
+    protected NeoModelLocation currentModelLocation;
+    protected Revision currentRevision;
+
     /**
      * Get {@link Boolean} property value from this node's properties.
      * 
@@ -41,6 +49,9 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
      * @return
      */
     protected static Boolean getBool(final Node node, final String key){
+        if (!node.hasProperty(key)) {
+            return false;
+        }
         return (Boolean)node.getProperty(key);
     }
 
@@ -92,7 +103,10 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
      * @param value
      */
     protected static void set(final Node node, final String key, final Object value) {
-        if (value != null) {
+        if (value instanceof BigDecimal) {
+            node.setProperty(ISBIGDECIMAL, true);
+            node.setProperty(key, value.toString());
+        } else if (value != null) {
             node.setProperty(key, value);
         }
     }
@@ -175,7 +189,7 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
     protected Node determineEcoreClassifierNode(final String elementName) {
         if (!classifierCache.containsKey(elementName)) {
             // find model
-            final Node ecoreMetamodel = getModelNode(EcorePackage.eNS_URI);
+            final Node ecoreMetamodel = findEPackageByNamespaceUri(EcorePackage.eNS_URI);
             if (null == ecoreMetamodel) {
                 return null;
             }
@@ -238,6 +252,64 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
     }
 
     /**
+     * @return
+     */
+    protected Node findEcoreNode() {
+        Iterator<Relationship> rels = getFactoryNode(EcoreRelationshipType.ECORE_PACKAGE_STORED).getRelationships(EcoreRelationshipType.ECORE_PACKAGE_STORED, Direction.OUTGOING).iterator();
+        if (!rels.hasNext()) {
+            return null;
+        } else {
+            return rels.next().getEndNode();
+        }
+    }
+
+    /**
+     * @param substring
+     * @return
+     */
+    protected Node findEPackageByFilename(final String ecoreFilename) {
+        final String relativePath = EcoreModelHelper.normalizeUri(currentResourceUri.trimSegments(1).appendSegments(ecoreFilename.split("/"))).toString();
+        final ModelLocation loc = ModelFinder.findActiveModel(currentRevision, new ModelMatcher() {
+            @Override
+            public boolean matches(final ModelLocation loc) {
+                return loc.getRelativePath().equals(relativePath);
+            }
+        });
+        if (loc == null) {
+            return null;
+        }
+        final Node modelHead = ((NeoModelLocation) loc).getModelHead();
+        return modelHead;
+        // for (final Relationship rel : modelHead.getRelationships(EcoreRelationshipType.MODEL_CONTENT, Direction.OUTGOING)) {
+        // final Node pckgNode = rel.getEndNode();
+        // // FIXME returns the first package node, does not match all the time
+        // return pckgNode;
+        // }
+        // return null;
+    }
+
+    /**
+     * @param substring
+     * @return
+     */
+    protected Node findEPackageByNamespaceUri(final String nsUri) {
+        if(nsUri.equals(EcorePackage.eNS_URI)){
+            return findEcoreNode();
+        }
+        final ModelLocation loc = ModelFinder.findActiveModel(currentRevision, new ModelMatcher() {
+            @Override
+            public boolean matches(final ModelLocation loc) {
+                return loc.isMetaModel() && loc.getNamespaceUris().contains(nsUri);
+            }
+        });
+        if (loc == null) {
+            return null;
+        }
+        final Node modelHead = ((NeoModelLocation) loc).getModelHead();
+        return modelHead;
+    }
+
+    /**
      * @param relationships
      * @param nsUri
      * @param nsURI2
@@ -273,27 +345,27 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
         return null;
     }
 
-    /**
-     * Find the neo4j start node for a model.
-     * 
-     * @param nsUri
-     *            the model's namespace uri
-     * @return neo4j node for this model
-     */
-    protected Node getModelNode(final String nsURI) {
-        final Iterable<Relationship> rels = getFactoryNode(EcoreRelationshipType.RESOURCES).getRelationships(Direction.OUTGOING);
-        for (final Relationship rel : rels) {
-            final Node model = rel.getEndNode();
-            String noteNsUri = getString(model,NS_URI);
-            if (noteNsUri.equals(nsURI)) {
-                return model;
-            }else if(noteNsUri.length()>0 && nsURI.startsWith(noteNsUri)){
-                // subpackage
-                return findNode(model.getRelationships(EcoreRelationshipType.CONTAINS, Direction.OUTGOING),NS_URI,nsURI);
-            }
-        }
-        return null;
-    }
+    // /**
+    // * Find the neo4j start node for a model.
+    // *
+    // * @param nsUri
+    // * the model's namespace uri
+    // * @return neo4j node for this model
+    // */
+    // protected Node getModelNode(final String nsURI) {
+    // final Iterable<Relationship> rels = getFactoryNode(EcoreRelationshipType.RESOURCES).getRelationships(Direction.OUTGOING);
+    // for (final Relationship rel : rels) {
+    // final Node model = rel.getEndNode();
+    // String noteNsUri = getString(model,NS_URI);
+    // if (nsURI.equals(noteNsUri)) {
+    // return model;
+    // } else if (noteNsUri != null && noteNsUri.length() > 0 && nsURI.startsWith(noteNsUri)) {
+    // // subpackage
+    // return findNode(model.getRelationships(EcoreRelationshipType.CONTAINS, Direction.OUTGOING),NS_URI,nsURI);
+    // }
+    // }
+    // return null;
+    // }
     /**
      * Find neo4j node within the cache.
      * 

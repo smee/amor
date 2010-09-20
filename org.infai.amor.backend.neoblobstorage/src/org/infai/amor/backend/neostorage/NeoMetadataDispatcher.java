@@ -14,11 +14,7 @@ import java.util.logging.Logger;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl;
-import org.infai.amor.backend.ModelLocation;
 import org.infai.amor.backend.internal.NeoProvider;
-import org.infai.amor.backend.neo.NeoModelLocation;
-import org.infai.amor.backend.util.*;
-import org.infai.amor.backend.util.ModelFinder.ModelMatcher;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.Traverser.Order;
 
@@ -51,7 +47,7 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
                 final String proxyUri = (String) toContainer.getProperty("proxyUri");
                 // find node for proxies
                 // TODO create versioned node that references most recent model according to the checkout revision
-                final Node tempNode = findEPackage(proxyUri.substring(0, proxyUri.indexOf('#')));
+                final Node tempNode = findEPackageByFilename(proxyUri.substring(0, proxyUri.indexOf('#')));
                 if (tempNode != null) {
                     toContainer = tempNode;
                 }
@@ -67,32 +63,6 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
                 fromContainer.createRelationshipTo(toContainer, EcoreRelationshipType.DEPENDS);
             }
         }
-    }
-
-    /**
-     * @param substring
-     * @return
-     */
-    private Node findEPackage(final String ecoreFilename) {
-        // XXX hack assumes relative path separated by /
-        final String relativePath = EcoreModelHelper.normalizeUri(currentResourceUri.trimSegments(1).appendSegments(ecoreFilename.split("/"))).toString();
-        final ModelLocation loc = ModelFinder.findActiveModel(currentRevision, new ModelMatcher() {
-            @Override
-            public boolean matches(final ModelLocation loc) {
-                return loc.getRelativePath().equals(relativePath);
-            }
-        });
-        if (loc == null) {
-            return null;
-        }
-        final Node modelHead = ((NeoModelLocation) loc).getModelHead();
-        return modelHead;
-        // for (final Relationship rel : modelHead.getRelationships(EcoreRelationshipType.MODEL_CONTENT, Direction.OUTGOING)) {
-        // final Node pckgNode = rel.getEndNode();
-        // // FIXME returns the first package node, does not match all the time
-        // return pckgNode;
-        // }
-        // return null;
     }
 
     /**
@@ -322,8 +292,7 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
                     }
                 } else {
                     final Node featureNode = createNodeWithRelationship(eObjectNode, EcoreRelationshipType.CONTAINS, true);
-                    // FIXME breaks for attributeValue.getClass.equals(BigDecimal.class)
-                    featureNode.setProperty(VALUE, attributeValue);
+                    set(featureNode, VALUE, attributeValue);
 
                     // set meta relationship
                     attributeMetaNode.createRelationshipTo(featureNode, EcoreRelationshipType.INSTANCE);
@@ -389,7 +358,7 @@ public class NeoMetadataDispatcher extends AbstractNeoDispatcher {
         final EPackage container = element.getESuperPackage();
         if (null == container && !element.getNsURI().equals(EcorePackage.eNS_URI)) {
             // custom m2 model
-            final Node metamodelNode = getModelNode(EcorePackage.eNS_URI);
+            final Node metamodelNode = findEPackageByNamespaceUri(EcorePackage.eNS_URI);
             if (null == metamodelNode) {
                 throw new IllegalStateException("First save the meta model with nsURI: " + EcorePackage.eNS_URI);
             }

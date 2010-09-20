@@ -195,7 +195,7 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
             set(modelNode, NS_URI, metaNsUri + " [" + element.eResource().getURI() + "]");
             set(modelNode, URI, String.valueOf(element.eResource().getURI()));
             // TODO global references not needed
-            getFactoryNode(EcoreRelationshipType.RESOURCES).createRelationshipTo(modelNode, EcoreRelationshipType.RESOURCE);
+            // getFactoryNode(EcoreRelationshipType.RESOURCES).createRelationshipTo(modelNode, EcoreRelationshipType.RESOURCE);
 
             // bind node to dummy container node
             modelNode.createRelationshipTo(objectNode, EcoreRelationshipType.CONTAINS);
@@ -203,9 +203,10 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
             EPackage topLevelPackage = element.eClass().getEPackage();
             /*
              * while (null != topLevelPackage.getESuperPackage()) { topLevelPackage = topLevelPackage.getESuperPackage(); }
-             */            final Node metaPackageNode = getModelNode(topLevelPackage.getNsURI());
-             assert metaPackageNode != null : "There is no metamodel stored with namespace uri " + topLevelPackage.getNsURI();
-             metaPackageNode.createRelationshipTo(modelNode, EcoreRelationshipType.INSTANCE_MODEL);
+             */
+            final Node metaPackageNode = findEPackageByNamespaceUri(topLevelPackage.getNsURI());
+            assert metaPackageNode != null : "There is no metamodel stored with namespace uri " + topLevelPackage.getNsURI();
+            metaPackageNode.createRelationshipTo(modelNode, EcoreRelationshipType.INSTANCE_MODEL);
         }
         // TODO why not cache(element, modelNode)?
         cache(element, objectNode);
@@ -246,8 +247,9 @@ public class NeoMappingDispatcher extends AbstractNeoDispatcher {
         // relationships
         final EPackage container = element.getESuperPackage();
         if (null == container) {
-            // model node
-            getFactoryNode(EcoreRelationshipType.RESOURCES).createRelationshipTo(node, EcoreRelationshipType.RESOURCE);
+            if (element.getNsURI().equals(EcorePackage.eNS_URI)) {
+                getFactoryNode(EcoreRelationshipType.ECORE_PACKAGE_STORED).createRelationshipTo(node, EcoreRelationshipType.ECORE_PACKAGE_STORED);
+            }
         } else {
             // sub package node
             addContains(container, node);

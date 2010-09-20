@@ -49,4 +49,5 @@ public interface Constants {
     static final String TYPENAME = "typeName";
     static final String TRANSIENT = "transient";
     static final String DERIVED = "derived";
+    static final String ISBIGDECIMAL = "isBigDecimal";
 }

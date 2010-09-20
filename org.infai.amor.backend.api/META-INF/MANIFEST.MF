@@ -8,3 +8,4 @@ Export-Package: org.infai.amor.backend.api
 Service-Component: OSGI-INF/component.xml
 Import-Package: ch.ethz.iks.r_osgi;version="1.0.0.RC4",
  org.osgi.framework;version="1.5.0"
+Bundle-ActivationPolicy: lazy

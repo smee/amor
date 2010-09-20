@@ -46,8 +46,7 @@ public class NeoBlobStorageFactory extends AbstractStorageFactory {
         try {
 
             NeoMappingDispatcher disp1 = new NeoMappingDispatcher(neoprovider);
-            final Node ecoreMetamodel = disp1.getModelNode(EcorePackage.eNS_URI);
-            if (null == ecoreMetamodel) {
+            if (!isM3StoredYet(disp1)) {
                 // checkin ecore M3 model
                 Map<EObject, Node> map = Maps.newHashMap();
                 disp1.setRegistry(map);
@@ -61,6 +60,7 @@ public class NeoBlobStorageFactory extends AbstractStorageFactory {
             tx.finish();
         }
     }
+
     /*
      * (non-Javadoc)
      * 
@@ -69,6 +69,14 @@ public class NeoBlobStorageFactory extends AbstractStorageFactory {
     @Override
     protected Storage createNewStorage(final Branch branch) {
         return new NeoBlobStorage(neoprovider);
+    }
+
+    /**
+     * @param disp
+     * @return
+     */
+    private boolean isM3StoredYet(NeoMappingDispatcher disp) {
+        return disp.findEcoreNode() != null;
     }
 
 }
