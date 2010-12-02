@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.pde.ui.EquinoxLauncher">
+<booleanAttribute key="append.args" value="true"/>
+<booleanAttribute key="automaticAdd" value="false"/>
+<booleanAttribute key="automaticValidate" value="false"/>
+<stringAttribute key="bootstrap" value=""/>
+<stringAttribute key="checked" value="[NONE]"/>
+<booleanAttribute key="clearConfig" value="false"/>
+<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/AMOR backend"/>
+<booleanAttribute key="default_auto_start" value="true"/>
+<intAttribute key="default_start_level" value="4"/>
+<booleanAttribute key="includeOptional" value="false"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.ignoreApp=true -Dosgi.noShutdown=true -ea"/>
+<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:org.infai.amor.backend.client}"/>
+<stringAttribute key="pde.version" value="3.3"/>
+<booleanAttribute key="show_selected_only" value="false"/>
+<stringAttribute key="target_bundles" value="org.eclipse.osgi@-1:true,org.eclipse.equinox.app@default:default,org.eclipse.emf.compare.diff@default:default,org.eclipse.emf.compare@default:default,org.eclipse.emf.compare.match@default:default,org.eclipse.core.filesystem@default:default,org.eclipse.equinox.common@2:true,org.eclipse.core.contenttype@default:default,org.eclipse.equinox.registry@default:default,org.eclipse.core.resources.compatibility@default:false,org.eclipse.core.runtime@default:true,org.eclipse.core.runtime.compatibility.registry@default:false,org.eclipse.core.jobs@default:default,org.eclipse.core.resources@default:default,org.eclipse.core.expressions@default:default,org.eclipse.emf.ecore@default:default,org.eclipse.emf.edit@default:default,org.eclipse.equinox.preferences@default:default,org.eclipse.emf.compare.epatch@default:default,org.eclipse.emf.ecore.xmi@default:default,org.eclipse.osgi.services@default:default,org.eclipse.emf.common@default:default"/>
+<booleanAttribute key="tracing" value="false"/>
+<booleanAttribute key="useDefaultConfigArea" value="true"/>
+<stringAttribute key="workspace_bundles" value="org.infai.amor.backend.filestorage@default:default,org.infai.amor.backend.impl@default:default,org.infai.amor.backend.client@default:default,org.infai.amor.backend.neo@default:default,org.infai.amor.backend@default:default"/>
+</launchConfiguration>

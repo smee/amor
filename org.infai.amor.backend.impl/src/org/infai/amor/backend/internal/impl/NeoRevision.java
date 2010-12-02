@@ -14,7 +14,8 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 import org.infai.amor.backend.*;
-import org.infai.amor.backend.neo.*;
+import org.infai.amor.backend.neo.NeoObject;
+import org.infai.amor.backend.neo.NeoProvider;
 import org.neo4j.graphdb.*;
 
 import com.google.common.collect.Iterables;
@@ -211,7 +212,7 @@ public class NeoRevision extends NeoObject implements InternalRevision {
     }
 
     private void rememberModelAction(ModelLocation loc, final ChangeType ct) {
-        if (!(loc instanceof NeoModelLocation)) {
+        if (!(loc instanceof NeoObject)) {
             loc = new NeoModelLocation(getNeoProvider(), createNode(), loc);
         }
         final Node node = getModelChangeNode(ct);

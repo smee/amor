@@ -1,0 +1,1 @@
+Default backend implemention of the org.infai.amor.backend API.

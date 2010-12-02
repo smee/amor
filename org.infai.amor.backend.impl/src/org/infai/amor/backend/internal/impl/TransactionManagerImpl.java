@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 
 import org.infai.amor.backend.*;
+import org.infai.amor.backend.InternalRevision;
 import org.infai.amor.backend.exception.TransactionException;
 import org.infai.amor.backend.exception.TransactionListener;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
