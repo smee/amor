@@ -22,7 +22,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.internal.ModelImpl;
-import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.neo.NeoProvider;
 import org.infai.amor.backend.neostorage.NeoBlobStorage;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.test.*;

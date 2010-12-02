@@ -15,7 +15,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.internal.AbstractStorageFactory;
-import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.neo.NeoProvider;
 import org.infai.amor.backend.storage.Storage;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;

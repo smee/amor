@@ -15,8 +15,10 @@ import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 
 /**
+ * Describes metadata of one stored model in one revision.
+ * 
  * @author sdienst
- *
+ * 
  */
 public interface ModelLocation {
     static final String RELATIVE_PATH = "relativePath";
@@ -29,10 +31,10 @@ public interface ModelLocation {
     /**
      * @return
      */
-    Revision.ChangeType getChangeType();
+    ChangeType getChangeType();
 
     /**
-     * @return amor uri that references this model
+     * @return external amor uri that references this model
      */
     URI getExternalUri();
 
@@ -43,6 +45,11 @@ public interface ModelLocation {
      */
     Map<String,Object> getMetaData();
 
+    /**
+     * If this modellocation represents a metamodel this method will return all stored namespace uris of them.
+     * 
+     * @return
+     */
     Collection<String> getNamespaceUris();
 
     /**
@@ -51,6 +58,12 @@ public interface ModelLocation {
      * @return
      */
     String getRelativePath();
+
+    /**
+     * Does this model location reference a metamodel (ecore)?
+     * 
+     * @return
+     */
     boolean isMetaModel();
 
 }

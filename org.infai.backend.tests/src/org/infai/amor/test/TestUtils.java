@@ -13,7 +13,6 @@ import java.util.*;
 
 import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.*;
-import org.infai.amor.backend.Revision.ChangeType;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 
@@ -29,7 +28,7 @@ public class TestUtils {
      * @param ct
      * @return
      */
-    public static ModelLocation createLocation(final URI uri, final String modelPath, final Revision.ChangeType ct) {
+    public static ModelLocation createLocation(final URI uri, final String modelPath, final ChangeType ct) {
         return new ModelLocation() {
 
             @Override

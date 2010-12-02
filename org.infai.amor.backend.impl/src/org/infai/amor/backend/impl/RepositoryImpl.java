@@ -18,7 +18,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI.MalformedURIException;
 import org.infai.amor.backend.*;
-import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.api.RevisionInfo;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.responses.*;
@@ -202,9 +201,9 @@ public class RepositoryImpl implements Repository {
                 rev.getUser(),
                 rev.getCommitMessage(),
                 rev.getCommitTimestamp().getTime(),
-                getPaths(rev.getModelReferences(Revision.ChangeType.ADDED)),
-                getPaths(rev.getModelReferences(Revision.ChangeType.CHANGED)),
-                getPaths(rev.getModelReferences(Revision.ChangeType.DELETED)));
+                getPaths(rev.getModelReferences(ChangeType.ADDED)),
+                getPaths(rev.getModelReferences(ChangeType.CHANGED)),
+                getPaths(rev.getModelReferences(ChangeType.DELETED)));
     }
 
     /* (non-Javadoc)

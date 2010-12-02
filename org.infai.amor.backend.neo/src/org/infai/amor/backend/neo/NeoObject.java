@@ -9,7 +9,6 @@
  *******************************************************************************/
 package org.infai.amor.backend.neo;
 
-import org.infai.amor.backend.internal.NeoProvider;
 import org.neo4j.graphdb.*;
 
 /**

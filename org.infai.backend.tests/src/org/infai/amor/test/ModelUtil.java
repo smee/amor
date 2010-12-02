@@ -210,6 +210,7 @@ public class ModelUtil {
         // we assume the very same metamodel, no matter where it was loaded from
         final Map<String, Object> options = new HashMap<String, Object>();
         options.put(MatchOptions.OPTION_DISTINCT_METAMODELS, true);
+        options.put(MatchOptions.OPTION_IGNORE_XMI_ID, true);
         return options;
     }
 
@@ -366,6 +367,7 @@ public class ModelUtil {
         options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_RECORD);
 
         final Resource res = rs.createResource(URI.createFileURI("foo/" + System.currentTimeMillis() + "/" + relPath));
+        logger.info("Storing models to " + res.getURI());
         res.getContents().addAll(model);
         res.save(options);
         for(final EObject eo:model) {

@@ -12,8 +12,8 @@ package org.infai.amor.backend.internal.impl;
 import java.util.*;
 
 import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.neo.NeoObject;
+import org.infai.amor.backend.neo.NeoProvider;
 import org.neo4j.graphdb.*;
 
 /**

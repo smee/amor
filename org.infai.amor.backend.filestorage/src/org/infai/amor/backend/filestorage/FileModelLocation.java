@@ -12,9 +12,8 @@ package org.infai.amor.backend.filestorage;
 import java.util.*;
 
 import org.eclipse.emf.common.util.URI;
+import org.infai.amor.backend.ChangeType;
 import org.infai.amor.backend.ModelLocation;
-import org.infai.amor.backend.Revision;
-import org.infai.amor.backend.Revision.ChangeType;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -27,7 +26,7 @@ public class FileModelLocation implements ModelLocation {
     private final String rp;
     private final URI exUri;
     private final Map<String, Object> props;
-    private final Revision.ChangeType ct;
+    private final ChangeType ct;
 
     private FileModelLocation(final URI externalUri, final String relativePath, final ChangeType ct, final Map<String, Object> props) {
         this.rp = relativePath;
@@ -36,10 +35,10 @@ public class FileModelLocation implements ModelLocation {
         this.props = props;
     }
 
-    public FileModelLocation(final URI externalUri, final String relativePath, final Revision.ChangeType ct) {
+    public FileModelLocation(final URI externalUri, final String relativePath, final ChangeType ct) {
         this(externalUri, relativePath, ct, new HashMap<String, Object>());
     }
-    public FileModelLocation(final URI externalUri, final String relativePath, final Revision.ChangeType ct, final Collection<String> namespaceUris) {
+    public FileModelLocation(final URI externalUri, final String relativePath, final ChangeType ct, final Collection<String> namespaceUris) {
         this(externalUri, relativePath, ct, ImmutableMap.of(NAMESPACE_URIS, (Object) namespaceUris.toArray(new String[namespaceUris.size()])));
     }
 

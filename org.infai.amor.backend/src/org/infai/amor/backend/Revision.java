@@ -17,9 +17,6 @@ import java.util.Date;
  * 
  */
 public interface Revision {
-    enum ChangeType {
-        ADDED, CHANGED, DELETED
-    }
     /**
      * Commit message.
      * 

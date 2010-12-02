@@ -23,9 +23,9 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.infai.amor.backend.*;
-import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.internal.impl.*;
+import org.infai.amor.backend.neo.NeoProvider;
 import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.backend.storage.StorageFactory;
 import org.infai.amor.backend.util.EcoreModelHelper;
@@ -129,18 +129,19 @@ public abstract class AbstractStorageIntegrationTest extends AbstractNeo4JPerfor
     }
 
     @Test
-    public void shouldSaveModelIntoNeo() throws Exception {
+    public void shouldPersistAndRestoreModels() throws Exception {
         split(String.format("Before loading %d models ", modelLocations.length, Arrays.asList(modelLocations)));
         // given
         final ResourceSet rs = new AmorResourceSetImpl();
         final Map<String, List<EObject>> models = Maps.newLinkedHashMap();
         for (final String location : modelLocations) {
-            final List<EObject> currentModelContents = readInputModels(location, rs, false);
+            final List<EObject> currentModelContents = readInputModels(location, rs, true);
             for (final EObject eo : currentModelContents) {
                 final Set<URI> proxyUrls = EcoreModelHelper.findReferencedModels(eo, eo.eResource().getURI());
                 if (!proxyUrls.isEmpty()) {
                     System.out.println("Unresolved proxies: " + proxyUrls);
                     // TODO restore from repo or ask for these dependencies
+                    // fail();
                 }
             }
             models.put(location, new ArrayList<EObject>(currentModelContents));

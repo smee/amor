@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.infai.amor.backend,
+ org.infai.amor.backend.neo,
  org.infai.amor.backend.resources,
  org.infai.amor.test,
  org.junit;version="4.5.0",

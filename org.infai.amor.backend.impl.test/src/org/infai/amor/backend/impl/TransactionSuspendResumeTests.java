@@ -16,8 +16,10 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.infai.amor.backend.*;
-import org.infai.amor.backend.internal.*;
+import org.infai.amor.backend.internal.BranchFactory;
+import org.infai.amor.backend.internal.UriHandler;
 import org.infai.amor.backend.internal.impl.TransactionManagerImpl;
+import org.infai.amor.backend.neo.NeoProvider;
 import org.infai.amor.backend.storage.StorageFactory;
 import org.infai.amor.test.AbstractNeo4JTest;
 import org.infai.amor.test.ModelUtil;

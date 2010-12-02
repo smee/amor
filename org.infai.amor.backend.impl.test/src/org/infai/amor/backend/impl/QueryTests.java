@@ -16,7 +16,6 @@ import java.util.*;
 
 import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.*;
-import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.internal.impl.UriHandlerImpl;
 import org.infai.amor.backend.storage.Storage;

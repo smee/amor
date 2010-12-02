@@ -40,7 +40,7 @@ public class AbstractNeo4JPerformanceTest extends AbstractNeo4JTest {
         final long splitTime = stopwatch.getSplitTime();
         final long timediff = splitTime - lastSplit;
         lastSplit = splitTime;
-        logger.info(String.format("%s: %dmsec", msg, timediff));
+        logger.finest(String.format("%s: %dmsec", msg, timediff));
         stopwatch.unsplit();
     }
 

@@ -13,8 +13,10 @@ import java.io.File;
 import java.io.IOException;
 
 import org.infai.amor.backend.Repository;
-import org.infai.amor.backend.internal.*;
+import org.infai.amor.backend.internal.TransactionManager;
+import org.infai.amor.backend.internal.UriHandler;
 import org.infai.amor.backend.internal.impl.*;
+import org.infai.amor.backend.neo.NeoProvider;
 import org.infai.amor.backend.storage.StorageFactory;
 import org.junit.*;
 import org.neo4j.graphdb.GraphDatabaseService;

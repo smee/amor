@@ -9,9 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.backend.util;
 
-import org.infai.amor.backend.ModelLocation;
-import org.infai.amor.backend.Revision;
-import org.infai.amor.backend.Revision.ChangeType;
+import org.infai.amor.backend.*;
 
 /**
  * @author sdienst

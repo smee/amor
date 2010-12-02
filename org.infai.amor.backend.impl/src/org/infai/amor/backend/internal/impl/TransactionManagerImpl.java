@@ -21,6 +21,7 @@ import org.infai.amor.backend.exception.TransactionListener;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.neo.NeoObjectFactory;
+import org.infai.amor.backend.neo.NeoProvider;
 import org.infai.amor.backend.responses.CommitSuccessResponse;
 import org.infai.amor.backend.responses.TransactionErrorResponse;
 import org.neo4j.graphdb.*;

@@ -7,19 +7,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.neo;
+package org.infai.amor.backend.internal.impl;
 
 import java.util.*;
 
 import org.eclipse.emf.common.util.URI;
+import org.infai.amor.backend.ChangeType;
 import org.infai.amor.backend.ModelLocation;
-import org.infai.amor.backend.Revision;
-import org.infai.amor.backend.Revision.ChangeType;
-import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.neo.NeoObject;
+import org.infai.amor.backend.neo.NeoProvider;
 import org.neo4j.graphdb.*;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * @author sdienst
@@ -78,7 +75,7 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
      */
     @Override
     public ChangeType getChangeType() {
-        return Revision.ChangeType.valueOf((String) get(CHANGETYPE));
+        return ChangeType.valueOf((String) get(CHANGETYPE));
     }
 
     /* (non-Javadoc)
@@ -104,11 +101,11 @@ public class NeoModelLocation extends NeoObject implements ModelLocation {
 
         final Node propertiesNode = rel.getEndNode();
 
-        final Builder<String, Object> mb = new ImmutableMap.Builder<String, Object>();
+        final Map<String, Object> mb = new HashMap<String, Object>();
         for (final String key : propertiesNode.getPropertyKeys()) {
             mb.put(key, propertiesNode.getProperty(key));
         }
-        return mb.build();
+        return mb;
     }
 
     /**

@@ -1,4 +1,4 @@
-package org.infai.amor.backend.neo;
+package org.infai.amor.backend.activator;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;

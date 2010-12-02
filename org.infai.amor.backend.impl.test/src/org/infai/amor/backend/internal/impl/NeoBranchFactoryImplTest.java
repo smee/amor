@@ -18,9 +18,8 @@ import java.util.*;
 
 import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.*;
-import org.infai.amor.backend.Revision.ChangeType;
 import org.infai.amor.backend.impl.CommitTransactionImpl;
-import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.neo.NeoProvider;
 import org.infai.amor.test.*;
 import org.junit.*;
 import org.neo4j.graphdb.GraphDatabaseService;

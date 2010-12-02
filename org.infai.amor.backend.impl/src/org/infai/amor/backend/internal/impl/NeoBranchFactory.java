@@ -12,8 +12,8 @@ package org.infai.amor.backend.internal.impl;
 import org.infai.amor.backend.Branch;
 import org.infai.amor.backend.Revision;
 import org.infai.amor.backend.internal.BranchFactory;
-import org.infai.amor.backend.internal.NeoProvider;
 import org.infai.amor.backend.neo.NeoObjectFactory;
+import org.infai.amor.backend.neo.NeoProvider;
 import org.neo4j.graphdb.*;
 
 import com.google.common.base.Function;

@@ -16,7 +16,7 @@ import junit.framework.Assert;
 
 import org.infai.amor.backend.filestorage.FileStorageFactory;
 import org.infai.amor.backend.impl.AbstractStorageIntegrationTest;
-import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.neo.NeoProvider;
 import org.infai.amor.backend.storage.StorageFactory;
 
 /**

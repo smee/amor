@@ -1,6 +1,6 @@
 package org.infai.amor.backend.neostorage;
 
-import org.infai.amor.backend.internal.NeoProvider;
+import org.infai.amor.backend.neo.NeoProvider;
 import org.infai.amor.backend.storage.StorageFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.osgi.framework.*;
