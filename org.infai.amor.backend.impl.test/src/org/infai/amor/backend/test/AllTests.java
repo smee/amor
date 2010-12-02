@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.impl;
+package org.infai.amor.backend.test;
 
 import org.infai.amor.backend.internal.impl.*;
 import org.junit.runner.RunWith;

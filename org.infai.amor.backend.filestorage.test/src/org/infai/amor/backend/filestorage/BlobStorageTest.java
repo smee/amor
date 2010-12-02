@@ -24,8 +24,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.exception.TransactionException;
-import org.infai.amor.backend.internal.ChangedModelImpl;
-import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.internal.impl.NeoRevision;
 import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.test.ModelUtil;

@@ -7,13 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.impl;
+package org.infai.amor.backend.test;
 
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 
 import org.infai.amor.backend.*;
+import org.infai.amor.backend.impl.RepositoryImpl;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.storage.Storage;
 import org.infai.amor.backend.storage.StorageFactory;

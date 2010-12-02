@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.impl;
+package org.infai.amor.backend.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,6 +16,7 @@ import java.util.*;
 
 import org.eclipse.emf.common.util.URI;
 import org.infai.amor.backend.*;
+import org.infai.amor.backend.impl.RepositoryImpl;
 import org.infai.amor.backend.internal.*;
 import org.infai.amor.backend.internal.impl.UriHandlerImpl;
 import org.infai.amor.backend.storage.Storage;

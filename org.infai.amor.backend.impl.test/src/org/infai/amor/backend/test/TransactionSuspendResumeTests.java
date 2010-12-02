@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.impl;
+package org.infai.amor.backend.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -16,6 +16,7 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.infai.amor.backend.*;
+import org.infai.amor.backend.impl.*;
 import org.infai.amor.backend.internal.BranchFactory;
 import org.infai.amor.backend.internal.UriHandler;
 import org.infai.amor.backend.internal.impl.TransactionManagerImpl;

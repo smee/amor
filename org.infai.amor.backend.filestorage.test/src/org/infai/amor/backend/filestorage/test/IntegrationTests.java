@@ -22,7 +22,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.infai.amor.backend.*;
-import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.backend.responses.CommitSuccessResponse;
 import org.infai.amor.backend.responses.UnresolvedDependencyResponse;

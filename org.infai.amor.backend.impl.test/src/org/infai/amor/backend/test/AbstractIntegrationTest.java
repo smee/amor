@@ -7,12 +7,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  *******************************************************************************/
-package org.infai.amor.backend.impl;
+package org.infai.amor.backend.test;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.infai.amor.backend.Repository;
+import org.infai.amor.backend.impl.RepositoryImpl;
 import org.infai.amor.backend.internal.TransactionManager;
 import org.infai.amor.backend.internal.UriHandler;
 import org.infai.amor.backend.internal.impl.*;
