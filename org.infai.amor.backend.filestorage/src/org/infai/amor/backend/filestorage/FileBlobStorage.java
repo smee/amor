@@ -27,7 +27,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.exception.TransactionException;
-import org.infai.amor.backend.internal.ModelImpl;
 import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.backend.storage.Storage;
 import org.w3c.dom.Document;

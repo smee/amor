@@ -12,7 +12,7 @@ package org.infai.amor.backend.filestorage;
 import java.io.File;
 
 import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.internal.AbstractStorageFactory;
+import org.infai.amor.backend.storage.AbstractStorageFactory;
 import org.infai.amor.backend.storage.Storage;
 
 /**
