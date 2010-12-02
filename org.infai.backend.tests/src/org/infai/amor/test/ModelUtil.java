@@ -265,13 +265,21 @@ public class ModelUtil {
 
     public static List<EObject> readInputModels(final String relativePath, final ResourceSet rs, final boolean simulateRemote) throws IOException {
 
-        String file = getAbsolutePathToTestModel(relativePath);
-        if (simulateRemote) {
-            file = copyToTempDirectory(file);
-        }
-        final Resource resource = rs.getResource(URI.createFileURI(file), true);
-        resource.load(null);
+        final String modelPath=getAbsolutePathToTestModel(relativePath);
+        Resource resource = null;
 
+        if (simulateRemote) {
+            // FIXME ugly hack: use filename of relative path only, assuming all connected models are within the same directory
+            String fakePath = relativePath;
+            if (relativePath.contains("/")) {
+                fakePath = relativePath.substring(relativePath.lastIndexOf('/') + 1);
+            }
+            resource = rs.createResource(URI.createFileURI(fakePath));
+            resource.load(new FileInputStream(modelPath), Collections.emptyMap());
+        }else{
+            resource = rs.getResource(URI.createFileURI(modelPath), true);
+            resource.load(null);
+        }
         // register packages
         for (final EObject eObject : resource.getContents()) {
             if (eObject instanceof EPackage) {

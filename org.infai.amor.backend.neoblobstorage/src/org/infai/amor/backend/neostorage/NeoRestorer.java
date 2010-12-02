@@ -539,7 +539,16 @@ public class NeoRestorer extends AbstractNeoPersistence {
                     if (getBool(featureNode, ISBIGDECIMAL)) {
                         // restore bigdecimal
                         featureValue = new BigDecimal((String) featureValue);
+                    } else if (getBool(featureNode, ISDATE)) {
+                        featureValue = new Date(getLong(metaNode, className));
+                    } else if (getBool(featureNode, ISENUMLITERAL)) {
+                        EEnumLiteral lit = EcoreFactory.eINSTANCE.createEEnumLiteral();
+                        lit.setValue((Integer) featureValue);
+                        lit.setName(ENUMNAME);
+                        lit.setLiteral(ENUMLITERAL);
+                        featureValue=lit;
                     }
+
                     logger.finest(String.format("  attr '%s' of type '%s'", attribute.getName(), attribute.getEType().getName()));
 
                     if (attribute.isMany()) {

@@ -50,4 +50,8 @@ public interface Constants {
     static final String TRANSIENT = "transient";
     static final String DERIVED = "derived";
     static final String ISBIGDECIMAL = "isBigDecimal";
+    static final String ISENUMLITERAL = "isEnumLiteral";
+    static final String ISDATE = "isDate";
+    static final String ENUMLITERAL = "enumLiteral";
+    static final String ENUMNAME = "enumName";
 }

@@ -66,6 +66,10 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
         return (Integer) node.getProperty(key);
     }
 
+    protected static Long getLong(final Node node, final String key) {
+        return (Long) node.getProperty(key);
+    }
+
     /**
      * Get {@link String} property value from this node's properties.
      * 
@@ -106,6 +110,15 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
         if (value instanceof BigDecimal) {
             node.setProperty(ISBIGDECIMAL, true);
             node.setProperty(key, value.toString());
+        } else if (value instanceof EEnumLiteral) {
+            node.setProperty(ISENUMLITERAL, true);
+            EEnumLiteral e = (EEnumLiteral) value;
+            node.setProperty(key, e.getValue());
+            node.setProperty(ENUMLITERAL, e.getLiteral());
+            node.setProperty(ENUMNAME, e.getName());
+        } else if (value instanceof Date) {
+            node.setProperty(ISDATE, true);
+            node.setProperty(key, ((Date) value).getTime());
         } else if (value != null) {
             node.setProperty(key, value);
         }
