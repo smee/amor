@@ -1,2 +1,0 @@
-This project contains the master test suite that combines all available unit and integration tests of the AMOR
-model repository backend. Run org.infai.amor.backend.tests.MasterTestSuite via JUnit4's runner.
