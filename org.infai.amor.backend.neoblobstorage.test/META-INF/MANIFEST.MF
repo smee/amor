@@ -7,6 +7,7 @@ Bundle-ActivatorXX: org.infai.amor.backend.neoblobstorage.test.Activator
 Bundle-Vendor: InfAI e.V.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.infai.amor.backend.api,
+ org.infai.amor.backend.test,
  org.infai.amor.test,
  org.junit;version="4.3.0"
 Bundle-ActivationPolicy: lazy

@@ -9,7 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.backend.neoblobstorage.test;
 
-import org.infai.amor.backend.impl.ProxyTests;
+import org.infai.amor.backend.test.ProxyTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

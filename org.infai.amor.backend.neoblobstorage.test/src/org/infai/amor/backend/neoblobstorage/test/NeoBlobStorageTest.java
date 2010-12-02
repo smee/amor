@@ -9,7 +9,7 @@
  *******************************************************************************/
 package org.infai.amor.backend.neoblobstorage.test;
 
-import org.infai.amor.backend.impl.AbstractStorageIntegrationTest;
+import org.infai.amor.backend.test.AbstractStorageIntegrationTest;
 import org.infai.amor.backend.neo.NeoProvider;
 import org.infai.amor.backend.neostorage.NeoBlobStorageFactory;
 import org.infai.amor.backend.storage.StorageFactory;

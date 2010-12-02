@@ -19,7 +19,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses( {
     org.infai.amor.backend.neoblobstorage.test.AllTests.class,
-    org.infai.amor.backend.impl.AllTests.class,
+    org.infai.amor.backend.test.AllTests.class,
     org.infai.amor.backend.filestorage.test.AllTests.class,
 })
 public class MasterTestSuite {
