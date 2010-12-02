@@ -7,8 +7,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.infai.amor.backend.neostorage.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: com.google.common.collect;version="1.0.0",
- org.apache.commons.lang;version="2.3.0",
+Import-Package: org.apache.commons.lang;version="2.3.0",
  org.eclipse.core.runtime;version="3.4.0",
  org.eclipse.emf.common.util,
  org.eclipse.emf.compare.epatch,
@@ -25,7 +24,6 @@ Import-Package: com.google.common.collect;version="1.0.0",
  org.infai.amor.backend.neo,
  org.infai.amor.backend.resources,
  org.infai.amor.backend.storage,
- org.infai.amor.backend.util,
  org.neo4j.graphdb,
  org.osgi.framework;version="1.3.0",
  org.osgi.util.tracker;version="1.4.2"

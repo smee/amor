@@ -9,18 +9,17 @@
  *******************************************************************************/
 package org.infai.amor.backend.neostorage;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.infai.amor.backend.Branch;
-import org.infai.amor.backend.internal.AbstractStorageFactory;
 import org.infai.amor.backend.neo.NeoProvider;
+import org.infai.amor.backend.storage.AbstractStorageFactory;
 import org.infai.amor.backend.storage.Storage;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
-
-import com.google.common.collect.Maps;
 
 /**
  * @author sdienst
@@ -48,7 +47,7 @@ public class NeoBlobStorageFactory extends AbstractStorageFactory {
             NeoMappingDispatcher disp1 = new NeoMappingDispatcher(neoprovider);
             if (!isM3StoredYet(disp1)) {
                 // checkin ecore M3 model
-                Map<EObject, Node> map = Maps.newHashMap();
+                Map<EObject, Node> map = new HashMap();
                 disp1.setRegistry(map);
                 disp1.store(EcorePackage.eINSTANCE.eResource());
                 NeoMetadataDispatcher disp2 = new NeoMetadataDispatcher(neoprovider);

@@ -13,15 +13,13 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Logger;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
 import org.infai.amor.backend.ModelLocation;
 import org.infai.amor.backend.Revision;
-import org.infai.amor.backend.internal.impl.NeoModelLocation;
-import org.infai.amor.backend.neo.NeoObjectFactory;
-import org.infai.amor.backend.neo.NeoProvider;
-import org.infai.amor.backend.util.*;
-import org.infai.amor.backend.util.ModelFinder.ModelMatcher;
+import org.infai.amor.backend.neo.*;
+import org.infai.amor.backend.neostorage.ModelFinder.ModelMatcher;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.Traverser.Order;
 
@@ -100,6 +98,32 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
     }
 
     /**
+     * Normalize uri containing "." or "..".
+     * 
+     * @param uri
+     *            relative uri
+     * @return
+     */
+    public static URI normalizeUri(URI uri) {
+        Stack<String> newSegments=new Stack<String>();
+        for(String segment:uri.segments()){
+            if(".".equals(segment)) {
+                continue;// ignore
+            } else if("..".equals(segment)){
+                if (newSegments.isEmpty()) {
+                    logger.warning("Could not normalize uri \""+uri+"\", no such parent!");
+                    return uri;
+                }else{
+                    newSegments.pop();// go up one layer
+                }
+            } else {
+                newSegments.push(segment);
+            }
+        }
+        return uri.trimSegments(uri.segmentCount()).appendSegments(newSegments.toArray(new String[newSegments.size()]));
+    }
+
+    /**
      * Set a property iff value != null.
      * 
      * @param node
@@ -124,6 +148,7 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
         }
     }
 
+
     /**
      * Set a property iff value != null else use value=dflt.
      * 
@@ -138,7 +163,6 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
             node.setProperty(key, dflt);
         }
     }
-
 
     /**
      * @param neo
@@ -275,13 +299,12 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
             return rels.next().getEndNode();
         }
     }
-
     /**
      * @param substring
      * @return
      */
     protected Node findEPackageByFilename(final String ecoreFilename) {
-        final String relativePath = EcoreModelHelper.normalizeUri(currentResourceUri.trimSegments(1).appendSegments(ecoreFilename.split("/"))).toString();
+        final String relativePath = normalizeUri(currentResourceUri.trimSegments(1).appendSegments(ecoreFilename.split("/"))).toString();
         final ModelLocation loc = ModelFinder.findActiveModel(currentRevision, new ModelMatcher() {
             @Override
             public boolean matches(final ModelLocation loc) {
@@ -291,7 +314,7 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
         if (loc == null) {
             return null;
         }
-        final Node modelHead = ((NeoModelLocation) loc).getModelHead();
+        final Node modelHead = ((NeoObject) loc).getNode();
         return modelHead;
         // for (final Relationship rel : modelHead.getRelationships(EcoreRelationshipType.MODEL_CONTENT, Direction.OUTGOING)) {
         // final Node pckgNode = rel.getEndNode();
@@ -318,7 +341,7 @@ public abstract class AbstractNeoPersistence extends NeoObjectFactory implements
         if (loc == null) {
             return null;
         }
-        final Node modelHead = ((NeoModelLocation) loc).getModelHead();
+        final Node modelHead = ((NeoObject) loc).getNode();
         return modelHead;
     }
 

@@ -15,7 +15,6 @@ import org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.infai.amor.backend.Model;
 import org.infai.amor.backend.Revision;
-import org.infai.amor.backend.internal.impl.NeoModelLocation;
 import org.infai.amor.backend.neo.NeoProvider;
 import org.neo4j.graphdb.*;
 

@@ -26,16 +26,11 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.infai.amor.backend.*;
 import org.infai.amor.backend.exception.TransactionException;
-import org.infai.amor.backend.internal.ModelImpl;
-import org.infai.amor.backend.internal.impl.NeoModelLocation;
 import org.infai.amor.backend.neo.NeoObjectFactory;
 import org.infai.amor.backend.neo.NeoProvider;
 import org.infai.amor.backend.resources.AmorResourceSetImpl;
 import org.infai.amor.backend.storage.Storage;
 import org.neo4j.graphdb.Node;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * Store models into neo4j, stores complete models while ignoring all differences between versions.
@@ -111,7 +106,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         final Resource resource = inputRS.createResource(URI.createURI(patch.getResources().get(0).getLeftUri()));
         resource.getContents().addAll(origModel.getContent());
         // create mapping of NamedResources to resources, because the builtin functionality of CopyingEpatchApplier is buggy :(
-        final Map<NamedResource, Resource> resourceMap = Maps.newHashMap();
+        final Map<NamedResource, Resource> resourceMap = new HashMap();
         resourceMap.put(patch.getResources().get(0), resource);
         // apply epatch
         final CopyingEpatchApplier epatchApplier = new CopyingEpatchApplier(ApplyStrategy.LEFT_TO_RIGHT, patch, resourceMap, inputRS);
@@ -194,7 +189,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
         logger.finer(String.format("checking out %s of revision %d", path.toString(), revision.getRevisionId()));
 
         final InternalRevision neoRev = (InternalRevision) revision;
-        final NeoModelLocation modelLocation = (NeoModelLocation) neoRev.getModelLocation(createModelSpecificPath(path));
+        final ModelLocation modelLocation = neoRev.getModelLocation(createModelSpecificPath(path));
 
         if (modelLocation == null) {
             throw new IOException("No such model at revision " + revision.getRevisionId());
@@ -229,7 +224,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      * @return
      */
     private Collection<String> getEPackageUrisFrom(final List<? extends EObject> content) {
-        final Collection<String> res = Lists.newArrayList();
+        final Collection<String> res = new ArrayList();
         for(final EObject eo: content){
             if(eo instanceof EPackage) {
                 final EPackage epackage = (EPackage) eo;
@@ -259,7 +254,7 @@ public class NeoBlobStorage extends NeoObjectFactory implements Storage {
      */
     @Override
     public void startTransaction(final CommitTransaction tr) {
-        cache = Maps.newHashMap();
+        cache = new HashMap();
     }
 
     /*

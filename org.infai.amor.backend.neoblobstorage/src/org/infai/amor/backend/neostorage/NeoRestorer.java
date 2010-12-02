@@ -21,14 +21,11 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.infai.amor.backend.ModelLocation;
-import org.infai.amor.backend.internal.impl.NeoModelLocation;
+import org.infai.amor.backend.neo.NeoObject;
 import org.infai.amor.backend.neo.NeoProvider;
 import org.infai.amor.backend.resources.AmorResourceSetImpl;
-import org.infai.amor.backend.util.EcoreModelHelper;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.Traverser.Order;
-
-import com.google.common.collect.Lists;
 
 public class NeoRestorer extends AbstractNeoPersistence {
     static class OrderedNodeIterable implements Iterable<Node> {
@@ -73,12 +70,31 @@ public class NeoRestorer extends AbstractNeoPersistence {
     private ResourceSetImpl resourceSet;
 
     /**
+     * Create a map of epackage namespace uris to epackages.
+     * 
+     * @param contents
+     * @return
+     */
+    private static Map<String, Object> createPackageNamespaceMap(final List<? extends EObject> contents) {
+        final Map<String, Object> res = new HashMap();
+        for (final EObject eo : contents) {
+            if (eo instanceof EPackage) {
+                final EPackage epckg = (EPackage) eo;
+                res.put(epckg.getNsURI(), epckg);
+                res.putAll(createPackageNamespaceMap(epckg.getESubpackages()));
+            }
+        }
+        return res;
+    }
+
+    /**
      * @param neo
      */
     public NeoRestorer(final NeoProvider neo) {
         super(neo);
         initMembers();
     }
+
 
     /**
      * Find the relative path to the file this proxy uri relates to. The path has the same root as {@link #currentResourceUri}.
@@ -90,7 +106,6 @@ public class NeoRestorer extends AbstractNeoPersistence {
         URI pseudoAbsProxyUri = org.eclipse.emf.common.util.URI.createURI("file://dummy/" + proxyUri);
         return pseudoAbsProxyUri.deresolve(pseudoAbsCurrentUri);
     }
-
 
     /**
      * @param name
@@ -130,16 +145,16 @@ public class NeoRestorer extends AbstractNeoPersistence {
      *            toplevel node for a persisted model
      * @return
      */
-    public List<EObject> load(final NeoModelLocation modelLocation) {
+    public List<EObject> load(final ModelLocation modelLocation) {
         // initMembers();
         // FIXME when checking out model with reference to another object of a different package,
         // FIXME the reference will point to the eclass instead of the eobject :(
-        final List<EObject> result = Lists.newArrayList();
+        final List<EObject> result = new ArrayList();
         final Resource resource = resourceSet.createResource(org.eclipse.emf.common.util.URI.createURI(modelLocation.getRelativePath()));
         // FIXME wtf, we are overwriting currentResourceUri every time a dependency model gets restored?
         currentResourceUri = resource.getURI();
 
-        final Node rootNode = modelLocation.getModelHead();
+        final Node rootNode = ((NeoObject) modelLocation).getNode();
 
         for (Node modelHeadNode : new OrderedNodeIterable(rootNode, EcoreRelationshipType.MODEL_CONTENT, Direction.OUTGOING)) {
             // debug(modelHeadNode);
@@ -153,7 +168,6 @@ public class NeoRestorer extends AbstractNeoPersistence {
         resource.getContents().addAll(result);
         return result;
     }
-
     /**
      * @param modelNode
      * @return
@@ -172,7 +186,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
                         final Resource resource = resourceSet.createResource(deresolve(org.eclipse.emf.common.util.URI.createURI(location.getRelativePath())));
                         List<EObject> loadedEObjects = load(location);
                         // register all loaded packages
-                        resourceSet.getPackageRegistry().putAll(EcoreModelHelper.createPackageNamespaceMap(loadedEObjects));
+                        resourceSet.getPackageRegistry().putAll(createPackageNamespaceMap(loadedEObjects));
                         resource.getContents().addAll(loadedEObjects);
                     }
                 }
