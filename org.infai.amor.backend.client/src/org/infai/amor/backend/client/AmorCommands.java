@@ -246,7 +246,7 @@ public class AmorCommands implements CommandProvider {
         if (arg == null) {
             newDir = new File(".").getCanonicalFile();
         } else if (arg.trim().equals("..")) {
-            newDir = new File(crntDir.getParent());
+            newDir = new File(crntDir.getAbsoluteFile().getParent());
         } else {
             newDir = new File(crntDir, arg).getCanonicalFile();
         }
