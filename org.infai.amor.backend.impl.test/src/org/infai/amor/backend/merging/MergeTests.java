@@ -9,7 +9,10 @@
  *******************************************************************************/
 package org.infai.amor.backend.merging;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 
 import org.eclipse.emf.compare.diff.merge.service.MergeService;
 import org.eclipse.emf.compare.diff.metamodel.DiffModel;
@@ -31,6 +34,18 @@ public class MergeTests {
     @Test
     public void shouldBeSimilar() throws Exception {
         assertTrue(NameSimilarity.nameSimilarityMetric("secondRenamed.txt", "secondrenamed.txt") > 0.9);
+    }
+
+    @Test
+    public void shouldPersistCDOEcore() throws Exception {
+        // given
+        final ResourceSet rs = new AmorResourceSetImpl();
+        // given
+        final EObject m = ModelUtil.readInputModel("testmodels/cdo.ecore", rs);
+        // when
+        List<String> strings = ModelUtil.storeViaXml(m);
+        // then
+        assertFalse(strings.isEmpty());
     }
 
     @Test

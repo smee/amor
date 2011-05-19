@@ -111,12 +111,12 @@ public class NeoRestorer extends AbstractNeoPersistence {
      * @param name
      * @return
      */
-    private EDataType fetchEcoreDataTypeViaReflection(final String name) {
+    private <T> T fetchEcoreDataTypeViaReflection(final String name) {
         final EcorePackage ecorePackage = EcoreFactory.eINSTANCE.getEcorePackage();
         try {
             final Method method = ecorePackage.getClass().getMethod("get"+name, null);
             logger.finest(String.format("trying to fetch ecore element named '%s' via method '%s'", name, method));
-            return (EDataType) method.invoke(ecorePackage, null);
+            return (T) method.invoke(ecorePackage, null);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
@@ -307,8 +307,15 @@ public class NeoRestorer extends AbstractNeoPersistence {
         if (null != cache.get(node)) {
             return (EClass) cache.get(node);
         }
+        final String name = getString(node, NAME);
+        String instanceTypeName = getString(node, INSTANCE_TYPE_NAME);
+        if (instanceTypeName != null && instanceTypeName.startsWith(EcorePackage.eCONTENT_TYPE)) {
+            EClass c = fetchEcoreDataTypeViaReflection(name);
+            cache.put(node, c);
+            return c;
+        }
         // TODO need to restore package as well, if we haven't yet
-        final EClass aClass = EcoreFactory.eINSTANCE.createEClass();
+        EClass aClass = EcoreFactory.eINSTANCE.createEClass();
 
         cache.put(node, aClass);
 
@@ -317,7 +324,7 @@ public class NeoRestorer extends AbstractNeoPersistence {
         } else {
 
             // properties
-            aClass.setName(getString(node, NAME));
+            aClass.setName(name);
 
             logger.finest("restoring eclass " + aClass.getName());
 

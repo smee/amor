@@ -199,6 +199,20 @@ public class SimpleRepoIntegrationTests extends AbstractNeo4JTest {
     }
 
     @Test
+    public void shouldRestoreDOEcore() throws Exception {
+        // given
+        final String cdoecore = ModelUtil.readModel("testmodels/cdo.ecore");
+        // when
+        repo.checkin(cdoecore, "cdo.ecore", trId);
+        final long revisionId = repo.commitTransaction(trId, "user", "bla");
+
+        final String ecoreXml = repo.checkout(BRANCHNAME, revisionId, "cdo.ecore");
+        // then
+        assertNotNull(ecoreXml);
+        assertEqualsIgnoringWhitespace(cdoecore, ecoreXml);
+    }
+
+    @Test
     public void shouldRestoreModelWithDependency() throws Exception {
         // given
         final String ecoreB = ModelUtil.readModel("testmodels/multi/B.ecore");

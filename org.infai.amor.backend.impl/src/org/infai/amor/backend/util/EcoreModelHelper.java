@@ -279,7 +279,7 @@ public class EcoreModelHelper {
         res.getContents().addAll(contents);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        res.save(baos, ImmutableMap.of(XMLResource.OPTION_ENCODING, "UTF-8"));
+        res.save(baos, ImmutableMap.of(XMLResource.OPTION_ENCODING, "UTF-8", XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_RECORD));
         return baos.toString();
     }
 
