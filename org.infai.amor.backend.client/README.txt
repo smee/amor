@@ -36,6 +36,11 @@ cd 3
 lcd ../../temp
 checkout testmodels/simplefilesystem.xmi
 
+starttransaction trunk
+add testmodels/cdo.ecore
+committransaction "added CDO ecore with nasty ecore datatypes" "max mustermann"
+cd ../../trunk/4
+checkout testmodels/cdo.ecore
 
 ######################### OR use this scenario ############################
 lcd ../../../org.infai.backend.tests/bin
